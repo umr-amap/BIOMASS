@@ -1,0 +1,434 @@
+---
+title: 'Vignette BIOMASS'
+output:
+  html_document: 
+    number_sections: yes
+    theme: united
+    toc: yes
+    toc_depth: 5
+    toc_float: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette BIOMASS}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+test=TRUE
+CACHE=T
+```
+
+#Load BIOMASS and datasets
+**Install BIOMASS (to be done once)**
+```{r eval=F}
+install.packages("BIOMASS")
+```
+**Load the package**
+```{r}
+library(BIOMASS)
+require(knitr) # To build tables in this document
+```
+**Load the two datasets stored in the package**
+```{r, cache=CACHE}
+data(KarnatakaForest)
+str(KarnatakaForest)
+#
+data(NouraguesHD)
+str(NouraguesHD)
+```
+**Select 10 plots for illustrative purpose**
+```{r, cache=CACHE}
+selecPlot<-KarnatakaForest$plotId%in%c("BSP2","BSP12","BSP14","BSP26","BSP28","BSP30","BSP34","BSP44","BSP63","BSP65")
+KarnatakaForestsub<-droplevels(KarnatakaForest[selecPlot,])
+```
+
+#Retrieve wood density
+##Check and retrieve taxonomy
+**First, check for any typo in the taxonomy**
+```{r eval=test, cache=CACHE}
+Taxo<-correctTaxo(genus=KarnatakaForestsub$genus,species=KarnatakaForestsub$species)
+KarnatakaForestsub$genusCorr<-Taxo$genusCorrected
+KarnatakaForestsub$speciesCorr<-Taxo$speciesCorrected
+```
+
+**If needed, retrieve APG III families and orders from genus names**
+```{r eval=test, cache=CACHE}
+APG<-getTaxonomy(KarnatakaForestsub$genusCorr, findOrder =T)
+KarnatakaForestsub$familyAPG<-APG$family
+KarnatakaForestsub$orderAPG<-APG$order
+```
+## Wood density
+**Retrieve wood density using the plot level average if no genus level information is available**
+```{r eval=test, cache=CACHE}
+dataWD<-getWoodDensity(genus=KarnatakaForestsub$genusCorr,
+             species=KarnatakaForestsub$speciesCorr,
+             stand=KarnatakaForestsub$plotId)
+```
+**The same but using the family average and adding other wood density values as references (here invented for the example)**
+```{r eval=test, cache=CACHE}
+LocalWoodDensity<-data.frame(genus=c("Ziziphus","Terminalia","Garcinia"),
+                             species=c("oenopolia","bellirica","indica"),
+                             wd=c(0.65,0.72,0.65))
+
+dataWD<-getWoodDensity(genus=KarnatakaForestsub$genusCorr,
+             species=KarnatakaForestsub$speciesCorr,
+             family=KarnatakaForestsub$familyAPG,
+             stand=KarnatakaForestsub$plotID,
+             addWoodDensityData=LocalWoodDensity)
+```
+**Below the number of wood density value estimated at the species, genus and plot level:**
+```{r eval=test, cache=CACHE}
+# At species level
+sum(dataWD$levelWD=="species")
+# At genus level
+sum(dataWD$levelWD=="genus")
+# At plot level
+sum(!dataWD$levelWD%in%c("genus","species"))
+```
+
+#Build height-diameter models
+
+**You may compare different models at once**
+```{r eval=F, cache=CACHE}
+HDmodel <- modelHD(D=NouraguesHD$D, 
+                   H =NouraguesHD$H,
+                   drawGraph=TRUE,
+                   useWeight=TRUE)
+```
+
+```{r echo=F, cache=CACHE}
+modelHDplot <- function (D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE){
+  nbNonNA <- sum(!is.na(H))
+  if (nbNonNA < 15) 
+    stop(paste("The data has not enough height data (less than 15 non NA)"))
+  Hdata <- data.frame(H, D)
+  names(Hdata) <- c("H", "D")
+  Hdata <- na.omit(Hdata)
+  weight <- NULL
+  D_Plot <- seq(from = floor(min(Hdata$D)), to = ceiling(max(Hdata$D)), 
+                0.5)
+  if (useWeight == TRUE) 
+    weight <- (Hdata$D^2) * Hdata$H
+  if (!is.null(method)) {
+    RSElog <- NULL
+    if (grepl("log", method)) {
+      modSelected <- loglogFunction(Hdata, method)
+      RSElog <- summary(modSelected)$sigma
+      coeff <- summary(modSelected)$coefficients
+      if (method == "log1") {
+        Hpredict_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                               coeff[2] * log(D_Plot))
+        Hpredict <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                          coeff[2] * log(Hdata$D))
+      }
+      if (method == "log2") {
+        Hpredict_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                               coeff[2] * log(D_Plot) + coeff[3] * log(D_Plot)^2)
+        Hpredict <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                          coeff[2] * log(Hdata$D) + coeff[3] * log(Hdata$D)^2)
+      }
+      if (method == "log3") {
+        Hpredict_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                               coeff[2] * log(D_Plot) + coeff[3] * log(D_Plot)^2 + 
+                               coeff[4] * log(D_Plot)^3)
+        Hpredict <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                          coeff[2] * log(Hdata$D) + coeff[3] * log(Hdata$D)^2 + 
+                          coeff[4] * log(Hdata$D)^3)
+      }
+    }
+    if (method == "weibull") {
+      modSelected <- weibullFunction(Hdata, weight)
+      coeff <- summary(modSelected)$coefficients
+      a <- coeff[1]
+      b <- coeff[2]
+      c <- coeff[3]
+      Hpredict_plot <- a * (1 - exp(-(D_Plot/b)^c))
+      Hpredict <- a * (1 - exp(-(Hdata$D/b)^c))
+    }
+    if (method == "michaelis") {
+      modSelected <- michaelisFunction(Hdata, weight)
+      coeff <- summary(modSelected)$coefficients
+      A <- coeff[1]
+      B <- coeff[2]
+      Hpredict_plot <- SSmicmen(D_Plot, A, B)
+      Hpredict <- SSmicmen(Hdata$D, A, B)
+    }
+    if (drawGraph == TRUE) {
+      par(mar = c(5, 5, 3, 3))
+      plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", 
+           log = "xy", las = 1, xlab = "D (cm)", ylab = "H (m)", 
+           cex.lab = 1.8, cex.axis = 1.5, main = paste("Selected model : ", 
+                                                       method), cex.main = 2)
+      lines(D_Plot, Hpredict_plot, lwd = 2, col = "blue")
+      legend("bottomright", c("Data", "Model selected"), 
+             lty = c(3, 1), lwd = c(3, 3), col = c("grey", 
+                                                   "blue"), cex = 1.5)
+    }
+  }
+  else {
+    mod_log1 <- loglogFunction(Hdata, method = "log1")
+    RSElog <- summary(mod_log1)$sigma
+    coeff <- summary(mod_log1)$coefficients
+    Hpredict_log1_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                                coeff[2] * log(D_Plot))
+    Hpredict_log1 <- exp(coeff[1] + 0.5 * RSElog^2 + coeff[2] * 
+                           log(Hdata$D))
+    mod_log2 <- loglogFunction(Hdata, method = "log2")
+    RSElog <- summary(mod_log2)$sigma
+    coeff <- summary(mod_log2)$coefficients
+    Hpredict_log2_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                                coeff[2] * log(D_Plot) + coeff[3] * log(D_Plot)^2)
+    Hpredict_log2 <- exp(coeff[1] + 0.5 * RSElog^2 + coeff[2] * 
+                           log(Hdata$D) + coeff[3] * log(Hdata$D)^2)
+    mod_log3 <- loglogFunction(Hdata, method = "log3")
+    RSElog <- summary(mod_log3)$sigma
+    coeff <- summary(mod_log3)$coefficients
+    Hpredict_log3_plot <- exp(coeff[1] + 0.5 * RSElog^2 + 
+                                coeff[2] * log(D_Plot) + coeff[3] * log(D_Plot)^2 + 
+                                coeff[4] * log(D_Plot)^3)
+    Hpredict_log3 <- exp(coeff[1] + 0.5 * RSElog^2 + coeff[2] * 
+                           log(Hdata$D) + coeff[3] * log(Hdata$D)^2 + coeff[4] * 
+                           log(Hdata$D)^3)
+    mod_wei <- weibullFunction(Hdata, weight)
+    coeff <- summary(mod_wei)$coefficients
+    a <- coeff[1]
+    b <- coeff[2]
+    c <- coeff[3]
+    Hpredict_wei_plot <- a * (1 - exp(-(D_Plot/b)^c))
+    Hpredict_wei <- a * (1 - exp(-(Hdata$D/b)^c))
+    mod_mich <- michaelisFunction(Hdata, weight)
+    coeff <- summary(mod_mich)$coefficients
+    A <- coeff[1]
+    B <- coeff[2]
+    Hpredict_mich_plot <- SSmicmen(D_Plot, A, B)
+    Hpredict_mich <- SSmicmen(Hdata$D, A, B)
+    par(mar = c(5, 5, 3, 3))
+    plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", 
+         log = "xy", las = 1, xlab = "D (cm)", ylab = "H (m)", 
+         cex.lab = 1.8, cex.axis = 1.5, main = "Model comparison", 
+         cex.main = 2)
+    lines(D_Plot, Hpredict_log1_plot, lwd = 2, col = "blue")
+    lines(D_Plot, Hpredict_log2_plot, lwd = 2, col = "green")
+    lines(D_Plot, Hpredict_log3_plot, lwd = 2, col = "red")
+    lines(D_Plot, Hpredict_wei_plot, lwd = 2, col = "orange")
+    lines(D_Plot, Hpredict_mich_plot, lwd = 2, col = "purple")
+    legend("bottomright", c("Log 1", "Log 2", "Log 3", "Weibull", 
+                            "Michaelis"), lty = c(1, 1, 1, 1, 1), lwd = c(2, 
+                                                                          2, 2, 2, 2), cex = 1.5, col = c("blue", "green", 
+                                                                                                          "red", "orange", "purple"))
+  }
+
+}
+HDmodel <- modelHDplot(D=NouraguesHD$D, 
+                   H =NouraguesHD$H,
+                   drawGraph=TRUE,
+                   useWeight=TRUE)
+```
+
+```
+Which model would you like to select to model your data ? 
+ 
+##1 : Log 1 (blue) 
+##----- RSE = 4.1893 (RSElog = 0.2211) 
+##----- Average bias =  0.0042 
+
+##2 : Log 2 (green) 
+##----- RSE = 4.1017 (RSElog = 0.2194) 
+----- Average bias =  0.003 
+
+3 : Log 3 (red) 
+----- RSE = 4.1038 (RSElog = 0.2195) 
+----- Average bias =  0.003 
+
+4 : Weibull (orange) 
+----- RSE =  4.1716  
+----- Average bias =  0.0052 
+
+5 : Michaelis - Menten (purple) 
+----- RSE =  4.1662  
+----- Average bias =  0.0148 
+
+1: 3
+```
+
+**Compute the local H-D model with the lowest RSE**
+```{r, cache=CACHE}
+HDmodel<-modelHD(D=NouraguesHD$D,
+                 H=NouraguesHD$H,
+                 method="log2",
+                 useWeight =TRUE)
+```
+
+**Compute models specific to given stands**
+
+```{r, cache=CACHE}
+HDmodelPerPlot <- by(NouraguesHD,NouraguesHD$plotId,
+                     function(x) modelHD(D=x$D,H=x$H, method="weibull",useWeight =T),
+                     simplify=FALSE)                     
+RSEmodels<-sapply(HDmodelPerPlot,function(x) x$RSE)
+Coeffmodels<-lapply(HDmodelPerPlot,function(x) x$coefficients)
+ResHD<-data.frame(Plot=names(unlist(RSEmodels)),
+                  a=round(unlist(sapply(Coeffmodels,"[",1)),3),
+                  b=round(unlist(sapply(Coeffmodels,"[",2)),3),
+                  c=round(unlist(sapply(Coeffmodels,"[",3)),3),
+                  RSE=round(unlist(RSEmodels),3))
+kable(ResHD, row.names = F)
+```
+
+# Retrieve height data
+
+**Retrieve height data from a local Height-diameter model** (Note that using a HD model built on French guianan trees for Indian trees is only for illustrative purpose here)
+```{r, cache=CACHE}
+dataHlocal<-retrieveH(D=KarnatakaForestsub$D,
+                      model =HDmodel)
+```
+**Retrieve height data from a Feldpaush et al. (2012) averaged model**
+```{r, cache=CACHE}
+dataHfeld<-retrieveH(D=KarnatakaForestsub$D,
+                     region ="SEAsia")
+```
+**Retrieve height data from  Chave et al. (2012) equation 6**
+```{r, eval=F, cache=CACHE}
+dataHchave<-retrieveH(D=KarnatakaForestsub$D,
+                      coord=cbind(KarnatakaForestsub$long,KarnatakaForestsub$lat))
+```
+
+# Estimate AGB
+**Organize data**
+```{r, cache=CACHE}
+KarnatakaForestsub$WD=dataWD$meanWD
+KarnatakaForestsub$H=dataHlocal$H
+KarnatakaForestsub$Hfeld=dataHfeld$H
+```
+**Compute AGB(Mg) per tree**
+```{r warning=F, cache=CACHE}
+AGBtree<-computeAGB(D=KarnatakaForestsub$D,
+                    WD=KarnatakaForestsub$WD,
+                    H =KarnatakaForestsub$H)
+```
+**Compute AGB(Mg) per plot**
+```{r warning=F, cache=CACHE}
+AGBPlotList<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+                function(x) computeAGB(D=x$D,WD=x$WD,H=x$H),
+                simplify=F)
+AGBplot<-sapply(AGBPlotList,sum) 
+```
+
+**Compute AGB(Mg) per tree without height information (Eq. 7 from Chave et al. (2014))**
+```{r warning=F, eval=F, cache=CACHE}
+AGBPlotListChave<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+                function(x) computeAGB(D=x$D,WD=x$WD,coord =cbind(x$long, x$lat)),
+                simplify=F)
+AGBplotChave<-sapply(AGBPlotListChave,sum) 
+```
+**Compute AGB(Mg) per tree with Feldpausch et al. (2012) regional H-D model**
+```{r warning=F, cache=CACHE}
+AGBPlotListFeld<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+                function(x) computeAGB(D=x$D,WD=x$WD,H=x$Hfeld),
+                simplify=F)
+AGBplotFeld<-sapply(AGBPlotListFeld,sum) 
+```
+
+# Propagate AGB errors
+**Organize data**
+```{r, cache=CACHE }
+KarnatakaForestsub$sdWD=dataWD$sdWD
+KarnatakaForestsub$HfeldRSE=dataHfeld$RSE
+```
+**Propagate error for all tree at once using the local HD model constructed above (modelHD), i.e. non-independent allometric errors will be assigned to all trees at each iteration, independently of plots.**
+```{r, cache=CACHE}
+resultMC<-AGBmonteCarlo(D=KarnatakaForestsub$D,WD=KarnatakaForestsub$WD,errWD = KarnatakaForestsub$sdWD,HDmodel=HDmodel,Dpropag ="chave2004")
+meanAGBperplot<-by(resultMC$AGB_simu,KarnatakaForestsub$plotId,function(x) mean(apply(x, 2, sum))) 
+credperplot<-by(resultMC$AGB_simu,KarnatakaForestsub$plotId,function(x) quantile(apply(x,2,sum, na.rm = T), probs = c(0.025, 0.975))) 
+credinf<-sapply(credperplot,"[",1)
+credsup<-sapply(credperplot,"[",2)
+ord<-order(meanAGBperplot)
+plot(meanAGBperplot[ord],pch=20,xlab="Plots",ylab="AGB (Mg/ha)",ylim=c(0,max(credsup)),las=1,cex.lab=1.3)
+segments(1:length(ord),credinf[ord],1:length(ord),credsup[ord],col="red")
+```
+
+**Propagate error per plot using the local HD model constructed above (modelHD), i.e. independent allometric errors will be assigned to all trees at each iteration, between plots.**
+```{r, cache=CACHE}
+resultMC<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+             function(x) AGBmonteCarlo(D=x$D,WD=x$WD,H=x$H,errWD = x$sdWD,
+                                       HDmodel=HDmodel,Dpropag ="chave2004"),
+             simplify=F)
+meanAGBperplot<-unlist(sapply(resultMC,"[",1))
+credperplot<-sapply(resultMC,"[",4)
+credinf<-sapply(credperplot,"[",1)
+credsup<-sapply(credperplot,"[",2)
+ord<-order(meanAGBperplot)
+plot(meanAGBperplot[ord],pch=20,xlab="Plots",ylab="AGB (Mg/ha)",ylim=c(0,max(credsup)),las=1,cex.lab=1.3)
+segments(1:length(ord),credinf[ord],1:length(ord),credsup[ord],col="red")
+```
+
+
+**Per plot using the Feldpaush regional HD averaged model (code only given)**
+```{r, eval=F, cache=CACHE}
+resultMC<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+             function(x) AGBmonteCarlo(D=x$D,WD=x$WD,errWD=x$sdWD, H=x$Hfeld,
+                                       errH=x$HfeldRSE, Dpropag="chave2004"),
+             simplify=F)
+meanAGBperplot<-unlist(sapply(resultMC,"[",1))
+credperplot<-sapply(resultMC,"[",4)
+credinf<-sapply(credperplot,"[",1)
+credsup<-sapply(credperplot,"[",2)
+ord<-order(meanAGBperplot)
+plot(meanAGBperplot[ord],pch=20,xlab="Plots",ylab="AGB (Mg/ha)",ylim=c(0,max(credsup)),las=1,cex.lab=1.3)
+segments(1:length(ord),credinf[ord],1:length(ord),credsup[ord],col="red")
+```
+
+**Per plot using the Chave et al. (2014) Equation 7 (code only given)**
+```{r, eval=F,cache=CACHE}
+resultMC<-by(KarnatakaForestsub, KarnatakaForestsub$plotId,
+             function(x)AGBmonteCarlo(D=x$D,WD=x$WD,errWD=x$sdWD,
+                                      coord=cbind(x$long,x$lat),
+                                      Dpropag="chave2004"),
+             simplify=F)
+meanAGBperplot<-unlist(sapply(resultMC,"[",1))
+credperplot<-sapply(resultMC,"[",4)
+credinf<-sapply(credperplot,"[",1)
+credsup<-sapply(credperplot,"[",2)
+ord<-order(meanAGBperplot)
+plot(meanAGBperplot[ord],pch=20,xlab="Plots",ylab="AGB (Mg/ha)",ylim=c(0,max(credsup)),las=1,cex.lab=1.3)
+segments(1:length(ord),credinf[ord],1:length(ord),credsup[ord],col="red")
+```
+
+# Some tricks
+
+##Mixing measured and estimated height values
+If you want to use a mix of directly-measured height and of estimated ones, you may do the following steps.
+
+1 Build a vector of H and RSE where we assume an error of 0.5 m on directly measured trees
+```{r, cache=CACHE }
+NouraguesHD$Hmix<-NouraguesHD$H
+NouraguesHD$RSEmix<-0.5
+filt<-is.na(NouraguesHD$Hmix)
+NouraguesHD$Hmix[filt]<- retrieveH(NouraguesHD$D,model = HDmodel)$H[filt]
+NouraguesHD$RSEmix[filt]<-HDmodel$RSE
+```
+2 Apply the AGBmonteCarlo by setting the height values and their errors (which depend on wether the tree was directly measured or estimated)
+```{r eval=F, cache=CACHE}
+resultMC<-by(NouraguesHD, NouraguesHD$plotId,
+             function(x)AGBmonteCarlo(D=x$D,WD=x$WD,errWD=x$sdWD,
+                                      H=NouraguesHD$Hmix,errH=NouraguesHD$RSEmix,
+                                      Dpropag="chave2004"),
+             simplify=F)
+meanAGBperplot<-unlist(sapply(resultMC,"[",1))
+credperplot<-sapply(resultMC,"[",4)
+credinf<-sapply(credperplot,"[",1)
+credsup<-sapply(credperplot,"[",2)
+ord<-order(meanAGBperplot)
+plot(meanAGBperplot[ord],pch=20,xlab="Plots",ylab="AGB (Mg/ha)",ylim=c(0,max(credsup)),las=1,cex.lab=1.3)
+segments(1:length(ord),credinf[ord],1:length(ord),credsup[ord],col="red")
+```
+
+##Add your tricks
+Please contact Maxime (maxime.rejou@gmail.com) if you would like to add here a code that may be useful for users (code authorship will be respected) 
+
+
+
+
+
+
+

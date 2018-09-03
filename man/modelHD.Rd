@@ -1,0 +1,80 @@
+\name{modelHD}
+\alias{modelHD}
+
+\title{
+Fitting height-diameter model
+}
+\description{
+This function fits and compares (optional) height-diameter models.
+}
+\usage{
+modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
+}
+\arguments{
+  \item{D}{
+  Vector with diameter measurements (in cm). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding height in H) is required.
+}
+  \item{H}{
+  Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.
+}
+  \item{method}{
+  Method used to fit the relationship. 
+  To be chosen between: 
+  \itemize{
+  \item log1, log2, log3
+  \itemize{
+  	\item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
+	\item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
+	\item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
+	}
+	\item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
+	\item michaelis: \eqn{H = (A * D)/(B + D)}
+	}
+  If \code{NULL}, all the methods will be compared.
+}
+  \item{useWeight}{
+  If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree volume, so that larger trees have a stronger influence during the construction of the model).
+}
+  \item{drawGraph}{
+  If \code{TRUE}, a graphic will illustrate the relationship between H and D. 
+}
+}
+\details{
+All the back transformations in loglog are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error). 
+}
+\value{
+Returns a list  with: 
+  \item{input}{list of the data used to construct the model (list(H, D))}
+  \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
+  \item{RSE}{Residual Standard Error of the model}
+  \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
+  \item{residuals}{Residuals of the model}
+  \item{coefficients}{Coefficients of the model}
+  \item{R.squared}{\eqn{R^2} of the model}
+  \item{formula}{Formula of the model}
+  \item{method}{Name of the method used to construct the model}
+  \item{predicted}{Predicted height values}
+}
+\author{
+Maxime REJOU-MECHAIN, Ariane TANGUY
+}
+
+\seealso{
+\code{\link{retrieveH}}, 
+\code{\link{predictHeight}}
+}
+\examples{
+# Load a data set
+data(NouraguesHD)
+
+# To model the height from a dataset
+\dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)}
+
+# If the method needed is known
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
+
+# Using weights
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
+					drawGraph = TRUE)
+}

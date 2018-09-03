@@ -1,0 +1,13 @@
+* version 1.2
+- Duplicated genera from the plantList have been fixed in the "genusFamily" dataset (e.g. The family Jungermanniaceae was given for the genus Massularia, now the dataset gives the Rubiaceae family)
+
+* version 1.1
+- The NouraguesHD dataset has now taxonomic information
+- The warning message from the computeAGB function has been removed
+- The correctTaxo function have been slightly modified to handle species names not recognized by TNRS
+- The getWoodDensity function has been slightly modified to deal with NA values in addWoodDensityData, which is now a data.frame of three colums and not four (the family column is now internaly built).
+- The computeAGB and AGBmonteCarlo functions have an additional argument: Dlim (see help).
+- The AGBmonteCarlo function has now an option to propagate error up to the carbon estimate (see the argument Carbon).
+
+* version 1.0
+Initial version of BIOMASS
