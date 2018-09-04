@@ -21,11 +21,11 @@ To cite BIOMASS, please use citation("BIOMASS").
 
 The latest released version from CRAN with
 
-'''r
+```r
 install.packages("BIOMASS")
-'''
+```
 
 To use it :
-'''r
+```r
 library("BIOMASS")
-'''
+```
