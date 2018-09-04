@@ -31,3 +31,7 @@
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 .Rproj.user
+
+# Remove the E directory (Environmental index) (too heavy)
+E/*
+E_zip*
