@@ -35,3 +35,16 @@ rsconnect/
 # Remove the E directory (Environmental index) (too heavy)
 E/*
 E_zip*
+test/speed_analysis/CorrectTaxo_speed_bigdata\.Rprofvis
+
+test/speed_analysis/out\.txt
+
+test/speed_analysis/speed_big_data\.png
+
+test/speed_analysis/speed_orignal_vs_modified\.png
+
+wc2-5/
+
+CWD/
+
+CWD_zip

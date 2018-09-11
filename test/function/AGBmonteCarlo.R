@@ -35,7 +35,6 @@ HDmodel<-modelHD(D=NouraguesHD$D,
 
 
 KarnatakaForest$sdWD=dataWD$sdWD
-KarnatakaForest$HfeldRSE=dataHfeld$RSE
 KarnatakaForest$WD=dataWD$meanWD
 
 
@@ -205,7 +204,6 @@ AGBmonteCarlo1 = function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL, HDm
                         sweep(Esim, MARGIN = 2, coeffE, "*"),
                       MARGIN = 2, intercept, '+')
     # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
-    len = length(D)
     matRSE <- mapply(function(y){rnorm(sd = y, n = len)}, y = RSE)
     AGB_simu <- AGB_simu + matRSE
     AGB_simu <- exp(AGB_simu)/1000
@@ -234,8 +232,179 @@ AGBmonteCarlo1 = function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL, HDm
 
 
 
+
+
+
 res = microbenchmark("origin"=AGBmonteCarlo(D=KarnatakaForest$D,WD=KarnatakaForest$WD,
                                             errWD = KarnatakaForest$sdWD,HDmodel=HDmodel,Dpropag ="chave2004"),
                      "modified"=AGBmonteCarlo1(D=KarnatakaForest$D,WD=KarnatakaForest$WD,
                                                errWD = KarnatakaForest$sdWD,HDmodel=HDmodel,Dpropag ="chave2004"), times = 10)
+
+
+
+
+
+######## time and memory in function of dataset size
+
+n = 60000
+time = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2)
+k = 1
+b = seq(10, n, by = 100)
+for( i in b){
+  gc(reset = T)
+  time[k,1] = system.time(AGBmonteCarlo(D=KarnatakaForest$D[1:i],WD=KarnatakaForest$WD[1:i],
+                         errWD = KarnatakaForest$sdWD[1:i],HDmodel=HDmodel,Dpropag ="chave2004"))[1]
+  gc(reset = T)
+  time[k,2] = system.time(AGBmonteCarlo1(D=KarnatakaForest$D[1:i],WD=KarnatakaForest$WD[1:i],
+                         errWD = KarnatakaForest$sdWD[1:i],HDmodel=HDmodel,Dpropag ="chave2004"))[1]
+  k = k + 1
+  print(paste(i, k))
+}
+
+png(filename = "~/Bureau/document arthur/biomass/test/function/speed_AGB.png")
+plot(b, time[,1], type = "l", col = "blue", xlab = "dataset size (lines)", ylab = "user time")
+lines(b, time[,2], col = "red")
+legend("bottomright", legend = c("original", "modified"), col = c("blue", "red"), lty = 1)
+dev.off()
+
+
+n = 60000
+mem = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2)
+k = 1
+b = seq(10, n, by = 100)
+for( i in b){
+  start = gc(reset = T)
+  AGBmonteCarlo(D=KarnatakaForest$D[1:i],WD=KarnatakaForest$WD[1:i],
+                errWD = KarnatakaForest$sdWD[1:i],HDmodel=HDmodel,Dpropag ="chave2004")
+  end = gc() - start
+  mem[k, 1] = colSums(end)[6]
+
+  start = gc(reset = T)
+  AGBmonteCarlo1(D=KarnatakaForest$D[1:i],WD=KarnatakaForest$WD[1:i],
+                errWD = KarnatakaForest$sdWD[1:i],HDmodel=HDmodel,Dpropag ="chave2004")
+  end = gc() - start
+  mem[k, 2] = colSums(end)[6]  
+
+  k = k + 1
+  print(paste(i, k))
+}
+
+png(filename = "~/Bureau/document arthur/biomass/test/function/memory_AGB.png")
+plot(b, mem[,1], type = "l", col = "blue", xlab = "dataset size (lines)", ylab = "Memory (Mb)")
+lines(b, mem[,2], col = "red")
+legend("bottomright", legend = c("original", "modified"), col = c("blue", "red"), lty = 1)
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########## function coord
+coord = function(n, coord, WD_simu, D_simu, selec){
+  param_7 <- NULL
+  data(param_7, envir = environment()) # posterior parameters from MCMC algorithm
+  
+  bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
+  
+  # Posterior model parameters 
+  intercept <- param_7[selec, "intercept"] # vector of simulated intercept
+  coeffWD <- param_7[selec, "logwsg"] # vector of simulated parameter associated to ln(WD)
+  coefflnD <- param_7[selec, "logdbh"] # vector of simulated parameter associated to ln(D) 
+  coefflnD2 <- param_7[selec, "logdbh2"] # vector of simulated parameter associated to ln(D)^2
+  coeffE <- -param_7[selec, "E"] # vector of simulated parameter associated to E
+  coeffTmp <- param_7[selec, "temp"] # vector of of simulated parameter associated to tempsea coeff
+  coeffCWD <- param_7[selec, "cwd"] # vector of of simulated parameter associated to CWD coeff
+  coeffPS <- param_7[selec, "prec"] # vector of of simulated parameter associated to precSeas coeff
+  RSE <- param_7[selec,"sd"] # vector of simulated RSE values
+  
+  # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
+  Tmp <- replicate(n, bioclimParams$tempSeas)
+  CWD <- replicate(n, bioclimParams$CWD)
+  PS <- replicate(n, bioclimParams$precSeas)
+  
+  Esim <- sweep(Tmp, MARGIN = 2, coeffTmp, "*") + sweep(CWD, MARGIN = 2, coeffCWD, "*") +
+    sweep(PS, MARGIN = 2, coeffPS, "*")
+  
+  # Applying AGB formula over simulated matrices and vectors
+  AGB_simu <- sweep(sweep(log(WD_simu), MARGIN = 2, coeffWD, "*") + 
+                      sweep(log(D_simu), MARGIN = 2, coefflnD, "*") + 
+                      sweep(log(D_simu)^2, MARGIN = 2, coefflnD2, "*")+
+                      sweep(Esim, MARGIN = 2, coeffE, "*"),
+                    MARGIN = 2, intercept, '+')
+  return(AGB_simu)
+}
+
+coord1 = function(n, coord, WD_simu, D_simu, selec){
+  param_7 <- NULL
+  data(param_7, envir = environment()) # posterior parameters from MCMC algorithm
+    
+  bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
+  
+  # Posterior model parameters 
+  intercept <- param_7[selec, "intercept"] # vector of simulated intercept
+  coeffWD <- param_7[selec, "logwsg"] # vector of simulated parameter associated to ln(WD)
+  coefflnD <- param_7[selec, "logdbh"] # vector of simulated parameter associated to ln(D) 
+  coefflnD2 <- param_7[selec, "logdbh2"] # vector of simulated parameter associated to ln(D)^2
+  coeffE <- -param_7[selec, "E"] # vector of simulated parameter associated to E
+  coeffTmp <- param_7[selec, "temp"] # vector of of simulated parameter associated to tempsea coeff
+  coeffCWD <- param_7[selec, "cwd"] # vector of of simulated parameter associated to CWD coeff
+  coeffPS <- param_7[selec, "prec"] # vector of of simulated parameter associated to precSeas coeff
+  RSE <- param_7[selec,"sd"] # vector of simulated RSE values
+  
+  # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
+  Tmp <- replicate(n, bioclimParams$tempSeas)
+  CWD <- replicate(n, bioclimParams$CWD)
+  PS <- replicate(n, bioclimParams$precSeas)
+  
+  Esim <- t(Tmp) * coeffTmp + t(CWD) * coeffCWD + t(PS) * coeffPS
+  
+  # Applying AGB formula over simulated matrices and vectors
+  AGB_simu <- t( t(log(WD_simu)) * coeffWD +  t(log(D_simu)) * coefflnD + t(log(D_simu)^2) * coefflnD2 + Esim * coeffE + intercept )
+  return(AGB_simu)
+  
+}
+
+
+
+n = 1000
+a = 10000
+coord12 = cbind( KarnatakaForest$long[1:a], KarnatakaForest$lat[1:a] )
+D_simu = replicate(n, D[1:a])
+WD_simu = replicate(n, WD[1:a])
+selec <- sample(1:1001, n) 
+
+res = microbenchmark("original"=coord(n, coord12, WD_simu, D_simu, selec),
+                     "modified1" = coord1(n, coord12, WD_simu, D_simu, selec))
+
+all( coord(n, coord12, WD_simu, D_simu, selec) == coord1(n, coord12, WD_simu, D_simu, selec) , na.rm = T)
 
