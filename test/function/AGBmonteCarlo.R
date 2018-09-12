@@ -247,7 +247,7 @@ res = microbenchmark("origin"=AGBmonteCarlo(D=KarnatakaForest$D,WD=KarnatakaFore
 ######## time and memory in function of dataset size
 
 n = 60000
-time = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2)
+time = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2, dimnames = list(NULL, c("original", "modified")))
 k = 1
 b = seq(10, n, by = 100)
 for( i in b){
@@ -267,9 +267,10 @@ lines(b, time[,2], col = "red")
 legend("bottomright", legend = c("original", "modified"), col = c("blue", "red"), lty = 1)
 dev.off()
 
+write.csv(cbind("dataset size" = b, time), file = "~/Bureau/document arthur/biomass/test/function/speed_time.csv")
 
 n = 60000
-mem = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2)
+mem = matrix(nrow=length(seq(10, n, by = 100)), ncol = 2, dimnames = list(NULL, c("original", "modified")))
 k = 1
 b = seq(10, n, by = 100)
 for( i in b){
@@ -295,17 +296,22 @@ lines(b, mem[,2], col = "red")
 legend("bottomright", legend = c("original", "modified"), col = c("blue", "red"), lty = 1)
 dev.off()
 
+write.csv(cbind("dataset size" = b, mem), file = "~/Bureau/document arthur/biomass/test/function/memory.csv")
 
 
 
 
+#### function time vs dataset size
 
+b2 = b^2
+lm_time1 = lm(time[,1] ~ b + b2)
+plot(b, time[,1], cex = 0.1, col = "blue", xlab = "dataset size (lines)", ylab = "user time")
+lines(b, lm_time1$coefficients[1] + lm_time1$coefficients[2] * b + lm_time1$coefficients[3] * b2, col = "blue")
 
-
-
-
-
-
+lm_time2 = lm(time[,2] ~ b)
+points(b, time[,2], cex = 0.1, col = "red")
+abline(lm_time2, col = "red")
+#
 
 
 
@@ -371,14 +377,6 @@ coord1 = function(n, coord, WD_simu, D_simu, selec){
   bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
   
   # Posterior model parameters 
-  intercept <- param_7[selec, "intercept"] # vector of simulated intercept
-  coeffWD <- param_7[selec, "logwsg"] # vector of simulated parameter associated to ln(WD)
-  coefflnD <- param_7[selec, "logdbh"] # vector of simulated parameter associated to ln(D) 
-  coefflnD2 <- param_7[selec, "logdbh2"] # vector of simulated parameter associated to ln(D)^2
-  coeffE <- -param_7[selec, "E"] # vector of simulated parameter associated to E
-  coeffTmp <- param_7[selec, "temp"] # vector of of simulated parameter associated to tempsea coeff
-  coeffCWD <- param_7[selec, "cwd"] # vector of of simulated parameter associated to CWD coeff
-  coeffPS <- param_7[selec, "prec"] # vector of of simulated parameter associated to precSeas coeff
   RSE <- param_7[selec,"sd"] # vector of simulated RSE values
   
   # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
@@ -386,25 +384,139 @@ coord1 = function(n, coord, WD_simu, D_simu, selec){
   CWD <- replicate(n, bioclimParams$CWD)
   PS <- replicate(n, bioclimParams$precSeas)
   
-  Esim <- t(Tmp) * coeffTmp + t(CWD) * coeffCWD + t(PS) * coeffPS
+  Esim <- t(Tmp) * param_7[selec, "temp"] + t(CWD) * param_7[selec, "cwd"] + t(PS) * param_7[selec, "prec"]
   
   # Applying AGB formula over simulated matrices and vectors
-  AGB_simu <- t( t(log(WD_simu)) * coeffWD +  t(log(D_simu)) * coefflnD + t(log(D_simu)^2) * coefflnD2 + Esim * coeffE + intercept )
+  AGB_simu <- t( t(log(WD_simu)) * param_7[selec, "logwsg"] +  
+                   t(log(D_simu)) * param_7[selec, "logdbh"] + 
+                   t(log(D_simu)^2) * param_7[selec, "logdbh2"] + Esim * -param_7[selec, "E"] + 
+                   param_7[selec, "intercept"] )
   return(AGB_simu)
   
 }
 
 
+myrtruncnorm <- function(n,lower = -1, upper = 1,mean=0,sd=1) {
+  qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd)
+}
+
 
 n = 1000
 a = 10000
 coord12 = cbind( KarnatakaForest$long[1:a], KarnatakaForest$lat[1:a] )
-D_simu = replicate(n, D[1:a])
-WD_simu = replicate(n, WD[1:a])
+D_simu = replicate(n, myrtruncnorm(a, mean= D[1:a], lower = 0.1, upper = 500))
+WD_simu = replicate(n, myrtruncnorm(a, mean = WD[1:a], lower = 0.08, upper = 1.39))
 selec <- sample(1:1001, n) 
 
-res = microbenchmark("original"=coord(n, coord12, WD_simu, D_simu, selec),
-                     "modified1" = coord1(n, coord12, WD_simu, D_simu, selec))
-
 all( coord(n, coord12, WD_simu, D_simu, selec) == coord1(n, coord12, WD_simu, D_simu, selec) , na.rm = T)
+
+
+
+
+
+
+
+#### Try of a new function coord
+
+coord2 = function(n, coord, WD_simu, D_simu, selec){
+  param_7 <- NULL
+  data(param_7, envir = environment()) # posterior parameters from MCMC algorithm
+  
+  bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
+  
+  simulation = function(x){
+    Esim = bioclimParams$tempSeas * param_7[selec[x], "temp"] + 
+      bioclimParams$CWD * param_7[selec[x], "cwd"] + 
+      bioclimParams$precSeas * param_7[selec[x], "prec"]
+    AGB_simu = log(WD_simu[,x]) * param_7[selec[x], "logwsg"] +
+      log(D_simu[,x]) * param_7[selec[x], "logdbh"] +
+      log(D_simu[,x])^2 * param_7[selec[x], "logdbh2"] +
+      Esim * -param_7[selec[x], "E"] +
+      param_7[selec[x], "intercept"]
+    return(AGB_simu)
+  }
+  
+  RSE <- param_7[selec,"sd"] # vector of simulated RSE values
+  
+
+  return(sapply(1:n, simulation))
+  
+}
+all( coord(n, coord12, WD_simu, D_simu, selec) == coord2(n, coord12, WD_simu, D_simu, selec))
+
+
+res = microbenchmark("original"= coord(n, coord12, WD_simu, D_simu, selec),
+                     "modified1" = coord1(n, coord12, WD_simu, D_simu, selec),
+                     "modified2" = coord1(n, coord12, WD_simu, D_simu, selec))
+
+
+
+##### function coordonates spped and memory
+
+n = 1000
+coord12 = cbind( KarnatakaForest$long, KarnatakaForest$lat )
+D_simu = replicate(n, myrtruncnorm(length(D), mean= D, lower = 0.1, upper = 500))
+WD_simu = replicate(n, myrtruncnorm(length(WD), mean = WD, lower = 0.08, upper = 1.39))
+selec <- sample(1:1001, n)
+
+
+n = 61000
+time = matrix(nrow=length(seq(10, n, by = 100)), ncol = 3, dimnames = list(NULL, c("original", "modified1", "modified2")))
+k = 1
+size = seq(10, n, by = 100)
+for( i in size){
+  gc(reset = T)
+  time[k,1] = system.time(coord(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec))[1]
+  gc(reset = T)
+  time[k,2] = system.time(coord1(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec))[1]
+  gc(reset = T)
+  time[k,3] = system.time(coord2(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec))[1]
+  
+  k = k + 1
+  print(paste(i, k))
+}
+
+png(filename = "~/Bureau/document arthur/biomass/test/function/speed_coord.png")
+plot(size, time[,1], col = "blue", xlab = "dataset size (lines)", ylab = "user time", cex = 0.1)
+points(size, time[,2], col = "red", cex = 0.1)
+points(size, time[,3], col = "green", cex = 0.1)
+legend("bottomright", legend = c("original", "modified1", "modified2"), col = c("blue", "red", "green"), lty = 1)
+dev.off()
+
+write.csv(cbind("dataset size" = size, time), file = "~/Bureau/document arthur/biomass/test/function/speed_coord.csv", row.names = F)
+
+n = 61000
+mem = matrix(nrow=length(seq(10, n, by = 100)), ncol = 3, dimnames = list(NULL, c("original", "modified1", "modified2")))
+k = 1
+size = seq(10, n, by = 100)
+for( i in size ){
+  start = gc(reset = T)
+  coord(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec)
+  end = gc() - start
+  mem[k, 1] = colSums(end)[6]
+  
+  start = gc(reset = T)
+  coord1(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec)
+  end = gc() - start
+  mem[k, 2] = colSums(end)[6]
+  
+  start = gc(reset = T)
+  coord3(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec)
+  end = gc() - start
+  mem[k, 3] = colSums(end)[6]
+  
+  k = k + 1
+  print(paste(i, k))
+}
+
+png(filename = "~/Bureau/document arthur/biomass/test/function/memory_coord.png")
+plot(size, mem[,1], col = "blue", xlab = "dataset size (lines)", ylab = "Memory (Mb)", cex = 0.1)
+points(size, mem[,2], col = "red", cex = 0.1)
+points(size, mem[,3], col = "green", cex = 0.1)
+legend("bottomright", legend = c("original", "modified1", "modified2"), col = c("blue", "red", "green"), lty = 1)
+dev.off()
+
+write.csv(cbind("dataset size" = size, mem), file = "~/Bureau/document arthur/biomass/test/function/memory_coord.csv", row.names = F)
+
+
 
