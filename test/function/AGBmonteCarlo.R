@@ -477,7 +477,7 @@ for( i in size){
 }
 
 png(filename = "~/Bureau/document arthur/biomass/test/function/speed_coord.png")
-plot(size, time[,1], col = "blue", xlab = "dataset size (lines)", ylab = "user time", cex = 0.1)
+plot(size, time[,1], col = "blue", xlab = "dataset size (lines)", ylab = "user time (s)", cex = 0.1)
 points(size, time[,2], col = "red", cex = 0.1)
 points(size, time[,3], col = "green", cex = 0.1)
 legend("bottomright", legend = c("original", "modified1", "modified2"), col = c("blue", "red", "green"), lty = 1)
@@ -501,7 +501,7 @@ for( i in size ){
   mem[k, 2] = colSums(end)[6]
   
   start = gc(reset = T)
-  coord3(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec)
+  coord2(1000, coord12[1:i, ], WD_simu[1:i, ], D_simu[1:i, ], selec)
   end = gc() - start
   mem[k, 3] = colSums(end)[6]
   
@@ -510,9 +510,9 @@ for( i in size ){
 }
 
 png(filename = "~/Bureau/document arthur/biomass/test/function/memory_coord.png")
-plot(size, mem[,1], col = "blue", xlab = "dataset size (lines)", ylab = "Memory (Mb)", cex = 0.1)
-points(size, mem[,2], col = "red", cex = 0.1)
-points(size, mem[,3], col = "green", cex = 0.1)
+plot(size, mem[,1], col = "blue", xlab = "dataset size (lines)", ylab = "Memory (Mb)", type = "l")
+lines(size, mem[,2], col = "red")
+lines(size, mem[,3], col = "green")
 legend("bottomright", legend = c("original", "modified1", "modified2"), col = c("blue", "red", "green"), lty = 1)
 dev.off()
 
