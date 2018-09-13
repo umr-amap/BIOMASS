@@ -35,3 +35,10 @@ rsconnect/
 # Remove the E directory (Environmental index) (too heavy)
 E/*
 E_zip*
+CWD/
+
+CWD_zip
+
+wc2-5/
+
+test/speed_analysis/
