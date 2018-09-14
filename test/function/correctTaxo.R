@@ -1,49 +1,85 @@
-correctTaxo = function (genus, species = NULL, score = 0.5) 
-{
+rm(list = ls())
+library(BIOMASS)
+
+
+# data used for the function
+data("KarnatakaForest")
+
+genus = KarnatakaForest$genus[1:100]
+species = KarnatakaForest$species[1:100]
+
+score = 0.5
+
+
+
+
+
+
+
+
+
+
+correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
+  
+  ########### Data preparation
+  
   options(stringsAsFactors = F)
   
-  # Create a dataframe with the original values
-  oriData <- data.frame(genus = as.character(genus), query = as.character(genus), id = 1:length(genus))
-  
-  # Create a temporary vector with only the unique of the names
-  query <- na.omit(unique(genus))
+  genus = as.character(genus)
   
   if(!is.null(species))
   {
+    species = as.character(species)
+    
     # Check the length of the inputs
     if(length(genus) != length(species))
       stop("You should provide two vectors of genus and species of the same length")
     
     # Create a dataframe with the original values
-    oriData <- data.frame(genus = as.character(genus), species = as.character(species), 
-                          query = paste(genus, species), id = 1:length(genus))
+    oriData <- data.table::data.table(genus = genus, species = species, 
+                                      query = paste(genus, species), id = 1:length(genus))
     
-    # Create a temporary vector with only the unique of the names
-    query <- unique(paste(genus, species))
-    query <- na.omit(query)
+    # Regroup unique query and filter the column species and genus if they are NA in the same time
+    query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
+    
   }else{
-    species <- sapply(strsplit(genus," "),"[",2)
+    
+    # Create a dataframe with the original values
+    oriData <- data.table::data.table(genus = sapply(strsplit(genus," "),"[",1), 
+                                      species = sapply(strsplit(genus," "),"[",2),
+                                      query = genus, id = 1:length(genus))
+    
+    # Regroup unique query and filter the column species and genus if they are NA in the same time
+    query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
   }
-  species <- as.character(species)
-  if (length(query) < 1 || is.na(query)) 
+  
+  
+  if ( nrow(query) == 0 )
     stop("Please supply at least one name", call. = FALSE)
   
   getpost <- "get"
-  if(length(query) > 50)
+  if(nrow(query) > 50)
     getpost <- "post"
+  
+  
+  
+  # If there is too much data, better submit it in separated queries
+  splitby <- 30
+  slicedQu <- rep(1, nrow(query))
+  if ( nrow(query) > splitby )
+    query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
+  
+  
+  
+  
+  ########### sending and retrive the data from taxosaurus
   
   tc <- function(l) Filter(Negate(is.null), l)
   con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
   
-  # If there is too much data, better submit it in separated queries
-  splitby <- 30
-  slicedQu <- rep(1, length(query))
-  if (getpost == "get" && length(query) > 75 | length(query) > 30 && getpost == "post") 
-    slicedQu <- rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)]
-  
   url <- "http://taxosaurus.org/submit"
   
-  # Send and retrieve the data from taxosaurus
+
   df <- c()
   for(s in unique(slicedQu))
   {
@@ -133,4 +169,7 @@ correctTaxo = function (genus, species = NULL, score = 0.5)
   out$nameModified[filt & filt2] <- "SpNotFound"
   
   return(out[, c("genusCorrected", "speciesCorrected", "nameModified")])
+  
 }
+
+
