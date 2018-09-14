@@ -79,11 +79,11 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   url <- "http://taxosaurus.org/submit"
   
-
-  df <- c()
-  for(s in unique(slicedQu))
+  data.table::setkey(query, query)
+  query[, c("matchedName", "score1") := list("NA", as.double(0))]
+  for(s in query[, unique(slicedQu)])
   {
-    x <- query[slicedQu == s]
+    x <- query[slicedQu == s, query]
     
     if(getpost == "get") 
     {
@@ -91,9 +91,9 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
       args <- tc(list(query = query2))
       out <- httr::GET(url, query = args)
       retrieve <- out$url
-    }
-    else 
-    {
+      
+    } else {
+      
       loc <- tempfile(fileext = ".txt")
       write.table(data.frame(x), file = loc, col.names = FALSE, row.names = FALSE)
       args <- tc(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
@@ -116,27 +116,22 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     out <- tc(output$names)
     
     if(length(out)>0){
-      for(j in 1:length(out))
-      {
-        if(length(out[[j]][[2]][[1]]$annotations) == 0)
-          out[[j]][[2]][[1]]$annotations <- list(Authority = NA)
-        
-        tmp <- data.frame(out[[j]][[2]][[1]])
-        tmp$submittedName <- out[[j]]$submittedName
-        df <- rbind(df, tmp)
-      }
-    }else{
-      tmp=data.frame(acceptedName=NA,sourceId=NA,score=0,matchedName=NA,Authority=NA,uri=NA,submittedName=x)
-      df <- rbind(df,tmp)
+      submittedName = sapply(out, function(x) x$submittedName)
+      receiveData = t( sapply(out, function(x) c( x[[2]][[1]]$matchedName, x[[2]][[1]]$score) ) )
+      
+      # Remove some parasite characters
+      submittedName <- gsub("\"", "", submittedName)
+      submittedName <- gsub("\r", "", submittedName)
+      receiveData[,1] <- gsub("\"", "", receiveData[,1])
+      receiveData[,1] <- gsub("\r", "", receiveData[,1])
+      
+      
+      query[submittedName, ':='(matchedName = receiveData[,1], score1 = as.double(receiveData[, 2]))]
     }
   }
   
-  # Remove some parasite characters 
-  df$submittedName <- gsub("\"", "", df$submittedName)
-  df$submittedName <- gsub("\r", "", df$submittedName)
-  df$matchedName <- gsub("\"", "", df$matchedName)
-  df$matchedName <- gsub("\r", "", df$matchedName)
-  df$nameModified <- TRUE
+  
+  query[ , nameModified := TRUE]
   #### AUTOMATIC PROCEDURE
   # If score ok
   df$outName[df$score >= score] <- df$matchedName[df$score >= score]
