@@ -27,6 +27,8 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   genus = as.character(genus)
   
+  require(data.table, quietly = T)
+  
   if(!is.null(species))
   {
     species = as.character(species)
@@ -36,23 +38,24 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
       stop("You should provide two vectors of genus and species of the same length")
     
     # Create a dataframe with the original values
-    oriData <- data.table::data.table(genus = genus, species = species, 
-                                      query = paste(genus, species), id = 1:length(genus))
+    oriData <- data.table(genus = genus, species = species, 
+                          query = paste(genus, species), id = 1:length(genus))
     
-    # Regroup unique query and filter the column species and genus if they are NA in the same time
-    query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
+    
     
   }else{
     
     # Create a dataframe with the original values
-    oriData <- data.table::data.table(genus = sapply(strsplit(genus," "),"[",1), 
-                                      species = sapply(strsplit(genus," "),"[",2),
-                                      query = genus, id = 1:length(genus))
+    oriData <- data.table(genus = sapply(strsplit(genus," "),"[",1), 
+                          species = sapply(strsplit(genus," "),"[",2),
+                          query = genus, id = 1:length(genus))
     
-    # Regroup unique query and filter the column species and genus if they are NA in the same time
-    query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
   }
   
+  # Regroup unique query and filter the column species and genus if they are NA in the same time
+  query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
+  
+  setkey(oriData, query)
   
   if ( nrow(query) == 0 )
     stop("Please supply at least one name", call. = FALSE)
@@ -66,9 +69,11 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   # If there is too much data, better submit it in separated queries
   splitby <- 30
   slicedQu <- rep(1, nrow(query))
-  if ( nrow(query) > splitby )
+  if ( nrow(query) > splitby ){
     query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
-  
+  } else {
+    query[, slicedQu := 1]
+  }
   
   
   
@@ -79,8 +84,8 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   url <- "http://taxosaurus.org/submit"
   
-  data.table::setkey(query, query)
-  query[, c("matchedName", "score1") := list("NA", as.double(0))]
+  setkey(query, query)
+  query[, c("matchedName", "score1") := list(as.character(NA), as.double(0))]
   for(s in query[, unique(slicedQu)])
   {
     x <- query[slicedQu == s, query]
@@ -130,38 +135,35 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     }
   }
   
+  ########### data analysis
   
-  query[ , nameModified := TRUE]
-  #### AUTOMATIC PROCEDURE
+  query[ , c( "nameModified", "outname" ) := list(as.character(TRUE), as.character(NA) )]
+  query[, slicedQu := NULL]
+
   # If score ok
-  df$outName[df$score >= score] <- df$matchedName[df$score >= score]
+  query[score1 >= score, outname := matchedName]
   
   # If score non ok
-  df$outName[df$score < score] <- df$submittedName[df$score < score]
-  df$nameModified[df$score < score] <- "NoMatch(low_score)"
+  query[score1 < score, c("outname", "nameModified") := list(query, "NoMatch(low_score)")]
+
+  # If no modified name value of nameModified as False
+  query[!is.na(outname) & outname == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
-  df <- unique(df[, c("submittedName", "outName","nameModified")])
-  df <- df[with(df, order(submittedName)), ]
   
-  df$nameModified[!is.na(df$outName) & df$outName == df$submittedName & df$nameModified != "NoMatch(low_score)"] <- FALSE
-  
-  out <- merge(oriData, df, by.x = "query", by.y = "submittedName", all.x = T)
-  out$nameModified[is.na(out$nameModified)] <- TRUE
-  out <- out[with(out, order(id)), ]
-  
-  out$genusCorrected <- sapply(strsplit(out$outName, "[ ]"), "[", 1)
-  out$speciesCorrected <- sapply(strsplit(out$outName, "[ ]"), "[", 2)
+  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, species, outname, nameModified)]
+
+  out[, c("genusCorrected", "speciesCorrected") := tstrsplit(outname, " ", keep = 1:2)]
   
   # # If genera or species not found by TNRS
   # Genera
   filt <- out$nameModified==TRUE & is.na(out$genusCorrected) & !is.na(out$genus)
-  out$genusCorrected[filt] <- sapply(strsplit(out$genus[filt]," "),"[",1)
-  out$nameModified[filt] <- "TaxaNotFound"
+  out[filt, c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")]
+
   # Species
   filt <- (out$nameModified==TRUE | out$nameModified=="TaxaNotFound") & is.na(out$speciesCorrected) & !is.na(species)
-  out$speciesCorrected[filt] <- species[filt]
-  filt2 <- out$nameModified!="TaxaNotFound"
-  out$nameModified[filt & filt2] <- "SpNotFound"
+  out[filt, speciesCorrected := species]
+  out[filt & nameModified != "TaxaNotFound", nameModified := "SpNotFound"]
+
   
   return(out[, c("genusCorrected", "speciesCorrected", "nameModified")])
   
