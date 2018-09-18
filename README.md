@@ -1,4 +1,4 @@
-# Biomass
+# BIOMASS
 
 R package for estimating above-ground biomass and its uncertainty in tropical forests. 
 
