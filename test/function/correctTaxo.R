@@ -5,8 +5,8 @@ library(BIOMASS)
 # data used for the function
 data("KarnatakaForest")
 
-genus = KarnatakaForest$genus[1:100]
-species = KarnatakaForest$species[1:100]
+genus = KarnatakaForest$genus
+species = KarnatakaForest$species
 
 score = 0.5
 
@@ -115,6 +115,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   setkey(query, query)
   query[, c("matchedName", "score1") := list(as.character(NA), as.double(0))]
+  
   for(s in query[, unique(slicedQu)])
   {
     x <- query[slicedQu == s, query]
@@ -147,6 +148,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
       if(!grepl("is still being processed", output["message"]) == TRUE) 
         timeout <- "done"
     }
+    
     out <- tc(output$names)
     
     if(length(out)>0){
@@ -168,19 +170,19 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   query[ , c( "nameModified", "outname" ) := list(as.character(TRUE), as.character(NA) )]
   query[, slicedQu := NULL]
-
+  
   # If score ok
   query[score1 >= score, outname := matchedName]
   
   # If score non ok
   query[score1 < score, c("outname", "nameModified") := list(query, "NoMatch(low_score)")]
-
+  
   # If no modified name value of nameModified as False
   query[!is.na(outname) & outname == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
   
-
-
+  
+  
   query[, c("genusCorrected", "speciesCorrected") := tstrsplit(outname, " ", keep = 1:2)]
   query[, c("genus", "species") := tstrsplit(query, " ", keep = 1:2)]
   
@@ -188,12 +190,12 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   # Genera
   filt <- query$nameModified==TRUE & is.na(query$genusCorrected) & !is.na(query$genus)
   query[filt, c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")]
-
+  
   # Species
   filt <- (query$nameModified==TRUE | query$nameModified=="TaxaNotFound") & is.na(query$speciesCorrected) & !is.na(query$species)
   query[filt, speciesCorrected := species]
   query[filt & nameModified != "TaxaNotFound", nameModified := "SpNotFound"]
-
+  
   
   
   ########### write all the new data on the log file created
