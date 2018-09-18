@@ -15,17 +15,34 @@ score = 0.5
 
 
 
-
-
-
-
 correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
+  
+  ########### preparation of log file
+  
+  sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
+  path = paste(rappdirs::user_data_dir("BIOMASS"), "correctTaxo.log", sep = sep)
+  file_exist = T
+  
+  if( !dir.exists( rappdirs::user_data_dir("BIOMASS")) ){
+    file_exist = F
+    dir.create(rappdirs::user_data_dir("BIOMASS"))
+  }
+  
+  if( !file.exists(path) ){
+    file_exist = F
+    file.create(path)
+    write(paste("query", "outname", "nameModified", "genusCorrected", "speciesCorrected", sep = "\t"), file = path)
+  } else {
+    taxo_already_have = fread(file = path)
+    setkey(taxo_already_have, query)
+  }
+  
   
   ########### Data preparation
   
   options(stringsAsFactors = F)
   
-  genus = as.character(genus)
+  genus = as.character(genus) 
   
   require(data.table, quietly = T)
   
@@ -53,12 +70,24 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   }
   
   # Regroup unique query and filter the column species and genus if they are NA in the same time
-  query = oriData[!(is.na(genus)&is.na(species)), query, by = query][,2]
-  
+  query = oriData[!(is.na(genus)&is.na(species)), query, keyby = query][, 2]
   setkey(oriData, query)
   
   if ( nrow(query) == 0 )
     stop("Please supply at least one name", call. = FALSE)
+  
+  # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the the two
+  if (file_exist){
+    if (nrow(taxo_already_have) != 0)
+      query = query[!taxo_already_have, on = "query"]
+  }
+  
+  # End the function if we already have all the data needed
+  if ( nrow(query) == 0 ){
+    out = merge(oriData, taxo_already_have, all.x = T)
+    return(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")])
+  }
+  
   
   getpost <- "get"
   if(nrow(query) > 50)
@@ -150,22 +179,39 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   query[!is.na(outname) & outname == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
   
-  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, species, outname, nameModified)]
 
-  out[, c("genusCorrected", "speciesCorrected") := tstrsplit(outname, " ", keep = 1:2)]
+
+  query[, c("genusCorrected", "speciesCorrected") := tstrsplit(outname, " ", keep = 1:2)]
+  query[, c("genus", "species") := tstrsplit(query, " ", keep = 1:2)]
   
   # # If genera or species not found by TNRS
   # Genera
-  filt <- out$nameModified==TRUE & is.na(out$genusCorrected) & !is.na(out$genus)
-  out[filt, c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")]
+  filt <- query$nameModified==TRUE & is.na(query$genusCorrected) & !is.na(query$genus)
+  query[filt, c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")]
 
   # Species
-  filt <- (out$nameModified==TRUE | out$nameModified=="TaxaNotFound") & is.na(out$speciesCorrected) & !is.na(species)
-  out[filt, speciesCorrected := species]
-  out[filt & nameModified != "TaxaNotFound", nameModified := "SpNotFound"]
+  filt <- (query$nameModified==TRUE | query$nameModified=="TaxaNotFound") & is.na(query$speciesCorrected) & !is.na(query$species)
+  query[filt, speciesCorrected := species]
+  query[filt & nameModified != "TaxaNotFound", nameModified := "SpNotFound"]
 
   
-  return(out[, c("genusCorrected", "speciesCorrected", "nameModified")])
+  
+  ########### write all the new data on the log file created
+  fwrite(query[, .(outname, nameModified, genusCorrected, speciesCorrected), by=query], 
+         file = path, col.names = F, sep = "\t", append = T)
+  
+  
+  
+  ########## merge the data for the return
+  out = merge(oriData, query, all.x = T)[ order(id), .(id, nameModified, query, genusCorrected, speciesCorrected)]
+  
+  if(exists("taxo_already_have")){
+    setkey(out, query)
+    out[taxo_already_have, 
+        ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected)]
+  }
+  
+  return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
   
 }
 
