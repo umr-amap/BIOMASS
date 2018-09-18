@@ -17,7 +17,7 @@ There is the [vignette](https://cran.r-project.org/web/packages/BIOMASS/vignette
 To cite BIOMASS, please use citation("BIOMASS").
 
 
-# Install biomass
+# Install BIOMASS
 
 The latest released version from CRAN with
 
