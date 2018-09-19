@@ -7,6 +7,7 @@ data("KarnatakaForest")
 
 genus = KarnatakaForest$genus[1:10]
 species = KarnatakaForest$species[1:10]
+species = NULL
 
 score = 0.5
 
@@ -19,7 +20,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   require(data.table, quietly = T)
   
-  strsplit_NA = function(x, patern){
+  strsplit_NA = function(x, patern = " "){
     split = tstrsplit(x, patern)
     if (length( split ) == 1)
       return(list(split[[1]], NA))
@@ -92,7 +93,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the the two
   if (file_exist){
-    if (nrow(taxo_already_have) != 0)
+    if (exists(taxo_already_have))
       query = query[!taxo_already_have, on = "query"]
   }
   
@@ -197,8 +198,8 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   
   
-  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname, " ")]
-  query[, c("genus", "species") := strsplit_NA(query, " ")]
+  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+  query[, c("genus", "species") := strsplit_NA(query)]
   
   # # If genera or species not found by TNRS
   # Genera
