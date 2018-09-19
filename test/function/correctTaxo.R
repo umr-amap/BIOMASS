@@ -40,7 +40,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   if( !file.exists(path) ){
     file_exist = F
     file.create(path)
-    write(paste("query", "outname", "nameModified", "genusCorrected", "speciesCorrected", sep = "\t"), file = path)
+    write(paste("query", "outname", "nameModified", sep = "\t"), file = path)
   } else {
     taxo_already_have = fread(file = path)
     
@@ -207,7 +207,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   
   ########### write all the new data on the log file created
-  fwrite(query[, .(outname, nameModified, genusCorrected, speciesCorrected), by=query], 
+  fwrite(query[, .(outname, nameModified), by=query], 
          file = path, col.names = F, sep = "\t", append = T)
   
   
