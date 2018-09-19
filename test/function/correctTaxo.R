@@ -43,8 +43,14 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     write(paste("query", "outname", "nameModified", sep = "\t"), file = path)
   } else {
     taxo_already_have = fread(file = path)
-    
-    setkey(taxo_already_have, query)
+    if (nrow(taxo_already_have) != 0){
+      taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
+      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+      setkey(taxo_already_have, query)
+    } else { 
+      del(taxo_already_have) 
+      file_exist = F
+    }
   }
   
   
