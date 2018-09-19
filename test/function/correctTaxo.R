@@ -5,8 +5,8 @@ library(BIOMASS)
 # data used for the function
 data("KarnatakaForest")
 
-genus = KarnatakaForest$genus
-species = KarnatakaForest$species
+genus = KarnatakaForest$genus[1:10]
+species = KarnatakaForest$species[1:10]
 
 score = 0.5
 
@@ -16,6 +16,15 @@ score = 0.5
 
 
 correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
+  
+  require(data.table, quietly = T)
+  
+  strsplit_NA = function(x, patern){
+    split = tstrsplit(x, patern)
+    if (length( split ) == 1)
+      return(list(split[[1]], NA))
+    return(split)
+  }
   
   ########### preparation of log file
   
@@ -34,6 +43,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     write(paste("query", "outname", "nameModified", "genusCorrected", "speciesCorrected", sep = "\t"), file = path)
   } else {
     taxo_already_have = fread(file = path)
+    
     setkey(taxo_already_have, query)
   }
   
@@ -43,8 +53,6 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   options(stringsAsFactors = F)
   
   genus = as.character(genus) 
-  
-  require(data.table, quietly = T)
   
   if(!is.null(species))
   {
@@ -183,8 +191,8 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   
   
-  query[, c("genusCorrected", "speciesCorrected") := tstrsplit(outname, " ", keep = 1:2)]
-  query[, c("genus", "species") := tstrsplit(query, " ", keep = 1:2)]
+  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname, " ")]
+  query[, c("genus", "species") := strsplit_NA(query, " ")]
   
   # # If genera or species not found by TNRS
   # Genera
