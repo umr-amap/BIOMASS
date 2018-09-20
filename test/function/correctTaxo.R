@@ -6,7 +6,7 @@ library(BIOMASS)
 data("KarnatakaForest")
 
 genus = KarnatakaForest$genus[1:100]
-species = KarnatakaForest$species[1:100]
+species = KarnatakaForest$species[1:10]
 #species = NULL
 
 score = 0.5
@@ -31,13 +31,13 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   # if we have just the genus in input and in the query we already treated we have genus and species
   just_genus = function(out, taxo_already_have){
-    Na_species = which(is.na(out$species))
-    index_genus = chmatch(out$genus, taxo_already_have$genus)[Na_species]
+    Na_name = which(is.na(out$nameModified))
+    index_genus = chmatch(out$genus, taxo_already_have$genus)[Na_name]
     
-    out[Na_species, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
-    out[Na_species, nameModified := as.character(genus!=genusCorrected)]
+    out[Na_name, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
+    out[Na_name, nameModified := as.character(genus!=genusCorrected)]
     
-    out[Na_species & taxo_already_have[index_genus, nameModified] == "TaxaNotFound", 
+    out[Na_name & taxo_already_have[index_genus, nameModified] == "TaxaNotFound", 
         nameModified := "TaxaNotFound"]
     return(out)
   }
@@ -58,7 +58,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     file.create(path)
     write(paste("query", "outname", "nameModified", sep = "\t"), file = path)
   } else {
-    taxo_already_have = fread(file = path)
+    taxo_already_have = fread(file = path, colClasses = list(character=1:3))
     if (nrow(taxo_already_have) != 0){
       taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
       taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
