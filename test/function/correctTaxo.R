@@ -56,7 +56,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   if( !file.exists(path) ){
     file_exist = F
     file.create(path)
-    write(paste("query", "outname", "nameModified", sep = "\t"), file = path)
+    write(paste("query", "outname", "nameModified", sep = ","), file = path)
   } else {
     taxo_already_have = fread(file = path, colClasses = list(character=1:3))
     if (nrow(taxo_already_have) != 0){
