@@ -37,7 +37,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     out[Na_name, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
     out[Na_name, nameModified := as.character(genus!=genusCorrected)]
     
-    out[Na_name & taxo_already_have[index_genus, nameModified] == "TaxaNotFound", 
+    out[which( Na_name & taxo_already_have[index_genus, nameModified] == "TaxaNotFound" ), 
         nameModified := "TaxaNotFound"]
     return(out)
   }
@@ -226,21 +226,25 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   
   
-  ########### write all the new data on the log file created
-  fwrite(query[, .(outname, nameModified), by=query], 
-         file = path, col.names = F, sep = "\t", append = T)
+  
   
   
   
   ########## merge the data for the return
-  out = merge(oriData, query, all.x = T)[ order(id), .(id, nameModified, query, genusCorrected, speciesCorrected)]
+  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected)]
   
   if(exists("taxo_already_have")){
     setkey(out, query)
     out[taxo_already_have, 
-        ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected)]
+        ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected), on = "query"]
     just_genus(out, taxo_already_have)
   }
+  
+  
+  ########### write all the new data on the log file created
+  fwrite(query[, .(outname, nameModified), by=query], 
+         file = path, col.names = F, sep = "\t", append = T)
+  
   
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
   
