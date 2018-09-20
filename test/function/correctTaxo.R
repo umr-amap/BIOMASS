@@ -6,7 +6,7 @@ library(BIOMASS)
 data("KarnatakaForest")
 
 genus = KarnatakaForest$genus[1:100]
-species = KarnatakaForest$species[1:10]
+species = KarnatakaForest$species[1:100]
 #species = NULL
 
 score = 0.5
@@ -243,7 +243,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   ########### write all the new data on the log file created
   fwrite(query[, .(outname, nameModified), by=query], 
-         file = path, col.names = F, sep = "\t", append = T)
+         file = path, col.names = F, sep = ",", append = T)
   
   
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
