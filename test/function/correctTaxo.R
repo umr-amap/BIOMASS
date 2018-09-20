@@ -5,9 +5,9 @@ library(BIOMASS)
 # data used for the function
 data("KarnatakaForest")
 
-genus = KarnatakaForest$genus[1:10]
-species = KarnatakaForest$species[1:10]
-species = NULL
+genus = KarnatakaForest$genus[1:100]
+species = KarnatakaForest$species[1:100]
+#species = NULL
 
 score = 0.5
 
@@ -20,11 +20,26 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   require(data.table, quietly = T)
   
+  ######## sub-function definition
+  
   strsplit_NA = function(x, patern = " "){
     split = tstrsplit(x, patern)
     if (length( split ) == 1)
-      return(list(split[[1]], NA))
+      return(list(split[[1]], as.character(NA)))
     return(split)
+  }
+  
+  # if we have just the genus in input and in the query we already treated we have genus and species
+  just_genus = function(out, taxo_already_have){
+    Na_species = which(is.na(out$species))
+    index_genus = chmatch(out$genus, taxo_already_have$genus)[Na_species]
+    
+    out[Na_species, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
+    out[Na_species, nameModified := as.character(genus!=genusCorrected)]
+    
+    out[Na_species & taxo_already_have[index_genus, nameModified] == "TaxaNotFound", 
+        nameModified := "TaxaNotFound"]
+    return(out)
   }
   
   ########### preparation of log file
@@ -61,8 +76,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   genus = as.character(genus) 
   
-  if(!is.null(species))
-  {
+  if(!is.null(species)){
     species = as.character(species)
     
     # Check the length of the inputs
@@ -73,33 +87,38 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     oriData <- data.table(genus = genus, species = species, 
                           query = paste(genus, species), id = 1:length(genus))
     
-    
-    
   }else{
     
     # Create a dataframe with the original values
     oriData <- data.table(genus = sapply(strsplit(genus," "),"[",1), 
                           species = sapply(strsplit(genus," "),"[",2),
                           query = genus, id = 1:length(genus))
-    
   }
+  setkey(oriData, query)
   
   # Regroup unique query and filter the column species and genus if they are NA in the same time
   query = oriData[!(is.na(genus)&is.na(species)), query, keyby = query][, 2]
-  setkey(oriData, query)
+  query[, c("genus", "species") := strsplit_NA(query)]
+  
   
   if ( nrow(query) == 0 )
     stop("Please supply at least one name", call. = FALSE)
   
-  # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the the two
+  # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the two.
   if (file_exist){
-    if (exists(taxo_already_have))
+    if (exists("taxo_already_have")){
       query = query[!taxo_already_have, on = "query"]
+      query = query[! ( is.na(species) & genus %in% taxo_already_have$genus) ]
+    }
   }
   
   # End the function if we already have all the data needed
   if ( nrow(query) == 0 ){
-    out = merge(oriData, taxo_already_have, all.x = T)
+    out = merge(oriData, 
+                taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected)], 
+                all.x = T, by = "query")
+    
+    just_genus(out, taxo_already_have)
     return(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")])
   }
   
@@ -112,12 +131,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   # If there is too much data, better submit it in separated queries
   splitby <- 30
-  slicedQu <- rep(1, nrow(query))
-  if ( nrow(query) > splitby ){
-    query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
-  } else {
-    query[, slicedQu := 1]
-  }
+  query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
   
   
   
@@ -135,7 +149,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   {
     x <- query[slicedQu == s, query]
     
-    if(getpost == "get") 
+    if(getpost == "get")
     {
       query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
       args <- tc(list(query = query2))
@@ -199,7 +213,6 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
   
   
   query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
-  query[, c("genus", "species") := strsplit_NA(query)]
   
   # # If genera or species not found by TNRS
   # Genera
@@ -226,6 +239,7 @@ correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
     setkey(out, query)
     out[taxo_already_have, 
         ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected)]
+    just_genus(out, taxo_already_have)
   }
   
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
