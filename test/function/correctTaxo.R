@@ -16,7 +16,7 @@ score = 0.5
 
 
 
-correctTaxo1 = function( genus, species = NULL, score = 0.5 ){
+correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   require(data.table, quietly = T)
   
