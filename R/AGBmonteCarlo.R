@@ -126,6 +126,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)
     param_7 <- NULL
     data(param_7, envir = environment()) # posterior parameters from MCMC algorithm
+    selec <- sample(1:nrow(param_7), n)
     
     bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
     
