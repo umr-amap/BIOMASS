@@ -5,6 +5,9 @@ computeE <- function(coord)
   sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
   path = paste0( rappdirs::user_data_dir("BIOMASS"), sep )
   
+  if( !dir.exists( rappdirs::user_data_dir("BIOMASS")) ){
+    dir.create(rappdirs::user_data_dir("BIOMASS"))
+  }
   
   ### If the file needed are in the working directory
   if (dir.exists("E") & !dir.exists(paste0(path, "E"))){
