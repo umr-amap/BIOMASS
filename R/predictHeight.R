@@ -5,7 +5,7 @@ predictHeight <- function(D, model, err = FALSE)
   logmod <- any(grepl("log",method))
   coeff <- model$coefficients
   
-  if (err == FALSE){
+  if (!err){
     if (logmod){
       e <- 0.5*model$RSElog^2 # Baskerville correction
     } else { 
