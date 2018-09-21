@@ -5,8 +5,8 @@ library(BIOMASS)
 # data used for the function
 data("KarnatakaForest")
 
-genus = KarnatakaForest$genus[1:100]
-species = KarnatakaForest$species[1:100]
+genus = KarnatakaForest$genus[1:10]
+species = KarnatakaForest$species[1:10]
 #species = NULL
 
 score = 0.5
@@ -56,15 +56,15 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   if( !file.exists(path) ){
     file_exist = F
     file.create(path)
-    write(paste("query", "outname", "nameModified", sep = ","), file = path)
+    write(paste("query", "outName", "nameModified", sep = ","), file = path)
   } else {
     taxo_already_have = fread(file = path, colClasses = list(character=1:3))
     if (nrow(taxo_already_have) != 0){
       taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
-      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
       setkey(taxo_already_have, query)
     } else { 
-      del(taxo_already_have) 
+      rm(taxo_already_have) 
       file_exist = F
     }
   }
@@ -197,22 +197,22 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   ########### data analysis
   
-  query[ , c( "nameModified", "outname" ) := list(as.character(TRUE), as.character(NA) )]
+  query[ , c( "nameModified", "outName" ) := list(as.character(TRUE), as.character(NA) )]
   query[, slicedQu := NULL]
   
   # If score ok
-  query[score1 >= score, outname := matchedName]
+  query[score1 >= score, outName := matchedName]
   
   # If score non ok
-  query[score1 < score, c("outname", "nameModified") := list(query, "NoMatch(low_score)")]
+  query[score1 < score, c("outName", "nameModified") := list(query, "NoMatch(low_score)")]
   
   # If no modified name value of nameModified as False
-  query[!is.na(outname) & outname == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
+  query[!is.na(outName) & outName == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
   
   
   
-  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
   
   # # If genera or species not found by TNRS
   # Genera
@@ -242,12 +242,19 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   ########### write all the new data on the log file created
-  fwrite(query[, .(outname, nameModified), by=query], 
-         file = path, col.names = F, sep = ",", append = T)
+  if (exists("taxo_already_have")){
+    out1 = merge(taxo_already_have[, .(query, outName, nameModified, genus)], 
+                 query[, .(query, genus, outName, nameModified)], by = "genus", all = T)
+    
+    out1[is.na(query.x), query.x := "a"][is.na(query.y), query.y := "a"]
+    nchr = nchar( out1[, query.x] ) > nchar( out1[, query.y] )
+    out1[nchr, ':='("query" = query.x, "outName" = outName.x, "nameModified" = nameModified.x)]
+    out1[!nchr, ':='("query" = query.y, "outName" = outName.y, "nameModified" = nameModified.y)]
+  } else {out1 = query}
+  
+  fwrite(out1[, .(outName, nameModified), by=query], file = path)
   
   
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
   
 }
-
-
