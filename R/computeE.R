@@ -12,7 +12,7 @@ computeE <- function(coord)
     message("Your repertory \"E\" has been moved in this repertory : ", path)
   }
   
-  if (file.exists("E_zip")){
+  if (file.exists("E_zip") & !file.exists(paste0(path, "E_zip"))){
     file.rename("E_zip", paste0(path, "E_zip"))
     message("Your repertory \"E_zip\" has been moved in this repertory : ", path)
   }
