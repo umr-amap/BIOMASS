@@ -1,3 +1,21 @@
+rm(list = ls())
+library(BIOMASS)
+
+
+# data used for the function
+data("KarnatakaForest")
+
+genus = KarnatakaForest$genus[1:100]
+species = KarnatakaForest$species[1:100]
+#species = NULL
+
+score = 0.5
+
+
+
+
+
+
 correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   require(data.table, quietly = T)
@@ -231,3 +249,5 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
   
 }
+
+
