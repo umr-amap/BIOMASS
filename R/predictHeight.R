@@ -4,15 +4,19 @@ predictHeight <- function(D, model, err = FALSE)
   method <- model$method  
   logmod <- any(grepl("log",method))
   coeff <- model$coefficients
-
-  if(err == FALSE & logmod) 
-    e <- 0.5*model$RSElog^2 # Baskerville correction
-  if(err == FALSE & !logmod) 
-    e <- 0 # No error
-  if(err == TRUE & logmod) 
-    e <- rnorm(length(D), 0, model$RSElog) # Log-log error
-  if(err == TRUE & !logmod) 
-    e <- rnorm(length(D), 0, model$RSE) # Michaelis or Weibull error
+  
+  if (err == FALSE){
+    if (logmod){
+      e <- 0.5*model$RSElog^2 # Baskerville correction
+    } else { 
+      e <- 0 # No error
+    }
+  } else {
+    if (logmod){
+      e <- rnorm(length(D), 0, model$RSElog) # Log-log error
+    } else { 
+      e <- rnorm(length(D), 0, model$RSE) # Michaelis or Weibull error
+  }
   
   Hpredict <- switch(method, 
                      "log1" = exp(coeff[1] + e + coeff[2]*log(D)), 
