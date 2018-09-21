@@ -69,6 +69,12 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              - HDmodel
              - coord")
   
+  if( !is.null(HDmodel) & !is.null(coord) | !is.null(HDmodel) & !is.null(H) | !is.null(coord) & !is.null(H))
+    stop("Too many input, choose one input among those arguments:
+              - H
+              - HDmodel
+              - coord")
+  
   # if there is data for H
   if(!is.null(HDmodel) | !is.null(H))
   {    
