@@ -32,15 +32,4 @@
 rsconnect/
 .Rproj.user
 
-# Remove the E directory (Environmental index) (too heavy)
-E/*
-E_zip*
-CWD/
-
-test/speed_analysis/
-
-wc2-5/
-
-CWD_zip
-
-test/function/
+test/*
