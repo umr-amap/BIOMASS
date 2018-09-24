@@ -14,8 +14,9 @@ predictHeight <- function(D, model, err = FALSE)
   } else {
     if (logmod){
       e <- rnorm(length(D), 0, model$RSElog) # Log-log error
-    } else { 
+    } else {
       e <- rnorm(length(D), 0, model$RSE) # Michaelis or Weibull error
+    }
   }
   
   Hpredict <- switch(method, 
@@ -30,7 +31,3 @@ predictHeight <- function(D, model, err = FALSE)
   
   return(Hpredict)
 }
-
-
-
-

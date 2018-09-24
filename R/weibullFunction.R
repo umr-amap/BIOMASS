@@ -1,5 +1,4 @@
-weibullFunction <- function(data, weight = NULL)
-{
+weibullFunction <- function(data, weight = NULL) {
   ### Compute the weibull model of the H-D relationship
   
   H <- data$H
@@ -12,10 +11,8 @@ weibullFunction <- function(data, weight = NULL)
   maxIter <- 50
   converge <- FALSE
   
-  if(is.null(weight))
-  {
-    while(converge == FALSE && count <= 10)
-    {
+  if(is.null(weight)) {
+    while(converge == FALSE && count <= 10) {
       tt <- tryCatch(minpack.lm::nlsLM(H ~ a*(1-exp(-(D/b)^c)), 
                                        start = init, 
                                        data = data, 
@@ -23,24 +20,20 @@ weibullFunction <- function(data, weight = NULL)
                      error = function(e) e, 
                      warning = function(w) w)
       
-      if(is(tt, "warning"))
-      {
+      if(is(tt, "warning")) {
         count <- count + 1
         maxIter <- maxIter + 50
-      }
-      else
+      } else{
         converge <- TRUE
+      }
     }
     
     model <- minpack.lm::nlsLM(H ~ a*(1-exp(-(D/b)^c)), 
                                start = init, 
                                data = data, 
                                control = minpack.lm::nls.lm.control(maxiter = maxIter))
-  }
-  else
-  {
-    while(converge == FALSE && count <= 10)
-    {
+  } else {
+    while(converge == FALSE && count <= 10) {
       tt <- tryCatch(minpack.lm::nlsLM(H ~ a*(1-exp(-(D/b)^c)), 
                                        start = init, 
                                        data = data, 
@@ -49,13 +42,12 @@ weibullFunction <- function(data, weight = NULL)
                      error = function(e) e, 
                      warning = function(w) w)
       
-      if(is(tt, "warning"))
-      {
+      if(is(tt, "warning")){
         count <- count + 1
         maxIter <- maxIter + 50
-      }
-      else
+      } else {
         converge <- TRUE
+      }
     }
     
     model <- minpack.lm::nlsLM(H ~ a*(1-exp(-(D/b)^c)), 
