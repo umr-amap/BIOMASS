@@ -35,6 +35,9 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   
   if(!is.null(addWoodDensityData))
   {
+    if (is.character(addWoodDensityData)){
+      addWoodDensityData = read.csv(addWoodDensityData)
+    }
     if(any(names(addWoodDensityData) != c("genus","species","wd")))
       stop("The additional wood density database should be organized in a dataframe with three columns: 
            \"genus\",\"species\",\"wd\" (column order and names should be respected)")
