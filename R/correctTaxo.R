@@ -32,7 +32,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   if( !dir.exists( rappdirs::user_data_dir("BIOMASS")) ){
     file_exist = F
-    dir.create(rappdirs::user_data_dir("BIOMASS"))
+    dir.create(rappdirs::user_data_dir("BIOMASS"), recursive = T)
   }
   
   if( !file.exists(path) ){
@@ -41,7 +41,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     taxo_already_have = fread(file = path, colClasses = list(character=1:3))
     if (nrow(taxo_already_have) != 0){
       taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
-      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
       setkey(taxo_already_have, query)
     } else { 
       del(taxo_already_have) 
@@ -77,7 +77,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   setkey(oriData, query)
   
   # Regroup unique query and filter the column species and genus if they are NA in the same time
-  query = oriData[!(is.na(genus)&is.na(species)), query, keyby = query][, 2]
+  query = oriData[!(is.na(genus)&is.na(species)), query, by = query][, 2]
   query[, c("genus", "species") := strsplit_NA(query)]
   
   
@@ -177,22 +177,22 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   ########### data analysis
   
-  query[ , c( "nameModified", "outname" ) := list(as.character(TRUE), as.character(NA) )]
+  query[ , c( "nameModified", "outName" ) := list(as.character(TRUE), as.character(NA) )]
   query[, slicedQu := NULL]
   
   # If score ok
-  query[score1 >= score, outname := matchedName]
+  query[score1 >= score, outName := matchedName]
   
   # If score non ok
-  query[score1 < score, c("outname", "nameModified") := list(query, "NoMatch(low_score)")]
+  query[score1 < score, c("outName", "nameModified") := list(query, "NoMatch(low_score)")]
   
   # If no modified name value of nameModified as False
-  query[!is.na(outname) & outname == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
+  query[!is.na(outName) & outName == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
   
   
   
-  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outname)]
+  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
   
   # # If genera or species not found by TNRS
   # Genera
