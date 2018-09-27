@@ -1,9 +1,39 @@
+#' Checking typos in names
+#' 
+#' This function corrects typos for a given taxonomic name using the Taxonomic 
+#' Name Resolution Service (TNRS) via the Taxosaurus interface. 
+#' This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
+#' 
+#' @param genus Vector of genus to be checked. Alternatively, the whole species name (genus + species) or (genus + species + author) may be given (see example).
+#' @param species Vector of species to be checked (same size as the genus vector).
+#' @param Score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match).
+#' 
+#' @return The function returns a dataframe with the corrected (or not) genera and species.
+#' 
+#' @references Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}. BMC bioinformatics, 14, 1.
+#' @references Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
+#' 
+#' @author Ariane TANGUY
+#' @author Maxime REJOU-MECHAIN
+#' 
+#' @examples 
+#' \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
+#' \dontrun{correctTaxo(genus = "Astrocarium standleanum")}
+#' 
+#' @export
+#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite
+#' @importFrom rappdirs user_data_dir
+#' @importFrom httr content GET upload_file POST config
+#' @importFrom jsonlite fromJSON
+#' 
+
+
 correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   ######## sub-function definition
   
   strsplit_NA = function(x, patern = " "){
-    split = data.table::tstrsplit(x, patern)
+    split = tstrsplit(x, patern)
     if (length( split ) == 1)
       return(list(split[[1]], as.character(NA)))
     return(split)
@@ -12,7 +42,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   # if we have just the genus in input and in the query we already treated we have genus and species
   just_genus = function(out, taxo_already_have){
     Na_name = which(is.na(out$nameModified))
-    index_genus = data.table::chmatch(out$genus, taxo_already_have$genus)[Na_name]
+    index_genus = chmatch(out$genus, taxo_already_have$genus)[Na_name]
     
     out[Na_name, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
     out[Na_name, nameModified := as.character(genus!=genusCorrected)]
@@ -25,22 +55,22 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   ########### preparation of log file
   
   sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
-  path = paste(rappdirs::user_data_dir("BIOMASS"), "correctTaxo.log", sep = sep)
+  path = paste(user_data_dir("BIOMASS"), "correctTaxo.log", sep = sep)
   file_exist = T
   
-  if( !dir.exists( rappdirs::user_data_dir("BIOMASS")) ){
+  if( !dir.exists( user_data_dir("BIOMASS")) ){
     file_exist = F
-    dir.create(rappdirs::user_data_dir("BIOMASS"), recursive = T)
+    dir.create(user_data_dir("BIOMASS"), recursive = T)
   }
   
   if( !file.exists(path) ){
     file_exist = F
   } else {
-    taxo_already_have = data.table::fread(file = path, colClasses = list(character=1:3))
+    taxo_already_have = fread(file = path, colClasses = list(character=1:3))
     if (nrow(taxo_already_have) != 0){
       taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
       taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
-      data.table::setkey(taxo_already_have, query)
+      setkey(taxo_already_have, query)
     } else { 
       del(taxo_already_have) 
       file_exist = F
@@ -62,17 +92,17 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       stop("You should provide two vectors of genus and species of the same length")
     
     # Create a dataframe with the original values
-    oriData <- data.table::data.table(genus = genus, species = species, 
+    oriData <- data.table(genus = genus, species = species, 
                           query = paste(genus, species), id = 1:length(genus))
     
   }else{
     
     # Create a dataframe with the original values
-    oriData <- data.table::data.table(genus = sapply(strsplit(genus," "),"[",1), 
+    oriData <- data.table(genus = sapply(strsplit(genus," "),"[",1), 
                           species = sapply(strsplit(genus," "),"[",2),
                           query = genus, id = 1:length(genus))
   }
-  data.table::setkey(oriData, query)
+  setkey(oriData, query)
   
   # Regroup unique query and filter the column species and genus if they are NA in the same time
   query = oriData[!(is.na(genus)&is.na(species)), query, by = query][, 2]
@@ -116,11 +146,11 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   ########### sending and retrive the data from taxosaurus
   
   tc <- function(l) Filter(Negate(is.null), l)
-  con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
+  con_utf8 <- function(x) content(x, "text", encoding = "UTF-8")
   
   url <- "http://taxosaurus.org/submit"
   
-  data.table::setkey(query, query)
+  setkey(query, query)
   query[, c("matchedName", "score1") := list(as.character(NA), as.double(0))]
   
   for(s in query[, unique(slicedQu)])
@@ -131,18 +161,18 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     {
       query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
       args <- tc(list(query = query2))
-      out <- httr::GET(url, query = args)
+      out <- GET(url, query = args)
       retrieve <- out$url
       
     } else {
       
       loc <- tempfile(fileext = ".txt")
       write.table(data.frame(x), file = loc, col.names = FALSE, row.names = FALSE)
-      args <- tc(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
-      out <- httr::POST(url, body = args, httr::config(followlocation = 0))
+      args <- tc(list(file = upload_file(loc), source = "iPlant_TNRS"))
+      out <- POST(url, body = args, config(followlocation = 0))
       tt <- con_utf8(out)
-      message <- jsonlite::fromJSON(tt, FALSE)[["message"]]
-      retrieve <- jsonlite::fromJSON(tt, FALSE)[["uri"]]
+      message <- fromJSON(tt, FALSE)[["message"]]
+      retrieve <- fromJSON(tt, FALSE)[["uri"]]
     }
     
     print(paste("Calling", retrieve))
@@ -150,8 +180,8 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     timeout <- "wait"
     while (timeout == "wait") 
     {
-      ss <- httr::GET(retrieve)
-      output <- jsonlite::fromJSON(con_utf8(ss), FALSE)
+      ss <- GET(retrieve)
+      output <- fromJSON(con_utf8(ss), FALSE)
       if(!grepl("is still being processed", output["message"]) == TRUE) 
         timeout <- "done"
     }
@@ -212,7 +242,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected)]
   
   if(exists("taxo_already_have")){
-    data.table::setkey(out, query)
+    setkey(out, query)
     out[taxo_already_have, 
         ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected), on = "query"]
     just_genus(out, taxo_already_have)
@@ -230,7 +260,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     out1[!nchr, ':='("query" = query.y, "outName" = outName.y, "nameModified" = nameModified.y)]
   } else {out1 = query}
   
-  data.table::fwrite(out1[, .(outName, nameModified), by=query], file = path)
+  fwrite(out1[, .(outName, nameModified), by=query], file = path)
   
   
   return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])

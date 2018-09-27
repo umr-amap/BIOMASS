@@ -1,3 +1,17 @@
+#' Modeling height-diameter relationship with Michaelis-Menten function
+#'
+#' Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A and B are the model parameters to be estimated)
+#'
+#' @param data Dataset with the informations of height (H) and diameter (D)
+#' @param weight (optional) Vector indicating observation weights in the model.
+#'
+#' @return This function give an output similar to the one given by \code{\link{lm}}, obtained for \code{michaelisFunction} from \code{\link[minpack.lm]{nlsLM}}).
+#' @references
+#' Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.
+#' @author Maxime REJOU-MECHAIN, Ariane TANGUY
+#' 
+#' @importFrom minpack.lm nls.lm.control nlsLM
+#' 
 michaelisFunction <- function(data, weight = NULL)
 {
   ### Compute the michaelis model of the H-D relationship
@@ -13,8 +27,8 @@ michaelisFunction <- function(data, weight = NULL)
   {
     while(converge == FALSE && count <= 10)
     {
-      tt <- tryCatch(minpack.lm::nlsLM(H ~ SSmicmen(D, A, B), 
-                                       control = minpack.lm::nls.lm.control(maxiter = maxIter)),
+      tt <- tryCatch(nlsLM(H ~ SSmicmen(D, A, B), 
+                           control = nls.lm.control(maxiter = maxIter)),
                      error = function(e) e, 
                      warning = function(w) w)
       
@@ -26,16 +40,16 @@ michaelisFunction <- function(data, weight = NULL)
       else
         converge <- TRUE
     }
-    model <- minpack.lm::nlsLM(H ~ SSmicmen(D, A, B), 
-                               control = minpack.lm::nls.lm.control(maxiter = maxIter))
+    model <- nlsLM(H ~ SSmicmen(D, A, B), 
+                   control = nls.lm.control(maxiter = maxIter))
   }
   else
   {
     while(converge == FALSE && count <= 10)
     {
-      tt <- tryCatch(minpack.lm::nlsLM(H ~ SSmicmen(D, A, B), 
-                                       weights = weight,
-                                       control = minpack.lm::nls.lm.control(maxiter = maxIter)),
+      tt <- tryCatch(nlsLM(H ~ SSmicmen(D, A, B), 
+                           weights = weight,
+                           control = nls.lm.control(maxiter = maxIter)),
                      error = function(e) e, 
                      warning = function(w) w)
       
@@ -47,9 +61,9 @@ michaelisFunction <- function(data, weight = NULL)
       else
         converge <- TRUE
     }
-    model <- minpack.lm::nlsLM(H ~ SSmicmen(D, A, B), 
-                               weights = weight,
-                               control = minpack.lm::nls.lm.control(maxiter = maxIter))
+    model <- nlsLM(H ~ SSmicmen(D, A, B), 
+                   weights = weight,
+                   control = nls.lm.control(maxiter = maxIter))
   }
   return(model)
 }
