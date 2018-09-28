@@ -1,6 +1,0 @@
-We need to add those library to the new update :
-	- rappdirs
-	- data.table
-
-we can delete those library :
-	- msm

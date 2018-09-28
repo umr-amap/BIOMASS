@@ -54,14 +54,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   ########### preparation of log file
   
-  sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
-  path = paste(user_data_dir("BIOMASS"), "correctTaxo.log", sep = sep)
-  file_exist = T
-  
-  if( !dir.exists( user_data_dir("BIOMASS")) ){
-    file_exist = F
-    dir.create(user_data_dir("BIOMASS"), recursive = T)
-  }
+  path = repertoryControl(correctTaxo = T)
   
   if( !file.exists(path) ){
     file_exist = F
@@ -71,6 +64,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
       taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
       setkey(taxo_already_have, query)
+      file_exist = T
     } else { 
       del(taxo_already_have) 
       file_exist = F
@@ -113,7 +107,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     stop("Please supply at least one name", call. = FALSE)
   
   # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the two.
-  if (file_exist){
+  if(file_exist){
     if (exists("taxo_already_have")){
       query = query[!taxo_already_have, on = "query"]
       query = query[! ( is.na(species) & genus %in% taxo_already_have$genus) ]
