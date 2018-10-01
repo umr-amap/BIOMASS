@@ -71,7 +71,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     }
   }
   
-  
   ########### Data preparation
   
   options(stringsAsFactors = F)
@@ -80,6 +79,9 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   if(!is.null(species)){
     species = as.character(species)
+    
+    if (all(is.na(species)) & all(is.na(genus)))
+        stop("Please supply at least one name", call. = FALSE)
     
     # Check the length of the inputs
     if(length(genus) != length(species))
@@ -91,6 +93,9 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     
   }else{
     
+    if(all(is.na(genus)))
+      stop("Please supply at least one name", call. = FALSE)
+    
     # Create a dataframe with the original values
     oriData <- data.table(genus = sapply(strsplit(genus," "),"[",1), 
                           species = sapply(strsplit(genus," "),"[",2),
@@ -101,10 +106,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   # Regroup unique query and filter the column species and genus if they are NA in the same time
   query = oriData[!(is.na(genus)&is.na(species)), query, by = query][, 2]
   query[, c("genus", "species") := strsplit_NA(query)]
-  
-  
-  if ( nrow(query) == 0 )
-    stop("Please supply at least one name", call. = FALSE)
   
   # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the two.
   if(file_exist){
@@ -121,7 +122,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
                 all.x = T, by = "query")
     
     just_genus(out, taxo_already_have)
-    return(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")])
+    return(as.data.frame(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
   }
   
   
@@ -134,7 +135,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   # If there is too much data, better submit it in separated queries
   splitby <- 30
   query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
-  
   
   
   ########### sending and retrive the data from taxosaurus
@@ -257,6 +257,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   fwrite(out1[, .(outName, nameModified), by=query], file = path)
   
   
-  return(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
+  return(as.data.frame(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
   
 }

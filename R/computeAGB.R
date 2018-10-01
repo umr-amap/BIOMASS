@@ -4,7 +4,8 @@
 #'
 #' @param D Tree diameter (in cm), either a vector or a single value
 #' @param WD Wood density (in g/cm3), either a vector or a single value. If not available, see \code{\link{getWoodDensity}}.
-#' @param H (optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.
+#' @param H (optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} 
+#' and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.
 #' @param coord (optional) Coordinates of the site(s), either a vector giving a single site 
 #' (e.g. c(longitude, latitude)) or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). 
 #' The coordinates are used to account for variation in height-diameter relationship thanks to an environmental 

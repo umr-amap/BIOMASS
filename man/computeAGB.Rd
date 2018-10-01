@@ -11,7 +11,8 @@ computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL)
 
 \item{WD}{Wood density (in g/cm3), either a vector or a single value. If not available, see \code{\link{getWoodDensity}}.}
 
-\item{H}{(optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.}
+\item{H}{(optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} 
+and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.}
 
 \item{coord}{(optional) Coordinates of the site(s), either a vector giving a single site 
 (e.g. c(longitude, latitude)) or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). 

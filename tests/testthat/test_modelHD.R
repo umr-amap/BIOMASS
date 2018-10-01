@@ -11,65 +11,50 @@ output = na.omit( output )
 
 
 context("Methods of function modelHD")
-test_that("Method log", {
-  for (method in c("log1", "log2", "log3")) {
-    HDmodel = modelHD(D, H, method = method, useWeight = T)
-    
-    expect_is(HDmodel, "list")
-    expect_equal(length(HDmodel), 10)
-    
-    expect_equal(HDmodel$input$D, output$D)
-    expect_equal(HDmodel$input$H, output$H)
-    
-    expect_is(HDmodel$model, "lm")
-    
-    expect_equal(length(HDmodel$residuals), nrow(output))
-    
-    expect_is(HDmodel$coefficients, "matrix")
-    
-    expect_is(HDmodel$R.squared, "numeric")
-    
-    expect_is(HDmodel$formula, "call")
-    
-    expect_equal(HDmodel$method, method)
-    
-    expect_equal(length(HDmodel$predicted), nrow(output))
-    expect_is(HDmodel$predicted, "numeric")
-    
-    expect_is(HDmodel$RSE, "numeric")
-    
-    expect_is(HDmodel$RSElog, "numeric")
+
+for (method in c("log1", "log2", "log3", "michaelis", "weibull")){
+  for (useWeight in c(TRUE, FALSE)){
+    test_that(paste("Method", method, "useWeight", useWeight), {
+      HDmodel = modelHD(D, H, method = method, useWeight = useWeight)
+      
+      logMethod = ifelse(length(grep("log", method))==0, FALSE, TRUE)
+      
+      expect_is(HDmodel, "list")
+      expect_equal(length(HDmodel), ifelse(logMethod, 10, 9))
+      
+      expect_equal(HDmodel$input$D, output$D)
+      expect_equal(HDmodel$input$H, output$H)
+      
+      expect_is(HDmodel$model, ifelse(logMethod, "lm", "nls"))
+      
+      expect_equal(length(HDmodel$residuals), nrow(output))
+      
+      expect_is(HDmodel$coefficients, "matrix")
+      
+      expect_is(HDmodel$R.squared, ifelse(logMethod, "numeric", "NULL"))
+      
+      expect_is(HDmodel$formula, "call")
+      
+      expect_equal(HDmodel$method, method)
+      
+      expect_equal(length(HDmodel$predicted), nrow(output))
+      expect_is(HDmodel$predicted, "numeric")
+      
+      expect_is(HDmodel$RSE, "numeric")
+      
+      expect_is(HDmodel$RSElog, ifelse(logMethod, "numeric", "NULL"))
+    })
   }
+}
+
+test_that("NA characters",{
+  H1 = H
+  H1[ sample(1:length(H), size = 1038) ] = NA
+  
+  expect_error(modelHD(D, H1), "NA")
 })
 
 
-test_that("Other Method", {
-  for (method in c("michaelis", "weibull")) {
-    HDmodel = modelHD(D, H, method = method, useWeight = T)
-    
-    expect_is(HDmodel, "list")
-    expect_equal(length(HDmodel), 9)
-    
-    expect_equal(HDmodel$input$D, output$D)
-    expect_equal(HDmodel$input$H, output$H)
-    
-    expect_is(HDmodel$model, "nls")
-    
-    expect_equal(length(HDmodel$residuals), nrow(output))
-    
-    expect_is(HDmodel$coefficients, "matrix")
-    
-    expect_is(HDmodel$R.squared, "NULL")
-    
-    expect_is(HDmodel$formula, "call")
-    
-    expect_equal(HDmodel$method, method)
-    
-    expect_equal(length(HDmodel$predicted), nrow(output))
-    expect_is(HDmodel$predicted, "numeric")
-    
-    expect_is(HDmodel$RSE, "numeric")
-  }
-})
+
 
 
