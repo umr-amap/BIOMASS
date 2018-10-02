@@ -47,8 +47,21 @@ test_that("AGBmonteCarlo error",{
   expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1:50,]), 
                "coord should be either")
   
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, coord = coord, H = H, errH = 0), 
+               "Too many input")
+  
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, coord = coord, HDmodel = HDmodel), 
+               "Too many input")
+  
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = 0, HDmodel = HDmodel), 
+               "Too many input")
 })
 
 
+test_that("AGB monte Carlo on the H", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel)
+  
+  
+})
 
 
