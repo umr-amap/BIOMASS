@@ -7,7 +7,7 @@
 #' @param errWD Vector of error associated to the wood density estimates (should be of the same size as \code{WD})
 #' @param H (option 1) Vector of tree heights (in m). If set, \code{errH} must be set too.
 #' @param errH (if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height 
-#' values (in the latter case the vector should be of the same lenght as \code{H}).
+#' values (in the latter case the vector should be of the same length as \code{H}).
 #' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from \code{\link{modelHD}}, see example).
 #' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude)) 
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict 
@@ -115,7 +115,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       chaveError <- function(x, len)
       { 
         ## Assigning large errors on 5% of the trees
-        largeErrSample <- sample(length(x), fivePercent)
+        largeErrSample <- sample(len, fivePercent)
         
         D_sd = 0.0062 * x + 0.0904 # Assigning small errors on the remaining 95% trees
         D_sd[largeErrSample] = 4.64
@@ -178,7 +178,6 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
         stop("Cannot propagate height errors without information on associated errors (errH is null), if you do not want to propagate H errors please set errH to 0")
       # Propagation of the error using the errH value(s)
       upper = max(H)+15
-      len = length(H)
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
     }
     
@@ -190,7 +189,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     RSE <- param_4[selec,"sd"]
     
     # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
-    matRSE <- mapply(function(y){rnorm(sd = y, n = length(D))}, y = RSE)
+    matRSE <- mapply(function(y){rnorm(sd = y, n = len)}, y = RSE)
     
     # Posterior model parameters
     Ealpha <- param_4[selec,"intercept"]
@@ -212,8 +211,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     if(is.null(dim(coord))) 
       coord <- as.matrix(t(coord))
     if(nrow(coord) == 1)
-      coord <- cbind(rep(coord[1], length(D)), rep(coord[2], length(D)))
-    if(nrow(coord) != length(D))
+      coord <- cbind(rep(coord[1], len), rep(coord[2], len))
+    if(nrow(coord) != len)
       stop("coord should be either
              - a vector (e.g. c(longitude, latitude))
              - a matrix with two columns (longitude and latitude) 
@@ -245,7 +244,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                      param_7[selec, "intercept"] )
     
     # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
-    matRSE <- mapply(function(y){rnorm(sd = y, n = length(D))}, y = RSE)
+    matRSE <- mapply(function(y){rnorm(sd = y, n = len)}, y = RSE)
     AGB_simu <- AGB_simu + matRSE
     AGB_simu <- exp(AGB_simu)/1000
   }  
@@ -260,7 +259,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                 credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025,0.975)), 
                 AGB_simu = AGB_simu)
   }else{
-    AGC_simu <- AGB_simu*rnorm(mean = 47.13, sd = 2.06,n = n*length(D))/100 # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical angiosperm stems carbon content)
+    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical angiosperm stems carbon content)
+    AGC_simu <- AGB_simu*rnorm(mean = 47.13, sd = 2.06,n = n*len)/100 
     sum_AGC_simu = colSums(AGC_simu, na.rm = T)
     res <- list(meanAGC = mean(sum_AGC_simu), 
                 medAGC = median(sum_AGC_simu), 

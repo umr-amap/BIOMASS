@@ -58,10 +58,136 @@ test_that("AGBmonteCarlo error",{
 })
 
 
-test_that("AGB monte Carlo on the H", {
-  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel)
+test_that("AGB monte Carlo on the HDmodel", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = 500)
+  expect_length(AGB, 5)
   
+  expect_length(AGB$meanAGB, 1)
+  expect_is(AGB$meanAGB, "numeric")
   
+  expect_length(AGB$medAGB, 1)
+  expect_is(AGB$medAGB, "numeric")
+  
+  expect_length(AGB$sdAGB, 1)
+  expect_is(AGB$sdAGB, "numeric")
+  
+  expect_length(AGB$credibilityAGB, 2)
+  expect_is(AGB$credibilityAGB, "numeric")
+  
+  expect_equal(dim(AGB$AGB_simu), c(100, 500))
+  expect_is(AGB$AGB_simu, "matrix")
+  expect_is(AGB$AGB_simu[1,1], "numeric")
 })
 
 
+test_that("AGB monte Carlo on the H", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = HDmodel$RSE, n = 500)
+  expect_length(AGB, 5)
+  
+  expect_length(AGB$meanAGB, 1)
+  expect_is(AGB$meanAGB, "numeric")
+  
+  expect_length(AGB$medAGB, 1)
+  expect_is(AGB$medAGB, "numeric")
+  
+  expect_length(AGB$sdAGB, 1)
+  expect_is(AGB$sdAGB, "numeric")
+  
+  expect_length(AGB$credibilityAGB, 2)
+  expect_is(AGB$credibilityAGB, "numeric")
+  
+  expect_equal(dim(AGB$AGB_simu), c(100, 500))
+  expect_is(AGB$AGB_simu, "matrix")
+  expect_is(AGB$AGB_simu[1,1], "numeric")
+})
+
+
+test_that("AGB monte Carlo on the coord", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = 500)
+  expect_length(AGB, 5)
+  
+  expect_length(AGB$meanAGB, 1)
+  expect_is(AGB$meanAGB, "numeric")
+  
+  expect_length(AGB$medAGB, 1)
+  expect_is(AGB$medAGB, "numeric")
+  
+  expect_length(AGB$sdAGB, 1)
+  expect_is(AGB$sdAGB, "numeric")
+  
+  expect_length(AGB$credibilityAGB, 2)
+  expect_is(AGB$credibilityAGB, "numeric")
+  
+  expect_equal(dim(AGB$AGB_simu), c(100, 500))
+  expect_is(AGB$AGB_simu, "matrix")
+  expect_is(AGB$AGB_simu[1,1], "numeric")
+  
+  expect_is(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1,], n = 500), 'list')
+})
+
+test_that("AGB monte Carlo on the Dpropag", {
+  AGB = AGBmonteCarlo(D, Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1), 
+                      WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = 500)
+  expect_length(AGB, 5)
+  
+  expect_length(AGB$meanAGB, 1)
+  expect_is(AGB$meanAGB, "numeric")
+  
+  expect_length(AGB$medAGB, 1)
+  expect_is(AGB$medAGB, "numeric")
+  
+  expect_length(AGB$sdAGB, 1)
+  expect_is(AGB$sdAGB, "numeric")
+  
+  expect_length(AGB$credibilityAGB, 2)
+  expect_is(AGB$credibilityAGB, "numeric")
+  
+  expect_equal(dim(AGB$AGB_simu), c(100, 500))
+  expect_is(AGB$AGB_simu, "matrix")
+  expect_is(AGB$AGB_simu[1,1], "numeric")
+})
+
+
+test_that("AGB monte Carlo on the Carbon", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = 500, Carbon = T)
+  expect_length(AGB, 5)
+  
+  expect_length(AGB$meanAGC, 1)
+  expect_is(AGB$meanAGC, "numeric")
+  
+  expect_length(AGB$medAGC, 1)
+  expect_is(AGB$medAGC, "numeric")
+  
+  expect_length(AGB$sdAGC, 1)
+  expect_is(AGB$sdAGC, "numeric")
+  
+  expect_length(AGB$credibilityAGC, 2)
+  expect_is(AGB$credibilityAGC, "numeric")
+  
+  expect_equal(dim(AGB$AGC_simu), c(100, 500))
+  expect_is(AGB$AGC_simu, "matrix")
+  expect_is(AGB$AGC_simu[1,1], "numeric")
+})
+
+test_that("AGB monte Carlo on the Dlim", {
+  AGB = AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = 500, Carbon = T, Dlim = 20)
+  expect_length(AGB, 5)
+  
+  expect_length(AGB$meanAGC, 1)
+  expect_is(AGB$meanAGC, "numeric")
+  
+  expect_length(AGB$medAGC, 1)
+  expect_is(AGB$medAGC, "numeric")
+  
+  expect_length(AGB$sdAGC, 1)
+  expect_is(AGB$sdAGC, "numeric")
+  
+  expect_length(AGB$credibilityAGC, 2)
+  expect_is(AGB$credibilityAGC, "numeric")
+  
+  expect_equal(dim(AGB$AGC_simu), c(100, 500))
+  expect_is(AGB$AGC_simu, "matrix")
+  expect_is(AGB$AGC_simu[1,1], "numeric")
+  
+  expect_equal( unique( which(AGB$AGC_simu == 0, arr.ind = T)[,1] ), which(D<20) )
+})
