@@ -1,5 +1,3 @@
-library(BIOMASS)
-
 options(stringsAsFactors = FALSE)
 
 data("NouraguesHD")

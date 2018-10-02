@@ -1,5 +1,3 @@
-library(BIOMASS)
-
 options(stringsAsFactors = FALSE)
 
 data("KarnatakaForest")
@@ -14,16 +12,20 @@ D = KarnatakaForest$D
 coord = cbind(KarnatakaForest$long, KarnatakaForest$lat)
 
 
-
+skip_if_not_function = function(name){
+  if (!exists(name))
+    skip(paste("The function", name, "is internal"))
+}
 
 context("Function computeE")
 test_that("Compute E", {
+  skip_if_not_function("computeE")
   
   E = computeE(coord)
   
   expect_is(E, "numeric")
   expect_equal(length(E), 61965)
-
+  
   expect_that(computeE(cbind(12, 50)), equals(1.129928, tolerance = 0.1) )
 })
 
@@ -33,6 +35,7 @@ test_that("Compute E", {
 
 context("Function getBioclimParam")
 test_that("getBioclimParam", {
+  skip_if_not_function("getBioclimParam")
   B = getBioclimParam(coord)
   
   expect_is(B, "data.frame")
@@ -119,10 +122,10 @@ test_that("Without finding the order", {
   
   Taxo = Taxo[order(Taxo$inputGenus), ]
   expect_equivalent(Taxo[1:3,], 
-               data.frame("inputGenus" = c("Alangium", "Albizia", "Albizia"), 
-                          "family" = c("Cornaceae", "Fabaceae", "Fabaceae")))
+                    data.frame("inputGenus" = c("Alangium", "Albizia", "Albizia"), 
+                               "family" = c("Cornaceae", "Fabaceae", "Fabaceae")))
 })
-  
+
 test_that("With finding the order", {
   
   Taxo = getTaxonomy(KarnatakaForest$genus[1:50], findOrder = T)
@@ -144,6 +147,8 @@ test_that("With finding the order", {
 
 context("Internal function of HD model ")
 test_that("loglog function", {
+  skip_if_not_function("loglogFunction")
+  
   data = data.frame(H = c(5,5), D = c(2,3))
   
   expect_is( loglogFunction( data,  "log1" ), "lm" )
@@ -153,14 +158,36 @@ test_that("loglog function", {
 })
 
 test_that("Michaelis function", {
+  skip_if_not_function("michaelisFunction")
   data = data.frame(H = retrieveH(D, coord = coord)$H, D = D)
   
   expect_is( michaelisFunction( data ), "nls" )
 })
 
 test_that("Weibull function", {
+  skip_if_not_function("weibullFunction")
   data = data.frame(H = retrieveH(D, coord = coord)$H, D = D)
   
   expect_is( weibullFunction( data ), "nls" )
 })
+
+
+
+context("Predict Height of the tree")
+test_that("predictHeight", {
+  skip_if_not_function("predictHeight")
+  for(method in c("log1", 'log2', "log3", "weibull", "michaelis")){
+    HDmodel<-modelHD(D=NouraguesHD$D,
+                     H=NouraguesHD$H,
+                     method=method,
+                     useWeight =TRUE)
+    for (err in c(T, F)){
+      expect_length( predictHeight(D, HDmodel, err = err), length(D))
+      expect_is( predictHeight(D, HDmodel, err = err), "numeric")
+    }
+    
+  }
+})
+
+
 

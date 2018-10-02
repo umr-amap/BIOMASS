@@ -1,5 +1,3 @@
-library(BIOMASS)
-
 data("KarnatakaForest")
 data("NouraguesHD")
 

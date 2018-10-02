@@ -27,4 +27,12 @@ test_that("CorrectTaxo",{
   path = repertoryControl(correctTaxo = T)
   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
   expect_true(file.exists(path))
+  
+  a = read.table(path, header = T, sep = ",")
+  expect_equal(names(a), c("query", "outName", "nameModified"))
+  expect_gt(nrow(a), 0)
 })
+
+
+
+
