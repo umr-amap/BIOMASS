@@ -21,7 +21,7 @@
 #' \dontrun{correctTaxo(genus = "Astrocarium standleanum")}
 #' 
 #' @export
-#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite
+#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF
 #' @importFrom rappdirs user_data_dir
 #' @importFrom httr content GET upload_file POST config
 #' @importFrom jsonlite fromJSON
@@ -122,7 +122,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
                 all.x = T, by = "query")
     
     just_genus(out, taxo_already_have)
-    return(as.data.frame(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
+    return(setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
   }
   
   
@@ -257,6 +257,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   fwrite(out1[, .(outName, nameModified), by=query], file = path)
   
   
-  return(as.data.frame(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
+  return(setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
   
 }
