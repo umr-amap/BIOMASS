@@ -39,19 +39,6 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     return(split)
   }
   
-  # if we have just the genus in input and in the query we already treated we have genus and species
-  just_genus = function(out, taxo_already_have){
-    Na_name = which(is.na(out$nameModified))
-    index_genus = chmatch(out$genus, taxo_already_have$genus)[Na_name]
-    
-    out[Na_name, genusCorrected := taxo_already_have[index_genus, genusCorrected]]
-    out[Na_name, nameModified := as.character(genus!=genusCorrected)]
-    
-    out[which( Na_name & taxo_already_have[index_genus, nameModified] == "TaxaNotFound" ), 
-        nameModified := "TaxaNotFound"]
-    return(out)
-  }
-  
   ########### preparation of log file
   
   path = repertoryControl(correctTaxo = T)
@@ -111,17 +98,15 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   if(file_exist){
     if (exists("taxo_already_have")){
       query = query[!taxo_already_have, on = "query"]
-      query = query[! ( is.na(species) & genus %in% taxo_already_have$genus) ]
     }
   }
   
   # End the function if we already have all the data needed
   if ( nrow(query) == 0 ){
     out = merge(oriData, 
-                taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected)], 
+                taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected, score1)], 
                 all.x = T, by = "query")
-    
-    just_genus(out, taxo_already_have)
+    out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
     return(setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
   }
   
@@ -134,7 +119,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   # If there is too much data, better submit it in separated queries
   splitby <- 30
-  query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby)[1:length(query)] ]
+  query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby, length.out = length(query))]
   
   
   ########### sending and retrive the data from taxosaurus
@@ -229,34 +214,26 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   
-  
-  
-  
   ########## merge the data for the return
-  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected)]
+  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
   
   if(exists("taxo_already_have")){
     setkey(out, query)
     out[taxo_already_have, 
         ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected), on = "query"]
-    just_genus(out, taxo_already_have)
   }
   
   
   ########### write all the new data on the log file created
-  if (exists("taxo_already_have")){
-    out1 = merge(taxo_already_have[, .(query, outName, nameModified, genus)], 
-                 query[, .(query, genus, outName, nameModified)], by = "genus", all = T)
-    
-    out1[is.na(query.x), query.x := "a"][is.na(query.y), query.y := "a"]
-    nchr = nchar( out1[, query.x] ) > nchar( out1[, query.y] )
-    out1[nchr, ':='("query" = query.x, "outName" = outName.x, "nameModified" = nameModified.x)]
-    out1[!nchr, ':='("query" = query.y, "outName" = outName.y, "nameModified" = nameModified.y)]
-  } else {out1 = query}
+  if(file.exists(path))
+    fwrite(query[, .(outName, nameModified, score1), by=query], 
+         file = path, sep = ",", append = T)
+  else
+    fwrite(query[, .(outName, nameModified, score1), by=query], 
+           file = path, sep = ",")
   
-  fwrite(out1[, .(outName, nameModified), by=query], file = path)
-  
-  
+  cat("Your new result has been saved/append in the file :", path)
+  out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
   return(setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
   
 }

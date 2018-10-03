@@ -29,8 +29,13 @@ test_that("CorrectTaxo",{
   expect_true(file.exists(path))
   
   a = read.table(path, header = T, sep = ",")
-  expect_equal(names(a), c("query", "outName", "nameModified"))
+  expect_equal(names(a), c("query", "outName", "nameModified", "score1"))
   expect_gt(nrow(a), 0)
+  
+  expect_equal( correctTaxo(genus = c("Magnophyton","?"), species=c("fulvum","?"), score = 0.97) ,
+                data.frame(genusCorrected = c("Magnophyton", "?"), 
+                           speciesCorrected = c("fulvum", "?"), 
+                           nameModified = c("NoMatch(low_score)", "NoMatch(low_score)")))
 })
 
 
