@@ -16,7 +16,8 @@
 #' getTaxonomy("Aphelandra")
 #' # ... and the order 
 #' getTaxonomy("Aphelandra", findOrder = TRUE)
- 
+#' 
+#' @importFrom data.table setDF setDT data.table
 getTaxonomy <- function(genus, findOrder = FALSE)
 {    
   ### Find the family (and the order) of a vector of genus
@@ -26,32 +27,30 @@ getTaxonomy <- function(genus, findOrder = FALSE)
   # Load taxonomical data (sourced from Angiosperm Phylogeny Website, http://www.mobot.org/MOBOT/research/APweb/)
   genusFamily <- NULL
   data(genusFamily, envir = environment())
+  setDT(genusFamily)
+  setkey(genusFamily, genus)
   
   # Create ids
-  inputGenus <- data.frame(id = 1:length(genus), inputGenus = as.character(genus), 
-                           stringsAsFactors = FALSE)
+  inputGenus <- data.table(id = 1:length(genus), inputGenus = as.character(genus), 
+                           stringsAsFactors = FALSE, key = "inputGenus")
   
   # Merge the input genera with the genus family table
-  genusFam <- unique(merge(inputGenus, genusFamily, by.x = "inputGenus", by.y = "genus", all.x = TRUE))
-    
-  # Sort data by id
-  genusFam <- genusFam[order(genusFam$id),]
+  genusFam <- merge(inputGenus, genusFamily, by.x = "inputGenus", by.y = "genus", all.x = TRUE)
+  genusFam = genusFam[, .(id, inputGenus, family)]
 
   ################## 2. Retrieve the Order 
   
   if(findOrder == TRUE)
   {
-	apgFamilies <- NULL
+	  apgFamilies <- NULL
     data(apgFamilies, envir = environment())
+    setDT(apgFamilies)
     
-    tmp <- unique(genusFam[, c("inputGenus", "family")])
-    tmpOrder <- unique(merge(tmp, apgFamilies, by.x = "family", by.y = "famAPG", all.x = TRUE))
-    
-    for(f in unique(tmpOrder$family))
-      genusFam$order[genusFam$family %in% f] <- unique(tmpOrder$order[tmpOrder$family %in% f])
+    genusFam = merge(genusFam, apgFamilies, by.x = "family", by.y = 'famAPG', all.x = T)
+    genusFam = genusFam[, .(id, inputGenus, family, order)]
   }
   
-  genusFam <- genusFam[order(genusFam$id), ]
-  genusFam$id <- NULL
+  genusFam <- genusFam[order(id),]
+  genusFam = setDF(genusFam[, id:=NULL])
   return(genusFam)  
 }
