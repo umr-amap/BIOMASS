@@ -98,17 +98,23 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   sd_10 <- NULL
   data(sd_10, envir = environment()) 
   
+  # Set the database on data.table
+  setDT(wdData, key = c('family', 'genus', 'species'))
+  setDT(sd_10)
+  wdData[, region := NULL]
+  wdData[, referenceNumber := NULL]
+  
   subWdData <- wdData
   if(region != "World") 
-    subWdData <- wdData[wdData$regionId == region,] 
+    subWdData <- wdData[regionId == region,] 
   
   if(nrow(subWdData) == 0) 
     stop("The region you entered is not recognized in the global wood density database")
   
   if(nrow(subWdData)<1000 & is.null(addWoodDensityData)) 
   {
-    cat(paste("DRYAD data only stored", nrow(subWdData), "wood density values in your region of interest. 
-              Would you want to try with the 'World' option ? (y/n)"))
+    cat("DRYAD data only stored", nrow(subWdData), "wood density values in your region of interest. 
+              Would you want to try with the 'World' option ? (y/n)")
     ans <- scan(what = character(), nmax = 1, quiet = TRUE)
     
     # Set the world option instead
@@ -116,135 +122,113 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
       subWdData <- wdData 
   }
   
-  subWdData <- subWdData[, c("family", "genus", "species", "wd")]
-  
   if(!is.null(addWoodDensityData))
   {
-    if (is.character(addWoodDensityData)){
-      addWoodDensityData = read.csv(addWoodDensityData)
-    }
     if(any(names(addWoodDensityData) != c("genus","species","wd")))
       stop("The additional wood density database should be organized in a dataframe with three columns: 
            \"genus\",\"species\",\"wd\" (column order and names should be respected)")
-    addWoodDensityData$family <- getTaxonomy(addWoodDensityData$genus)$family
-    addWoodDensityData <- addWoodDensityData[,c("family","genus","species","wd")]
-    addWoodDensityData <- addWoodDensityData[!is.na(addWoodDensityData$wd),]
-    subWdData <- rbind(subWdData, addWoodDensityData)
+    setDT(addWoodDensityData)
+    addWoodDensityData[, family := getTaxonomy(genus)$family]
+    addWoodDensityData <- addWoodDensityData[!is.na(wd),]
+    subWdData = merge(subWdData, addWoodDensityData, by = c('family', "genus", "species"), all = T)
+    subWdData[!is.na(regionId), wd := wd.x][is.na(regionId), wd := wd.y][, ':='(wd.x = NULL, wd.y = NULL)]
   }
+  setkey(subWdData, family, genus, species)
   
-  cat(paste("The reference dataset contains",nrow(subWdData), "wood density values \n"))
+  cat("The reference dataset contains",nrow(subWdData), "wood density values \n")
   
   # Creating an input dataframe
-  inputData <- data.frame(genus = as.character(genus), species = as.character(species), stringsAsFactors = FALSE)
+  inputData <- data.table(id = 1:length(genus), genus = as.character(genus), species = as.character(species), key = "id")
   
   if(!is.null(family))
   {
     if(length(genus) == length(family))
-      inputData$family <- as.character(family)
+      inputData[, family := as.character(family)]
     else
       stop("Your family vector and your genus/species vectors don't have the same length")
+  } else {
+    inputData[, family := getTaxonomy(genus)$family]
   }
   
-  taxa <- unique(inputData)
-  cat(paste("Your taxonomic table contains", nrow(taxa), "taxa \n"))
+  taxa = unique( inputData[, .(genus, species, family)] )
+  cat("Your taxonomic table contains", nrow(unique(inputData)), "taxa \n")
   
   if(!is.null(stand))
   {
     if(length(genus) == length(stand))
-      inputData$stand <- as.character(stand)
+      inputData[, stand := as.character(stand)]
     else
       stop("Your stand vector and your genus/species vectors don't have the same length")
   }
   
-  inputData$id <- 1:length(species)
+  
+  setkey(inputData, family, genus, species)
   
   # Select only the relevant data
-  selectData <- subWdData[(subWdData$family %in% taxa$family | subWdData$genus %in% taxa$genus | subWdData$species %in% taxa$species),]
-  aggregatedName <- paste(selectData$family, selectData$genus, selectData$species, sep = "_")
-  selectData <- data.frame(selectData, aggregatedName)
+  meanWdData <- subWdData[(ifelse(!is.null(family), family %in% taxa$family, F) | genus %in% taxa$genus | species %in% taxa$species), ]
   
   # Compute the mean at species, genus (and family) level
-  # -- Species 
-  allMeanSp <- unique(selectData[,c("family","genus","species","aggregatedName")])
-  allMeanSp <- allMeanSp[order(allMeanSp$aggregatedName),]
-  allMeanSp$meanWDsp <- tapply(selectData$wd, selectData$aggregatedName, mean) # Vector for Wood Specific Gravity measures
-  allMeanSp$nIndSp <- tapply(selectData$wd, selectData$aggregatedName, length) # Vector for number of Wood Specific Gravity measures
+  # -- Species
+  allMean = meanWdData[, .(meanWDsp = mean(wd), nIndSp = .N), by=.(family, genus, species)]
+  outData = merge(inputData, allMean, all.x = T, by = c("family","genus","species"))
   
   # -- Genus
-  allMeanGen <- unique(selectData[,c("family","genus")])
-  allMeanGen <- allMeanGen[order(allMeanGen$genus),]
-  allMeanGen$meanWDgen <- tapply(allMeanSp$meanWDsp, allMeanSp$genus, mean)
-  allMeanGen$nIndGen <- tapply(allMeanSp$meanWDsp, allMeanSp$genus, length)
+  allMean = allMean[, .(meanWDgen = mean(meanWDsp), nIndGen = .N), by=.(family, genus)]
+  outData = merge(outData, allMean, all.x = T, by = c("family","genus"))
   
-  # Combine original datasets with mean WD at genus and species level
-  meanData <- merge(inputData, allMeanGen, all.x = TRUE)
-  meanData <- merge(meanData, allMeanSp, all.x = TRUE)
   
   #### Create the final WD estimates
-  meanData[, c("meanWD", "nInd", "sdWD", "levelWD")] <- NA
-  
   ###################################
   # At the species level
-  filter <- !is.na(meanData$meanWDsp)
-  meanData$meanWD[filter] <- meanData$meanWDsp[filter]
-  meanData$nInd[filter] <- meanData$nIndSp[filter]
-  meanData$levelWD[filter] <- "species"   
-  meanData$sdWD[filter] <- sd_10$sd[sd_10$taxo == "species"]
+  outData[, ':='(meanWD = meanWDsp, 
+                 nInd = nIndSp, 
+                 levelWD = "species", 
+                 sdWD = sd_10[taxo == "species", sd])]
   
   ###################################
   # At the genus level
-  filter <- (is.na(meanData$meanWD) & !is.na(meanData$meanWDgen))
-  meanData$meanWD[filter] <- meanData$meanWDgen[filter]
-  meanData$nInd[filter] <- meanData$nIndGen[filter]
-  meanData$levelWD[filter] <- "genus"  
-  meanData$sdWD[filter] <- sd_10$sd[sd_10$taxo == "genus"]
+  outData[ is.na(meanWD), 
+           ':='(meanWD = meanWDgen, 
+                nInd = nIndGen, 
+                levelWD = "genus", 
+                sdWD = sd_10[taxo == "genus", sd])]
   
   # If the family is provided, compute the wood density at the family level
   if(!is.null(family))
   {
-    allMeanFam <- unique(selectData[, c("family")])
-    allMeanFam <- data.frame(family = sort(allMeanFam))
-    allMeanFam$meanWDfam <- tapply(allMeanGen$meanWDgen, allMeanGen$family, mean)
-    allMeanFam$nIndFam <- tapply(allMeanGen$meanWDgen, allMeanGen$family, length)
-    allMeanFam$sdWdfam <- tapply(allMeanGen$meanWDgen, allMeanGen$family, sd)
-    
-    meanData <- merge(meanData, allMeanFam, all.x = TRUE)
+    allMean = allMean[, .(meanWDfam = mean(meanWDgen), nIndFam = .N), by=.(family)]
+    outData = merge(outData, allMean, all.x = T, by = c("family"))
     
     ###################################
     # At the family level
-    filter <- (is.na(meanData$meanWD) & !is.na(meanData$meanWDfam))    
-    meanData$meanWD[filter] <- meanData$meanWDfam[filter]
-    meanData$nInd[filter] <- meanData$nIndFam[filter]
-    meanData$levelWD[filter] <- "family"  
-    meanData$sdWD[filter] <- sd_10$sd[sd_10$taxo == "family"]
-    
+    outData[ is.na(meanWD), 
+             ':='(meanWD = meanWDfam, 
+                  nInd = nIndFam, 
+                  levelWD = "family", 
+                  sdWD = sd_10[taxo == "family", sd])]
   }
   
   # If the stand is provided, compute the wood density at the stand level  
   if(!is.null(stand))
   {
-    standWD <- data.frame(meanStand = tapply(meanData$meanWD, meanData$stand, mean, na.rm = TRUE),
-                          sdStand = tapply(meanData$meanWD, meanData$stand, sd, na.rm = TRUE),
-                          nIndStand = tapply(meanData$meanWD, meanData$stand, function(x) length(x[!is.na(x)])))
+    standWD <- outData[, .(meanStand = mean(meanWD, na.rm = T), nIndStand = .N, sdStand = sd(meanWD, na.rm = T) ), by = stand]
     
-    meanData <- merge(meanData, standWD, by.x = "stand", by.y = "row.names", all.x = T)
-    filter <- is.na(meanData$meanWD)
-    meanData$meanWD[filter] <- meanData$meanStand[filter]
-    meanData$nInd[filter] <- meanData$nIndStand[filter]
-    meanData$sdWD[filter] <- meanData$sdStand[filter]
-    meanData$levelWD[filter] <- meanData$stand[filter]
+    outData <- merge(outData, standWD, by = "stand", all.x = T)
+    outData[is.na(meanWD), ':='(meanWD = meanStand,
+                                nInd = nIndStand,
+                                sdWD = sdStand,
+                                levelWD = as.character(stand))]
     
   }
   
   # If some values are still NA, set the Wood density of the whole dataset
-  filter <- is.na(meanData$meanWD)
-  meanData$meanWD[filter] <- mean(meanData$meanWD, na.rm = TRUE)
-  meanData$nInd[filter] <- sum(!filter)
-  meanData$sdWD[filter] <- sd(meanData$meanWD, na.rm = TRUE)
-  meanData$levelWD[filter] <- "dataset"
+  WD_isnt_NA = outData[!is.na(meanWD), .(meanWD = mean(meanWD), .N, sdWD = sd(meanWD))]
+  outData[is.na(meanWD), ':='(meanWD = WD_isnt_NA$meanWD, 
+                              nInd = WD_isnt_NA$N, 
+                              sdWD = WD_isnt_NA$sdWD, 
+                              levelWD = "dataset")]
   
-  meanData <- meanData[with(meanData, order(meanData$id)), ]
-  result <- meanData[, c("family", "genus", "species", "meanWD", "sdWD", "levelWD" ,"nInd")] 
+  result <- setDF( outData[order(id), .(family, genus, species, meanWD, sdWD, levelWD ,nInd)] )
   
   if(nrow(result) != nrow(inputData)) 
     warning(paste("The input and the output tables have a different number of rows"))

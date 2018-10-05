@@ -18,7 +18,7 @@ AGBmonteCarlo(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 \item{H}{(option 1) Vector of tree heights (in m). If set, \code{errH} must be set too.}
 
 \item{errH}{(if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height 
-values (in the latter case the vector should be of the same lenght as \code{H}).}
+values (in the latter case the vector should be of the same length as \code{H}).}
 
 \item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link{modelHD}}, see example).}
 
