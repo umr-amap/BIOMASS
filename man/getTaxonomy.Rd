@@ -24,6 +24,7 @@ order, from the Genus Family database (see \code{\link{genusFamily}}) and the AP
 getTaxonomy("Aphelandra")
 # ... and the order 
 getTaxonomy("Aphelandra", findOrder = TRUE)
+
 }
 \author{
 Ariane TANGUY, Maxime REJOU-MECHAIN
