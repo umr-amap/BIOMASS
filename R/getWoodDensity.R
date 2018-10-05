@@ -37,6 +37,9 @@
 #'  combined with the global wood density database. The dataframe should be organized 
 #'  in a dataframe with three columns: "genus","species","wd" (column order and names 
 #'  should be respected).
+#' @param verbose (optional) a binary set on TRUE that will display the test how much
+#' the reference dataset have data and how much the dataset provided have data
+#'  
 #' @details 
 #' The function assigns to each taxon a species- or genus- level average if at least
 #'  one wood density value at the genus level is available for that taxon in the reference database.
@@ -84,7 +87,7 @@
 #' @importFrom data.table data.table := setDF setDT
 #' 
 getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region = "World", 
-                           addWoodDensityData = NULL)
+                           addWoodDensityData = NULL, verbose = TRUE)
 {  
   ### For each genus and species, assign a wood density
   
@@ -135,7 +138,8 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   }
   setkey(subWdData, family, genus, species)
   
-  cat("The reference dataset contains",nrow(subWdData), "wood density values \n")
+  if (verbose)
+    cat("The reference dataset contains",nrow(subWdData), "wood density values \n")
   
   # Creating an input dataframe
   inputData <- data.table(id = 1:length(genus), genus = as.character(genus), species = as.character(species), key = "id")
@@ -151,7 +155,8 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   }
   
   taxa = unique( inputData[, .(genus, species, family)] )
-  cat("Your taxonomic table contains", nrow(unique(inputData)), "taxa \n")
+  if (verbose)
+    cat("Your taxonomic table contains", nrow(taxa), "taxa \n")
   
   if(!is.null(stand))
   {

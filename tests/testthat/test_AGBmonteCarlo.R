@@ -14,7 +14,7 @@ H = predictHeight(D, HDmodel)
 
 
 taxo = correctTaxo(KarnatakaForest$genus, KarnatakaForest$species)
-WD = getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected)
+WD = getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected, verbose = F)
 
 context("AGBmonteCarlo")
 test_that("AGBmonteCarlo error",{
