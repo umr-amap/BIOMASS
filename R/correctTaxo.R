@@ -21,7 +21,7 @@
 #' \dontrun{correctTaxo(genus = "Astrocarium standleanum")}
 #' 
 #' @export
-#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF
+#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF setorder
 #' @importFrom rappdirs user_data_dir
 #' @importFrom httr content GET upload_file POST config
 #' @importFrom jsonlite fromJSON
@@ -107,7 +107,8 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
                 taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected, score1)], 
                 all.x = T, by = "query")
     out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
-    return(setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
+    out = setDF( setorder(out, by = id)[, .(genusCorrected, speciesCorrected, nameModified)] )
+    return(out)
   }
   
   
@@ -215,7 +216,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   ########## merge the data for the return
-  out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
+  out = merge(oriData, query, all.x = T)[, .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
   
   if(exists("taxo_already_have")){
     setkey(out, query)
@@ -234,6 +235,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   cat("Your new result has been saved/append in the file :", path)
   out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
-  return(setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
+  out = setDF( setorder(out, by = id)[, .(genusCorrected, speciesCorrected, nameModified)] )
+  return(out)
   
 }
