@@ -237,11 +237,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     RSE <- param_7[selec,"sd"] # vector of simulated RSE values
     
     # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
-    Tmp <- replicate(n, bioclimParams$tempSeas)
-    CWD <- replicate(n, bioclimParams$CWD)
-    PS <- replicate(n, bioclimParams$precSeas)
-    
-    Esim <- t(Tmp) * param_7[selec, "temp"] + t(CWD) * param_7[selec, "cwd"] + t(PS) * param_7[selec, "prec"]
+    Esim <- tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
     
     # Applying AGB formula over simulated matrices and vectors
     AGB_simu <- t( t(log(WD_simu)) * param_7[selec, "logwsg"] +  
