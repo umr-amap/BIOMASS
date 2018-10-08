@@ -240,9 +240,9 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     Esim <- tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
     
     # Applying AGB formula over simulated matrices and vectors
+    log_D_simu = t(log(D_simu))
     AGB_simu <- t( t(log(WD_simu)) * param_7[selec, "logwsg"] +  
-                     t(log(D_simu)) * param_7[selec, "logdbh"] + 
-                     t(log(D_simu)^2) * param_7[selec, "logdbh2"] + 
+                     log_D_simu * (param_7[selec, "logdbh"] + log_D_simu * param_7[selec, "logdbh2"]) + 
                      Esim * -param_7[selec, "E"] + 
                      param_7[selec, "intercept"] )
     
