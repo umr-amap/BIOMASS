@@ -174,8 +174,15 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE))
     else
     {
+      if(length(H) != len)
+        stop("Your vector H and D don't have the same length")
       if(is.null(errH))
-        stop("Cannot propagate height errors without information on associated errors (errH is null), if you do not want to propagate H errors please set errH to 0")
+        stop("Cannot propagate height errors without information on associated errors (errH is null), 
+             if you do not want to propagate H errors please set errH to 0")
+      if(! (length(errH) %in% c(1,len)) )
+        stop("errH should be set to one of these options:
+             - a single sd value that will be applied to all trees
+             - a vector of sd values of the same length as D")
       # Propagation of the error using the errH value(s)
       upper = max(H)+15
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
