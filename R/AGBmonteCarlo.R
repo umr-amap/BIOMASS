@@ -174,15 +174,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE))
     else
     {
-      if(length(H) != len)
-        stop("Your vector H and D don't have the same length")
       if(is.null(errH))
-        stop("Cannot propagate height errors without information on associated errors (errH is null), 
-             if you do not want to propagate H errors please set errH to 0")
-      if(! (length(errH) %in% c(1,len)) )
-        stop("errH should be set to one of these options:
-             - a single sd value that will be applied to all trees
-             - a vector of sd values of the same length as D")
+        stop("Cannot propagate height errors without information on associated errors (errH is null), if you do not want to propagate H errors please set errH to 0")
       # Propagation of the error using the errH value(s)
       upper = max(H)+15
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
@@ -237,12 +230,16 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     RSE <- param_7[selec,"sd"] # vector of simulated RSE values
     
     # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
-    Esim <- tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
+    Tmp <- replicate(n, bioclimParams$tempSeas)
+    CWD <- replicate(n, bioclimParams$CWD)
+    PS <- replicate(n, bioclimParams$precSeas)
+    
+    Esim <- t(Tmp) * param_7[selec, "temp"] + t(CWD) * param_7[selec, "cwd"] + t(PS) * param_7[selec, "prec"]
     
     # Applying AGB formula over simulated matrices and vectors
-    log_D_simu = t(log(D_simu))
     AGB_simu <- t( t(log(WD_simu)) * param_7[selec, "logwsg"] +  
-                     log_D_simu * (param_7[selec, "logdbh"] + log_D_simu * param_7[selec, "logdbh2"]) + 
+                     t(log(D_simu)) * param_7[selec, "logdbh"] + 
+                     t(log(D_simu)^2) * param_7[selec, "logdbh2"] + 
                      Esim * -param_7[selec, "E"] + 
                      param_7[selec, "intercept"] )
     

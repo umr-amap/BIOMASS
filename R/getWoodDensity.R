@@ -84,7 +84,7 @@
 #' 
 #' @seealso \code{\link{wdData}}, \code{\link{sd_10}}
 #' @keywords Wood density
-#' @importFrom data.table data.table := setDF setDT setkey
+#' @importFrom data.table data.table := setDF setDT
 #' 
 getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region = "World", 
                            addWoodDensityData = NULL, verbose = TRUE)
