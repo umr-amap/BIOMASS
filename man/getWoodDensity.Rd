@@ -5,7 +5,7 @@
 \title{Estimating wood density}
 \usage{
 getWoodDensity(genus, species, stand = NULL, family = NULL,
-  region = "World", addWoodDensityData = NULL, verbose = TRUE)
+  region = "World", addWoodDensityData = NULL)
 }
 \arguments{
 \item{genus}{Vector of genus names}
@@ -19,8 +19,8 @@ If not, the value attributed will be the mean of the whole tree dataset.}
 \item{family}{(optional) Vector of families. If set, the missing wood densities at the genus 
 level will be attributed at family level if available.}
 
-\item{region}{Region of interest of your sample. By default, Region is set to 'World', but you 
-can restrict the WD estimates to a single region : 
+\item{region}{Region (or vector of region) of interest of your sample. By default, Region is 
+set to 'World', but you can restrict the WD estimates to a single region : 
 \itemize{
   \item \code{AfricaExtraTrop}: Africa (extra tropical)
   \item \code{AfricaTrop}: Africa (tropical)
@@ -45,9 +45,6 @@ can restrict the WD estimates to a single region :
 combined with the global wood density database. The dataframe should be organized 
 in a dataframe with three columns: "genus","species","wd" (column order and names 
 should be respected).}
-
-\item{verbose}{(optional) a binary set on TRUE that will display the test how much
-the reference dataset have data and how much the dataset provided have data}
 }
 \value{
 Returns a dataframe containing the following information: 

@@ -12,8 +12,8 @@
 #' If not, the value attributed will be the mean of the whole tree dataset.
 #' @param family (optional) Vector of families. If set, the missing wood densities at the genus 
 #' level will be attributed at family level if available.
-#' @param region Region of interest of your sample. By default, Region is set to 'World', but you 
-#' can restrict the WD estimates to a single region : 
+#' @param region Region (or vector of region) of interest of your sample. By default, Region is 
+#' set to 'World', but you can restrict the WD estimates to a single region : 
 #' \itemize{
 #'   \item \code{AfricaExtraTrop}: Africa (extra tropical)
 #'   \item \code{AfricaTrop}: Africa (tropical)
@@ -35,10 +35,8 @@
 #' }
 #' @param addWoodDensityData A dataframe containing additional wood density data to be
 #'  combined with the global wood density database. The dataframe should be organized 
-#'  in a dataframe with three columns: "genus","species","wd" (column order and names 
-#'  should be respected).
-#' @param verbose (optional) a binary set on TRUE that will display the test how much
-#' the reference dataset have data and how much the dataset provided have data
+#'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth 
+#'  column "famlily" is optional.
 #'  
 #' @details 
 #' The function assigns to each taxon a species- or genus- level average if at least
@@ -84,159 +82,208 @@
 #' 
 #' @seealso \code{\link{wdData}}, \code{\link{sd_10}}
 #' @keywords Wood density
-#' @importFrom data.table data.table := setDF setDT setkey
+#' @importFrom data.table data.table := setDF setDT setkey copy chmatch %chin%
 #' 
 getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region = "World", 
-                           addWoodDensityData = NULL, verbose = TRUE)
-{  
-  ### For each genus and species, assign a wood density
+                           addWoodDensityData = NULL)
+{ 
+  
+  
+  # Parameters verification -------------------------------------------------
   
   if(length(genus) != length(species))
-    stop("Your data (genus and species) don't have the same lenght")
+    stop("Your data (genus and species) don't have the same length")
+  
+  if(!is.null(family) && (length(genus) != length(family))){
+    stop("Your family vector and your genus/species vectors don't have the same length")
+    
+    if( any( colSums( table(family, genus) > 0, na.rm = T ) >= 2 ) )
+      stop("One or more of your genus are in two or more family")
+  }
+  
+  if(!is.null(stand) && (length(genus) != length(stand)))
+    stop("Your stand vector and your genus/species vectors don't have the same length")
+  
+  if(!is.null(addWoodDensityData))
+    if(all(names(addWoodDensityData) %in% c("genus","species","wd", "family")) && length(names(addWoodDensityData)) %in% c(3,4) )
+      stop('The additional wood density database should be organized in a dataframe with three (or four) columns: 
+           "genus","species","wd", and the column "family" is optional')
+  
+  
+  
+  
+  # Data processing ---------------------------------------------------------
   
   # Load global wood density database downloaded from http://datadryad.org/handle/10255/dryad.235
-  wdData <- NULL
-  data(wdData, envir = environment()) 
-  # Load the mean standard deviation observed at the species, Genus or Family level in the Dryad dataset when at least 10 individuals are considered
-  sd_10 <- NULL
-  data(sd_10, envir = environment()) 
+  wdData <- setDT(copy(BIOMASS::wdData))
   
-  # Set the database on data.table
-  setDT(wdData, key = c('family', 'genus', 'species'))
-  setDT(sd_10)
-  wdData[, region := NULL]
-  wdData[, referenceNumber := NULL]
+  # Load the mean standard deviation observed at the species, Genus or Family level 
+  # in the Dryad dataset when at least 10 individuals are considered
+  sd_10 <- setDT(copy(BIOMASS::sd_10))
+  
+  Region <- tolower(region)
+  if( (Region!="world") && any(is.na(chmatch(Region, tolower(wdData$regionId)))) )
+    stop("One of the region you entered is not recognized in the global wood density database")
   
   subWdData <- wdData
-  if(region != "World") 
-    subWdData <- wdData[regionId == region,] 
+  if(Region[1] != "world")
+    subWdData <- wdData[tolower(regionId) %chin% Region]
   
-  if(nrow(subWdData) == 0) 
-    stop("The region you entered is not recognized in the global wood density database")
-  
-  if(nrow(subWdData)<1000 & is.null(addWoodDensityData)) 
+  if(nrow(subWdData)<1000 && is.null(addWoodDensityData)) 
   {
-    cat("DRYAD data only stored", nrow(subWdData), "wood density values in your region of interest. 
-              Would you want to try with the 'World' option ? (y/n)")
-    ans <- scan(what = character(), nmax = 1, quiet = TRUE)
-    
-    # Set the world option instead
-    if(ans == "y")
-      subWdData <- wdData 
+    warning("DRYAD data only stored ", nrow(subWdData), " wood density values in your region of interest. ",
+            'You could provide additional wood densities (parameter addWoodDensityData) or widen your region (region="World")')
   }
   
   if(!is.null(addWoodDensityData))
   {
-    if(any(names(addWoodDensityData) != c("genus","species","wd")))
-      stop("The additional wood density database should be organized in a dataframe with three columns: 
-           \"genus\",\"species\",\"wd\" (column order and names should be respected)")
     setDT(addWoodDensityData)
-    addWoodDensityData[, family := getTaxonomy(genus)$family]
+    if ( !(c("family") %in% names(addWoodDensityData)) ){
+      setDT(BIOMASS::genusFamily,key="genus")
+      addWoodDensityData[genusFamily,on="genus",family:=i.family]
+    }
     addWoodDensityData <- addWoodDensityData[!is.na(wd),]
     subWdData = merge(subWdData, addWoodDensityData, by = c('family', "genus", "species"), all = T)
     subWdData[!is.na(regionId), wd := wd.x][is.na(regionId), wd := wd.y][, ':='(wd.x = NULL, wd.y = NULL)]
   }
-  setkey(subWdData, family, genus, species)
   
-  if (verbose)
-    cat("The reference dataset contains",nrow(subWdData), "wood density values \n")
+  message("The reference dataset contains ",nrow(subWdData), " wood density values")
   
   # Creating an input dataframe
-  inputData <- data.table(id = 1:length(genus), genus = as.character(genus), species = as.character(species), key = "id")
+  inputData <- data.table(genus = as.character(genus), species = as.character(species))
+  
   
   if(!is.null(family))
   {
-    if(length(genus) == length(family))
-      inputData[, family := as.character(family)]
-    else
-      stop("Your family vector and your genus/species vectors don't have the same length")
+    inputData[, family := as.character(family)]
   } else {
-    inputData[, family := getTaxonomy(genus)$family]
+    setDT(BIOMASS::genusFamily,key="genus")
+    inputData[genusFamily,on="genus",family:=i.family]
   }
-  
-  taxa = unique( inputData[, .(genus, species, family)] )
-  if (verbose)
-    cat("Your taxonomic table contains", nrow(taxa), "taxa \n")
   
   if(!is.null(stand))
   {
-    if(length(genus) == length(stand))
-      inputData[, stand := as.character(stand)]
-    else
-      stop("Your stand vector and your genus/species vectors don't have the same length")
+    inputData[, stand := as.character(stand)]
   }
   
+  taxa = unique(inputData, by=c("family","genus", "species"))
+  message("Your taxonomic table contains ", nrow(taxa), " taxa")
   
-  setkey(inputData, family, genus, species)
+  # utilitary function : paste y values inside x when one x value is NA
+  coalesce <- function(x,y) {
+    if(length(y)==1)
+      y <- rep(y,length(x))
+    where <- is.na(x)
+    x[where]<-y[where]
+    x
+  }
   
   # Select only the relevant data
-  meanWdData <- subWdData[(ifelse(!is.null(family), family %in% taxa$family, F) | genus %in% taxa$genus | species %in% taxa$species), ]
-  
-  # Compute the mean at species, genus (and family) level
-  # -- Species
-  allMean = meanWdData[, .(meanWDsp = mean(wd), nIndSp = .N), by=.(family, genus, species)]
-  outData = merge(inputData, allMean, all.x = T, by = c("family","genus","species"))
-  
-  # -- Genus
-  allMean = allMean[, .(meanWDgen = mean(meanWDsp), nIndGen = .N), by=.(family, genus)]
-  outData = merge(outData, allMean, all.x = T, by = c("family","genus"))
+  meanWdData <- subWdData[(family %in% taxa$family | genus %in% taxa$genus | species %in% taxa$species), ]
   
   
-  #### Create the final WD estimates
-  ###################################
-  # At the species level
-  outData[, ':='(meanWD = meanWDsp, 
-                 nInd = nIndSp, 
-                 levelWD = "species", 
-                 sdWD = sd_10[taxo == "species", sd])]
   
-  ###################################
-  # At the genus level
-  outData[ is.na(meanWD), 
-           ':='(meanWD = meanWDgen, 
-                nInd = nIndGen, 
-                levelWD = "genus", 
-                sdWD = sd_10[taxo == "genus", sd])]
   
-  # If the family is provided, compute the wood density at the family level
-  if(!is.null(family))
-  {
-    allMean = allMean[, .(meanWDfam = mean(meanWDgen), nIndFam = .N), by=.(family)]
-    outData = merge(outData, allMean, all.x = T, by = c("family"))
-    
-    ###################################
-    # At the family level
-    outData[ is.na(meanWD), 
-             ':='(meanWD = meanWDfam, 
-                  nInd = nIndFam, 
-                  levelWD = "family", 
-                  sdWD = sd_10[taxo == "family", sd])]
+  
+  # Extracting data ---------------------------------------------------------
+  
+  # compute mean at species level
+  sdSP <- sd_10[taxo=="species",sd]
+  meanSP <- meanWdData[,
+                       by=c("family","genus","species"),
+                       .(
+                         meanWDsp=mean(wd),
+                         nIndsp=.N,
+                         sdWDsp=sdSP
+                       )
+                       ]
+  inputData[meanSP,on=c("family","genus","species"),by=.EACHI,
+            `:=`(
+              meanWD=meanWDsp,
+              nInd=nIndsp,
+              sdWD=sdWDsp,
+              levelWD="species"
+            )
+            ]
+  
+  # mean at genus level
+  sdGN <- sd_10[taxo=="genus",sd]
+  meanGN <- meanSP[,
+                   by=c("family","genus"),
+                   .(
+                     meanWDgn=mean(meanWDsp),
+                     nIndgn=.N,
+                     sdWDgn=sdGN
+                   )
+                   ]
+  inputData[meanGN,on=c("family","genus"),by=.EACHI,
+            `:=`(
+              meanWD=coalesce(meanWD,meanWDgn),
+              nInd=coalesce(nInd,nIndgn),
+              sdWD=coalesce(sdWD,sdWDgn),
+              levelWD=coalesce(levelWD,"genus")
+            )
+            ]
+  
+  # mean at family level if provided
+  if(!is.null(family)) {
+    sdFM <- sd_10[taxo=="family",sd]
+    meanFM <- meanGN[,
+                     by=family,
+                     .(
+                       meanWDfm=mean(meanWDgn),
+                       nIndfm=.N,
+                       sdWDfm=sdFM
+                     )
+                     ]
+    inputData[meanFM,on="family",by=.EACHI,
+              `:=`(
+                meanWD=coalesce(meanWD,meanWDfm),
+                nInd=coalesce(nInd,nIndfm),
+                sdWD=coalesce(sdWD,sdWDfm),
+                levelWD=coalesce(levelWD,"family")
+              )
+              ]
   }
   
-  # If the stand is provided, compute the wood density at the stand level  
-  if(!is.null(stand))
-  {
-    standWD <- outData[, .(meanStand = mean(meanWD, na.rm = T), nIndStand = .N, sdStand = sd(meanWD, na.rm = T) ), by = stand]
-    
-    outData <- merge(outData, standWD, by = "stand", all.x = T)
-    outData[is.na(meanWD), ':='(meanWD = meanStand,
-                                nInd = nIndStand,
-                                sdWD = sdStand,
-                                levelWD = as.character(stand))]
-    
+  # mean at stand level if provided
+  if(!is.null(stand)) {
+    meanST <- inputData[!is.na(meanWD),
+                        by=stand,
+                        .(
+                          meanWDst=mean(meanWD),
+                          nIndst=.N,
+                          sdWDst=sd(meanWD)
+                        )
+                        ]
+    inputData[meanST,on="stand",by=.EACHI,
+              `:=`(
+                meanWD=coalesce(meanWD,meanWDst),
+                nInd=coalesce(nInd,nIndst),
+                sdWD=coalesce(sdWD,sdWDst),
+                levelWD=coalesce(levelWD,"stand")
+              )
+              ]
   }
   
-  # If some values are still NA, set the Wood density of the whole dataset
-  WD_isnt_NA = outData[!is.na(meanWD), .(meanWD = mean(meanWD), .N, sdWD = sd(meanWD))]
-  outData[is.na(meanWD), ':='(meanWD = WD_isnt_NA$meanWD, 
-                              nInd = WD_isnt_NA$N, 
-                              sdWD = WD_isnt_NA$sdWD, 
-                              levelWD = "dataset")]
+  # mean of whole dataset for remaining NA
+  meanDS <- inputData[!is.na(meanWD),
+                      .(
+                        meanWDds=mean(meanWD),
+                        nIndds=.N,
+                        sdWDds=sd(meanWD)
+                      )
+                      ]
+  inputData[is.na(meanWD),
+            `:=`(
+              meanWD=meanDS$meanWDds,
+              nInd=meanDS$nIndds,
+              sdWD=meanDS$sdWDds,
+              levelWD="dataset"
+            )
+            ]
   
-  result <- setDF( outData[order(id), .(family, genus, species, meanWD, sdWD, levelWD ,nInd)] )
-  
-  if(nrow(result) != nrow(inputData)) 
-    warning(paste("The input and the output tables have a different number of rows"))
+  result <- setDF( inputData[, .(family, genus, species, meanWD, sdWD, levelWD ,nInd)] )
   
   return(result) 
 }
