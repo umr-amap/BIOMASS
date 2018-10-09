@@ -36,6 +36,12 @@ test_that("CorrectTaxo",{
                 data.frame(genusCorrected = c("Magnophyton", "?"), 
                            speciesCorrected = c("fulvum", "?"), 
                            nameModified = c("NoMatch(low_score)", "NoMatch(low_score)")))
+  
+  expect_equal(correctTaxo(genus = c("Magnophyton","?"), species=c("eaznrp","?"), score = 0.97), 
+               data.frame(genusCorrected = c("Magnophyton", "?"), 
+                          speciesCorrected = c("eaznrp", "?"), 
+                          nameModified = c("NoMatch(low_score)", "NoMatch(low_score)")))
+  
 })
 
 
