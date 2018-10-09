@@ -126,7 +126,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     stop("One of the region you entered is not recognized in the global wood density database")
   
   subWdData <- wdData
-  if(Region[1] != "world")
+  if(!("world" %in% Region))
     subWdData <- wdData[tolower(regionId) %chin% Region]
   
   if(nrow(subWdData)<1000 && is.null(addWoodDensityData)) 
