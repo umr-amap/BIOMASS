@@ -106,7 +106,10 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     out = merge(oriData, 
                 taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected, score1)], 
                 all.x = T, by = "query")
+    
     out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
+    out[nameModified == "TaxaNotFound", ':='(genusCorrected = genus, speciesCorrected = species)]
+    out[nameModified == "SpNotFound" , ':='(speciesCorrected = species)]
     out = setDF( setorder(out, by = id)[, .(genusCorrected, speciesCorrected, nameModified)] )
     return(out)
   }
@@ -216,7 +219,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   ########## merge the data for the return
-  out = merge(oriData, query, all.x = T)[, .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
+  out = merge(oriData, query, all.x = T)[, .(id, nameModified, query, genusCorrected, speciesCorrected, score1)]
   
   if(exists("taxo_already_have")){
     setkey(out, query)
@@ -234,7 +237,12 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
            file = path, sep = ",")
   
   cat("Your new result has been saved/append in the file :", path)
+  
+  out[, c("genus", "species") := strsplit_NA(query)]
+  
   out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
+  out[nameModified == "TaxaNotFound", ':='(genusCorrected = genus, speciesCorrected = species)]
+  out[nameModified == "SpNotFound" , ':='(speciesCorrected = species)]
   out = setDF( setorder(out, by = id)[, .(genusCorrected, speciesCorrected, nameModified)] )
   return(out)
   
