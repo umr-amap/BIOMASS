@@ -105,7 +105,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     stop("Your stand vector and your genus/species vectors don't have the same length")
   
   if(!is.null(addWoodDensityData))
-    if(all(names(addWoodDensityData) %in% c("genus","species","wd", "family")) && length(names(addWoodDensityData)) %in% c(3,4) )
+    if(! (all(names(addWoodDensityData) %in% c("genus","species","wd", "family")) && length(names(addWoodDensityData)) %in% c(3,4)) )
       stop('The additional wood density database should be organized in a dataframe with three (or four) columns: 
            "genus","species","wd", and the column "family" is optional')
   

@@ -7,7 +7,7 @@ D = KarnatakaForest$D
 coord = cbind(KarnatakaForest$long, KarnatakaForest$lat)
 
 taxo = correctTaxo(KarnatakaForest$genus, KarnatakaForest$species)
-WD = getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected, verbose = F)
+WD = suppressMessages( getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected) )
 
 H = retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = T))
 
