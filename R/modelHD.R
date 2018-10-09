@@ -64,27 +64,45 @@
 #' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd
 #' @importFrom utils data download.file unzip write.table
 #' @importFrom methods is
+#' @importFrom data.table data.table
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
 {   
-  ### Model a relationship between the height and the diameter of the trees
+
+  # parameters verification -------------------------------------------------
   
   # Check if there is enough data to compute an accurate model
   nbNonNA <- sum(!is.na(H))
   if(nbNonNA < 15)
-    stop(paste("The data has not enough height data (less than 15 non NA)"))
+    stop("The data has not enough height data (less than 15 non NA)")
   
-  Hdata <- data.frame(H, D)
-  names(Hdata) <- c("H", "D")    
+  if (length(H) != length(D))
+    stop("Your vector D and H don't have the same length")
+  
+  if ( !is.null(method) && ! (tolower(method) %in% c("log1", "log2", "log3", "weibull", "michaelis")) )
+    stop("Chose your method among those ones : log1, log2, log3, weibull, michaelis")
+  
+  if(!is.logical(useWeight))
+    stop("UseWeight argument must be a boolean")
+  
+  if(!is.logical(drawGraph))
+    stop("drawGraph argument must be a boolean")
+
+  
+  
+  
+  # Data processing ---------------------------------------------------------
+  
+  Hdata <- data.table(H = H, D = D)
   Hdata <- na.omit(Hdata) # Remove NA values
   weight <- NULL
   
   # Vector of diameter used only for visualisation purpose
-  D_Plot <- seq(from = floor(min(Hdata$D)), to = ceiling(max(Hdata$D)), 0.5)
+  D_Plot <- seq(from = Hdata[, floor(min(D))], to = Hdata[, ceiling(max(D))], 0.5)
   
   # If the measures need to be weighted
   if(useWeight == TRUE)
-    weight <- (Hdata$D^2)*Hdata$H # weight is proportional to tree volume
+    weight <- Hdata[, D^2 * H] # weight is proportional to tree volume
   
   if(!is.null(method))
   {
