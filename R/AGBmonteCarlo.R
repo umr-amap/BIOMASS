@@ -92,15 +92,64 @@
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL, 
                           HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000, Carbon = FALSE, Dlim = NULL)
 {  
+  len = length(D)  
+  
+  # parameters verification -------------------------------------------------
+  
   if(n > 1000 | n < 50) 
     stop("n cannot be smaller than 50 or larger than 1000")
   
-  ### function truncated random gausien law
+  if(!is.null(Dpropag)){
+    if ( (is.numeric(Dpropag) && !(length(Dpropag)%in%c(1,len)) || (!is.numeric(Dpropag) && Dpropag != "chave2004")) )
+      stop('Dpropag should be set to one of these options:
+             - "chave2004"
+             - a single sd value that will be applied to all trees
+             - a vector of sd values of the same length as D')
+  }
+  
+  if ( is.null(WD) || is.null(errWD) )
+    stop("The WD and errWD arguments must be not NULL")
+  
+  if (len != length(WD) || len != length(errWD))
+    stop("One of vector WD or errWD doesn't have the same length as D")
+  
+  if(is.null(HDmodel) & is.null(coord) & is.null(H))
+    stop("Input missing, you need to provide one of the following arguments:
+             - H
+             - HDmodel
+             - coord")
+  
+  if( (!is.null(HDmodel) && !is.null(coord)) || (!is.null(HDmodel) && !is.null(H)) || (!is.null(coord) && !is.null(H)) )
+    stop("Too many input, choose one input among those arguments:
+              - H and Herr
+              - HDmodel
+              - coord")
+  
+  if (!is.null(H)){
+    if ( is.null(errH) )
+      stop("Cannot propagate height errors without information on associated errors (errH is null), 
+         if you do not want to propagate H errors please set errH to 0")
+    if ( length(H) != len || !(length(errH) %in% c(1,len)) )
+         stop("H must be the same length as D and errH must be either one value or the same length as D")
+         
+  }
+  
+  if ( !is.null(coord) && ( (is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != len) ) )
+    stop("coord should be either
+             - a vector (e.g. c(longitude, latitude))
+             - a matrix with two columns (longitude and latitude) 
+             having the same number of rows as the number of trees (length(D))")
+  
+  
+  
+  # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n,lower = -1, upper = 1,mean=0,sd=1) {
     qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd)
   }
   
-  len = length(D)
+  
+  
+  
   
   ### Propagate error with Markov Chain Monte Carlo approach
   
@@ -128,43 +177,26 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     else
     {
-      if(!is.numeric(Dpropag) | !length(Dpropag)%in%c(1,len)) 
-        stop("Dpropag should be set to one of these options:
-             - \"chave2004\"
-             - a single sd value that will be applied to all trees
-             - a vector of sd values of the same length as D")
       D_simu = replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500))
     }
   }else{ D_simu <- replicate(n, D) }
   
+  
+  
+  
+  
   # --------------------- WD ---------------------
   
-  if(!is.null(WD) & !is.null(errWD)){
-    
-    if(length(errWD) != length(WD))
-      stop("Your wood density vector (WD) and the vector of the associated errors (errWD) don't have the same length")
-    
-    #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
-    len = length(WD)
-    WD_simu <- replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39))
-  }
-  else
-    stop("The WD and errWD arguments must be not NULL")
+  
+  #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
+  WD_simu <- replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39))
+  
+  
+  
+  
   
   
   # --------------------- H ---------------------
-  
-  if(is.null(HDmodel) & is.null(coord) & is.null(H))
-    stop("Input missing, you need to provide one of the following arguments:
-             - H
-             - HDmodel
-             - coord")
-  
-  if( !is.null(HDmodel) & !is.null(coord) | !is.null(HDmodel) & !is.null(H) | !is.null(coord) & !is.null(H))
-    stop("Too many input, choose one input among those arguments:
-              - H and Herr
-              - HDmodel
-              - coord")
   
   # if there is data for H
   if(!is.null(HDmodel) | !is.null(H))
@@ -174,17 +206,14 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE))
     else
     {
-      if(is.null(errH))
-        stop("Cannot propagate height errors without information on associated errors (errH is null), if you do not want to propagate H errors please set errH to 0")
       # Propagation of the error using the errH value(s)
       upper = max(H)+15
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
     }
     
-    # --------------------- AGB
+    # --------------------- AGB ---------------------
     
-    param_4 <- NULL
-    data(param_4, envir = environment()) # posterior parameters from MCMC algorithm
+    param_4 <- BIOMASS::param_4
     selec <- sample(1:nrow(param_4), n)
     RSE <- param_4[selec,"sd"]
     
@@ -212,16 +241,10 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       coord <- as.matrix(t(coord))
     if(nrow(coord) == 1)
       coord <- cbind(rep(coord[1], len), rep(coord[2], len))
-    if(nrow(coord) != len)
-      stop("coord should be either
-             - a vector (e.g. c(longitude, latitude))
-             - a matrix with two columns (longitude and latitude) 
-             having the same number of rows as the number of trees (length(D))")
     
     # Equ 7
     # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)
-    param_7 <- NULL
-    data(param_7, envir = environment()) # posterior parameters from MCMC algorithm
+    param_7 <- BIOMASS::param_7
     selec <- sample(1:nrow(param_7), n)
     
     bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
@@ -230,11 +253,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     RSE <- param_7[selec,"sd"] # vector of simulated RSE values
     
     # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
-    Tmp <- replicate(n, bioclimParams$tempSeas)
-    CWD <- replicate(n, bioclimParams$CWD)
-    PS <- replicate(n, bioclimParams$precSeas)
-    
-    Esim <- t(Tmp) * param_7[selec, "temp"] + t(CWD) * param_7[selec, "cwd"] + t(PS) * param_7[selec, "prec"]
+    Esim = tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
     
     # Applying AGB formula over simulated matrices and vectors
     AGB_simu <- t( t(log(WD_simu)) * param_7[selec, "logwsg"] +  

@@ -36,7 +36,7 @@ test_that("AGBmonteCarlo error",{
                "Dpropag should be set to one of these options")
   
   expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD[1], H = H), 
-               "Your wood density vector")
+               "One of vector WD or errWD doesn't have the same length as D")
   
   expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H, coord = coord), 
                "Too many input")
