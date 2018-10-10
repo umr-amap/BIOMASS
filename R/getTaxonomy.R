@@ -17,8 +17,7 @@
 #' # ... and the order 
 #' getTaxonomy("Aphelandra", findOrder = TRUE)
 #' 
-#' @importFrom data.table setDF setDT data.table setorder
-
+#' @importFrom data.table setDF setDT data.table
 getTaxonomy <- function(genus, findOrder = FALSE)
 {    
   ### Find the family (and the order) of a vector of genus
@@ -51,7 +50,7 @@ getTaxonomy <- function(genus, findOrder = FALSE)
     genusFam = genusFam[, .(id, inputGenus, family, order)]
   }
   
-  setorder( genusFam, by = id )
+  genusFam <- genusFam[order(id),]
   genusFam = setDF(genusFam[, id:=NULL])
   return(genusFam)  
 }

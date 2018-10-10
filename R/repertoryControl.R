@@ -92,6 +92,5 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   DEMzip <- download.file(zip_url, destfile = path1)
   unzip(path1, exdir = paste(path, strsplit(nameFile, "_")[[1]][1], sep = sep))
-  cat("Your repertory had been download in the repertory :", path)
   return()
 }
