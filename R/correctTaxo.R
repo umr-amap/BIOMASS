@@ -166,7 +166,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       retrieve <- fromJSON(tt, FALSE)[["uri"]]
     }
     
-    print(paste("Calling", retrieve, "package :", s, "/", query[, max(slicedQu)]))
+    print(paste("Calling", retrieve, "progression :", s, "/", query[, max(slicedQu)]))
     
     timeout <- "wait"
     while (timeout == "wait") 
