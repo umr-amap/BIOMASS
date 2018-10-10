@@ -104,6 +104,10 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
   if(useWeight == TRUE)
     weight <- Hdata[, D^2 * H] # weight is proportional to tree volume
   
+  
+
+  # If we gave the function a method ----------------------------------------
+  
   if(!is.null(method))
   {
     RSElog <- NULL
@@ -114,47 +118,29 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
       # Fit the log model      
       modSelected <- loglogFunction(Hdata, method)
       RSElog <- summary(modSelected)$sigma
-      coeff <- summary(modSelected)$coefficients
       
-      # Baskerville correction 1972          
-      if(method == "log1")
-      {
-        Hpredict_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot))
-        Hpredict <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D))
-      }
-      if(method == "log2")
-      {
-        Hpredict_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot) + coeff[3]*log(D_Plot)^2) 
-        Hpredict <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D) + coeff[3]*log(Hdata$D)^2)
-      }
-      if(method == "log3")
-      {
-        Hpredict_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot) + coeff[3]*log(D_Plot)^2 + coeff[4]*log(D_Plot)^3) 
-        Hpredict <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D) + coeff[3]*log(Hdata$D)^2 + coeff[4]*log(Hdata$D)^3) 
-      }
+      # Baskerville correction 1972
+      Hpredict = exp( predict(modSelected) + 0.5*RSElog^2 )
+      Hpredict_plot = exp( predict(modSelected, newdata = data.frame(logD = log(D_Plot))) + 0.5*RSElog^2 )
+    
     }  
     
     ################## Weibull 3 parameters
     if(method == "weibull")
     {
       modSelected <- weibullFunction(Hdata, weight) 
-      coeff <- summary(modSelected)$coefficients
-      a <- coeff[1]
-      b <- coeff[2]
-      c <- coeff[3]
-      Hpredict_plot <- a*(1-exp(-(D_Plot/b)^c))
-      Hpredict <- a*(1-exp(-(Hdata$D/b)^c))
+      
+      Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
+      Hpredict <- predict(modSelected)
     }
     
     ################## Michaelis-Menten function
     if(method == "michaelis")
     {   
       modSelected <- michaelisFunction(Hdata, weight) 
-      coeff <- summary(modSelected)$coefficients
-      A <- coeff[1]
-      B <- coeff[2]
-      Hpredict_plot <- SSmicmen(D_Plot, A, B)
-      Hpredict <- SSmicmen(Hdata$D, A, B)
+
+      Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
+      Hpredict <- predict(modSelected)
     }
     
     if(drawGraph == TRUE)
@@ -170,41 +156,35 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
   } 
   else
   {
-    ################## Compare Models
+    # Compare Models ----------------------------------------------------------
+    
+    logD_plot = data.frame(logD = log(D_Plot))
+    D_plot = data.frame(D = D_Plot)
+    Plot = data.frame(D = D_Plot, log1 = NA, log2 = NA, log3 = NA, weibull = NA, michaelis = NA)
     
     # Let's compare all the models and plot all the graphs !
     mod_log1 <- loglogFunction(Hdata, method = "log1")
-    RSElog <- summary(mod_log1)$sigma
-    coeff <- summary(mod_log1)$coefficients
-    Hpredict_log1_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot)) 
-    Hpredict_log1 <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D)) 
+    RSElog = 0.5 * summary(mod_log1)$sigma ^ 2
+    Plot$log1 <- exp( predict(mod_log1, newdata = logD_plot) + RSElog )
+    Hpredict_log1 <- exp( predict(mod_log1) + RSElog )
     
     mod_log2 <- loglogFunction(Hdata, method = "log2")
-    RSElog <- summary(mod_log2)$sigma
-    coeff <- summary(mod_log2)$coefficients
-    Hpredict_log2_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot) + coeff[3]*log(D_Plot)^2) 
-    Hpredict_log2 <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D) + coeff[3]*log(Hdata$D)^2) 
+    RSElog = 0.5 * summary(mod_log2)$sigma ^ 2
+    Plot$log2 <- exp( predict(mod_log2, newdata = logD_plot) + 0.5*RSElog^2 )
+    Hpredict_log2 <- exp( predict(mod_log2) + 0.5*RSElog^2 )
     
     mod_log3 <- loglogFunction(Hdata, method = "log3")
-    RSElog <- summary(mod_log3)$sigma
-    coeff <- summary(mod_log3)$coefficients
-    Hpredict_log3_plot <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(D_Plot) + coeff[3]*log(D_Plot)^2 + coeff[4]*log(D_Plot)^3)
-    Hpredict_log3 <- exp(coeff[1] + 0.5*RSElog^2 + coeff[2]*log(Hdata$D) + coeff[3]*log(Hdata$D)^2 + coeff[4]*log(Hdata$D)^3)
+    RSElog = 0.5 * summary(mod_log3)$sigma ^ 2
+    Plot$log3 <- exp( predict(mod_log3, newdata = logD_plot) + 0.5*RSElog^2 )
+    Hpredict_log3 <- exp( predict(mod_log3) + 0.5*RSElog^2 )
     
     mod_wei <- weibullFunction(Hdata, weight)
-    coeff <- summary(mod_wei)$coefficients
-    a <- coeff[1]
-    b <- coeff[2]
-    c <- coeff[3]
-    Hpredict_wei_plot <- a*(1-exp(-(D_Plot/b)^c))
-    Hpredict_wei <- a*(1-exp(-(Hdata$D/b)^c))
+    Plot$weibull <- predict(mod_wei, newdata = D_plot)
+    Hpredict_wei <- predict(mod_wei)
     
     mod_mich <- michaelisFunction(Hdata, weight)
-    coeff <- summary(mod_mich)$coefficients
-    A <- coeff[1]
-    B <- coeff[2]
-    Hpredict_mich_plot <- SSmicmen(D_Plot, A, B)
-    Hpredict_mich <- SSmicmen(Hdata$D, A, B)
+    Plot$michaelis <- predict(mod_mich, newdata = D_plot)
+    Hpredict_mich <- predict(mod_mich)
     
     # Plot everything
     par(mar = c(5, 5, 3, 3))
@@ -266,19 +246,15 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
   
   # Results (RSE, model coefficient, residuals, R?)
   
-  coeff <- summary(modSelected)$coefficients
-  Residuals <- Hdata$H - Hpredict 
-  rSquared <- summary(modSelected)$r.squared
-  formula <- summary(modSelected)$call
   RSE <- sqrt(sum(Residuals^2, na.rm = TRUE)/summary(modSelected)$df[2])
   
   output <- list(
     input = list(H = Hdata$H, D = Hdata$D),
     model = modSelected,
-    residuals = Residuals,
-    coefficients = coeff,
-    R.squared = rSquared,
-    formula = formula,
+    residuals = Hdata$H - Hpredict,
+    coefficients = summary(modSelected)$coefficients,
+    R.squared = summary(modSelected)$r.squared,
+    formula = summary(modSelected)$call,
     method = method,
     predicted = Hpredict,
     RSE = RSE)
