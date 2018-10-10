@@ -55,6 +55,15 @@ test_that("AGBmonteCarlo error",{
   
   expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = 0, HDmodel = HDmodel), 
                "Too many input")
+  
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = seq(1,10)),
+               "H must be the same length as D and errH must be either one value or the same length as D")
+  
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H[1:10], errH = seq(1,10)),
+               "H must be the same length as D and errH must be either one value or the same length as D")
+  
+  expect_error(AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H[1:10], errH = 0),
+               "H must be the same length as D and errH must be either one value or the same length as D")
 })
 
 
