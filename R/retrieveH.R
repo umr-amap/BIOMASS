@@ -50,8 +50,29 @@
 
 retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
 {  
+  
+
+  # parameters verification -------------------------------------------------
+
   if(is.null(model) & is.null(region) & is.null(coord))
     stop("Either model, region, coord should be given")
+  
+  if(!is.null(region) && length(region) != 1 && length(region) != length(D)) 
+    stop("The number of region does not match the number of trees")
+  
+  if ( !is.null(coord) && ( (is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != length(D)) ) )
+    stop("coord should be either
+             - a vector (e.g. c(longitude, latitude))
+             - a matrix with two columns (longitude and latitude) 
+             having the same number of rows as the number of trees (length(D))")
+  
+  if( (!is.null(HDmodel) && !is.null(coord)) || (!is.null(HDmodel) && !is.null(H)) || (!is.null(coord) && !is.null(H)) )
+    stop("Too many input, choose one input among those arguments:
+              - H and Herr
+              - HDmodel
+              - coord")
+  
+  
   
   # First case : with a model fitted with HDfunction
   if(!is.null(model))
@@ -70,11 +91,6 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
       if(nrow(coord) == 1)
         coord <- cbind(rep(coord[1], length(D)), rep(coord[2], length(D)))
       
-      if(nrow(coord) != length(D))
-        stop("coord should be either 
-- a vector (e.g. c(longitude, latitude)) or 
-- a matrix/dataframe with two columns (longitude and latitude) 
-             having the same number of rows as the number of trees (length(D))")
       
       logD <- log(D)
       E <- computeE(coord) # E = environmental index in Chave et al. 2014
@@ -87,11 +103,8 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
     else
     {
       # Third case : with the region, use the weibull parameters from Feldpaush et al. 2012 Biogeosciences
-      if(length(region) != 1 & length(region) != length(D)) 
-          stop("The number of region does not match the number of trees") 
-
-      feldCoef <- NULL
-	  data(feldCoef, envir = environment())
+      
+      feldCoef <- BIOMASS::feldCoef
       a <- feldCoef[region, "a"]
       b <- feldCoef[region, "b"]
       c <- feldCoef[region, "c"]

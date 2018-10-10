@@ -48,7 +48,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   if (file_exists){
     ## If the file isn't a zip but exist
-    if (length(grep("zip", nameFile)) == 0)
+    if ( any(grepl("zip", nameFile)) )
       return(list("path" = path1, "sep" = sep))
     
     
@@ -79,7 +79,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   
   ###### If nameFile isn't a zip file
-  if (length(grep("zip", nameFile)) == 0){
+  if ( any(grepl("zip", nameFile)) ){
     repertoryControl(nameFile = paste(nameFile, "zip", sep = "_"))
     return(list("path" = path1, "sep" = sep))
   }
