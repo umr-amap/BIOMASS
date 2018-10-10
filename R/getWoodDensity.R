@@ -139,7 +139,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   {
     setDT(addWoodDensityData)
     if ( !("family" %in% names(addWoodDensityData)) ){
-      setDT(copy(BIOMASS::genusFamily))
+      genusFamily = setDT(copy(BIOMASS::genusFamily))
       addWoodDensityData[genusFamily,on="genus",family:=i.family]
     }
     addWoodDensityData <- addWoodDensityData[!is.na(wd),]
@@ -157,7 +157,8 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   {
     inputData[, family := as.character(family)]
   } else {
-    setDT(copy(BIOMASS::genusFamily))
+    if (!exists("genusFamily"))
+      genusFamily = setDT(copy(BIOMASS::genusFamily))
     inputData[genusFamily,on="genus",family:=i.family]
   }
   
