@@ -30,7 +30,22 @@
 
 correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
-  ######## sub-function definition
+
+  # parameters verification -------------------------------------------------
+  
+  
+  if ( all(is.na(genus)) )
+    stop("Please supply at least one name")
+  
+  if (!is.null(species)){
+    if (all(is.na(species)) && all(is.na(genus)))
+      stop("Please supply at least one name")
+    if(length(genus) != length(species))
+      stop("You should provide two vectors of genus and species of the same length")
+  }
+  
+
+  # sub-function definition -------------------------------------------------
   
   strsplit_NA = function(x, patern = " "){
     split = tstrsplit(x, patern)
@@ -39,8 +54,10 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
     return(split)
   }
   
-  ########### preparation of log file
   
+  
+  
+  # preparation of log file -------------------------------------------------
   path = repertoryControl(correctTaxo = T)
   
   if( !file.exists(path) ){
@@ -57,9 +74,10 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       file_exist = F
     }
   }
+
   
-  ########### Data preparation
   
+  # Data preparation --------------------------------------------------------
   options(stringsAsFactors = F)
   
   genus = as.character(genus) 
@@ -67,32 +85,25 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   if(!is.null(species)){
     species = as.character(species)
     
-    if (all(is.na(species)) & all(is.na(genus)))
-        stop("Please supply at least one name", call. = FALSE)
-    
-    # Check the length of the inputs
-    if(length(genus) != length(species))
-      stop("You should provide two vectors of genus and species of the same length")
-    
     # Create a dataframe with the original values
     oriData <- data.table(genus = genus, species = species, 
                           query = paste(genus, species), id = 1:length(genus))
     
   }else{
     
-    if(all(is.na(genus)))
-      stop("Please supply at least one name", call. = FALSE)
-    
     # Create a dataframe with the original values
     oriData <- data.table(genus = sapply(strsplit(genus," "),"[",1), 
                           species = sapply(strsplit(genus," "),"[",2),
                           query = genus, id = 1:length(genus))
+
   }
   setkey(oriData, query)
+  
   
   # Regroup unique query and filter the column species and genus if they are NA in the same time
   query = oriData[!(is.na(genus)&is.na(species)), query, by = query][, 2]
   query[, c("genus", "species") := strsplit_NA(query)]
+  
   
   # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the two.
   if(file_exist){
@@ -107,7 +118,8 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
                 taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected, score1)], 
                 all.x = T, by = "query")
     out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
-    return(setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")]))
+    out = setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")])
+    return(out)
   }
   
   
@@ -122,15 +134,15 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby, length.out = length(query))]
   
   
-  ########### sending and retrive the data from taxosaurus
   
+  
+  # sending and retrive the data from taxosaurus ----------------------------
   tc <- function(l) Filter(Negate(is.null), l)
   con_utf8 <- function(x) content(x, "text", encoding = "UTF-8")
   
   url <- "http://taxosaurus.org/submit"
   
   setkey(query, query)
-  query[, c("matchedName", "score1") := list(as.character(NA), as.double(0))]
   
   for(s in query[, unique(slicedQu)])
   {
@@ -154,7 +166,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       retrieve <- fromJSON(tt, FALSE)[["uri"]]
     }
     
-    print(paste("Calling", retrieve))
+    print(paste("Calling", retrieve, "package :", s, "/", query[, max(slicedQu)]))
     
     timeout <- "wait"
     while (timeout == "wait") 
@@ -178,22 +190,21 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
       receiveData[,1] <- gsub("\r", "", receiveData[,1])
       
       
-      query[submittedName, ':='(matchedName = receiveData[,1], score1 = as.double(receiveData[, 2]))]
+      query[chmatch(submittedName, query), ':='(matchedName = receiveData[,1], score1 = as.double(receiveData[, 2]))]
     }
   }
   
-  ########### data analysis
-  
-  query[ , c( "nameModified", "outName" ) := list(as.character(TRUE), as.character(NA) )]
+
+  # data analysis -----------------------------------------------------------
   query[, slicedQu := NULL]
   
   # If score ok
-  query[score1 >= score, outName := matchedName]
+  query[score1 >= score, ':='(outName = matchedName, nameModified = as.character(TRUE))]
   
   # If score non ok
   query[score1 < score, c("outName", "nameModified") := list(query, "NoMatch(low_score)")]
   
-  # If no modified name value of nameModified as False
+  # If no modified name value set nameModified as False
   query[!is.na(outName) & outName == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
   
   
@@ -214,7 +225,9 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   
-  ########## merge the data for the return
+
+  # merge the data for the return -------------------------------------------
+
   out = merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
   
   if(exists("taxo_already_have")){
@@ -224,16 +237,20 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   }
   
   
-  ########### write all the new data on the log file created
+  
+  # write all the new data on the log file created --------------------------
   if(file.exists(path))
     fwrite(query[, .(outName, nameModified, score1), by=query], 
          file = path, sep = ",", append = T)
   else
     fwrite(query[, .(outName, nameModified, score1), by=query], 
            file = path, sep = ",")
+
   
-  cat("Your new result has been saved/append in the file :", path)
+  message("Your new result has been saved/append in the file :", path)
   out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
-  return(setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)]))
+  out = setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
+  
+  return( out )
   
 }
