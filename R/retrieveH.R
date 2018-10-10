@@ -66,7 +66,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
              - a matrix with two columns (longitude and latitude) 
              having the same number of rows as the number of trees (length(D))")
   
-  if( (!is.null(HDmodel) && !is.null(coord)) || (!is.null(HDmodel) && !is.null(H)) || (!is.null(coord) && !is.null(H)) )
+  if( (!is.null(model) && !is.null(coord)) || (!is.null(model) && !is.null(region)) || (!is.null(coord) && !is.null(region)) )
     stop("Too many input, choose one input among those arguments:
               - H and Herr
               - HDmodel

@@ -245,6 +245,8 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
   
   # Results (RSE, model coefficient, residuals, R?)
   
+  names(Hpredict) = NULL
+  
   Residuals = Hdata$H - Hpredict
   RSE <- sqrt(sum(Residuals^2, na.rm = TRUE)/summary(modSelected)$df[2])
   

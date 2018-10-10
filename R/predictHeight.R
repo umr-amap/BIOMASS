@@ -56,6 +56,8 @@ predictHeight <- function(D, model, err = FALSE)
     Hpredict = predict(model$model, D_) + e
   }
   
+  names(Hpredict) = NULL
+  
   # If H predicted values are negative due to random error assignment
   Hpredict[Hpredict <= 0] <- 0.1
   

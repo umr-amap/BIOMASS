@@ -48,7 +48,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   if (file_exists){
     ## If the file isn't a zip but exist
-    if ( any(grepl("zip", nameFile)) )
+    if ( !any(grepl("zip", nameFile)) )
       return(list("path" = path1, "sep" = sep))
     
     
