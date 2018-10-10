@@ -16,9 +16,8 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
   path = user_data_dir("BIOMASS")
   
-  if( !dir.exists( path ) ){
+  if( !dir.exists( path ) )
     dir.create( path, recursive = T )
-  }
   
   if( correctTaxo )
     return(paste(path, "correctTaxo.log", sep = sep))
@@ -35,7 +34,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
       message("Your repertory \"", nameFile, "\" has been moved in this repertory : ", path)
     } else {
       message("Your repertory \"", nameFile,"\" already exists in this path : ", path, " and in working directory. ",
-              "You can delete the repertory ", nameFile, ".")
+              "You can delete the repertory ", nameFile)
     }
     file_exists = T
     
@@ -73,6 +72,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
     bioData <- getData('worldclim', var='bio', res=2.5, path = path)
     unzip(paste(path1, "bio_2-5m_bil.zip", sep = sep), exdir = paste(path, "wc2-5", sep = sep), files = c("bio4.bil", "bio15.bil"))
     
+    message("Your file ", nameFile, " has been download and deziped in this repertory : ", path)
     return(list("path" = path1, "sep" = sep))
   }
   
@@ -92,5 +92,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   DEMzip <- download.file(zip_url, destfile = path1)
   unzip(path1, exdir = paste(path, strsplit(nameFile, "_")[[1]][1], sep = sep))
+  message("Your file ", nameFile, " has been download and deziped in this repertory : ", path)
+  
   return()
 }
