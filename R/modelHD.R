@@ -191,11 +191,10 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
          xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
          main = "Model comparison",cex.main = 2)
-    lines(D_Plot, Hpredict_log1_plot, lwd = 2, col = "blue")
-    lines(D_Plot, Hpredict_log2_plot, lwd = 2, col = "green")
-    lines(D_Plot, Hpredict_log3_plot, lwd = 2, col = "red")   
-    lines(D_Plot, Hpredict_wei_plot, lwd = 2, col = "orange")
-    lines(D_Plot, Hpredict_mich_plot,lwd = 2, col = "purple")
+    color = c("blue", "green", "red", "orange", "purple")
+    for (i in 2:ncol(Plot))
+      lines(Plot[,1], Plot[,i], lwd = 2, col = color[i-1])
+
     
     legend('bottomright', c("Log 1", "Log 2", "Log 3", "Weibull", "Michaelis"),
            lty = c(1, 1, 1, 1, 1), lwd = c(2, 2, 2, 2, 2), cex = 1.5,
