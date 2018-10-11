@@ -13,7 +13,7 @@
 
 folderControl = function(nameFile = "", correctTaxo = FALSE){
   
-  sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
+  sep = ifelse( grepl("win", Sys.info()["sysname"], ignore.case = T), "\\", "/" )
   path = user_data_dir("BIOMASS")
   
   if( !dir.exists( path ) )
