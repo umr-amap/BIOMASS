@@ -58,7 +58,7 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   
   
   # preparation of log file -------------------------------------------------
-  path = repertoryControl(correctTaxo = T)
+  path = folderControl(correctTaxo = T)
   
   if( !file.exists(path) ){
     file_exist = F

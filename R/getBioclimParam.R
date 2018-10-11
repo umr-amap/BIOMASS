@@ -40,8 +40,8 @@
 getBioclimParam <- function(coord)
 {  
   
-  pathwc = repertoryControl("wc2-5")
-  pathcwd = repertoryControl("CWD")
+  pathwc = folderControl("wc2-5")
+  pathcwd = folderControl("CWD")
   
   ### Load rasters
   tempSeas_rast <- raster(paste(pathwc$path, "bio4.bil", sep = pathwc$sep))

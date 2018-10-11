@@ -24,7 +24,7 @@ test_that("CorrectTaxo",{
                            speciesCorrected = c("fulvum", "?"), 
                            nameModified = c("TRUE", "NoMatch(low_score)"))
   )
-  path = repertoryControl(correctTaxo = T)
+  path = folderControl(correctTaxo = T)
   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
   expect_true(file.exists(path))
   

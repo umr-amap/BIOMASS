@@ -46,7 +46,7 @@ computeE <- function(coord)
 {  
   ### Compute the Environmental Index (Chave et al. 2014)
   
-  path = repertoryControl("E")
+  path = folderControl("E")
   
   nam <- paste(path$path, "E.bil", sep = path$sep)
   RAST <- raster(nam)
