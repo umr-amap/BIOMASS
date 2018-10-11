@@ -49,9 +49,11 @@ predictHeight <- function(D, model, err = FALSE)
   }
   
   if (logmod){
-    Hpredict = exp( predict(model$model, data.frame(logD = log(D))) + e )
+    logD = data.frame(logD = log(D))
+    Hpredict = exp( predict(model$model, logD) + e )
   } else {
-    Hpredict = predict(model$model, data.frame(D = D)) + e
+    D_ = data.frame(D = D)
+    Hpredict = predict(model$model, D_) + e
   }
   
   names(Hpredict) = NULL

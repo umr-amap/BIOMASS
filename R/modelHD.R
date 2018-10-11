@@ -123,16 +123,13 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
       # Baskerville correction 1972
       RSElog_2 = 0.5*RSElog^2
       Hpredict = exp( predict(modSelected) + RSElog_2 )
-      Hpredict_plot = exp( predict(modSelected, newdata = data.frame(logD = log(D_Plot))) + RSElog_2 )
     
     }  
     
     ################## Weibull 3 parameters
     if(method == "weibull")
     {
-      modSelected <- weibullFunction(Hdata, weight) 
-      
-      Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
+      modSelected <- weibullFunction(Hdata, weight)
       Hpredict <- predict(modSelected)
     }
     
@@ -140,13 +137,19 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     if(method == "michaelis")
     {   
       modSelected <- michaelisFunction(Hdata, weight) 
-
-      Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
       Hpredict <- predict(modSelected)
     }
     
     if(drawGraph == TRUE)
-    {      
+    { 
+      if ( grepl("log", method) ){
+        logD = data.frame(logD = log(D_Plot))
+        Hpredict_plot = exp( predict(modSelected, newdata = logD) + RSElog_2 )
+      } else {
+        D_ = data.frame(D = D_Plot)
+        Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
+      }
+        
       par(mar = c(5, 5, 3, 3))
       plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
            xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
