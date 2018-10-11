@@ -203,7 +203,6 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     for (i in 2:ncol(Plot))
       lines(Plot[,1], Plot[,i], lwd = 2, col = color[i-1])
 
-    
     legend('bottomright', c("Log 1", "Log 2", "Log 3", "Weibull", "Michaelis"),
            lty = c(1, 1, 1, 1, 1), lwd = c(2, 2, 2, 2, 2), cex = 1.5,
            col = c("blue", "green", "red", "orange", "purple"))
@@ -225,28 +224,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     cat("5 : Michaelis - Menten (purple) \n")
     printFitData(Hdata$H, Hpredict_mich, mod_mich)
     
-    ans <- scan(what = integer(), nmax = 1, quiet = TRUE)
+    message("\n If you want to use a particular model, use the parameter 'method' in this function.")
     
-    modSelected <- switch(ans, 
-                          "1" = mod_log1, 
-                          "2" = mod_log2, 
-                          "3" = mod_log3, 
-                          "4" = mod_wei, 
-                          "5" = mod_mich) 
-    
-    Hpredict <- switch(ans, 
-                       "1" = Hpredict_log1, 
-                       "2" = Hpredict_log2, 
-                       "3" = Hpredict_log3, 
-                       "4" = Hpredict_wei, 
-                       "5" = Hpredict_mich) 
-    
-    method <- switch(ans, 
-                     "1" = "log1", 
-                     "2" = "log2", 
-                     "3" = "log3", 
-                     "4" = "weibull", 
-                     "5" = "michaelis") 
+    return()
   }
   
   ################## Return the model chosen
