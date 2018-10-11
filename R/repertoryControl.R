@@ -1,17 +1,17 @@
-#' Check if we have the file or repertory
+#' Check if we have the file or folder
 #' 
-#' Create a repertory if needed of it, control all of the file which needed to be downloaded and 
-#' place in the specifique repertory
+#' Create a folder if needed of it, control all of the file which needed to be downloaded and 
+#' place in the specifique folder
 #'
-#' @param nameFile the name of the file or repertory
+#' @param nameFile the name of the file or folder
 #' @param correctTaxo (binary) if we are in the correctTaxo function
 #'
-#' @return the path to the repertory, and the separator if correctTaxo is False
+#' @return the path to the folder, and the separator if correctTaxo is False
 #'
 #' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 
-repertoryControl = function(nameFile = "", correctTaxo = FALSE){
+folderControl = function(nameFile = "", correctTaxo = FALSE){
   
   sep = ifelse(length(grep( "win", Sys.info()["sysname"], ignore.case = T )) != 0, "\\", "/")
   path = user_data_dir("BIOMASS")
@@ -26,29 +26,29 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   path1 = paste(path, nameFile, sep = sep)
   file_exists = F
-  ############# if the repertory exists in the working directory
+  ############# if the folder exists in the working directory
   if (file.exists(nameFile)){
     
     if (!file.exists(path1)){
       file.rename(nameFile, path1)
-      message("Your repertory \"", nameFile, "\" has been moved in this repertory : ", path)
+      message("Your folder \"", nameFile, "\" has been moved in this folder : ", path)
     } else {
-      message("Your repertory \"", nameFile,"\" already exists in this path : ", path, " and in working directory. ",
-              "You can delete the repertory ", nameFile)
+      message("Your folder \"", nameFile,"\" already exists in this path : ", path, " and in working directory. ",
+              "You can delete the folder ", nameFile)
     }
     file_exists = T
     
   }
   
   
-  ############# if the repertory exists in the designed repertory
+  ############# if the folder exists in the designed folder
   if (file.exists(path1))
     file_exists = T
   
   
   if (file_exists){
     ## If the file isn't a zip but exist
-    if ( !any(grepl("zip", nameFile)) )
+    if(!grepl("_zip$", nameFile, ignore.case=TRUE))
       return(list("path" = path1, "sep" = sep))
     
     
@@ -65,14 +65,14 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
     
   
   
-  ############# if the repertory doesn't exists anywhere
-  ###### if the repertory asked is the World Climate
+  ############# if the folder doesn't exists anywhere
+  ###### if the folder asked is the World Climate
   if (nameFile == "wc2-5"){
     ### Get the BioClim param from the http://www.worldclim.org website
     bioData <- getData('worldclim', var='bio', res=2.5, path = path)
     unzip(paste(path1, "bio_2-5m_bil.zip", sep = sep), exdir = paste(path, "wc2-5", sep = sep), files = c("bio4.bil", "bio15.bil"))
     
-    message("Your file ", nameFile, " has been download and deziped in this repertory : ", path)
+    message("Your file ", nameFile, " has been download and deziped in this folder : ", path)
     return(list("path" = path1, "sep" = sep))
   }
   
@@ -80,7 +80,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   ###### If nameFile isn't a zip file
   if ( any(grepl("zip", nameFile)) ){
-    repertoryControl(nameFile = paste(nameFile, "zip", sep = "_"))
+    folderControl(nameFile = paste(nameFile, "zip", sep = "_"))
     return(list("path" = path1, "sep" = sep))
   }
   
@@ -92,7 +92,7 @@ repertoryControl = function(nameFile = "", correctTaxo = FALSE){
   
   DEMzip <- download.file(zip_url, destfile = path1)
   unzip(path1, exdir = paste(path, strsplit(nameFile, "_")[[1]][1], sep = sep))
-  message("Your file ", nameFile, " has been download and deziped in this repertory : ", path)
+  message("Your file ", nameFile, " has been download and deziped in this folder : ", path)
   
   return()
 }

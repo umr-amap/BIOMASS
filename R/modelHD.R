@@ -68,7 +68,7 @@
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
 {   
-
+  
   # parameters verification -------------------------------------------------
   
   # Check if there is enough data to compute an accurate model
@@ -111,6 +111,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
   if(!is.null(method))
   {
     RSElog <- NULL
+    method = tolower(method)
     
     ################## Log-log model
     if(grepl("log", method))
