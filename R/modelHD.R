@@ -121,8 +121,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
       RSElog <- summary(modSelected)$sigma
       
       # Baskerville correction 1972
-      Hpredict = exp( predict(modSelected) + 0.5*RSElog^2 )
-      Hpredict_plot = exp( predict(modSelected, newdata = data.frame(logD = log(D_Plot))) + 0.5*RSElog^2 )
+      RSElog_2 = 0.5*RSElog^2
+      Hpredict = exp( predict(modSelected) + RSElog_2 )
+      Hpredict_plot = exp( predict(modSelected, newdata = data.frame(logD = log(D_Plot))) + RSElog_2 )
     
     }  
     
@@ -165,19 +166,22 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     
     # Let's compare all the models and plot all the graphs !
     mod_log1 <- loglogFunction(Hdata, method = "log1")
-    RSElog = 0.5 * summary(mod_log1)$sigma ^ 2
-    Plot$log1 <- exp( predict(mod_log1, newdata = logD_plot) + RSElog )
-    Hpredict_log1 <- exp( predict(mod_log1) + RSElog )
+    RSElog = summary(mod_log1)$sigma
+    RSElog_2 = 0.5*RSElog^2
+    Plot$log1 <- exp( predict(mod_log1, newdata = logD_plot) + RSElog_2 )
+    Hpredict_log1 <- exp( predict(mod_log1) + RSElog_2 )
     
     mod_log2 <- loglogFunction(Hdata, method = "log2")
-    RSElog = 0.5 * summary(mod_log2)$sigma ^ 2
-    Plot$log2 <- exp( predict(mod_log2, newdata = logD_plot) + 0.5*RSElog^2 )
-    Hpredict_log2 <- exp( predict(mod_log2) + 0.5*RSElog^2 )
+    RSElog = summary(mod_log2)$sigma
+    RSElog_2 = 0.5*RSElog^2
+    Plot$log2 <- exp( predict(mod_log2, newdata = logD_plot) + RSElog_2 )
+    Hpredict_log2 <- exp( predict(mod_log2) + RSElog_2 )
     
     mod_log3 <- loglogFunction(Hdata, method = "log3")
-    RSElog = 0.5 * summary(mod_log3)$sigma ^ 2
-    Plot$log3 <- exp( predict(mod_log3, newdata = logD_plot) + 0.5*RSElog^2 )
-    Hpredict_log3 <- exp( predict(mod_log3) + 0.5*RSElog^2 )
+    RSElog = summary(mod_log3)$sigma
+    RSElog_2 = 0.5*RSElog^2
+    Plot$log3 <- exp( predict(mod_log3, newdata = logD_plot) + RSElog_2 )
+    Hpredict_log3 <- exp( predict(mod_log3) + RSElog_2 )
     
     mod_wei <- weibullFunction(Hdata, weight)
     Plot$weibull <- predict(mod_wei, newdata = D_plot)
