@@ -27,12 +27,13 @@ This function has been adapted from the \code{tnrs} function from the taxize pac
 
 }
 \references{
-Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}. BMC bioinformatics, 14, 1.
+Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated 
+standardization of plant names}. BMC bioinformatics, 14, 1.
 
 Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 }
 \author{
 Ariane TANGUY
 
-Maxime REJOU-MECHAIN
+Maxime REJOU-MECHAIN, Arthur PERE
 }

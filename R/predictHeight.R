@@ -13,7 +13,7 @@
 #' Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 #'
 #' @return Returns a vector of total tree height (in m).
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY
+#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link[minpack.lm]{nlsLM}}
 #'
 #' @examples

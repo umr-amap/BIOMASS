@@ -42,7 +42,7 @@ Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces f
 Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
 }
 \author{
-Ariane TANGUY
+Ariane TANGUY, Arthur PERE
 }
 \keyword{bioclim}
 \keyword{internal}

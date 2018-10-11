@@ -59,7 +59,14 @@
 #' Dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)}
 #' \item{nInd}{Number of individuals taken into account to compute the mean wood density}
 #' @export
-#'
+#' 
+#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
+#' 
+#' @references 
+#' Chave, Jerome, et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
+#' Zanne, A. E., et al. \emph{Global wood density database.} Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
+#' 
+#' 
 #' @examples
 #' # Load a data set
 #' data(KarnatakaForest)

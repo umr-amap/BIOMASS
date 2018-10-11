@@ -38,7 +38,7 @@
 #' \item{predicted}{Predicted height values}
 #' }
 #' 
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY
+#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link{retrieveH}}, \code{\link{predictHeight}}
 #' 
 #' @export

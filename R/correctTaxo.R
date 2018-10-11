@@ -10,11 +10,12 @@
 #' 
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #' 
-#' @references Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}. BMC bioinformatics, 14, 1.
+#' @references Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated 
+#' standardization of plant names}. BMC bioinformatics, 14, 1.
 #' @references Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 #' 
 #' @author Ariane TANGUY
-#' @author Maxime REJOU-MECHAIN
+#' @author Maxime REJOU-MECHAIN, Arthur PERE
 #' 
 #' @examples 
 #' \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}

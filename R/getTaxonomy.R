@@ -8,7 +8,7 @@
 #' @param findOrder (Boolean) If \code{TRUE}, the output will contain the taxonomical orders of the families.
 #'
 #' @return Data frame with the order (if \code{findOrder} is \code{TRUE}), family and genus.
-#' @author Ariane TANGUY, Maxime REJOU-MECHAIN
+#' @author Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 #' @export
 #'
 #' @examples

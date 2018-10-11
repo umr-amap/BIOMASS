@@ -73,5 +73,5 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", use
 \code{\link{retrieveH}}, \code{\link{predictHeight}}
 }
 \author{
-Maxime REJOU-MECHAIN, Ariane TANGUY
+Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 }

@@ -7,7 +7,7 @@
 #' @param correctTaxo (binary) if we are in the correctTaxo function
 #'
 #' @return the path to the folder, and the separator if correctTaxo is False
-#'
+#' @author Arthur PERE
 #' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 

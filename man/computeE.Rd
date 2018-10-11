@@ -45,10 +45,11 @@ coord <- cbind(long, lat)
 
 }
 \references{
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
+Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+Global Change Biology, 20 (10), 3177-3190
 }
 \author{
-Jerome CHAVE, Maxime REJOU-MECHAIN, Ariane TANGUY
+Jerome CHAVE, Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 }
 \keyword{environmental}
 \keyword{index}

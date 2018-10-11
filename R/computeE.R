@@ -21,8 +21,9 @@
 #'
 #' @return The function returns \code{E}, the environmental index computed thanks to the Chave et al 2014 formula.
 #' @references 
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
-#' @author Jerome CHAVE, Maxime REJOU-MECHAIN, Ariane TANGUY
+#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+#' Global Change Biology, 20 (10), 3177-3190
+#' @author Jerome CHAVE, Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' 
 #' @export
 #' @keywords environmental index internal

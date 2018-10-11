@@ -17,7 +17,7 @@
 #' @references 
 #' Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, International journal of climatology, 25(15), 1965-1978.
 #' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
-#' @author Ariane TANGUY
+#' @author Ariane TANGUY, Arthur PERE
 #' @keywords bioclim param internal
 #' @export
 #'

@@ -24,8 +24,9 @@
 #' @return The function returns the ABG in Mg (or ton).
 #' @export
 #' @references 
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY
+#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+#' Global Change Biology, 20 (10), 3177-3190
+#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link{computeE}}
 #' @examples
 #' # Create variables

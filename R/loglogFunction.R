@@ -18,7 +18,8 @@
 #' @references
 #' Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.
 #' Weibull, W. (1951). \emph{Wide applicability}. Journal of applied mechanics, 103.
-#' Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}. Canadian Journal of Forest Research, 2(1), 49-53.
+#' Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}. 
+#' Canadian Journal of Forest Research, 2(1), 49-53.
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY
 #'
 

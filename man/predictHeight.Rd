@@ -40,6 +40,6 @@ H <- predictHeight(NouraguesHD$D, model)
 \code{\link[minpack.lm]{nlsLM}}
 }
 \author{
-Maxime REJOU-MECHAIN, Ariane TANGUY
+Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 }
 \keyword{Internal}

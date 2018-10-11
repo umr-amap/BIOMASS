@@ -56,11 +56,12 @@ H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 }
 \references{
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
-Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.} Global change biology 20.10 (2014): 3177-3190.
+Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.} 
+Global change biology 20.10 (2014): 3177-3190.
 }
 \seealso{
 \code{\link{modelHD}}
 }
 \author{
-Ariane TANGUY, Maxime REJOU-MECHAIN
+Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 }

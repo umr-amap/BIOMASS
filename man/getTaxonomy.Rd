@@ -27,5 +27,5 @@ getTaxonomy("Aphelandra", findOrder = TRUE)
 
 }
 \author{
-Ariane TANGUY, Maxime REJOU-MECHAIN
+Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 }

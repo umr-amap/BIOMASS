@@ -46,7 +46,7 @@
 #' @references Rejou-Mechain et al. (in prep). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
 #' uncertainty in tropical forests}.
 #' 
-#' @author Bruno HERAULT, Camille PIPONIOT,  Ariane TANGUY, Maxime REJOU-MECHAIN
+#' @author Bruno HERAULT, Camille PIPONIOT,  Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 #' 
 #' @examples 
 #' # Load a database

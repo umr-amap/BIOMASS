@@ -43,8 +43,8 @@ set to 'World', but you can restrict the WD estimates to a single region :
 
 \item{addWoodDensityData}{A dataframe containing additional wood density data to be
 combined with the global wood density database. The dataframe should be organized 
-in a dataframe with three columns: "genus","species","wd" (column order and names 
-should be respected).}
+in a dataframe with three (or four) columns: "genus","species","wd", the fourth 
+column "famlily" is optional.}
 }
 \value{
 Returns a dataframe containing the following information: 
@@ -94,8 +94,15 @@ WD <- getWoodDensity(family = KarnatakaForest$family,
 str(WD)
 
 }
+\references{
+Chave, Jerome, et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
+Zanne, A. E., et al. \emph{Global wood density database.} Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
+}
 \seealso{
 \code{\link{wdData}}, \code{\link{sd_10}}
+}
+\author{
+Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 }
 \keyword{Wood}
 \keyword{density}
