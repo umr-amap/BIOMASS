@@ -264,12 +264,12 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
                           sdWDst=sd(meanWD)
                         )
                         ]
+    inputData[is.na(meanWD), levelWD := stand]
     inputData[meanST,on="stand",by=.EACHI,
               `:=`(
                 meanWD=coalesce(meanWD,meanWDst),
                 nInd=coalesce(nInd,nIndst),
-                sdWD=coalesce(sdWD,sdWDst),
-                levelWD=coalesce(levelWD,"stand")
+                sdWD=coalesce(sdWD,sdWDst)
               )
               ]
   }
