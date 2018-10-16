@@ -31,7 +31,7 @@ If \code{NULL}, all the methods will be compared.}
 \item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D.}
 }
 \value{
-Returns a list  with: 
+Returns a list with if the parameter model is not null: 
 \describe{
 \item{input}{list of the data used to construct the model (list(H, D))}
 \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
@@ -43,6 +43,16 @@ Returns a list  with:
 \item{formula}{Formula of the model}
 \item{method}{Name of the method used to construct the model}
 \item{predicted}{Predicted height values}
+}
+
+If the parameter model is null, the function return a graph with all the methods for 
+comparison, the function also return a data.frame with:
+\describe{
+\item{method}{The method that had been used to construct the graph}
+\item{color}{The color of the curve in the graph}
+\item{RSE}{Residual Standard Error of the model}
+\item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
+\item{Average_bias}{The average bias for the model}
 }
 }
 \description{

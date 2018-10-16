@@ -24,7 +24,7 @@
 #' @details All the back transformations in loglog are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error). 
 #'
 #'
-#' @return Returns a list  with: 
+#' @return Returns a list with if the parameter model is not null: 
 #' \describe{
 #' \item{input}{list of the data used to construct the model (list(H, D))}
 #' \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
@@ -37,6 +37,17 @@
 #' \item{method}{Name of the method used to construct the model}
 #' \item{predicted}{Predicted height values}
 #' }
+#' 
+#' If the parameter model is null, the function return a graph with all the methods for 
+#' comparison, the function also return a data.frame with:
+#' \describe{
+#' \item{method}{The method that had been used to construct the graph}
+#' \item{color}{The color of the curve in the graph}
+#' \item{RSE}{Residual Standard Error of the model}
+#' \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
+#' \item{Average_bias}{The average bias for the model}
+#' }
+#' 
 #' 
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link{retrieveH}}, \code{\link{predictHeight}}
@@ -207,26 +218,35 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
            lty = c(1, 1, 1, 1, 1), lwd = c(2, 2, 2, 2, 2), cex = 1.5,
            col = c("blue", "green", "red", "orange", "purple"))
     
-    cat("Which model would you like to select to model your data ? \n \n")
+    result = data.frame(method = c("log1", "log2", "log3", "weibull", "michaelis"),
+                       color = c("blue", "green", "red", "orange", "purple"),
+                       RSE = NA,
+                       RSElog = NA,
+                       Average_bias = NA)
     
-    cat("1 : Log 1 (blue) \n")
-    printFitData(Hdata$H, Hpredict_log1, mod_log1)
+    printFitData <- function(H, Hpredict, mod, result, model)
+    {
+      res <- H - Hpredict # residuals
+      RSE <- sqrt(sum(res^2)/summary(mod)$df[2]) # Residual standard error
+      bias <- (mean(Hpredict) - mean(H))/mean(H)
+      
+      result[result$method == model, "RSE"] = RSE
+      result[result$method == model, "Average_bias"] = bias
+      if(any(grepl("log",model)))
+        result[result$method == model, "RSElog"] = summary(mod)$sigma
+      
+      return(result)
+    }
     
-    cat("2 : Log 2 (green) \n")
-    printFitData(Hdata$H, Hpredict_log2, mod_log2)
-    
-    cat("3 : Log 3 (red) \n")
-    printFitData(Hdata$H, Hpredict_log3, mod_log3)
-    
-    cat("4 : Weibull (orange) \n")
-    printFitData(Hdata$H, Hpredict_wei, mod_wei)
-    
-    cat("5 : Michaelis - Menten (purple) \n")
-    printFitData(Hdata$H, Hpredict_mich, mod_mich)
+    result = printFitData(Hdata$H, Hpredict_log1, mod_log1, result, "log1")
+    result = printFitData(Hdata$H, Hpredict_log2, mod_log2, result, "log2")
+    result = printFitData(Hdata$H, Hpredict_log3, mod_log3, result, "log3")
+    result = printFitData(Hdata$H, Hpredict_wei, mod_wei, result, "weibull")
+    result = printFitData(Hdata$H, Hpredict_mich, mod_mich, result, "michaelis")
     
     message("\n If you want to use a particular model, use the parameter 'method' in this function.")
     
-    return()
+    return(result)
   }
   
   ################## Return the model chosen
