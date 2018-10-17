@@ -14,9 +14,8 @@ The function returns \code{E}, the environmental index computed thanks to the Ch
 }
 \description{
 Extract the Chave et al. 2014 environmental index thanks to the coordinates of the data. 
-The function is time-consuming at its first use as it downloads a raster in the working directory. 
-However, as soon as the raster is downloaded once, the function then runs fast (if the working directory 
-is not changed or if the raster is copied in the new working directory).
+The function is time-consuming at its first use as it downloads a raster in a folder (see Details).
+However, as soon as the raster is downloaded once, the function then runs fast.
 }
 \details{
 The Chave's environmental index, \code{E}, has been shown to be an important covariable of 
@@ -30,6 +29,18 @@ precipitation seasonality as defined in the Worldclim dataset (bioclimatic varia
 The E index is extracted from a raster file (2.5 arc-second resolution, or ca. 5 km) downloadable 
 at http://chave.ups-tlse.fr/pantropical_allometry.htm
 }
+\section{Localisation}{
+
+The localisation of this folder is :
+\itemize{
+\item On Linux : \code{~/.local/share/BIOMASS}
+\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\Users\<username>\AppData\Local\BIOMASS\BIOMASS}
+\item On Windows XP : \code{C:\Documents and Settings\<username>\Data\BIOMASS\BIOMASS}
+}
+See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+}
+
 \examples{
 # One study site 
 lat <- 4.08 

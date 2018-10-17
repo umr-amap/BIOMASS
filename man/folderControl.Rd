@@ -18,6 +18,22 @@ the path to the folder, and the separator if correctTaxo is False
 Create a folder if needed of it, control all of the file which needed to be downloaded and 
 place in the specifique folder
 }
+\section{Localisation}{
+
+The localisation of this folder is :
+\itemize{
+\item On Linux : \code{~/.local/share/BIOMASS}
+\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\Users\<username>\AppData\Local\BIOMASS\BIOMASS}
+\item On Windows XP : \code{C:\Documents and Settings\<username>\Data\BIOMASS\BIOMASS}
+}
+See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+}
+
+\seealso{
+\code{\link[rappdirs]{user_data_dir}}
+}
 \author{
 Arthur PERE
 }
+\keyword{Internal}

@@ -2,12 +2,25 @@
 #' 
 #' Create a folder if needed of it, control all of the file which needed to be downloaded and 
 #' place in the specifique folder
+#' 
+#' @section Localisation:
+#' The localisation of this folder is :
+#' \itemize{
+#' \item On Linux : \code{~/.local/share/BIOMASS}
+#' \item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
+#' \item On Windows 7 up to 10 : \code{C:\Users\<username>\AppData\Local\BIOMASS\BIOMASS}
+#' \item On Windows XP : \code{C:\Documents and Settings\<username>\Data\BIOMASS\BIOMASS}
+#' }
+#' See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 #'
 #' @param nameFile the name of the file or folder
 #' @param correctTaxo (binary) if we are in the correctTaxo function
 #'
 #' @return the path to the folder, and the separator if correctTaxo is False
 #' @author Arthur PERE
+#' @seealso \code{\link[rappdirs]{user_data_dir}}
+#' 
+#' @keywords Internal
 #' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 

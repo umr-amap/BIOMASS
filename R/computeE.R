@@ -1,11 +1,15 @@
 #' Retrieving Chave's environmental index
 #'
 #'Extract the Chave et al. 2014 environmental index thanks to the coordinates of the data. 
-#'The function is time-consuming at its first use as it downloads a raster in the working directory. 
-#'However, as soon as the raster is downloaded once, the function then runs fast (if the working directory 
-#'is not changed or if the raster is copied in the new working directory).
+#'The function is time-consuming at its first use as it downloads a raster in a folder (see Details).
+#'However, as soon as the raster is downloaded once, the function then runs fast.
+#'
+#' 
 #'
 #' @param coord Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples). 
+#'
+#'
+#' @inheritSection folderControl Localisation
 #'
 #' @details 
 #' The Chave's environmental index, \code{E}, has been shown to be an important covariable of 
@@ -40,7 +44,6 @@
 #' coord <- cbind(long, lat)
 #' \dontrun{E <- computeE(coord)}
 #' 
-#' @importFrom rappdirs user_data_dir
 #' @importFrom raster raster extract
 
 computeE <- function(coord)
