@@ -13,7 +13,8 @@
 #' @param Dlim (optional) Minimum diameter (in cm) for which aboveground biomass should be calculated 
 #' (all diameter below \code{Dlim} will have a 0 value in the output).
 #'
-#' @details This function uses two different ways of computing the above-ground biomass of a tree: 
+#' @details 
+#' This function uses two different ways of computing the above-ground biomass of a tree: 
 #'
 #' 1) If height data are available, the AGB is computed thanks to the following equation (Eq. 5 in Chave et al., 2014): 
 #'  \deqn{AGB = 0.0673 * (WD * H * D^2)^0.976}

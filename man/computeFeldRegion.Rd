@@ -7,14 +7,14 @@
 computeFeldRegion(coord)
 }
 \arguments{
-\item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples)}
+\item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
 The function return a vector with The Feldpausch Region prepared for the \code{retrieveH} function
 }
 \description{
 Extract the Feldpausch et al. (2012) Region thanks to the coordinates of the data. 
-The function is time-consuming at its first use as it downloads a raster in a folder (see details).
+The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see details).
 However, as soon as the raster is downloaded once, the function then runs fast.
 }
 \section{Localisation}{
@@ -23,8 +23,8 @@ The localisation of this folder is :
 \itemize{
 \item On Linux : \code{~/.local/share/BIOMASS}
 \item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
-\item On Windows 7 up to 10 : \code{C:\Users\<username>\AppData\Local\BIOMASS\BIOMASS}
-\item On Windows XP : \code{C:\Documents and Settings\<username>\Data\BIOMASS\BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
+\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
 }
 See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 }

@@ -2,12 +2,16 @@
 #'
 #' This function extracts three bioclimatic parameters thanks to the coordinates of the data: 
 #' the Climatic Water Deficit (CWD), the Temperature Seasonality (TS) and the Precipitation Seasonality (PS).
+#' 
 #' The function is time-consuming at its first use as it downloads three raster files (one for each of 
-#' the parameter) which are then stored in the working directory. However, as soon as the raster is 
-#' downloaded once, the function then runs fast (if the working directory is not changed or if the rasters
-#' are then moved to the new working directory).
+#' the parameter) which are then stored in forders named wc2-5 and CWD (see Localisation).
+#' 
+#' However, as soon as the raster is downloaded once, the function then runs fast.
+#' 
+#' 
+#' @inheritSection folderControl Localisation
 #'
-#' @param coord Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). 
+#' @inheritParams computeE
 #'
 #' @return The function returns a data.frame with \code{tempSeas} (temperature seasonality,
 #'  i.e. bioclimatic variable 4 from the Worldclim dataset; Hijmans et al. 2005), \code{precSeas}
@@ -15,8 +19,11 @@
 #'  et al. 2005) and \code{CWD} (climatic water deficit; Chave et al. 2014). 
 #'  
 #' @references 
-#' Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, International journal of climatology, 25(15), 1965-1978.
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
+#' Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, 
+#' International journal of climatology, 25(15), 1965-1978.
+#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+#' Global Change Biology, 20 (10), 3177-3190
+#' 
 #' @author Ariane TANGUY, Arthur PERE
 #' @keywords bioclim param internal
 #' @export

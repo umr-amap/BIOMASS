@@ -1,11 +1,14 @@
 #' Retrieving tree height from models
 #' 
-#' From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an estimation of the total tree height. 
+#' From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an 
+#' estimation of the total tree height. 
 #'
 #' @param D Vector of diameters.
 #' @param model A model output by the function \code{\link{modelHD}}.
-#' @param coord Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).
-#' @param region Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific and pantropical models proposed by Feldpausch et al. (2012). To be chosen between: 
+#' @param coord Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a 
+#' matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).
+#' @param region Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific 
+#' and pantropical models proposed by Feldpausch et al. (2012). To be chosen between: 
 #' \itemize{
 #'   \item \code{Africa}: Africa
 #'   \item \code{CAfrica}: Central Africa

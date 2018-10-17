@@ -47,6 +47,7 @@ Returns a list  with (if Carbon is FALSE):
 \item{credibilityAGB}{Credibility interval at 95\% of the stand AGB value following the error propagation}
 \item{AGB_simu}{Matrix with the AGB of the trees (rows) times the n iterations (columns)}
 }
+
 Returns a list  with (if Carbon is TRUE): 
 \describe{
   \item{meanAGC}{Mean stand AGC value following the error propagation}

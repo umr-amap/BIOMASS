@@ -1,17 +1,5 @@
-#' Modeling height-diameter relationship with Michaelis-Menten function
-#'
-#' Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A and B are the model parameters to be estimated)
-#'
-#' @param data Dataset with the informations of height (H) and diameter (D)
-#' @param weight (optional) Vector indicating observation weights in the model.
-#'
-#' @return This function give an output similar to the one given by \code{\link{lm}}, obtained for \code{michaelisFunction} from \code{\link[minpack.lm]{nlsLM}}).
-#' @references
-#' Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY
-#' 
-#' @importFrom minpack.lm nls.lm.control nlsLM
-#' 
+#' @rdname HDmethods
+
 michaelisFunction <- function(data, weight = NULL)
 {
   ### Compute the michaelis model of the H-D relationship

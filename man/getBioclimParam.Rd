@@ -7,7 +7,7 @@
 getBioclimParam(coord)
 }
 \arguments{
-\item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).}
+\item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
 The function returns a data.frame with \code{tempSeas} (temperature seasonality,
@@ -18,11 +18,25 @@ The function returns a data.frame with \code{tempSeas} (temperature seasonality,
 \description{
 This function extracts three bioclimatic parameters thanks to the coordinates of the data: 
 the Climatic Water Deficit (CWD), the Temperature Seasonality (TS) and the Precipitation Seasonality (PS).
-The function is time-consuming at its first use as it downloads three raster files (one for each of 
-the parameter) which are then stored in the working directory. However, as soon as the raster is 
-downloaded once, the function then runs fast (if the working directory is not changed or if the rasters
-are then moved to the new working directory).
 }
+\details{
+The function is time-consuming at its first use as it downloads three raster files (one for each of 
+the parameter) which are then stored in forders named wc2-5 and CWD (see Localisation).
+
+However, as soon as the raster is downloaded once, the function then runs fast.
+}
+\section{Localisation}{
+
+The localisation of this folder is :
+\itemize{
+\item On Linux : \code{~/.local/share/BIOMASS}
+\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
+\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
+}
+See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+}
+
 \examples{
 # One study site
 lat <- 4.08
@@ -38,8 +52,10 @@ coord <- cbind(long, lat)
 
 }
 \references{
-Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, International journal of climatology, 25(15), 1965-1978.
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, Global Change Biology, 20 (10), 3177-3190
+Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, 
+International journal of climatology, 25(15), 1965-1978.
+Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+Global Change Biology, 20 (10), 3177-3190
 }
 \author{
 Ariane TANGUY, Arthur PERE

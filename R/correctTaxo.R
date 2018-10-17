@@ -4,7 +4,17 @@
 #' Name Resolution Service (TNRS) via the Taxosaurus interface. 
 #' This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
 #' 
-#' @param genus Vector of genus to be checked. Alternatively, the whole species name (genus + species) or (genus + species + author) may be given (see example).
+#' 
+#' @details 
+#' This function create a file named correctTaxo.log (see Localisation), this file have the memory of what you have imputed
+#' in this function and the result of this function. The file fill himself with the new input if the input is unknown in this file.
+#' 
+#' 
+#' @inheritSection folderControl Localisation
+#' 
+#' 
+#' @param genus Vector of genus to be checked. Alternatively, the whole species name (genus + species)
+#'  or (genus + species + author) may be given (see example).
 #' @param species Vector of species to be checked (same size as the genus vector).
 #' @param Score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match).
 #' 

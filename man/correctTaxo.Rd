@@ -7,7 +7,8 @@
 correctTaxo(genus, species = NULL, score = 0.5)
 }
 \arguments{
-\item{genus}{Vector of genus to be checked. Alternatively, the whole species name (genus + species) or (genus + species + author) may be given (see example).}
+\item{genus}{Vector of genus to be checked. Alternatively, the whole species name (genus + species)
+or (genus + species + author) may be given (see example).}
 
 \item{species}{Vector of species to be checked (same size as the genus vector).}
 
@@ -21,6 +22,22 @@ This function corrects typos for a given taxonomic name using the Taxonomic
 Name Resolution Service (TNRS) via the Taxosaurus interface. 
 This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
 }
+\details{
+This function create a file named correctTaxo.log (see Localisation), this file have the memory of what you have imputed
+in this function and the result of this function. The file fill himself with the new input if the input is unknown in this file.
+}
+\section{Localisation}{
+
+The localisation of this folder is :
+\itemize{
+\item On Linux : \code{~/.local/share/BIOMASS}
+\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
+\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
+}
+See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+}
+
 \examples{
 \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
 \dontrun{correctTaxo(genus = "Astrocarium standleanum")}

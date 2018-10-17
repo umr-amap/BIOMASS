@@ -32,7 +32,7 @@
 #' \item{AGB_simu}{Matrix with the AGB of the trees (rows) times the n iterations (columns)}
 #' }
 # 
-#' Returns a list  with (if Carbon is TRUE): 
+#' @return Returns a list  with (if Carbon is TRUE): 
 #' \describe{
 #'   \item{meanAGC}{Mean stand AGC value following the error propagation}
 #' \item{medAGC}{Median stand AGC value following the error propagation}
