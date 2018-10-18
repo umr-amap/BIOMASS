@@ -175,35 +175,27 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     # Compare Models ----------------------------------------------------------
     
     logD_plot = data.frame(logD = log(D_Plot))
-    D_plot = data.frame(D = D_Plot)
+    D_plot_ = data.frame(D = D_Plot)
     Plot = data.frame(D = D_Plot, log1 = NA, log2 = NA, log3 = NA, weibull = NA, michaelis = NA)
     
     # Let's compare all the models and plot all the graphs !
     mod_log1 <- loglogFunction(Hdata, method = "log1")
     RSElog = summary(mod_log1)$sigma
-    RSElog_2 = 0.5*RSElog^2
-    Plot$log1 <- exp( predict(mod_log1, newdata = logD_plot) + RSElog_2 )
-    Hpredict_log1 <- exp( predict(mod_log1) + RSElog_2 )
+    Plot$log1 <- exp( predict(mod_log1, newdata = logD_plot) + 0.5*RSElog^2 )
     
     mod_log2 <- loglogFunction(Hdata, method = "log2")
     RSElog = summary(mod_log2)$sigma
-    RSElog_2 = 0.5*RSElog^2
-    Plot$log2 <- exp( predict(mod_log2, newdata = logD_plot) + RSElog_2 )
-    Hpredict_log2 <- exp( predict(mod_log2) + RSElog_2 )
+    Plot$log2 <- exp( predict(mod_log2, newdata = logD_plot) + 0.5*RSElog^2 )
     
     mod_log3 <- loglogFunction(Hdata, method = "log3")
     RSElog = summary(mod_log3)$sigma
-    RSElog_2 = 0.5*RSElog^2
-    Plot$log3 <- exp( predict(mod_log3, newdata = logD_plot) + RSElog_2 )
-    Hpredict_log3 <- exp( predict(mod_log3) + RSElog_2 )
+    Plot$log3 <- exp( predict(mod_log3, newdata = logD_plot) + 0.5*RSElog^2 )
     
     mod_wei <- weibullFunction(Hdata, weight)
-    Plot$weibull <- predict(mod_wei, newdata = D_plot)
-    Hpredict_wei <- predict(mod_wei)
+    Plot$weibull <- predict(mod_wei, newdata = D_plot_)
     
     mod_mich <- michaelisFunction(Hdata, weight)
-    Plot$michaelis <- predict(mod_mich, newdata = D_plot)
-    Hpredict_mich <- predict(mod_mich)
+    Plot$michaelis <- predict(mod_mich, newdata = D_plot_)
     
     # Plot everything
     par(mar = c(5, 5, 3, 3))
@@ -218,34 +210,39 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
            lty = c(1, 1, 1, 1, 1), lwd = c(2, 2, 2, 2, 2), cex = 1.5,
            col = c("blue", "green", "red", "orange", "purple"))
     
-    result = data.frame(method = c("log1", "log2", "log3", "weibull", "michaelis"),
-                       color = c("blue", "green", "red", "orange", "purple"),
-                       RSE = NA,
-                       RSElog = NA,
-                       Average_bias = NA)
     
-    printFitData <- function(H, Hpredict, mod, result, model)
+    result = data.table(method = c("log1", "log2", "log3", "weibull", "michaelis"),
+                       color = c("blue", "green", "red", "orange", "purple"),
+                       RSE = as.numeric(NA),
+                       RSElog = as.numeric(NA),
+                       Average_bias = as.numeric(NA))
+    
+    printFitData <- function(H, mod, model)
     {
-      res <- H - Hpredict # residuals
-      RSE <- sqrt(sum(res^2)/summary(mod)$df[2]) # Residual standard error
-      bias <- (mean(Hpredict) - mean(H))/mean(H)
+      if(grepl("log",model)){
+        RSElog = summary(mod)$sigma
+        Hpredict <- exp( predict(mod) + 0.5*RSElog^2 )
+      }
+      else{
+        RSElog = as.numeric(NA)
+        Hpredict = predict(mod)
+      }
       
-      result[result$method == model, "RSE"] = RSE
-      result[result$method == model, "Average_bias"] = bias
-      if(any(grepl("log",model)))
-        result[result$method == model, "RSElog"] = summary(mod)$sigma
+      res <- H - Hpredict # residuals
+      
+      result = list()
+      result$RSE = sqrt(sum(res^2)/summary(mod)$df[2]) # Residual standard error
+      result$Average_bias = (mean(Hpredict) - mean(H))/mean(H)
+      result$RSElog = RSElog
       
       return(result)
     }
     
-    result = printFitData(Hdata$H, Hpredict_log1, mod_log1, result, "log1")
-    result = printFitData(Hdata$H, Hpredict_log2, mod_log2, result, "log2")
-    result = printFitData(Hdata$H, Hpredict_log3, mod_log3, result, "log3")
-    result = printFitData(Hdata$H, Hpredict_wei, mod_wei, result, "weibull")
-    result = printFitData(Hdata$H, Hpredict_mich, mod_mich, result, "michaelis")
-    
+    mod_ = list(mod_log1, mod_log2, mod_log3, mod_wei, mod_mich)
+    result[, c("RSE", "Average_bias", "RSElog") := printFitData(Hdata$H, mod_[[.GRP]], method), by= method]
+
     message("\n If you want to use a particular model, use the parameter 'method' in this function.")
-    
+    result = setDF(result)
     return(result)
   }
   
