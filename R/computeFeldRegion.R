@@ -1,4 +1,4 @@
-#' Retriving the Feldpausch Region
+#' Retrieving the Feldpausch Region
 #' 
 #' Extract the Feldpausch et al. (2012) Region thanks to the coordinates of the data. 
 #' The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see details).
