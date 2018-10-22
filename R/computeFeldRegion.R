@@ -34,16 +34,10 @@
 #' @importFrom raster raster extract factorValues
 computeFeldRegion = function(coord){
   
-  # path = folderControl("FeldRegion")
-  path = "~/Bureau/document arthur/feldRegion/"
-  
-  # nam <- paste(path$path, "feldRegion.grd", sep = path$sep)
-  nam = paste0(path, "feldRegion.grd")
-  RAST <- raster(nam)
   
   # Extract the raster value
-  RASTval <- extract(RAST, coord)
-  FeldRegion = as.vector( factorValues(RAST, RASTval, att = "Region") )
+  RASTval <- extract(BIOMASS::feldRegion, coord)
+  FeldRegion = as.vector( factorValues(BIOMASS::feldRegion, RASTval, att = "Region") )
   
   return(FeldRegion)
 
