@@ -100,7 +100,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     stop("n cannot be smaller than 50 or larger than 1000")
   
   if(!is.null(Dpropag)){
-    if ( (is.numeric(Dpropag) && !(length(Dpropag)%in%c(1,len)) || (!is.numeric(Dpropag) && Dpropag != "chave2004")) )
+    if ( (is.numeric(Dpropag) && !(length(Dpropag)%in%c(1,len)) || (!is.numeric(Dpropag) && tolower(Dpropag) != "chave2004")) )
       stop('Dpropag should be set to one of these options:
              - "chave2004"
              - a single sd value that will be applied to all trees
@@ -157,7 +157,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   if(!is.null(Dpropag))
   {
-    if(length(Dpropag) == 1 && Dpropag == "chave2004")
+    if(length(Dpropag) == 1 && tolower(Dpropag) == "chave2004")
     {
       # Propagation of the measurement error on D: based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B. 
       fivePercent <- round( len * 5 / 100 )
