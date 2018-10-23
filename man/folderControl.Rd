@@ -15,8 +15,8 @@ folderControl(nameFile = "", correctTaxo = FALSE)
 the path to the folder, and the separator if correctTaxo is False
 }
 \description{
-Create a folder if needed of it, control all of the file which needed to be downloaded and 
-place in the specifique folder
+Create a folder if needed, control all of the files that needed to be downloaded and 
+placed in the specific folder.
 }
 \section{Localisation}{
 

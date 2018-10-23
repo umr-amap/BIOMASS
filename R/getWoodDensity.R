@@ -60,7 +60,7 @@
 #' \item{nInd}{Number of individuals taken into account to compute the mean wood density}
 #' @export
 #' 
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
+#' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
 #' 
 #' @references 
 #' Chave, Jerome, et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.

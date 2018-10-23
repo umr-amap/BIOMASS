@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeFeldRegion.R
 \name{computeFeldRegion}
 \alias{computeFeldRegion}
-\title{Retriving the Feldpausch Region}
+\title{Retrieving the Feldpausch Region}
 \usage{
 computeFeldRegion(coord)
 }
@@ -13,8 +13,8 @@ computeFeldRegion(coord)
 The function return a vector with The Feldpausch Region prepared for the \code{retrieveH} function
 }
 \description{
-Extract the Feldpausch et al. (2012) Region thanks to the coordinates of the data. 
-The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see details).
+Extract the Feldpausch et al. (2012) region thanks to the coordinates of the data. 
+The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see Localisation).
 However, as soon as the raster is downloaded once, the function then runs fast.
 }
 \section{Localisation}{
@@ -49,5 +49,5 @@ coord <- cbind(long, lat)
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
 }
 \author{
-Maxime REJOU-MECHAIN, Arthur PERE
+Arthur PERE
 }

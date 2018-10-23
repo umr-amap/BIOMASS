@@ -50,7 +50,5 @@ standardization of plant names}. BMC bioinformatics, 14, 1.
 Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 }
 \author{
-Ariane TANGUY
-
-Maxime REJOU-MECHAIN, Arthur PERE
+Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN,
 }

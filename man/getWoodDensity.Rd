@@ -102,7 +102,7 @@ Zanne, A. E., et al. \emph{Global wood density database.} Dryad. Identifier: htt
 \code{\link{wdData}}, \code{\link{sd_10}}
 }
 \author{
-Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
+Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
 }
 \keyword{Wood}
 \keyword{density}

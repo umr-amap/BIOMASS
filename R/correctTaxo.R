@@ -24,8 +24,7 @@
 #' standardization of plant names}. BMC bioinformatics, 14, 1.
 #' @references Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 #' 
-#' @author Ariane TANGUY
-#' @author Maxime REJOU-MECHAIN, Arthur PERE
+#' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, 
 #' 
 #' @examples 
 #' \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
