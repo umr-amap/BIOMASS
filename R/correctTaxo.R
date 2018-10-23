@@ -243,7 +243,11 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
   if(exists("taxo_already_have")){
     setkey(out, query)
     out[taxo_already_have, 
-        ':='(nameModified = i.nameModified, genusCorrected = i.genusCorrected, speciesCorrected = i.speciesCorrected), on = "query"]
+        ':='(nameModified = i.nameModified, 
+             genusCorrected = i.genusCorrected, 
+             speciesCorrected = i.speciesCorrected, 
+             score1 = i.score1), 
+        on = "query"]
   }
   
   
@@ -258,7 +262,8 @@ correctTaxo = function( genus, species = NULL, score = 0.5 ){
 
   
   message("Your new result has been saved/append in the file :", path)
-  out[score1 < score, ':='(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
+  out[, c("genus1", "species1") := strsplit_NA(query) ]
+  out[score1 < score, ':='(genusCorrected = genus1, speciesCorrected = species1, nameModified = "NoMatch(low_score)")]
   out = setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
   
   return( out )
