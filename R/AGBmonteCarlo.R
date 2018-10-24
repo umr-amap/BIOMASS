@@ -207,7 +207,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     else
     {
       # Propagation of the error using the errH value(s)
-      upper = max(H)+15
+      upper = max(H, na.rm = T)+15
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
     }
     
@@ -268,7 +268,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     AGB_simu <- exp(AGB_simu)/1000
   }  
   
-  if(!is.null(Dlim)) AGB_simu[D<Dlim,] <- 0  
+  if(!is.null(Dlim)) AGB_simu[D<Dlim,] <- 0
+  AGB_simu[ which(is.infinite(AGB_simu)) ] = NA
   
   if(Carbon == FALSE){
     sum_AGB_simu = colSums(AGB_simu, na.rm = T)

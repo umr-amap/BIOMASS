@@ -117,6 +117,6 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
       H <- a * (1 - exp(-b * D^c))
     }
   }
-  output <- list(H = H, RSE = RSE)  
+  output <- list(H = as.numeric(H), RSE = as.numeric(RSE))  
   return(output)
 }
