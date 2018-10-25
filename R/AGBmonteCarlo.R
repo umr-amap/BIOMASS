@@ -240,7 +240,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     if(is.null(dim(coord))) 
       coord <- as.matrix(t(coord))
     if(nrow(coord) == 1)
-      coord <- cbind(rep(coord[1], len), rep(coord[2], len))
+      coord <- cbind(rep(as.numeric(coord[,1]), len), rep(as.numeric(coord[,2]), len))
     
     # Equ 7
     # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)

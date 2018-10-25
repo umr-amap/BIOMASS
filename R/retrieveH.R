@@ -93,7 +93,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL)
         coord <- as.matrix(t(coord))
       
       if(nrow(coord) == 1)
-        coord <- cbind(rep(coord[1], length(D)), rep(coord[2], length(D)))
+        coord <- cbind(rep(as.numeric(coord[,1]), length(D)), rep(as.numeric(coord[,2]), length(D)))
       
       
       logD <- log(D)
