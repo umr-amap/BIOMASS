@@ -144,7 +144,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n,lower = -1, upper = 1,mean=0,sd=1) {
-    qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd)
+    suppressWarnings( qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd) )
   }
   
   
