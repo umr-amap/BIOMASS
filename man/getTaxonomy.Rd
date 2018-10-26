@@ -16,8 +16,7 @@ Data frame with the order (if \code{findOrder} is \code{TRUE}), family and genus
 }
 \description{
 From a genus, the function \code{getTaxonomy} finds the APG III family, and optionally the
-order, from the Genus Family database (see \code{\link{genusFamily}}) and the APGIII dataset 
-(see \code{\link{apgFamilies}})
+order, from the \code{\link{genusFamily}} database and the \code{\link{apgFamilies}} dataset
 }
 \examples{
 # Find the Family of the Aphelandra genus 

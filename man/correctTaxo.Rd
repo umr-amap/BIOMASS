@@ -7,12 +7,12 @@
 correctTaxo(genus, species = NULL, score = 0.5)
 }
 \arguments{
-\item{genus}{Vector of genus to be checked. Alternatively, the whole species name (genus + species)
+\item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)
 or (genus + species + author) may be given (see example).}
 
-\item{species}{Vector of species to be checked (same size as the genus vector).}
+\item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
 
-\item{Score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match).}
+\item{Score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.}
 }
 \value{
 The function returns a dataframe with the corrected (or not) genera and species.
@@ -23,12 +23,12 @@ Name Resolution Service (TNRS) via the Taxosaurus interface.
 This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
 }
 \details{
-This function create a file named correctTaxo.log (see Localisation), this file have the memory of what you have imputed
-in this function and the result of this function. The file fill himself with the new input if the input is unknown in this file.
+This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as 
+to avoid the replication of time-consuming servor requests.
 }
 \section{Localisation}{
 
-The localisation of this folder is :
+The localisation of the folder is :
 \itemize{
 \item On Linux : \code{~/.local/share/BIOMASS}
 \item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
@@ -50,5 +50,5 @@ standardization of plant names}. BMC bioinformatics, 14, 1.
 Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 }
 \author{
-Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN,
+Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
 }

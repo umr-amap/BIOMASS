@@ -25,7 +25,7 @@ data(NouraguesHD)
 str(NouraguesHD)
 }
 \references{
-Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental 
-gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
+Réjou-Méchain, M. et al. (2015). \emph{Using repeated small-footprint LiDAR 
+acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest} Remote Sensing of Environment, 169, 93-101.
 }
 \keyword{datasets}

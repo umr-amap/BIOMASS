@@ -31,7 +31,7 @@ data(wdData)
 str(wdData)
 }
 \references{
-Chave et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
+Chave et al. (2009)\emph{Towards a worldwide wood economics spectrum.} Ecology letters 12:4, 351-366.
 }
 \keyword{datasets}
 \keyword{density}

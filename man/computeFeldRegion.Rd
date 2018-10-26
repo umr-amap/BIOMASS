@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeFeldRegion.R
 \name{computeFeldRegion}
 \alias{computeFeldRegion}
-\title{Retrieving the Feldpausch Region}
+\title{Retrieving the Feldpausch Regions TO BE IMPROVED}
 \usage{
 computeFeldRegion(coord)
 }
@@ -10,25 +10,11 @@ computeFeldRegion(coord)
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
-The function return a vector with The Feldpausch Region prepared for the \code{retrieveH} function
+The function returns a vector with the Feldpausch et al. (2012)'s regions that can be incorporated in the \code{retrieveH} function.
 }
 \description{
-Extract the Feldpausch et al. (2012) region thanks to the coordinates of the data. 
-The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see Localisation).
-However, as soon as the raster is downloaded once, the function then runs fast.
+Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 }
-\section{Localisation}{
-
-The localisation of this folder is :
-\itemize{
-\item On Linux : \code{~/.local/share/BIOMASS}
-\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
-\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
-\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
-}
-See this function for more information : \code{\link[rappdirs]{user_data_dir}}
-}
-
 \examples{
 #' # One study site 
 lat <- 4.08 
@@ -44,10 +30,11 @@ coord <- cbind(long, lat)
 
 
 
+
 }
 \references{
-Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 }
 \author{
-Arthur PERE
+Arthur PERE, Ted FELDPAUSCH
 }

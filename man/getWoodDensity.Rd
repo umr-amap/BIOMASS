@@ -44,7 +44,7 @@ set to 'World', but you can restrict the WD estimates to a single region :
 \item{addWoodDensityData}{A dataframe containing additional wood density data to be
 combined with the global wood density database. The dataframe should be organized 
 in a dataframe with three (or four) columns: "genus","species","wd", the fourth 
-column "famlily" is optional.}
+column "family" is optional.}
 }
 \value{
 Returns a dataframe containing the following information: 
@@ -71,7 +71,7 @@ The function assigns to each taxon a species- or genus- level average if at leas
 
 The function also provides an estimate of the error associated with the wood density estimate
  (i.e. a standard deviation): a mean standard deviation value is given to the tree at the 
- appropriate taxonomic level using the sd_10 dataset (see \code{\link{sd_10}}).
+ appropriate taxonomic level using the \code{\link{sd_10}} dataset.
 }
 \examples{
 # Load a data set
@@ -95,7 +95,7 @@ str(WD)
 
 }
 \references{
-Chave, Jerome, et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
+Chave, J., et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
 Zanne, A. E., et al. \emph{Global wood density database.} Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
 }
 \seealso{

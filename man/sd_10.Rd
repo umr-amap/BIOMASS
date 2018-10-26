@@ -26,8 +26,8 @@ data(sd_10)
 str(sd_10)
 }
 \references{
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
-Global Change Biology, 20 (10), 3177-3190
+Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
+uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
 }
 \keyword{datasets}
 \keyword{getWoodDensity}

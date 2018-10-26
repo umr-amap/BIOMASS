@@ -3,7 +3,7 @@
 \docType{data}
 \name{param_4}
 \alias{param_4}
-\title{Posterior distribution of Chave et al. 2014 equation 4 parameters}
+\title{Posterior distribution of Chave et al.'s 2014 equation 4 parameters}
 \format{A data frame with 1001 observations on the following 3 variables.
 \describe{
   \item{\code{intercept}}{Vector of intercept values}
@@ -14,7 +14,7 @@
 data("param_4")
 }
 \description{
-This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al., (2014), 
+This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al. (2014), 
 obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{

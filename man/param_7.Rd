@@ -21,7 +21,7 @@ data("param_7")
 }
 \description{
 This matrix contains the posterior distribution of the parameters of the Equation 7 of Chave et al., (2014), 
-obtained in a Bayesian framework with uninformativepriors through a Metropolis algorithm.
+obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{
 This dataset is used in the function \code{\link{AGBmonteCarlo}}.

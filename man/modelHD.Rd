@@ -2,7 +2,7 @@
 % Please edit documentation in R/modelHD.R
 \name{modelHD}
 \alias{modelHD}
-\title{Fitting height-diameter model}
+\title{Fitting height-diameter models}
 \usage{
 modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
 }
@@ -59,7 +59,7 @@ comparison, the function also return a data.frame with:
 This function fits and compares (optional) height-diameter models.
 }
 \details{
-All the back transformations in loglog are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error).
+All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error).
 }
 \examples{
 

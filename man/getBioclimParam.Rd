@@ -27,7 +27,7 @@ However, as soon as the raster is downloaded once, the function then runs fast.
 }
 \section{Localisation}{
 
-The localisation of this folder is :
+The localisation of the folder is :
 \itemize{
 \item On Linux : \code{~/.local/share/BIOMASS}
 \item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
@@ -54,7 +54,7 @@ coord <- cbind(long, lat)
 \references{
 Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas}, 
 International journal of climatology, 25(15), 1965-1978.
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+Chave et al. (2014) \emph{Improved allometric models to estimate the above-ground biomass of tropical trees}, 
 Global Change Biology, 20 (10), 3177-3190
 }
 \author{

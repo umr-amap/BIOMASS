@@ -26,7 +26,7 @@
 #' @references 
 #' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 #' 
-#' @author Arthur PERE, Ted Feldpausch
+#' @author Arthur PERE, Ted FELDPAUSCH
 #' 
 #' @importFrom raster raster extract factorValues
 computeFeldRegion = function(coord){

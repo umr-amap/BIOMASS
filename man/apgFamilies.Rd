@@ -3,11 +3,11 @@
 \docType{data}
 \name{apgFamilies}
 \alias{apgFamilies}
-\title{Angiosperm Phylogeny Group (APG III) dataset}
+\title{Angiosperm Phylogeny Group (APG III) dataset UPDATE WITH APG IV?!}
 \format{A data frame with 502 observations on the following 2 variables: 
 \describe{
   \item{\code{order}}{Vector of order}
-  \item{\code{famAPG}}{Vector of APGII families}
+  \item{\code{famAPG}}{Vector of APGIII families}
 }}
 \source{
 Stevens, P. F. (2001 onwards). \emph{Angiosperm Phylogeny Website}. 

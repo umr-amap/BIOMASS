@@ -15,19 +15,17 @@
 data("feldCoef")
 }
 \description{
-Weibull coefficients from the Height-Diameter model \eqn{H = a(1-exp(-b*D^c))} by Feldpausch
+Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
 et al. 2012., with the associated RSE.
 }
 \details{
-This dataset is used in the function \code{\link{retrieveH}}, 
+This dataset is used in the function \code{\link{retrieveH}} 
 to predict height from diameter depending on the region.
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 }
 \examples{
 data(feldCoef)
 str(feldCoef)
-}
-\references{
-Feldpausch, Ted R., et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
 }
 \keyword{datasets}
 \keyword{internal}
