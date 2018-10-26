@@ -109,7 +109,7 @@ Rejou-Mechain et al. (in prep). \emph{BIOMASS: An R Package for estimating above
 uncertainty in tropical forests}.
 }
 \author{
-Bruno HERAULT, Camille PIPONIOT,  Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
+Bruno HERAULT, Arthur PERE, Camille PIPONIOT, Ariane TANGUY, Maxime REJOU-MECHAIN
 }
 \keyword{carlo}
 \keyword{monte}

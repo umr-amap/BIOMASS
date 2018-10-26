@@ -46,6 +46,7 @@
  
 getBioclimParam <- function(coord)
 {  
+  coord = apply(coord, 1:2, as.numeric)
   
   pathwc = folderControl("wc2-5")
   pathcwd = folderControl("CWD")

@@ -1,4 +1,5 @@
 #' @rdname HDmethods
+#' @importFrom minpack.lm nlsLM nls.lm.control
 
 michaelisFunction <- function(data, weight = NULL)
 {

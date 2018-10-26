@@ -91,12 +91,11 @@ folderControl = function(nameFile = "", correctTaxo = FALSE){
   
   
   
-  ###### If nameFile isn't a zip file
-  if ( any(grepl("zip", nameFile)) ){
+  ###### If nameFile isn't a zip file return in the function with zip file on him
+  if ( !grepl("zip", nameFile) ){
     folderControl(nameFile = paste(nameFile, "zip", sep = "_"))
     return(list("path" = path1, "sep" = sep))
   }
-  
   
   zip_url = switch (nameFile,
                     "CWD_zip" = "http://chave.ups-tlse.fr/pantropical_allometry/CWD.bil.zip",

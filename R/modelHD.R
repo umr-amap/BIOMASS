@@ -49,7 +49,7 @@
 #' }
 #' 
 #' 
-#' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
+#' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
 #' @seealso \code{\link{retrieveH}}, \code{\link{predictHeight}}
 #' 
 #' @export

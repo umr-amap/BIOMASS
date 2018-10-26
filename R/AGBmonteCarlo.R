@@ -91,7 +91,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     stop("n cannot be smaller than 50 or larger than 1000")
   
   if(!is.null(Dpropag)){
-    if ( (is.numeric(Dpropag) && !(length(Dpropag)%in%c(1,len)) || (!is.numeric(Dpropag) && Dpropag != "chave2004")) )
+    if ( (is.numeric(Dpropag) && !(length(Dpropag)%in%c(1,len)) || (!is.numeric(Dpropag) && tolower(Dpropag) != "chave2004")) )
       stop('Dpropag should be set to one of these options:
              - "chave2004"
              - a single sd value that will be applied to all trees
@@ -135,7 +135,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n,lower = -1, upper = 1,mean=0,sd=1) {
-    qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd)
+    suppressWarnings( qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd) )
   }
   
   
@@ -148,7 +148,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   if(!is.null(Dpropag))
   {
-    if(length(Dpropag) == 1 && Dpropag == "chave2004")
+    if(length(Dpropag) == 1 && tolower(Dpropag) == "chave2004")
     {
       # Propagation of the measurement error on D: based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B. 
       fivePercent <- round( len * 5 / 100 )
@@ -198,7 +198,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     else
     {
       # Propagation of the error using the errH value(s)
-      upper = max(H)+15
+      upper = max(H, na.rm = T)+15
       H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
     }
     
@@ -231,7 +231,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     if(is.null(dim(coord))) 
       coord <- as.matrix(t(coord))
     if(nrow(coord) == 1)
-      coord <- cbind(rep(coord[1], len), rep(coord[2], len))
+      coord <- cbind(rep(as.numeric(coord[,1]), len), rep(as.numeric(coord[,2]), len))
     
     # Equ 7
     # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)
@@ -259,7 +259,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     AGB_simu <- exp(AGB_simu)/1000
   }  
   
-  if(!is.null(Dlim)) AGB_simu[D<Dlim,] <- 0  
+  if(!is.null(Dlim)) AGB_simu[D<Dlim,] <- 0
+  AGB_simu[ which(is.infinite(AGB_simu)) ] = NA
   
   if(Carbon == FALSE){
     sum_AGB_simu = colSums(AGB_simu, na.rm = T)
