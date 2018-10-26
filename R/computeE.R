@@ -58,27 +58,5 @@ computeE <- function(coord)
   # Extract the raster value
   RASTval <- extract(RAST, coord, "bilinear")
   
-  # RASTval_NA = is.na(RASTval)
-  # 
-  # i = 1
-  # while( any( RASTval_NA ) ){
-  #   i = i*2
-  #   coord1 = coord[RASTval_NA, ]
-  #   
-  #   a = extract(RAST, coord1, buffer = floor(i * 110))
-  #   
-  #   RASTval[RASTval_NA] = sapply(a, mean, na.rm = T)
-  #   RASTval_NA = is.na(RASTval)
-  #   cat(i, sum(RASTval_NA), "\n")
-  # }
-  
   return(RASTval)
 }
-
-
-
-
-
-
-
-
