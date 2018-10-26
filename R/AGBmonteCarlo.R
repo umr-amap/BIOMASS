@@ -12,16 +12,16 @@
 #' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude)) 
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict 
 #' height-diameter allometry with bioclimatic variables.
-#' @param Dpropag This variable can take three kind of values, indicating how to propagate the errors on diameter measurements : 
+#' @param Dpropag This variable can take three kind of values, indicating how to propagate the errors on diameter measurements: 
 #' a single numerical value or a vector of the same size as \code{D}, both representing the standard deviation associated 
 #' with the diameter measurements or \code{"chave2004"} (an important error on 5 percent of the measures, a smaller error on 
 #' 95 percent of the trees).
-#' @param n Number of iteration. Cannot be smaller than 50 or larger than 1000. By default \code{n = 1000}
-#' @param Carbon (logical) Wether or not the propagation should be done up to the carbon value (FALSE by default).
-#' @param Dlim (optional) Minimum diameter (in cm) for which aboveground biomass should be calculated (all diameter below 
+#' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default \code{n = 1000}
+#' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
+#' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below 
 #' \code{Dlim} will have a 0 value in the output).
 #' 
-#' @details See Rejou-Mechain et al. (in prep) for all details on the error propagation procedure.
+#' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #' 
 #' @return Returns a list  with (if Carbon is FALSE): 
 #' \describe{
@@ -31,22 +31,13 @@
 #' \item{credibilityAGB}{Credibility interval at 95\% of the stand AGB value following the error propagation}
 #' \item{AGB_simu}{Matrix with the AGB of the trees (rows) times the n iterations (columns)}
 #' }
-# 
-#' @return Returns a list  with (if Carbon is TRUE): 
-#' \describe{
-#'   \item{meanAGC}{Mean stand AGC value following the error propagation}
-#' \item{medAGC}{Median stand AGC value following the error propagation}
-#' \item{sdAGC}{Standard deviation of the stand AGC value following the error propagation}
-#' \item{credibilityAGC}{Credibility interval at 95\% of the stand AGC value following the error propagation}
-#' \item{AGC_simu}{Matrix with the AGC of the trees (rows) times the n iterations (columns)}
-#' }
 #' 
 #' @references Chave, J. et al. (2004). \emph{Error propagation and scaling for tropical forest biomass estimates}. 
 #' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
-#' @references Rejou-Mechain et al. (in prep). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
-#' uncertainty in tropical forests}.
+#' @references Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
+#' uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
 #' 
-#' @author Bruno HERAULT, Camille PIPONIOT,  Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
+#' @author Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
 #' 
 #' @examples 
 #' # Load a database

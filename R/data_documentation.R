@@ -1,4 +1,4 @@
-#' Angiosperm Phylogeny Group (APG III) dataset
+#' Angiosperm Phylogeny Group (APG III) dataset UPDATE WITH APG IV?!
 #' 
 #' APGIII Families taken from the Angiosperm Phylogeny Website (http://www.mobot.org/MOBOT/research/APweb/)
 #' 
@@ -7,7 +7,7 @@
 #' A data frame with 502 observations on the following 2 variables: 
 #' \describe{
 #'   \item{\code{order}}{Vector of order}
-#'   \item{\code{famAPG}}{Vector of APGII families}
+#'   \item{\code{famAPG}}{Vector of APGIII families}
 #' }
 #' @usage data("apgFamilies")
 #' @source Stevens, P. F. (2001 onwards). \emph{Angiosperm Phylogeny Website}. 
@@ -23,7 +23,7 @@
 
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #' 
-#' Weibull coefficients from the Height-Diameter model \eqn{H = a(1-exp(-b*D^c))} by Feldpausch
+#' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
 #' et al. 2012., with the associated RSE.
 #' 
 #' @docType data
@@ -36,9 +36,9 @@
 #'   \item{\code{c}}{Coefficient c}
 #'   \item{\code{RSE}}{Vector of RSE}
 #' }
-#' @details This dataset is used in the function \code{\link{retrieveH}}, 
+#' @details This dataset is used in the function \code{\link{retrieveH}} 
 #' to predict height from diameter depending on the region.
-#' @references Feldpausch, Ted R., et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 #' @examples 
 #' data(feldCoef)
 #' str(feldCoef)
@@ -115,8 +115,8 @@
 #'   \item{\code{long}}{Longitude}
 #' }
 #' @references 
-#' Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental 
-#' gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118. 
+#' Réjou-Méchain, M. et al. (2015). \emph{Using repeated small-footprint LiDAR 
+#' acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest} Remote Sensing of Environment, 169, 93-101.
 #' @examples
 #' data(NouraguesHD)
 #' str(NouraguesHD)
@@ -126,9 +126,9 @@
 
 
 
-#' Posterior distribution of Chave et al. 2014 equation 4 parameters
+#' Posterior distribution of Chave et al.'s 2014 equation 4 parameters
 #' 
-#' This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al., (2014), 
+#' This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al. (2014), 
 #' obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 #'  
 #' @docType data
@@ -154,7 +154,7 @@
 #' Posterior distribution of parameters associated with the equation 7 by Chave et al. 2014.
 #' 
 #' This matrix contains the posterior distribution of the parameters of the Equation 7 of Chave et al., (2014), 
-#' obtained in a Bayesian framework with uninformativepriors through a Metropolis algorithm.
+#' obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 #'  
 #' @docType data
 #' @usage data("param_7")
@@ -200,8 +200,8 @@
 #' }
 #' @details This dataset is used in the function \code{\link{getWoodDensity}}.
 #' @references 
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
-#' Global Change Biology, 20 (10), 3177-3190
+#' Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
+#' uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
 #' @examples
 #' data(sd_10)
 #' str(sd_10)
@@ -228,7 +228,7 @@
 #' }
 #' @details This dataset is used in the function \code{\link{getWoodDensity}}, to estimate a taxon-average wood density value.
 #' @references 
-#' Chave et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
+#' Chave et al. (2009)\emph{Towards a worldwide wood economics spectrum.} Ecology letters 12:4, 351-366.
 #' @source Zanne et al. \emph{Global wood density database.} Dryad. Identifier: http://datadryad.org/handle/10255/dryad.235 (2009).
 #' @examples
 #' data(wdData)
@@ -241,12 +241,12 @@
 #' 
 #' @title HDmethods
 #' 
-#' @description  Modeling height-diameter relationship
+#' @description  Methods used for modeling height-diameter relationship
 #' 
 #' @details 
 #' These functions model the relationship between tree height (H) and diameter (D).
 #' \bold{loglogFunction} 
-#' Compute three types of log model (log, log2 and log3) to model H from D.
+#' Compute three types of log model (log, log2 and log3) to predict H from D.
 #' The model can be:
 #' \itemize{
 #'     \item log 1: \eqn{log(H) = a+ b*log(D)} (equivalent to a power model)
@@ -271,8 +271,7 @@
 #' @references 
 #' Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.
 #' Weibull, W. (1951). \emph{Wide applicability}. Journal of applied mechanics, 103.
-#' Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}. 
-#' Canadian Journal of Forest Research, 2(1), 49-53.
+#' Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}. Canadian Journal of Forest Research, 2(1), 49-53.
 #' 
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY
 #' 

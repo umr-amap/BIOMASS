@@ -1,4 +1,4 @@
-#' Fitting height-diameter model
+#' Fitting height-diameter models
 #'
 #' This function fits and compares (optional) height-diameter models.
 #'
@@ -21,7 +21,7 @@
 #' @param useWeight If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree volume, so that larger trees have a stronger influence during the construction of the model).
 #' @param drawGraph If \code{TRUE}, a graphic will illustrate the relationship between H and D. 
 #'
-#' @details All the back transformations in loglog are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error). 
+#' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error). 
 #'
 #'
 #' @return Returns a list with if the parameter model is not null: 
