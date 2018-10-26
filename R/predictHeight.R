@@ -50,10 +50,10 @@ predictHeight <- function(D, model, err = FALSE)
   
   if (logmod){
     logD = data.frame(logD = log(D))
-    Hpredict = exp( predict(model$model, logD) + e )
+    coeff = coef(model$model)
+    Hpredict = exp( rowSums( sapply(1:length(coeff), function(x, logD) coeff[x] * logD^(x-1), logD) ) + e )
   } else {
-    D_ = data.frame(D = D)
-    Hpredict = predict(model$model, D_) + e
+    Hpredict = predict(model$model, data.frame(D = D)) + e
   }
   
   names(Hpredict) = NULL
@@ -61,5 +61,5 @@ predictHeight <- function(D, model, err = FALSE)
   # If H predicted values are negative due to random error assignment
   Hpredict[Hpredict <= 0] <- 0.1
   
-  return(Hpredict)
+  return(as.vector(Hpredict))
 }

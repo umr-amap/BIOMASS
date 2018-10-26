@@ -136,7 +136,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n,lower = -1, upper = 1,mean=0,sd=1) {
-    suppressWarnings( qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd) )
+    qnorm(runif(n,pnorm(lower,mean=mean,sd=sd),pnorm(upper,mean=mean,sd=sd)),mean=mean,sd=sd)
   }
   
   
@@ -164,12 +164,12 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
         x <- myrtruncnorm(n = len, mean = x, sd = D_sd, lower = 0.1, upper = 500)
         return(x)
       }
-      D_simu = replicate(n, chaveError(D, len))
+      D_simu = suppressWarnings( replicate(n, chaveError(D, len)) )
       
     }
     else
     {
-      D_simu = replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500))
+      D_simu = suppressWarnings( replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500)) )
     }
   }else{ D_simu <- replicate(n, D) }
   
@@ -181,7 +181,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   
   
   #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
-  WD_simu <- replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39))
+  WD_simu <- suppressWarnings( replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39)) )
   
   
   
@@ -200,7 +200,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     {
       # Propagation of the error using the errH value(s)
       upper = max(H, na.rm = T)+15
-      H_simu <- replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) 
+      H_simu <- suppressWarnings( replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)) )
     }
     
     # --------------------- AGB ---------------------
