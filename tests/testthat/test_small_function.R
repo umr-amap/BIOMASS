@@ -24,9 +24,9 @@ test_that("Compute E", {
   E = computeE(coord)
   
   expect_is(E, "numeric")
-  expect_equal(length(E), 61965)
+  expect_length(E, 61965)
   
-  expect_that(computeE(cbind(12, 50)), equals(1.129928, tolerance = 0.1) )
+  expect_equal(computeE(cbind(12, 50)), 1.129928, tolerance = 0.1 )
 })
 
 
@@ -52,7 +52,7 @@ test_that("getBioclimParam", {
 
 context("Function retriveH")
 test_that("With the HDmodel", {
-  expect_that( retrieveH(KarnatakaForest$D), throws_error("Either"))
+  expect_error( retrieveH(KarnatakaForest$D), "Either")
   
   H = retrieveH(KarnatakaForest$D, model = HDmodel)
   expect_is(H, "list")
@@ -74,28 +74,29 @@ test_that("With the coordonate", {
   H = retrieveH(KarnatakaForest$D, coord = coord)
   
   expect_is(H, "list")
-  expect_is(H$H, "AsIs")
+  expect_length(H, 2)
+  expect_is(H$H, "numeric")
   expect_is(H$RSE, "numeric")
-  expect_equal(length(H$H), 61965)
+  expect_length(H$H, 61965)
   expect_equal(H$RSE, 0.243)
   RSE = H$RSE
   
-  expect_that( retrieveH(c(2,3), coord = coord), throws_error("coord"))
+  expect_error( retrieveH(c(2,3), coord = coord), "coord")
   H = retrieveH(c(2,3), coord = c(70, 25))
-  expect_equal(H$H, I(c(0.8351121, 1.1087833)), tolerance = 10^-6)
+  expect_equal(H$H, c(0.8351121, 1.1087833), tolerance = 10^-6)
   expect_equal(H$RSE, RSE)
   
 })
 
 test_that("With the region", {
-  expect_that( retrieveH(D, region = c("SEAsia", "SEAsia")), throws_error("region"))
+  expect_error( retrieveH(D, region = c("SEAsia", "SEAsia")), "region")
   
   H = retrieveH(D, region = "SEAsia")
   
   expect_is(H, "list")
   expect_is(H$H, "numeric")
   expect_is(H$RSE, "numeric")
-  expect_equal(length(H$H), 61965)
+  expect_length(H$H, 61965)
   expect_equal(H$RSE, 5.691)
   RSE = H$RSE
   
@@ -174,9 +175,10 @@ test_that("Weibull function", {
 
 
 context("Predict Height of the tree")
-test_that("predictHeight", {
-  skip_if_not_function("predictHeight")
-  for(method in c("log1", 'log2', "log3", "weibull", "michaelis")){
+
+for(method in c("log1", 'log2', "log3", "weibull", "michaelis")){
+  test_that(paste("predictHeight", method), {
+    skip_if_not_function("predictHeight")
     HDmodel<-modelHD(D=NouraguesHD$D,
                      H=NouraguesHD$H,
                      method=method,
@@ -185,9 +187,9 @@ test_that("predictHeight", {
       expect_length( predictHeight(D, HDmodel, err = err), length(D))
       expect_is( predictHeight(D, HDmodel, err = err), "numeric")
     }
-    
-  }
-})
+    }
+  )
+}
 
 
 
