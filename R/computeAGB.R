@@ -1,8 +1,8 @@
 #' Computing tree above-ground biomass (AGB)
 #' 
-#' This function uses the Chave's pantropical models to estimate the above-ground biomass of tropical trees.
+#' This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
 #'
-#' @param D Tree diameter (in cm), either a vector or a single value
+#' @param D Tree diameter (in cm), either a vector or a single value.
 #' @param WD Wood density (in g/cm3), either a vector or a single value. If not available, see \code{\link{getWoodDensity}}.
 #' @param H (optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} 
 #' and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.
@@ -16,10 +16,10 @@
 #' @details 
 #' This function uses two different ways of computing the above-ground biomass of a tree: 
 #'
-#' 1) If height data are available, the AGB is computed thanks to the following equation (Eq. 5 in Chave et al., 2014): 
+#' 1) If tree height data are available, the AGB is computed thanks to the following equation (Eq. 4 in Chave et al., 2014): 
 #'  \deqn{AGB = 0.0673 * (WD * H * D^2)^0.976}
 #'
-#' 2) If no height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014: 
+#' 2) If no tree height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014 (see Réjou-Méchain et al. 2017): 
 #'  \deqn{AGB = exp(-2.024- 0.896*E + 0.920*log(WD) + 2.795*log(D) - 0.0461*(log(D)^2))} where \code{E} is a measure of environmental stress estimated from the site coordinates (\code{coord}).
 #'
 #' @return The function returns the ABG in Mg (or ton).

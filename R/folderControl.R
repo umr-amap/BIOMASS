@@ -1,10 +1,10 @@
-#' Check if we have the file or folder
+#' Controling files and folders
 #' 
-#' Create a folder if needed, control all of the files that needed to be downloaded and 
-#' placed in the specific folder.
+#' The function creates a folder (only once) and then controls files that needed to be downloaded and 
+#' placed in this folder.
 #' 
 #' @section Localisation:
-#' The localisation of this folder is :
+#' The localisation of the folder is :
 #' \itemize{
 #' \item On Linux : \code{~/.local/share/BIOMASS}
 #' \item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
@@ -65,7 +65,7 @@ folderControl = function(nameFile = "", correctTaxo = FALSE){
       return(list("path" = path1, "sep" = sep))
     
     
-    ## If the file is a zip and exist and if it's a good size so it won't download again the file
+    ## If the file is a zip, exists and its size is ok, we do not download again the file
     size = switch (nameFile,
       "E_zip" = 31202482,
       "CWD_zip" = 15765207
@@ -78,7 +78,7 @@ folderControl = function(nameFile = "", correctTaxo = FALSE){
     
   
   
-  ############# if the folder doesn't exists anywhere
+  ############# if the folder does not exist anywhere
   ###### if the folder asked is the World Climate
   if (nameFile == "wc2-5"){
     ### Get the BioClim param from the http://www.worldclim.org website

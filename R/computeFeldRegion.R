@@ -1,14 +1,10 @@
-#' Retrieving the Feldpausch Region
+#' Retrieving the Feldpausch Regions TO BE IMPROVED
 #' 
-#' Extract the Feldpausch et al. (2012) region thanks to the coordinates of the data. 
-#' The function is time-consuming at its first use as it downloads a raster in the folder FeldRegion (see Localisation).
-#' However, as soon as the raster is downloaded once, the function then runs fast.
+#' Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates. 
 #' 
-#' @inheritSection folderControl Localisation
-#'
 #' @inheritParams computeE
 #'
-#' @return The function return a vector with The Feldpausch Region prepared for the \code{retrieveH} function
+#' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be incorporated in the \code{retrieveH} function.
 #' @export
 #'
 #' @examples
@@ -26,10 +22,11 @@
 #' 
 #' 
 #' 
-#' @references 
-#' Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
 #' 
-#' @author Arthur PERE
+#' @references 
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
+#' 
+#' @author Arthur PERE, Ted Feldpausch
 #' 
 #' @importFrom raster raster extract factorValues
 computeFeldRegion = function(coord){
