@@ -87,6 +87,7 @@
 #'   credperplot <- sapply(resultMC, "[", 4)}
 #'   
 #'@keywords monte carlo
+#'@importFrom stats pnorm qnorm runif
 #'@export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL, 

@@ -33,3 +33,7 @@ rsconnect/
 .Rproj.user
 
 test/*
+
+biomass\.Rproj
+
+vignettes/VignetteBiomass_cache/html/

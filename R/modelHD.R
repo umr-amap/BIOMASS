@@ -72,7 +72,7 @@
 #'                    
 #'                    
 #' @importFrom graphics legend lines par plot
-#' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd
+#' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict
 #' @importFrom utils data download.file unzip write.table
 #' @importFrom methods is
 #' @importFrom data.table data.table
