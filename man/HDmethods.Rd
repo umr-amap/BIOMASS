@@ -19,7 +19,7 @@ weibullFunction(data, weight = NULL)
 
 \item{method}{In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.}
 
-\item{(optional)}{Vector indicating observation weights in the model.}
+\item{weight}{(optional) Vector indicating observation weights in the model.}
 }
 \value{
 All the functions give an output similar to the one given by \code{\link{lm}}, obtained for 
@@ -44,23 +44,6 @@ Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A 
 
 \bold{weibullFunction}
 Construct a three parameter Weibull model of the form: \deqn{H = a*(1-exp(-(D/b)^c))} (a, b, c are the model parameters to be estimated)
-}
-\examples{
-# Load the data set
-data("NouraguesHD")
-weight <- (NouraguesHD$D^2) * NouraguesHD$H
-
-# ----------- Log
-mod <- loglogFunction(NouraguesHD, method = "log3")
-
-# ----------- Michaelis Menten
-mod_nonWeighted <- michaelisFunction(NouraguesHD)
-mod_weighted <- michaelisFunction(NouraguesHD, weight)
-
-# ----------- Weibull
-mod_nonWeighted <- weibullFunction(NouraguesHD)
-mod_weighted <- weibullFunction(NouraguesHD, weight)
-
 }
 \references{
 Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.

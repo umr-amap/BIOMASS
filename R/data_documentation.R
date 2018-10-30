@@ -21,6 +21,21 @@
 "apgFamilies"
 
 
+#' Raster with the region of Feldpausch et al. 2012 generalized height-diameter models
+#' 
+#' 
+#' @docType data
+#' @usage data("feldCoef")
+#' @format raster
+#' @details This dataset is used in the function \code{\link{retrieveH}} 
+#' to predict height from diameter depending on the region.
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
+#' @examples 
+#' data(feldRegion)
+#' @keywords raster internal
+"feldRegion"
+
+
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #' 
 #' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
@@ -263,7 +278,7 @@
 #' 
 #' @param data Dataset with the informations of height (H) and diameter (D)
 #' @param method In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.
-#' @param (optional) Vector indicating observation weights in the model.
+#' @param weight (optional) Vector indicating observation weights in the model.
 #' 
 #' @return All the functions give an output similar to the one given by \code{\link{lm}}, obtained for 
 #' \code{michaelisFunction} and \code{weibullFunction} from \code{\link[minpack.lm]{nlsLM}}).
@@ -277,21 +292,6 @@
 #' 
 #' @seealso \code{\link{modelHD}}, \code{\link[lmfor]{HDmodels}}
 #' 
-#' @examples 
-#' # Load the data set
-#' data("NouraguesHD")
-#' weight <- (NouraguesHD$D^2) * NouraguesHD$H
-#' 
-#' # ----------- Log
-#' mod <- loglogFunction(NouraguesHD, method = "log3")
-#' 
-#' # ----------- Michaelis Menten
-#' mod_nonWeighted <- michaelisFunction(NouraguesHD)
-#' mod_weighted <- michaelisFunction(NouraguesHD, weight)
-#' 
-#' # ----------- Weibull
-#' mod_nonWeighted <- weibullFunction(NouraguesHD)
-#' mod_weighted <- weibullFunction(NouraguesHD, weight)
 #' 
 #' @keywords Internal
 NULL

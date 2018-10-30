@@ -12,7 +12,7 @@ or (genus + species + author) may be given (see example).}
 
 \item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
 
-\item{Score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.}
+\item{score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.}
 }
 \value{
 The function returns a dataframe with the corrected (or not) genera and species.

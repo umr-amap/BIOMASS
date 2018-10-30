@@ -51,7 +51,7 @@ predictHeight <- function(D, model, err = FALSE)
   if (logmod){
     logD = data.frame(logD = log(D))
     coeff = coef(model$model)
-    Hpredict = exp( rowSums( sapply(1:length(coeff), function(x, logD) coeff[x] * logD^(x-1), logD) ) + e )
+    Hpredict = exp( rowSums( sapply(1:length(coeff), function(x) coeff[x] * logD^(x-1)) ) + e )
   } else {
     Hpredict = predict(model$model, data.frame(D = D)) + e
   }

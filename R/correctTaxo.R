@@ -16,7 +16,7 @@
 #' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
 #'  or (genus + species + author) may be given (see example).
 #' @param species (optional) Vector of species to be checked (same size as the genus vector).
-#' @param Score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
+#' @param score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
 #' 
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #' 

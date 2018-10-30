@@ -4,7 +4,8 @@
 #' 
 #' @inheritParams computeE
 #'
-#' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be incorporated in the \code{retrieveH} function.
+#' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be 
+#' incorporated in the \code{retrieveH} function.
 #' @export
 #'
 #' @examples
@@ -24,7 +25,8 @@
 #' 
 #' 
 #' @references 
-#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest 
+#' biomass estimates.} Biogeosciences, 9, 3381–3403.
 #' 
 #' @author Arthur PERE, Ted FELDPAUSCH
 #' 
