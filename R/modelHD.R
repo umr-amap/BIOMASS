@@ -164,7 +164,10 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
       par(mar = c(5, 5, 3, 3))
       plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
            xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
-           main = paste("Selected model : ", method), cex.main = 2) 
+           main = paste("Selected model : ", method), cex.main = 2, axes = F, frame.plot = F)
+      grid(col = "grey80", lty = 1, equilogs = F)
+      axis(side = 1, lty = "blank", las = 1)
+      axis(side = 2, lty = "blank", las = 1) 
       lines(D_Plot, Hpredict_plot, lwd = 2, col = "blue")
       legend('bottomright', c("Data", "Model selected"), lty = c(3,1), lwd = c(3,3), 
              col = c("grey","blue"), cex = 1.5)
@@ -201,13 +204,16 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
     par(mar = c(5, 5, 3, 3))
     plot(Hdata$D, Hdata$H, pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
          xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
-         main = "Model comparison",cex.main = 2)
+         main = "Model comparison",cex.main = 2, axes = F, frame.plot = F)
+    grid(col = "grey80", lty = 1, equilogs = F)
+    axis(side = 1, lty = "blank", las = 1)
+    axis(side = 2, lty = "blank", las = 1)
     color = c("blue", "green", "red", "orange", "purple")
     for (i in 2:ncol(Plot))
-      lines(Plot[,1], Plot[,i], lwd = 2, col = color[i-1])
+      lines(Plot[,1], Plot[,i], lwd = 2, col = color[i-1], lty = i-1)
 
     legend('bottomright', c("Log 1", "Log 2", "Log 3", "Weibull", "Michaelis"),
-           lty = c(1, 1, 1, 1, 1), lwd = c(2, 2, 2, 2, 2), cex = 1.5,
+           lty = 1:5, lwd = 2, cex = 1,
            col = c("blue", "green", "red", "orange", "purple"))
     
     
