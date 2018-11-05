@@ -20,7 +20,7 @@
 data("param_7")
 }
 \description{
-This matrix contains the posterior distribution of the parameters of the Equation 7 of Chave et al., (2014), 
+This matrix contains the posterior distribution of the parameters of the Equation 7 of Chave et al., (2014),
 obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{
@@ -31,7 +31,7 @@ data(param_7)
 str(param_7)
 }
 \references{
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees},
 Global Change Biology, 20 (10), 3177-3190
 }
 \keyword{AGBmonteCarlo}

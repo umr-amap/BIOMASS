@@ -11,15 +11,15 @@ computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL)
 
 \item{WD}{Wood density (in g/cm3), either a vector or a single value. If not available, see \code{\link{getWoodDensity}}.}
 
-\item{H}{(optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}} 
+\item{H}{(optional) Tree height (H in m), either a vector or a single value. If not available, see \code{\link{retrieveH}}
 and \code{\link{modelHD}}. Compulsory if the coordinates \code{coord} are not given.}
 
-\item{coord}{(optional) Coordinates of the site(s), either a vector giving a single site 
-(e.g. c(longitude, latitude)) or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). 
-The coordinates are used to account for variation in height-diameter relationship thanks to an environmental 
+\item{coord}{(optional) Coordinates of the site(s), either a vector giving a single site
+(e.g. c(longitude, latitude)) or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).
+The coordinates are used to account for variation in height-diameter relationship thanks to an environmental
 proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} are not given.}
 
-\item{Dlim}{(optional) Minimum diameter (in cm) for which aboveground biomass should be calculated 
+\item{Dlim}{(optional) Minimum diameter (in cm) for which aboveground biomass should be calculated
 (all diameter below \code{Dlim} will have a 0 value in the output).}
 }
 \value{
@@ -29,12 +29,12 @@ The function returns the ABG in Mg (or ton).
 This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
 }
 \details{
-This function uses two different ways of computing the above-ground biomass of a tree: 
+This function uses two different ways of computing the above-ground biomass of a tree:
 
-1) If tree height data are available, the AGB is computed thanks to the following equation (Eq. 4 in Chave et al., 2014): 
+1) If tree height data are available, the AGB is computed thanks to the following equation (Eq. 4 in Chave et al., 2014):
  \deqn{AGB = 0.0673 * (WD * H * D^2)^0.976}
 
-2) If no tree height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014 (see Réjou-Méchain et al. 2017): 
+2) If no tree height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014 (see Réjou-Méchain et al. 2017):
  \deqn{AGB = exp(-2.024- 0.896*E + 0.920*log(WD) + 2.795*log(D) - 0.0461*(log(D)^2))} where \code{E} is a measure of environmental stress estimated from the site coordinates (\code{coord}).
 }
 \examples{
@@ -60,7 +60,7 @@ coord <- cbind(long, lat)
 
 }
 \references{
-Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}, 
+Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees},
 Global Change Biology, 20 (10), 3177-3190
 }
 \seealso{

@@ -10,16 +10,16 @@ computeFeldRegion(coord)
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
-The function returns a vector with the Feldpausch et al. (2012)'s regions that can be 
+The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
 incorporated in the \code{retrieveH} function.
 }
 \description{
 Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 }
 \examples{
-#' # One study site 
-lat <- 4.08 
-long <- -52.68 
+#' # One study site
+lat <- 4.08
+long <- -52.68
 coord <- cbind(long, lat)
 \dontrun{FeldRegion <- computeFeldRegion(coord)}
 
@@ -34,7 +34,7 @@ coord <- cbind(long, lat)
 
 }
 \references{
-Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest 
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest
 biomass estimates.} Biogeosciences, 9, 3381–3403.
 }
 \author{

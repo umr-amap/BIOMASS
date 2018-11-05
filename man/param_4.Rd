@@ -14,7 +14,7 @@
 data("param_4")
 }
 \description{
-This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al. (2014), 
+This matrix contains the posterior distribution of the parameters of Equation 4 of Chave et al. (2014),
 obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{

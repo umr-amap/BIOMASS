@@ -22,7 +22,7 @@ weibullFunction(data, weight = NULL)
 \item{weight}{(optional) Vector indicating observation weights in the model.}
 }
 \value{
-All the functions give an output similar to the one given by \code{\link{lm}}, obtained for 
+All the functions give an output similar to the one given by \code{\link{lm}}, obtained for
 \code{michaelisFunction} and \code{weibullFunction} from \code{\link[minpack.lm]{nlsLM}}).
 }
 \description{
@@ -30,7 +30,7 @@ Methods used for modeling height-diameter relationship
 }
 \details{
 These functions model the relationship between tree height (H) and diameter (D).
-\bold{loglogFunction} 
+\bold{loglogFunction}
 Compute three types of log model (log, log2 and log3) to predict H from D.
 The model can be:
 \itemize{
@@ -39,7 +39,7 @@ The model can be:
     \item log 3: \eqn{log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3}
 }
 
-\bold{michaelisFunction} 
+\bold{michaelisFunction}
 Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A and B are the model parameters to be estimated)
 
 \bold{weibullFunction}

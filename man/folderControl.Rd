@@ -15,7 +15,7 @@ folderControl(nameFile = "", correctTaxo = FALSE)
 the path to the folder, and the separator if correctTaxo is False
 }
 \description{
-The function creates a folder (only once) and then controls files that needed to be downloaded and 
+The function creates a folder (only once) and then controls files that needed to be downloaded and
 placed in this folder.
 }
 \section{Localisation}{

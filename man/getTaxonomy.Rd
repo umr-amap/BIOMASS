@@ -19,9 +19,9 @@ From a genus, the function \code{getTaxonomy} finds the APG III family, and opti
 order, from the \code{\link{genusFamily}} database and the \code{\link{apgFamilies}} dataset
 }
 \examples{
-# Find the Family of the Aphelandra genus 
+# Find the Family of the Aphelandra genus
 getTaxonomy("Aphelandra")
-# ... and the order 
+# ... and the order
 getTaxonomy("Aphelandra", findOrder = TRUE)
 
 }

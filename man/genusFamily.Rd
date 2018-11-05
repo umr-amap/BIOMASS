@@ -4,7 +4,7 @@
 \name{genusFamily}
 \alias{genusFamily}
 \title{Genus Family database}
-\format{A data frame with 28107 observations on the following 2 variables: 
+\format{A data frame with 28107 observations on the following 2 variables:
 \describe{
   \item{\code{family}}{Vector of families APGIII corrected}
   \item{\code{genus}}{Vector of genus}
@@ -19,7 +19,7 @@ data("genusFamily")
 }
 \description{
 To create this database, we combined the genera from The Plant List (http://www.theplantlist.org/1.1/browse/-/-/)
-and the Vascular Plant Families and Genera from Kew (http://data.kew.org/vpfg1992/genlist.html). 
+and the Vascular Plant Families and Genera from Kew (http://data.kew.org/vpfg1992/genlist.html).
 Families were checked against the APGIII families.
 }
 \examples{

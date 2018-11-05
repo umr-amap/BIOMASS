@@ -7,13 +7,13 @@
 modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE)
 }
 \arguments{
-\item{D}{Vector with diameter measurements (in cm). NA values are accepted but a 
+\item{D}{Vector with diameter measurements (in cm). NA values are accepted but a
 minimum of 10 valid entries (i.e. having a corresponding height in H) is required.}
 
 \item{H}{Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.}
 
-\item{method}{Method used to fit the relationship. 
-To be chosen between: 
+\item{method}{Method used to fit the relationship.
+To be chosen between:
   \itemize{
     \item log1, log2, log3
     \itemize{
@@ -31,7 +31,7 @@ If \code{NULL}, all the methods will be compared.}
 \item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D.}
 }
 \value{
-Returns a list with if the parameter model is not null: 
+Returns a list with if the parameter model is not null:
 \describe{
 \item{input}{list of the data used to construct the model (list(H, D))}
 \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
@@ -45,7 +45,7 @@ Returns a list with if the parameter model is not null:
 \item{predicted}{Predicted height values}
 }
 
-If the parameter model is null, the function return a graph with all the methods for 
+If the parameter model is null, the function return a graph with all the methods for
 comparison, the function also return a data.frame with:
 \describe{
 \item{method}{The method that had been used to construct the graph}
@@ -76,8 +76,8 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGr
 # Using weights
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
                    drawGraph = TRUE)
-                   
-                   
+
+
 }
 \seealso{
 \code{\link{retrieveH}}, \code{\link{predictHeight}}

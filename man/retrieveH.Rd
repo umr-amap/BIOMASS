@@ -11,11 +11,11 @@ retrieveH(D, model = NULL, coord = NULL, region = NULL)
 
 \item{model}{A model output by the function \code{\link{modelHD}}.}
 
-\item{coord}{Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a 
+\item{coord}{Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a
 matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).}
 
-\item{region}{Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific 
-and pantropical models proposed by Feldpausch et al. (2012). To be chosen between: 
+\item{region}{Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific
+and pantropical models proposed by Feldpausch et al. (2012). To be chosen between:
 \itemize{
   \item \code{Africa}: Africa
   \item \code{CAfrica}: Central Africa
@@ -32,12 +32,12 @@ and pantropical models proposed by Feldpausch et al. (2012). To be chosen betwee
 }}
 }
 \value{
-Returns a list  with: 
+Returns a list  with:
 \item{H}{H predicted by the model}
 \item{RSE}{Residual Standard Error of the model}
 }
 \description{
-From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an 
+From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an
 estimation of the total tree height.
 }
 \examples{
@@ -59,7 +59,7 @@ H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 }
 \references{
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
-Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.} 
+Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.}
 Global change biology 20.10 (2014): 3177-3190.
 }
 \seealso{

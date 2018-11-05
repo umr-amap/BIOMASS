@@ -18,12 +18,12 @@ or (genus + species + author) may be given (see example).}
 The function returns a dataframe with the corrected (or not) genera and species.
 }
 \description{
-This function corrects typos for a given taxonomic name using the Taxonomic 
-Name Resolution Service (TNRS) via the Taxosaurus interface. 
+This function corrects typos for a given taxonomic name using the Taxonomic
+Name Resolution Service (TNRS) via the Taxosaurus interface.
 This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
 }
 \details{
-This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as 
+This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
 to avoid the replication of time-consuming servor requests.
 }
 \section{Localisation}{
@@ -44,7 +44,7 @@ See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 
 }
 \references{
-Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated 
+Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated
 standardization of plant names}. BMC bioinformatics, 14, 1.
 
 Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.

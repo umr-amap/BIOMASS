@@ -11,9 +11,9 @@ predictHeight(D, model, err = FALSE)
 
 \item{model}{A height-diameter model output by the function \code{link{modelHD}}}
 
-\item{err}{If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of 
-zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used 
-for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be 
+\item{err}{If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of
+zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
+for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be
 let as \code{FALSE}, the default case.}
 }
 \value{
@@ -23,7 +23,7 @@ Returns a vector of total tree height (in m).
 The function predicts height from diameter based on a fitted model.
 }
 \details{
-In the case where the error is \code{FALSE} and the model is a log-log model, we use the 
+In the case where the error is \code{FALSE} and the model is a log-log model, we use the
 Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 }
 \examples{

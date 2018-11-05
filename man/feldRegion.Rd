@@ -12,7 +12,7 @@ data("feldCoef")
 Raster with the region of Feldpausch et al. 2012 generalized height-diameter models
 }
 \details{
-This dataset is used in the function \code{\link{retrieveH}} 
+This dataset is used in the function \code{\link{retrieveH}}
 to predict height from diameter depending on the region.
 Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 }

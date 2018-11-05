@@ -13,9 +13,9 @@
 data("sd_10")
 }
 \description{
-This dataset gives the mean standard deviation of wood density values of the \code{\link{wdData}} dataset 
-at different taxonomical levels only considering taxa having more than 10 different values. 
-This dataset is used in the function \code{\link{getWoodDensity}} to associate at the appropriate taxonomic 
+This dataset gives the mean standard deviation of wood density values of the \code{\link{wdData}} dataset
+at different taxonomical levels only considering taxa having more than 10 different values.
+This dataset is used in the function \code{\link{getWoodDensity}} to associate at the appropriate taxonomic
 level a mean error to wood density estimate.
 }
 \details{
@@ -26,7 +26,7 @@ data(sd_10)
 str(sd_10)
 }
 \references{
-Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its 
+Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its
 uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
 }
 \keyword{datasets}

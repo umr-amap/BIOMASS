@@ -25,7 +25,7 @@ data(NouraguesHD)
 str(NouraguesHD)
 }
 \references{
-Réjou-Méchain, M. et al. (2015). \emph{Using repeated small-footprint LiDAR 
+Réjou-Méchain, M. et al. (2015). \emph{Using repeated small-footprint LiDAR
 acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest} Remote Sensing of Environment, 169, 93-101.
 }
 \keyword{datasets}
