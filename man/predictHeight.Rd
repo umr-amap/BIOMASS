@@ -26,16 +26,6 @@ The function predicts height from diameter based on a fitted model.
 In the case where the error is \code{FALSE} and the model is a log-log model, we use the
 Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 }
-\examples{
-# Load a database
-data(NouraguesHD)
-
-# Create a model
-model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
-# Predict the height
-H <- predictHeight(NouraguesHD$D, model)
-
-}
 \seealso{
 \code{\link[minpack.lm]{nlsLM}}
 }

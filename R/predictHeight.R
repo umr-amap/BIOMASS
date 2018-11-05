@@ -16,14 +16,7 @@
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link[minpack.lm]{nlsLM}}
 #'
-#' @examples
-#' # Load a database
-#' data(NouraguesHD)
-#'
-#' # Create a model
-#' model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
-#' # Predict the height
-#' H <- predictHeight(NouraguesHD$D, model)
+#' 
 #'
 #' @keywords Internal
 #'

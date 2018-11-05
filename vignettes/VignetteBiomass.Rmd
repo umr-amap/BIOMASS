@@ -7,6 +7,7 @@ output:
     toc: yes
     toc_depth: 5
     toc_float: yes
+    self_contained: no
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Vignette BIOMASS}

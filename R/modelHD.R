@@ -71,8 +71,8 @@
 #'                    drawGraph = TRUE)
 #'
 #'
-#' @importFrom graphics legend lines par plot
-#' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict
+#' @importFrom graphics legend lines par plot grid axis
+#' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict coef
 #' @importFrom utils data download.file unzip write.table
 #' @importFrom methods is
 #' @importFrom data.table data.table
