@@ -59,7 +59,7 @@ test_that("With the HDmodel", {
     method = "log2",
     useWeight = TRUE
   )
-  
+
   H <- retrieveH(KarnatakaForest$D, model = HDmodel)
   expect_is(H, "list")
   expect_is(H$H, "numeric")
