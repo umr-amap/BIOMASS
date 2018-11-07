@@ -55,6 +55,14 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
     }
   }
 
+  # Check if they have the package httr
+  if (!require("httr", quietly = T)) {
+    stop(
+      'To use this function, you must install "httr" library \n\n',
+      '\t\tinstall.packages("httr")\n\n'
+    )
+  }
+
 
   # sub-function definition -------------------------------------------------
 
@@ -148,7 +156,6 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
   # If there is too much data, better submit it in separated queries
   splitby <- 30
   query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby, length.out = length(query))]
-
 
 
 
