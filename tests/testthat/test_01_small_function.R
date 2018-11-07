@@ -2,12 +2,7 @@ options(stringsAsFactors = FALSE)
 
 data("KarnatakaForest")
 data("NouraguesHD")
-HDmodel <- modelHD(
-  D = NouraguesHD$D,
-  H = NouraguesHD$H,
-  method = "log2",
-  useWeight = TRUE
-)
+
 
 # Argument repetitive
 D <- KarnatakaForest$D
@@ -58,6 +53,13 @@ context("Function retriveH")
 test_that("With the HDmodel", {
   expect_error(retrieveH(KarnatakaForest$D), "Either")
 
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = "log2",
+    useWeight = TRUE
+  )
+  
   H <- retrieveH(KarnatakaForest$D, model = HDmodel)
   expect_is(H, "list")
   expect_is(H$H, "numeric")

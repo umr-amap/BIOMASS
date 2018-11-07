@@ -4,8 +4,11 @@ data("KarnatakaForest")
 genus <- KarnatakaForest$genus[1:10]
 species <- KarnatakaForest$species[1:10]
 
+
 context("CorrectTaxo")
 test_that("CorrectTaxo", {
+  skip_if_not_installed("httr")
+  
   expect_is(correctTaxo(genus, species), "data.frame")
 
   taxo <- correctTaxo(genus, species)
