@@ -59,7 +59,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
   if (!require("httr", quietly = T)) {
     stop(
       'To use this function, you must install "httr" library \n\n',
-      '\t\tinstall.packages("httr")\n\n'
+      '\t\tinstall.packages("httr")'
     )
   }
 
