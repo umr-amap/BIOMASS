@@ -16,7 +16,7 @@
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso \code{\link[minpack.lm]{nlsLM}}
 #'
-#' 
+#'
 #'
 #' @keywords Internal
 #'

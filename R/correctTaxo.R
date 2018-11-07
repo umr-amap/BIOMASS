@@ -33,13 +33,11 @@
 #' @export
 #' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF
 #' @importFrom rappdirs user_data_dir
-#' @importFrom httr content GET upload_file POST config
 #' @importFrom jsonlite fromJSON
 #'
 
 
 correctTaxo <- function(genus, species = NULL, score = 0.5) {
-
 
   # parameters verification -------------------------------------------------
 
@@ -156,7 +154,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
   # sending and retrive the data from taxosaurus ----------------------------
   tc <- function(l) Filter(Negate(is.null), l)
-  con_utf8 <- function(x) content(x, "text", encoding = "UTF-8")
+  con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
 
   url <- "http://taxosaurus.org/submit"
 
@@ -169,13 +167,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
     if (getpost == "get") {
       query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
       args <- tc(list(query = query2))
-      out <- GET(url, query = args)
+      out <- httr::GET(url, query = args)
       retrieve <- out$url
     } else {
       loc <- tempfile(fileext = ".txt")
       write.table(data.frame(x), file = loc, col.names = FALSE, row.names = FALSE)
-      args <- tc(list(file = upload_file(loc), source = "iPlant_TNRS"))
-      out <- POST(url, body = args, config(followlocation = 0))
+      args <- tc(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
+      out <- httr::POST(url, body = args, httr::config(followlocation = 0))
       tt <- con_utf8(out)
       message <- fromJSON(tt, FALSE)[["message"]]
       retrieve <- fromJSON(tt, FALSE)[["uri"]]
@@ -185,7 +183,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
     timeout <- "wait"
     while (timeout == "wait") {
-      ss <- GET(retrieve)
+      ss <- httr::GET(retrieve)
       output <- fromJSON(con_utf8(ss), FALSE)
       if (!grepl("is still being processed", output["message"]) == TRUE) {
         timeout <- "done"

@@ -1,0 +1,29 @@
+[general]
+creator=R package 'raster'
+created=2018-11-06 15:49:43
+[georeference]
+nrows=180
+ncols=180
+xmin=-80.4961463796052
+ymin=-23.4
+xmax=170.127133689689
+ymax=23.4000000000001
+projection=+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0
+[data]
+datatype=FLT4S
+byteorder=little
+nbands=1
+bandorder=BIL
+categorical=TRUE
+ratnames=ID:Id:Region:Perimeter:Area
+rattypes=integer:integer:character:numeric:numeric
+ratvalues=1:2:3:4:5:6:7:8:9:0:0:0:0:0:0:0:0:0:BrazilianShield:WAmazonia:ECAmazonia:NAustralia:SEAsia:EAfrica:CAfrica:WAfrica:GuianaShield:90.92018:185.86185:72.60486:140.91938:176.36417:127.26292:113.96067:88.18542:63.21677:482.6129:812.5679:111.1128:945.2953:1628.4536:613.0760:713.6373:318.7090:144.0952
+minvalue=1
+maxvalue=9
+nodatavalue=-3.4e+38
+[legend]
+legendtype=
+values=
+color=
+[description]
+layername=layer

@@ -32,11 +32,10 @@
 #'
 #' @importFrom raster raster extract factorValues
 computeFeldRegion <- function(coord) {
-
-
+  feldRegion <- raster(system.file("external/feldRegion.grd", package = "BIOMASS"))
   # Extract the raster value
-  RASTval <- extract(BIOMASS::feldRegion, coord)
-  FeldRegion <- as.vector(factorValues(BIOMASS::feldRegion, RASTval, att = "Region"))
+  RASTval <- extract(feldRegion, coord)
+  FeldRegion <- as.vector(factorValues(feldRegion, RASTval, att = "Region"))
 
   return(FeldRegion)
 }

@@ -13,7 +13,6 @@ Depends: R(>= 2.10.0)
 Imports:
 	minpack.lm (>= 1.2), 
 	raster (>= 2.6), 
-	httr (>= 1.3), 
 	jsonlite (>= 1.5), 
 	methods (>= 3.4), 
 	graphics (>= 3.4), 
@@ -23,6 +22,7 @@ Imports:
 	rappdirs (>= 0.3)
 VignetteBuilder: knitr
 Suggests:
+	httr (>= 1.3), 
 	knitr (>= 1.20), 
 	rmarkdown (>= 1.10),
     	testthat (>= 2.0),

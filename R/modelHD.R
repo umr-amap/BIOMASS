@@ -118,7 +118,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   # If the measures need to be weighted
   if (useWeight == TRUE) {
     weight <- Hdata[, D^2 * H]
-  }  # weight is proportional to tree volume
+  } # weight is proportional to tree volume
 
 
 
