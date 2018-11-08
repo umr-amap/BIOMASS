@@ -77,8 +77,10 @@ computeE <- function(coord) {
 
     if (i > 8) {
       coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
-      stop("The coordinate n° ", paste(which(is.na(coord$RASTval)), collapse = " "), 
-           " are too far for first non-NA value in the raster")
+      stop(
+        "The coordinate n° ", paste(which(is.na(coord$RASTval)), collapse = " "),
+        " are too far for first non-NA value in the raster"
+      )
     }
 
     i <- i + 1
