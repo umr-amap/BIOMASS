@@ -1,8 +1,15 @@
-#' Retrieving the Feldpausch Regions TO BE IMPROVED
+#' Retrieving the Feldpausch regions TO BE IMPROVED
 #'
 #' Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 #'
 #' @inheritParams computeE
+#' @param level a string or a vector of string, the length must be matched the number of row of the parameter coord. 
+#' This parameter will be used for grow the scale you which to look at for the Feldpausch regions. There are tree levels :
+#' \describe{
+#'    \item[region] The smaller scale and the 
+#'    \item[continent] The medium scale, only the value which who are in Africa and America will be changed 
+#'    \item[world] The larger scale, all the value will be replaced by "Pantropical"
+#' }
 #'
 #' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
 #' incorporated in the \code{retrieveH} function.
@@ -31,11 +38,46 @@
 #' @author Arthur PERE, Ted FELDPAUSCH
 #'
 #' @importFrom raster raster extract factorValues
-computeFeldRegion <- function(coord) {
-  feldRegion <- raster(system.file("external/feldRegion.grd", package = "BIOMASS"))
-  # Extract the raster value
-  RASTval <- extract(feldRegion, coord)
-  FeldRegion <- as.vector(factorValues(feldRegion, RASTval, att = "Region"))
+computeFeldRegion <- function(coord, level = "region") {
+  
+  if (!(length(level) %in% c(1, nrow(coord)))) {
+    stop("The vector region must be a length of 1 or the number of row of your coord parameter")
+  }
+  if(!all( grepl("(region)|(continent)|(world)", tolower(level)) ))
+    stop("The level parameter msut have this tree level : 'region', 'continent' or 'world'")
 
+  RAST <- raster(system.file("external/feldRegion.grd", package = "BIOMASS"))
+  # Extract the raster value
+  RASTval <- extract(RAST, coord)
+  FeldRegion <- as.vector(factorValues(RAST, RASTval, att = "Region"))[,1]
+  
+  level <- tolower(level)
+
+  if (all(level == "region")) {
+    return(FeldRegion)
+  }
+  
+  
+  # if the user choose to take a level
+  if (length(level) == 1) {
+    level <- rep(level, length(FeldRegion))
+  }
+
+  # Replace the world level by Pantropical
+  FeldRegion[ grepl("world", level) ] <- "Pantropical"
+  
+  # Replace the continent level by different value:
+  # The african region will be at the same level Africa
+  FeldRegion[ grepl("continent", level) ] <- sub(
+    pattern = ".+(Africa)", replacement = "Africa",
+    FeldRegion[ grepl("continent", level) ]
+  )
+  
+  # The south america region will be at the same level SAmerica
+  FeldRegion[ grepl("continent", level) ] <- sub(
+    pattern = ".+((Amazonia)|(Shield))", replacement = "SAmerica",
+    FeldRegion[ grepl("continent", level) ]
+  )
+  
   return(FeldRegion)
 }
