@@ -45,17 +45,47 @@
 #' \dontrun{E <- computeE(coord)}
 #'
 #' @importFrom raster raster extract
+#' @importFrom data.table as.data.table
 
 computeE <- function(coord) {
-  ### Compute the Environmental Index (Chave et al. 2014)
-
+  
+  
   path <- folderControl("E")
-
+  
+  # find the raster
   nam <- paste(path$path, "E.bil", sep = path$sep)
   RAST <- raster(nam)
-
+  
+  if(is.null(dim(coord))){
+    return(extract(RAST, matrix(coord, ncol = 2)))
+  }
+  
+  # set the coord in a data.table
+  coord = as.data.table(coord)
+  
+  # 
+  coord_unique = unique(coord)
+  coord_unique = na.omit(coord_unique)
+  
   # Extract the raster value
-  RASTval <- extract(RAST, coord, "bilinear")
-
-  return(RASTval)
+  coord_unique[, RASTval := extract(RAST, coord_unique, "bilinear")]
+  
+  # search around the point if there is an NA in the RASTval
+  r = 0
+  i = 1
+  while(anyNA(coord_unique$RASTval)){
+    r = r + 5000
+    coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+    
+    if( i > 8 ) {
+      coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
+      stop("The coordinate n° ", paste( which(is.na(coord$RASTval)), collapse = " " ), " are in a  ")
+    }
+    
+    i = i + 1
+  }
+  
+  return(coord[coord_unique, on = c("V1", "V2"), RASTval])
+  
+  
 }
