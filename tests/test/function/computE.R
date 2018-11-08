@@ -29,12 +29,11 @@ computeE1 = function(coord){
   RAST <- raster(nam)
   
   if(is.null(dim(coord))){
-    return(extract(RAST, coord))
+    return(extract(RAST, matrix(coord, ncol = 2)))
   }
   
   # set the coord for 
   coord = as.data.table(coord)
-  setnames(coord, colnames(coord), c("long", "lat"))
   
   coord_unique = unique(coord)
   coord_unique = na.omit(coord_unique)
@@ -43,28 +42,33 @@ computeE1 = function(coord){
   coord_unique[, RASTval := extract(RAST, coord_unique, "bilinear")]
   
   # r = 0
+  # i = 1
   # while(anyNA(coord_unique$RASTval)){
-  #   r = r + 1000
-  #   coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(long, lat), buffer = r), mean, na.rm = T)]
-  #   print(r)
+  #   r = r + 5000
+  #   coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+  #   
+  #   if( i > 8 ) {
+  #     coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
+  #     stop("The coordinate n° ", paste( which(is.na(coord$RASTval)), collapse = " " ))
+  #   }
+  #     
+  #   i = i + 1
   # }
   
-  return(coord[coord_unique, on = c("long", "lat"), RASTval])
+  return(coord[coord_unique, on = c("V1", "V2"), RASTval])
 }
 
 
 
-tic()
-computeE1(coord1)
-toc()
+
 
 
 res = microbenchmark::microbenchmark("original" = computeE(coord1[1:10,]), "modified" = computeE1(coord1[1:10,]))
 plot(res)
 
 tic()
-computeE(coord1[1:10,])
-a = toc()
+invisible( computeE1(coord1) )
+toc()
 
 sequence = seq(2, nrow(coord1), by = 100 )
 time = matrix(0, nrow = length(sequence), ncol = 3, dimnames = list( NULL, c("size", "original", "modified")) )
