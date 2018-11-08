@@ -41,19 +41,19 @@ computeE1 = function(coord){
   # Extract the raster value
   coord_unique[, RASTval := extract(RAST, coord_unique, "bilinear")]
   
-  # r = 0
-  # i = 1
-  # while(anyNA(coord_unique$RASTval)){
-  #   r = r + 5000
-  #   coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
-  #   
-  #   if( i > 8 ) {
-  #     coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
-  #     stop("The coordinate n° ", paste( which(is.na(coord$RASTval)), collapse = " " ))
-  #   }
-  #     
-  #   i = i + 1
-  # }
+  r = 0
+  i = 1
+  while(anyNA(coord_unique$RASTval)){
+    r = r + 5000
+    coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+
+    if( i > 8 ) {
+      coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
+      stop("The coordinate n° ", paste( which(is.na(coord$RASTval)), collapse = " " ), " are in a  ")
+    }
+
+    i = i + 1
+  }
   
   return(coord[coord_unique, on = c("V1", "V2"), RASTval])
 }

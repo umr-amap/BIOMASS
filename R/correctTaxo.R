@@ -56,7 +56,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
   }
 
   # Check if they have the package httr
-  if (!require("httr", quietly = T)) {
+  if (!requireNamespace("httr", quietly = T)) {
     stop(
       'To use this function, you must install "httr" library \n\n',
       '\t\tinstall.packages("httr")'
