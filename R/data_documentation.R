@@ -21,21 +21,6 @@
 "apgFamilies"
 
 
-#' Raster with the region of Feldpausch et al. 2012 generalized height-diameter models
-#'
-#'
-#' @docType data
-#' @usage data("feldCoef")
-#' @format raster
-#' @details This dataset is used in the function \code{\link{retrieveH}}
-#' to predict height from diameter depending on the region.
-#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
-#' @examples
-#' data(feldRegion)
-#' @keywords raster internal
-"feldRegion"
-
-
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #'
 #' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
