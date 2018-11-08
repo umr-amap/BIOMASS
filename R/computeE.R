@@ -48,44 +48,40 @@
 #' @importFrom data.table as.data.table
 
 computeE <- function(coord) {
-  
-  
   path <- folderControl("E")
-  
+
   # find the raster
   nam <- paste(path$path, "E.bil", sep = path$sep)
   RAST <- raster(nam)
-  
-  if(is.null(dim(coord))){
+
+  if (is.null(dim(coord))) {
     return(extract(RAST, matrix(coord, ncol = 2)))
   }
-  
+
   # set the coord in a data.table
-  coord = as.data.table(coord)
-  
-  # 
-  coord_unique = unique(coord)
-  coord_unique = na.omit(coord_unique)
-  
+  coord <- as.data.table(coord)
+
+  #
+  coord_unique <- unique(coord)
+  coord_unique <- na.omit(coord_unique)
+
   # Extract the raster value
   coord_unique[, RASTval := extract(RAST, coord_unique, "bilinear")]
-  
+
   # search around the point if there is an NA in the RASTval
-  r = 0
-  i = 1
-  while(anyNA(coord_unique$RASTval)){
-    r = r + 5000
-    coord_unique[is.na(RASTval), RASTval := sapply( extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
-    
-    if( i > 8 ) {
+  r <- 0
+  i <- 1
+  while (anyNA(coord_unique$RASTval)) {
+    r <- r + 5000
+    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+
+    if (i > 8) {
       coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
-      stop("The coordinate n° ", paste( which(is.na(coord$RASTval)), collapse = " " ), " are in a  ")
+      stop("The coordinate n° ", paste(which(is.na(coord$RASTval)), collapse = " "), " are too far for first non-NA value in the raster")
     }
-    
-    i = i + 1
+
+    i <- i + 1
   }
-  
+
   return(coord[coord_unique, on = c("V1", "V2"), RASTval])
-  
-  
 }
