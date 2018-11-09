@@ -4,7 +4,7 @@
 #'
 #' @author \packageAuthor{BIOMASS}
 #' @author Maintainer: \packageMaintainer{BIOMASS}
-#' 
+#'
 #'
 #' @examples
 #' \dontrun{

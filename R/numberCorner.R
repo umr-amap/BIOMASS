@@ -25,8 +25,7 @@
 #'   \item[codeUTM]{The UTM proj4 code}
 #' }
 #' @export
-#' @importFrom data.table data.table := split
-#' @importFrom proj4 project
+#' @importFrom data.table data.table :=
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #' @examples
 numberCorner <- function(longlat = NULL, UTMcoord = NULL, plot, origin, clockWise) {
