@@ -54,6 +54,9 @@ summaryByPlot <- function(plot, subplot = plot, AGB_simu) {
   if (length(subplot) != nrow(AGB_simu)) {
     stop("Your subplot vector haven't the same length as your number of row in the matrix")
   }
+  if (!is.matrix(AGB_simu)) {
+    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo'")
+  }
 
 
 
@@ -119,7 +122,7 @@ summaryByPlot <- function(plot, subplot = plot, AGB_simu) {
 
   AGB <- Plot[!is.na(subplot), mySummary(.I, AGB_simu), by = subplot]
 
-  if (all(plot == subplot)) {
+  if (all(na.omit(plot == subplot))) {
     setnames(AGB, "subplot", "plot")
   }
 

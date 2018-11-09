@@ -29,18 +29,18 @@
 #' @examples
 #' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
 #' plot <- rep("plot1", 4)
-#' 
+#'
 #' # if you turn clock wise
 #' corner = numberCorner(UTMcoord = coord, plot = plot, origin = c(F, F, T, F), clockWise = T)
-#' 
+#'
 #' # Plot the plot
 #' plot(coord, asp = 1)
 #' text(coord, labels = corner$corner, pos = 1)
-#' 
-#' 
+#'
+#'
 #' # if you turn anti clock wise
 #' corner = numberCorner(UTMcoord = coord, plot = plot, origin = c(F, F, T, F), clockWise = F)
-#' 
+#'
 #' # Plot the plot
 #' plot(coord, asp = 1)
 #' text(coord, labels = corner$corner, pos = 1)
@@ -97,16 +97,16 @@ numberCorner <- function(longlat = NULL, UTMcoord = NULL, plot, origin, clockWis
   # Function to assign corner numbers
   cornerFun <- function(x, y, Origin, clockWise) {
     coord <- data.table(X = x, Y = y, n.row = 1:length(x), corner = as.numeric(NA))
-    
+
     # if the plot the square is turn at 45° in relation to the horizontal
     # rotate the coordinate by 45°
-    if(any(rank(coord$X) == 4)){
-      rot = matrix(c(cos(pi/4), sin(pi/4), -sin(pi/4), cos(pi/4)), nrow = 2)
-      newcoord = as.matrix( coord[, .(X, Y)] ) %*% rot
-      
-      coord[, ":="(X = newcoord[,1], Y = newcoord[,2]) ]
+    if (any(rank(coord$X) == 4)) {
+      rot <- matrix(c(cos(pi / 4), sin(pi / 4), -sin(pi / 4), cos(pi / 4)), nrow = 2)
+      newcoord <- as.matrix(coord[, .(X, Y)]) %*% rot
+
+      coord[, ":="(X = newcoord[, 1], Y = newcoord[, 2]) ]
     }
-    
+
     # Assign temporary corner numbers without accounting for the origin
     m1 <- coord[ rank(X) <= 2, ]
     tmp1 <- m1[rank(Y), n.row]
