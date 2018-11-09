@@ -13,11 +13,30 @@ summaryByPlot(plot, subplot = plot, AGB_simu)
 
 \item{AGB_simu}{Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list}
 }
-\value{
-The matrix corrected with the values of the trees who doesn't have a subplot replaced by NA
-}
 \description{
 This function mixes the AGB of the tree that doesn't have a subplot assigned.
 The AGB for those trees will be added with a random tree (in the same plot or
 if the tree haven't a plot in the matrix) on each column of the matrix.
+}
+\examples{
+
+# Load a database
+data(NouraguesHD)
+data(KarnatakaForest)
+
+# Modelling height-diameter relationship
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+
+# Retrieving wood density values
+KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
+                              stand = KarnatakaForest$plotId)
+                              
+# Propagating errors with a standard error in wood density in one plot
+filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
+resultMC <- AGBmonteCarlo(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
+                          errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel)
+
+plot = KarnatakaForest$plotId[ KarnatakaForest$plotId \%in\% c("BSP20", "BSP14") ]
+
+
 }
