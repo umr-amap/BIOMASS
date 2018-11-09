@@ -11,11 +11,17 @@
 #'    \item[Y] The Y UTM coordinate
 #' }
 #' @export
-#'
+#' @importFrom data.table as.data.table :=
 #' @examples
-latlong2UTM <- function(Coord) {
-  setDT(Coord)
-  setnames(Coord, colnames(Coord), c("long", "lat"))
+#' 
+#' long <- c(-52.68, -51.12, -53.11)
+#' lat <- c(4.08, 3.98, 4.12)
+#' coord <- cbind(long, lat)
+#' \dontrun{UTMcoord <- latlong2UTM(coord)}
+#' 
+latlong2UTM <- function(coord) {
+  coord = as.data.table(coord)
+  setnames(coord, colnames(coord), c("long", "lat"))
 
   if (!requireNamespace("proj4")) {
     stop("Please install the package 'proj4'")
@@ -31,10 +37,10 @@ latlong2UTM <- function(Coord) {
   }
 
   # Convert into UTM
-  Coord[, codeUTM := codelatlong2UTM(long, lat)]
-  Coord[, c("X", "Y") := split(t(proj4::project(cbind(long, lat), proj = unique(codeUTM))), 1:2), by = codeUTM]
+  coord[, codeUTM := codelatlong2UTM(long, lat)]
+  coord[, c("X", "Y") := split(t(proj4::project(cbind(long, lat), proj = unique(codeUTM))), 1:2), by = codeUTM]
 
-  setDF(Coord)
+  setDF(coord)
 
-  return(Coord)
+  return(coord)
 }

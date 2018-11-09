@@ -4,7 +4,10 @@
 \alias{latlong2UTM}
 \title{Translate the long lat coordinate in UTM coordinate}
 \usage{
-latlong2UTM(Coord)
+latlong2UTM(coord)
+}
+\arguments{
+\item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
 a data frame whith :
@@ -18,4 +21,12 @@ a data frame whith :
 }
 \description{
 Translate the long lat coordinate in UTM coordinate
+}
+\examples{
+
+long <- c(-52.68, -51.12, -53.11)
+lat <- c(4.08, 3.98, 4.12)
+coord <- cbind(long, lat)
+\dontrun{UTMcoord <- latlong2UTM(coord)}
+
 }
