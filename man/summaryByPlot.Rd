@@ -13,10 +13,20 @@ summaryByPlot(plot, subplot = plot, AGB_simu)
 
 \item{AGB_simu}{Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list}
 }
+\value{
+a data frame where :
+\describe{
+   \item[plot] if you just put the argument plot without the subplot, it's the code of the plot
+   \item[subplot] if you just put the argument plot and the subplot, it's the code of the subplot
+   \item[AGB] the mean of AGBfor the plot or subplot
+   \item[Cred_2.5] the 2.5% credibility intervalle for the plot or subplot
+   \item[Cred_97.5] the 97.5% credibility intervalle for the plot or subplot
+}
+}
 \description{
 This function mixes the AGB of the tree that doesn't have a subplot assigned.
 The AGB for those trees will be added with a random tree (in the same plot or
-if the tree haven't a plot in the matrix) on each column of the matrix.
+if the tree haven't a plot in all the plot) on each column of the matrix.
 }
 \examples{
 
@@ -30,13 +40,15 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 # Retrieving wood density values
 KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
                               stand = KarnatakaForest$plotId)
-                              
+
 # Propagating errors with a standard error in wood density in one plot
 filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
 resultMC <- AGBmonteCarlo(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
                           errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel)
 
-plot = KarnatakaForest$plotId[ KarnatakaForest$plotId \%in\% c("BSP20", "BSP14") ]
+plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId \%in\% c("BSP20", "BSP14") ]
 
+# The summary by plot
+summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)
 
 }
