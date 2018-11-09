@@ -24,7 +24,6 @@ A data frame with:
   \item[X]{The coordinates X in UTM}
   \item[Y]{The coordinates Y in UTM}
   \item[corner]{The corner numbers}
-  \item[codeUTM]{The UTM proj4 code}
 }
 }
 \description{
@@ -36,6 +35,25 @@ Corner numbering is done as followed:
    \item axis X: the corner 1 to the corner 2
    \item axis Y: the corner 1 to the corner 4
 }
+}
+\examples{
+coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
+plot <- rep("plot1", 4)
+
+# if you turn clock wise
+corner = numberCorner(UTMcoord = coord, plot = plot, origin = c(F, F, T, F), clockWise = T)
+
+# Plot the plot
+plot(coord, asp = 1)
+text(coord, labels = corner$corner, pos = 1)
+
+
+# if you turn anti clock wise
+corner = numberCorner(UTMcoord = coord, plot = plot, origin = c(F, F, T, F), clockWise = F)
+
+# Plot the plot
+plot(coord, asp = 1)
+text(coord, labels = corner$corner, pos = 1)
 }
 \author{
 Arthur PERE, Maxime REJOU-MECHAIN
