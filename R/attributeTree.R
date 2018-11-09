@@ -1,9 +1,10 @@
 #' Attribute the tree to the subplot
 #'
-#' @param x The x coordinate of the tree for each plot
-#' @param y The y coordinate of the tree for axis
-#' @param Plot The label of the plot (same length as x and y)
-#' @param CoordAbs Output of the function cutTree
+#' Fonction to attribute the trees on each subplot, the trees that are at the exterior 
+#'
+#' @param xy The coordinate of the trees for each plot
+#' @param plot The label of the plot (same length as the number of row of xy)
+#' @param CoordAbs Output of the function cutPlot
 #'
 #' @return A vector with the subplot for each trees
 #' @export
@@ -11,30 +12,45 @@
 #' @importFrom data.table data.table setDT between
 #'
 #' @examples
+#' 
+#' # trees relative coordinate
+#' xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
 #'
+#' 
+#' # cut the plot in multiple part
+#' coord <- data.frame(X = rep(c(0, 200, 0, 200), 2), Y = rep(c(0, 0, 200, 200), 2))
+#' coord[1:4, ] = coord[1:4, ] + 5000
+#' coord[5:8, ] = coord[5:8, ] + 6000
+#' corner <- rep( c(1, 2, 4, 3), 2)
+#' plot <- rep(c("plot1", "plot2"), each = 4)
 #'
-#'
-#'
-attributeTree <- function(x, y, Plot, CoordAbs) {
+#' cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
+#' 
+#' 
+#' # The attribute the plot
+#' plot <- rep(c("plot1","plot2"), 100)
+#' 
+#' # attribute the trees to subplot
+#' attributeTree(xy, plot, cut)
+#' 
+attributeTree <- function(xy, plot, CoordAbs) {
 
 
   # parameters verification -------------------------------------------------
 
-  if (length(x) != length(y)) {
-    stop("Your x and y vector haven't the same length")
+  if (nrow(xy) != length(plot)) {
+    stop("Your plot vector haven't the same length than the number of row of xy")
   }
-  if (length(x) != length(Plot)) {
-    stop("Your Plot vector haven't the same length as the other x and y")
-  }
-  if (any(sort(unique(Plot)) != sort(unique(CoordAbs$Plot)))) {
+  if (any(sort(unique(plot)) != sort(unique(CoordAbs$Plot)))) {
     warning(
       "The plot(s) ",
-      sort(unique(Plot))[ sort(unique(Plot)) != sort(unique(CoordAbs$Plot))],
+      sort(unique(plot))[ sort(unique(plot)) != sort(unique(CoordAbs$Plot))],
       " won't be computed but will appeared as the label of the plot"
     )
   }
 
-  Coord <- data.table(X = x, Y = y, Plot = Plot)
+  Coord <- data.table(xy, Plot = plot)
+  setnames(Coord, colnames(Coord), c("X", "Y", "Plot"))
   setDT(CoordAbs)
 
   # Attribute the tree to there subplot

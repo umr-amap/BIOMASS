@@ -4,27 +4,42 @@
 \alias{attributeTree}
 \title{Attribute the tree to the subplot}
 \usage{
-attributeTree(x, y, Plot, CoordAbs)
+attributeTree(xy, plot, CoordAbs)
 }
 \arguments{
-\item{x}{The x coordinate of the tree for each plot}
+\item{xy}{The coordinate of the trees for each plot}
 
-\item{y}{The y coordinate of the tree for axis}
+\item{plot}{The label of the plot (same length as the number of row of xy)}
 
-\item{Plot}{The label of the plot (same length as x and y)}
-
-\item{CoordAbs}{Output of the function cutTree}
+\item{CoordAbs}{Output of the function cutPlot}
 }
 \value{
 A vector with the subplot for each trees
 }
 \description{
-Attribute the tree to the subplot
+Fonction to attribute the trees on each subplot, the trees that are at the exterior
 }
 \examples{
 
+# trees relative coordinate
+xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
 
 
+# cut the plot in multiple part
+coord <- data.frame(X = rep(c(0, 200, 0, 200), 2), Y = rep(c(0, 0, 200, 200), 2))
+coord[1:4, ] = coord[1:4, ] + 5000
+coord[5:8, ] = coord[5:8, ] + 6000
+corner <- rep( c(1, 2, 4, 3), 2)
+plot <- rep(c("plot1", "plot2"), each = 4)
+
+cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
+
+
+# The attribute the plot
+plot <- rep(c("plot1","plot2"), 100)
+
+# attribute the trees to subplot
+attributeTree(xy, plot, cut)
 
 }
 \author{
