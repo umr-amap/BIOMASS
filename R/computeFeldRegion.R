@@ -1,4 +1,4 @@
-#' Retrieving the Feldpausch regions TO BE IMPROVED
+#' Retrieving the Feldpausch regions
 #'
 #' Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 #'
