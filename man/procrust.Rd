@@ -19,8 +19,6 @@ Do the procrust analysis X is the target matrix, Y is the matrix we want to fit 
 This procrust analysis give just a translation vector and a rotation matrix
 After the procrust problem you \textbf{must} do the rotation before the translation.
 \textbf{Warning :} The order of the between the lines of the matrix X and Y must be respected.
-}
-\details{
 \textbf{The order of the value on both matrix is important}
 }
 \author{

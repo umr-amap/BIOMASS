@@ -4,8 +4,6 @@
 #' This procrust analysis give just a translation vector and a rotation matrix
 #' After the procrust problem you \textbf{must} do the rotation before the translation.
 #' \textbf{Warning :} The order of the between the lines of the matrix X and Y must be respected.
-#'
-#'
 #' \textbf{The order of the value on both matrix is important}
 #'
 #' @param X the target matrix
@@ -16,7 +14,6 @@
 #'
 #' @author Arthur PERE
 #'
-#' @examples
 procrust <- function(X, Y) {
   xmean <- colMeans(X)
   ymean <- colMeans(Y)
