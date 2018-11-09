@@ -39,12 +39,27 @@
 #'
 #' @importFrom raster raster extract factorValues
 computeFeldRegion <- function(coord, level = "region") {
+
+
+  # Parameter verification --------------------------------------------------
+
+
   if (!(length(level) %in% c(1, nrow(coord)))) {
     stop("The vector region must be a length of 1 or the number of row of your coord parameter")
   }
-  if (!all(grepl("(region)|(continent)|(world)", tolower(level)))) {
-    stop("The level parameter msut have this tree level : 'region', 'continent' or 'world'")
+  if (!all(grepl("(^world$)|(^region$)|(^continent$)", tolower(level)))) {
+    stop("The level parameter must have this tree level : 'region', 'continent' or 'world'")
   }
+
+
+  # if the user have the level set on world
+  if (all(level == "world")) {
+    return(rep("Pantropical", nrow(coord)))
+  }
+
+
+  # raster ------------------------------------------------------------------
+
 
   RAST <- raster(system.file("external/feldRegion.grd", package = "BIOMASS"))
   # Extract the raster value
@@ -58,25 +73,29 @@ computeFeldRegion <- function(coord, level = "region") {
   }
 
 
+  # level different of world and region -------------------------------------
+
+
+
   # if the user choose to take a level
   if (length(level) == 1) {
     level <- rep(level, length(FeldRegion))
   }
 
   # Replace the world level by Pantropical
-  FeldRegion[ grepl("world", level) ] <- "Pantropical"
+  FeldRegion[ level == "world" ] <- "Pantropical"
 
   # Replace the continent level by different value:
   # The african region will be at the same level Africa
-  FeldRegion[ grepl("continent", level) ] <- sub(
+  FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Africa)", replacement = "Africa",
-    FeldRegion[ grepl("continent", level) ]
+    FeldRegion[ level == "continent" ]
   )
 
   # The south america region will be at the same level SAmerica
-  FeldRegion[ grepl("continent", level) ] <- sub(
-    pattern = ".+((Amazonia)|(Shield))", replacement = "SAmerica",
-    FeldRegion[ grepl("continent", level) ]
+  FeldRegion[ level == "continent" ] <- sub(
+    pattern = ".+(Amazonia|Shield)", replacement = "SAmerica",
+    FeldRegion[ level == "continent" ]
   )
 
   return(FeldRegion)
