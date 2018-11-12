@@ -158,7 +158,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
   # sending and retrive the data from taxosaurus ----------------------------
-  tc <- function(l) Filter(Negate(is.null), l)
+  dropNulls <- function (x) x[!vapply(x, is.null, FUN.VALUE = logical(1))]
   con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
 
   url <- "http://taxosaurus.org/submit"
@@ -171,13 +171,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
     if (getpost == "get") {
       query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
-      args <- tc(list(query = query2))
+      args <- dropNulls(list(query = query2))
       out <- httr::GET(url, query = args)
       retrieve <- out$url
     } else {
       loc <- tempfile(fileext = ".txt")
       write.table(data.frame(x, stringsAsFactors = FALSE), file = loc, col.names = FALSE, row.names = FALSE)
-      args <- tc(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
+      args <- dropNulls(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
       out <- httr::POST(url, body = args, httr::config(followlocation = 0))
       tt <- con_utf8(out)
       message <- fromJSON(tt, FALSE)[["message"]]
@@ -196,7 +196,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
       Sys.sleep(1)
     }
 
-    out <- tc(output$names)
+    out <- dropNulls(output$names)
 
     if (length(out) > 0) {
       submittedName <- sapply(out, function(x) x$submittedName)
