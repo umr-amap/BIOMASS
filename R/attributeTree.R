@@ -9,7 +9,7 @@
 #' @return A vector with the subplot for each trees
 #' @export
 #' @author Arthur PERE
-#' @importFrom data.table data.table setDT between
+#' @importFrom data.table data.table setDT between first setnames
 #'
 #' @examples
 #'
@@ -41,7 +41,10 @@ attributeTree <- function(xy, plot, CoordAbs) {
   if (nrow(xy) != length(plot)) {
     stop("Your plot vector haven't the same length than the number of row of xy")
   }
-  if (any(sort(unique(plot)) != sort(unique(CoordAbs$Plot)))) {
+  if(!is.data.frame(CoordAbs))
+    stop("Your parameter 'CoordAbs' isn't a data frame")
+  
+  if (length(unique(plot)) < length(unique(CoordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(CoordAbs$Plot)))) {
     warning(
       "The plot(s) ",
       sort(unique(plot))[ sort(unique(plot)) != sort(unique(CoordAbs$Plot))],
@@ -68,7 +71,7 @@ attributeTree <- function(xy, plot, CoordAbs) {
 
 
   # if trees are at the superior limit of the plot
-  Coord[, ":="(Xmax = Xmax / gridsize, Ymax = Ymax / gridsize)]
+  Coord[, ":="(Xmax = Xmax / gridsize, Ymax = Ymax / gridsize), by = Plot]
   Coord[Xplot == Xmax, Xplot := Xplot - 1]
   Coord[Yplot == Ymax, Yplot := Yplot - 1]
 

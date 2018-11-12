@@ -35,7 +35,7 @@
 #' @export
 #'
 #' @importFrom data.table between
-#' @importFrom sp Polygon Polygons SpatialPolygons
+#' @importFrom sp Polygon Polygons SpatialPolygons plot
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
