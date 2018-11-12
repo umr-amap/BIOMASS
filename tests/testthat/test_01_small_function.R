@@ -201,3 +201,23 @@ for (method in c("log1", "log2", "log3", "weibull", "michaelis")) {
     }
   })
 }
+
+
+
+
+context("compute Feld Region")
+test_that("compute Feld Region", {
+  
+  expect_equal( unique( computeFeldRegion(coord) ), "SEAsia")
+  expect_length(computeFeldRegion(coord), nrow(coord))
+  
+  expect_equal( unique( computeFeldRegion(coord, level = "world") ), "Pantropical" )
+  expect_equal(computeFeldRegion(coord, level = rep(c("region", "continent", "world"), length.out = nrow(coord))), 
+               rep(c("SEAsia", "SEAsia", "Pantropical"), length.out = nrow(coord)))
+  
+  expect_error(computeFeldRegion(coord, level = c("region", "region")))
+  expect_error(computeFeldRegion(coord, level = "fgaz"))
+})
+
+
+
