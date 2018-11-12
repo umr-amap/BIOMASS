@@ -158,7 +158,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
   # sending and retrive the data from taxosaurus ----------------------------
-  dropNulls <- function (x) x[!vapply(x, is.null, FUN.VALUE = logical(1))]
+  dropNulls <- function(x) x[!vapply(x, is.null, FUN.VALUE = logical(1))]
   con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
 
   url <- "http://taxosaurus.org/submit"

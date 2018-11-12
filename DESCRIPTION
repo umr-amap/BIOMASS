@@ -27,4 +27,4 @@ Suggests:
 	rmarkdown (>= 1.10),
     	testthat (>= 2.0),
 	covr (>= 3.2)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

@@ -6,9 +6,9 @@
 #' @param level a string or a vector of string, the length must be matched the number of row of the parameter coord.
 #' This parameter will be used for grow the scale you which to look at for the Feldpausch regions. There are tree levels :
 #' \describe{
-#'    \item[region] The smaller scale and the value by default
-#'    \item[continent] The medium scale, only the value which who are in Africa and America will be changed
-#'    \item[world] The larger scale, all the value will be replaced by "Pantropical"
+#'    \item{region}{The smaller scale and the value by default}
+#'    \item{continent}{The medium scale, only the value which who are in Africa and America will be changed}
+#'    \item{world}{The larger scale, all the value will be replaced by "Pantropical"}
 #' }
 #'
 #' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
