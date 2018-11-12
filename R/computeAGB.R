@@ -64,12 +64,12 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
     if (length(D) != length(H)) {
       stop("H and WD have different length")
     }
-    if (any(is.na(H)) & !any(is.na(D))) {
-      warning("NA values are generated for AGB values because of missing information on tree height, 
-               you may construct a height-diameter model to overcome that issue (see ?HDFunction and ?retrieveH)")
-    }
-    if (any(is.na(D))) {
+    if (anyNA(D)) {
       warning("NA values in D")
+    }
+    if (anyNA(H) & !anyNA(D)) {
+      warning("There is some NA values in given heights. For those trees the function will return NA AGB, 
+               you may construct a height-diameter model to overcome that issue (see ?HDFunction and ?retrieveH)")
     }
   }
 
@@ -96,9 +96,6 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
     # If there is no heigth, but the coordinates :
     if (is.null(dim(coord))) {
       coord <- as.matrix(t(coord))
-    }
-    if (nrow(coord) == 1) {
-      coord <- cbind(rep(coord[1], length(D)), rep(coord[2], length(D)))
     }
 
     E <- computeE(coord) # environmental index in Chave et al. 2014

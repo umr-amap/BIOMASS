@@ -51,7 +51,7 @@ computeE <- function(coord) {
   path <- folderControl("E")
 
   # find the raster
-  nam <- paste(path$path, "E.bil", sep = path$sep)
+  nam <- file.path(path$path, "E.bil")
   RAST <- raster(nam)
 
   if (is.null(dim(coord))) {

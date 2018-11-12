@@ -69,7 +69,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
   strsplit_NA <- function(x, patern = " ") {
     split <- tstrsplit(x, patern)
     if (length(split) == 1) {
-      return(list(split[[1]], as.character(NA)))
+      return(c(split, NA_character_))
     }
     return(split)
   }
@@ -90,7 +90,6 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
       setkey(taxo_already_have, query)
       file_exist <- T
     } else {
-      del(taxo_already_have)
       file_exist <- F
     }
   }
@@ -98,7 +97,6 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
   # Data preparation --------------------------------------------------------
-  options(stringsAsFactors = F)
 
   genus <- as.character(genus)
 
@@ -178,7 +176,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
       retrieve <- out$url
     } else {
       loc <- tempfile(fileext = ".txt")
-      write.table(data.frame(x), file = loc, col.names = FALSE, row.names = FALSE)
+      write.table(data.frame(x, stringsAsFactors = FALSE), file = loc, col.names = FALSE, row.names = FALSE)
       args <- tc(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
       out <- httr::POST(url, body = args, httr::config(followlocation = 0))
       tt <- con_utf8(out)
@@ -195,13 +193,14 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
       if (!grepl("is still being processed", output["message"]) == TRUE) {
         timeout <- "done"
       }
+      Sys.sleep(1)
     }
 
     out <- tc(output$names)
 
     if (length(out) > 0) {
       submittedName <- sapply(out, function(x) x$submittedName)
-      receiveData <- t(sapply(out, function(x) c(x[[2]][[1]]$matchedName, x[[2]][[1]]$score)))
+      receiveData <- t(sapply(out[[2]][[1]], function(x) c(x$matchedName, x$score)))
 
       # Remove some parasite characters
       submittedName <- gsub("\"", "", submittedName)
@@ -250,7 +249,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
   out <- merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
 
-  if (exists("taxo_already_have")) {
+  if (file_exist) {
     setkey(out, query)
     out[taxo_already_have,
       ":="(nameModified = i.nameModified,
@@ -264,15 +263,9 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
   # write all the new data on the log file created --------------------------
-  if (file.exists(path)) {
-    fwrite(query[, .(outName, nameModified, score1), by = query],
-      file = path, sep = ",", append = T
-    )
-  } else {
-    fwrite(query[, .(outName, nameModified, score1), by = query],
-      file = path, sep = ","
-    )
-  }
+  fwrite(query[, .(outName, nameModified, score1), by = query],
+    file = path, sep = ",", append = T
+  )
 
 
   message("Your new result has been saved/append in the file :", path)

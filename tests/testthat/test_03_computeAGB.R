@@ -25,7 +25,7 @@ test_that("ComputeAGB with H", {
   H1[1] <- NA
   expect_warning(
     computeAGB(D, WD$meanWD, H = H1),
-    "NA values are generated for AGB values because of missing information on tree height"
+    "NA values"
   )
 
   D1 <- D
