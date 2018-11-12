@@ -10,13 +10,12 @@
 #'
 #' @return a data frame where :
 #' \describe{
-#'    \item[plot] if you just put the argument plot without the subplot, it's the code of the plot
-#'    \item[subplot] if you just put the argument plot and the subplot, it's the code of the subplot
-#'    \item[AGB] the mean of AGBfor the plot or subplot
-#'    \item[Cred_2.5] the 2.5% credibility intervalle for the plot or subplot
-#'    \item[Cred_97.5] the 97.5% credibility intervalle for the plot or subplot
+#'    \item{plot/subplot}{the code of the plot/subplot}
+#'    \item{AGB}{the mean of AGB for the plot or subplot}
+#'    \item{Cred_2.5}{the 2.5\% credibility intervalle for the plot or subplot}
+#'    \item{Cred_97.5}{the 97.5\% credibility intervalle for the plot or subplot}
 #' }
-#'
+#' 
 #' @export
 #'
 #' @importFrom data.table data.table :=
@@ -43,7 +42,7 @@
 #'
 #' # The summary by plot
 #' summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)
-#'
+
 summaryByPlot <- function(plot, subplot = plot, AGB_simu) {
 
 

@@ -18,10 +18,10 @@
 #'
 #' @return A data frame with:
 #' \describe{
-#'   \item[Plot]{The code of the plot}
-#'   \item[X]{The coordinates X in UTM}
-#'   \item[Y]{The coordinates Y in UTM}
-#'   \item[corner]{The corner numbers}
+#'   \item{Plot}{The code of the plot}
+#'   \item{X}{The coordinates X in UTM}
+#'   \item{Y}{The coordinates Y in UTM}
+#'   \item{corner}{The corner numbers}
 #' }
 #' @export
 #' @importFrom data.table data.table :=

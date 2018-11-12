@@ -12,11 +12,11 @@ latlong2UTM(coord)
 \value{
 a data frame whith :
 \describe{
-   \item[long] The longitude of the entry
-   \item[lat] The latitude of the entry
-   \item[codeUTM] The code proj4 for UTM
-   \item[X] The X UTM coordinate
-   \item[Y] The Y UTM coordinate
+   \item{long} {The longitude of the entry}
+   \item{lat} {The latitude of the entry}
+   \item{codeUTM} {The code proj4 for UTM}
+   \item{X} {The X UTM coordinate}
+   \item{Y} {The Y UTM coordinate}
 }
 }
 \description{

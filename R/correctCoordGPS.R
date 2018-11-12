@@ -21,14 +21,14 @@
 #'
 #' @return If you haven't outliers or RmOutliers = TRUE, there will be a list with :
 #' \describe{
-#'    \item[corner] a matrix with the coordinate of the corners whith no order in particular
-#'    \item[polygon] a spatial polygone
+#'    \item{corner}{a matrix with the coordinate of the corners whith no order in particular}
+#'    \item{polygon}{a spatial polygone}
 #' }
 #' However if you have outliers and RmOutliers = FALSE, there will be data frame with :
 #' \describe{
-#'    \item[outlayers] the line of your longlat or UTMcoord data frame, where it's an outlayers
-#'    \item[X] the UTM coordinate X outlayer
-#'    \item[Y] the UTM coordinate X outlayer
+#'    \item{outlayers} {the line of your longlat or UTMcoord data frame, where it's an outlayers}
+#'    \item{X} {the UTM coordinate X outlayer}
+#'    \item{Y} {the UTM coordinate X outlayer}
 #' }
 #'
 #'
@@ -68,12 +68,6 @@ correctCoordGPS <- function(longlat = NULL, UTMcoord = NULL, CoordRel, rangeX, r
   if (length(MaxDist) != 1) {
     stop("Your argument MaxDist must be one double")
   }
-  if (!is.logical(drawPlot)) {
-    stop("Your argument drawPlot must be logical")
-  }
-  if (!is.logical(RmOutliers)) {
-    stop("Your argument RmOutliers must be logical")
-  }
 
   if (!all(between(CoordRel[, 1], lower = rangeX[1], upper = rangeX[2]) &
     between(CoordRel[, 2], lower = rangeY[1], upper = rangeY[2]))) {
@@ -91,7 +85,7 @@ correctCoordGPS <- function(longlat = NULL, UTMcoord = NULL, CoordRel, rangeX, r
 
   # Transform the geographic coordinate into UTM coordinate
   if (!is.null(longlat)) {
-    UTMcoord <- latlong2UTM(longlat)
+    UTMcoord <- latlong2UTM(longlat)[, c("X", "Y")]
   }
 
   # Transformation CoordRel to CoordAbs
