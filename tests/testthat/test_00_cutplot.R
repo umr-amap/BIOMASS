@@ -5,6 +5,7 @@ plot <- rep("plot1", 4)
 
 context("cut plot")
 test_that("cut plot", {
+  expect_is(cutPlot(coord, plot, corner), "data.frame")
   
   expect_equal( dim( cutPlot(coord, plot, corner) ), c(9, 5))
   expect_equal( dim(cutPlot(coord, plot, corner, gridsize = 200)), c(4, 5) )
