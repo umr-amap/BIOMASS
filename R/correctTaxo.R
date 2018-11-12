@@ -200,7 +200,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
     if (length(out) > 0) {
       submittedName <- sapply(out, function(x) x$submittedName)
-      receiveData <- t(sapply(out[[2]][[1]], function(x) c(x$matchedName, x$score)))
+      receiveData <- t(sapply(out, function(x) c(x[[2]][[1]]$matchedName, x[[2]][[1]]$score)))
 
       # Remove some parasite characters
       submittedName <- gsub("\"", "", submittedName)
