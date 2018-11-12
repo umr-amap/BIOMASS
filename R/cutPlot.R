@@ -55,7 +55,9 @@ cutPlot <- function(UTMcoord, plot, corner, gridsize = 100, dimX = 200, dimY = 2
   if (!(length(dimY) %in% c(1, length(unique(plot))))) {
     stop("Your dimY vector must be the length 1 or the length unique(plot)")
   }
-
+  if( any(gridsize > dimX) || any(gridsize > dimY) )
+    stop("Your gridsize is superior of your dimension X or Y")
+  
 
   # function ----------------------------------------------------------------
 
