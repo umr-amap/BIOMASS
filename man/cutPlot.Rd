@@ -13,7 +13,7 @@ cutPlot(UTMcoord, plot, corner, gridsize = 100, dimX = 200,
 \item{plot}{Vector with the code of the plot}
 
 \item{corner}{Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
-(see the result of the \code{\link{getLeedsUTMcoord}})}
+(see the result of the \code{\link{numberCorner}})}
 
 \item{gridsize}{The size of the grid}
 

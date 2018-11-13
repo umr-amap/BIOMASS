@@ -7,7 +7,7 @@
 #' @param UTMcoord A data frame with the UTM coordinate with X and Y on the first and second colonne respectively
 #' @param plot Vector with the code of the plot
 #' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
-#' (see the result of the \code{\link{getLeedsUTMcoord}})
+#' (see the result of the \code{\link{numberCorner}})
 #' @param gridsize The size of the grid
 #' @param dimX A vector of the real size for the X axis for the plot (can be given one value it will be replicate for each plot)
 #' @param dimY A vector of the real size for the Y axis for the plot (can be given one value it will be replicate for each plot)
