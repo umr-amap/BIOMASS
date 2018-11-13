@@ -4,6 +4,11 @@ data("KarnatakaForest")
 genus <- KarnatakaForest$genus[1:10]
 species <- KarnatakaForest$species[1:10]
 
+skip_if_not_function <- function(name) {
+  if (!exists(name)) {
+    skip(paste("The function", name, "is internal"))
+  }
+}
 
 context("CorrectTaxo")
 test_that("CorrectTaxo", {
@@ -13,7 +18,7 @@ test_that("CorrectTaxo", {
 
   taxo <- correctTaxo(genus, species)
   taxoFalse <- taxo[taxo$nameModified == FALSE, ]
-  taxoBegin <- as.data.frame(cbind(as.character(genus), as.character(species)))
+  taxoBegin <- data.frame(as.character(genus), as.character(species), stringsAsFactors = F)
 
   expect_equivalent(taxoFalse[, 1:2], taxoBegin[taxo$nameModified == FALSE, ])
   expect_error(correctTaxo(genus, species[1:9]), "You should provide two vectors of genus and species of the same length")
@@ -27,9 +32,12 @@ test_that("CorrectTaxo", {
     data.frame(
       genusCorrected = c("Manniophyton", "?"),
       speciesCorrected = c("fulvum", "?"),
-      nameModified = c("TRUE", "NoMatch(low_score)")
+      nameModified = c("TRUE", "NoMatch(low_score)"), stringsAsFactors = F
     )
   )
+
+  skip_if_not_function("folderControl")
+
   path <- folderControl(correctTaxo = T)
   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
   expect_true(file.exists(path))
@@ -43,7 +51,7 @@ test_that("CorrectTaxo", {
     data.frame(
       genusCorrected = c("Magnophyton", "?"),
       speciesCorrected = c("fulvum", "?"),
-      nameModified = c("NoMatch(low_score)", "NoMatch(low_score)")
+      nameModified = c("NoMatch(low_score)", "NoMatch(low_score)"), stringsAsFactors = F
     )
   )
 })
