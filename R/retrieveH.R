@@ -92,9 +92,9 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
       if (is.null(dim(coord))) {
         coord <- as.matrix(t(coord))
       }
-      
+
       E <- computeE(coord) # E = environmental index in Chave et al. 2014
-      
+
       if (length(E) == 1) {
         E <- rep(E, length(D))
       }

@@ -235,9 +235,9 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     if (is.null(dim(coord))) {
       coord <- as.matrix(t(coord))
     }
-    
+
     bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
-    
+
     if (nrow(bioclimParams) == 1) {
       bioclimParams <- bioclimParams[rep(1, len), ]
     }

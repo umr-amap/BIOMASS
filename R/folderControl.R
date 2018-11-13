@@ -25,7 +25,7 @@
 #' @importFrom utils download.file unzip
 
 folderControl <- function(nameFile = "", correctTaxo = FALSE) {
-  sep <- ifelse(grepl("win", Sys.info()["sysname"], ignore.case = T), "\\", "/")
+  sep <- if (grepl("win", Sys.info()["sysname"], ignore.case = T)) "\\" else "/"
   path <- user_data_dir("BIOMASS")
 
   if (!dir.exists(path)) {

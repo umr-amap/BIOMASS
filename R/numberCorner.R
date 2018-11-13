@@ -30,7 +30,7 @@
 #' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
 #' plot <- rep("plot1", 4)
 #' origin <- c(FALSE, FALSE, TRUE, FALSE)
-#' 
+#'
 #' # if you turn clock wise
 #' corner = numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = TRUE)
 #'
