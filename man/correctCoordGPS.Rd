@@ -32,9 +32,9 @@ If you haven't outliers or RmOutliers = TRUE, there will be a list with :
 }
 However if you have outliers and RmOutliers = FALSE, there will be data frame with :
 \describe{
-   \item{outlayers} {the line of your longlat or UTMcoord data frame, where it's an outlayers}
-   \item{X} {the UTM coordinate X outlayer}
-   \item{Y} {the UTM coordinate X outlayer}
+   \item{outlayers}{the line of your longlat or UTMcoord data frame, where it's an outlayers}
+   \item{X}{the UTM coordinate X outlayer}
+   \item{Y}{the UTM coordinate X outlayer}
 }
 }
 \description{
