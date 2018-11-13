@@ -55,22 +55,28 @@ numberCorner <- function(longlat = NULL, UTMcoord = NULL, plot, origin, clockWis
   if (!is.null(longlat) && !is.null(UTMcoord)) {
     stop("Please choose between the two coordinate")
   }
-  if (!is.null(longlat)) {
-    if (nrow(longlat) != length(plot)) {
-      stop("Your vector plot isn't the same length of longlat")
-    }
-    if (nrow(longlat) != length(origin)) {
-      stop("Your vector origin isn't the same length of longlat")
-    }
+  if(length(plot) != length(origin))
+    stop("Your vector plot and origin aren't the same length")
+  
+  if (!is.null(longlat) && nrow(longlat) != length(plot)) {
+      stop("Your vector plot and origin isn't the same length of longlat")
   }
-  if (!is.null(UTMcoord)) {
-    if (nrow(UTMcoord) != length(plot)) {
-      stop("Your vector plot isn't the same length of UTMcoord")
-    }
-    if (nrow(UTMcoord) != length(origin)) {
-      stop("Your vector origin isn't the same length of UTMcoord")
-    }
+  if (!is.null(UTMcoord) && nrow(UTMcoord) != length(plot)) {
+      stop("Your vector plot and origin isn't the same length of UTMcoord")
   }
+  tab = as.numeric(table( plot ))
+  if ( any(as.numeric(table( plot )) != 4) ){
+    stop("Your vector plot isn't a multiple of 4, the plot(s):\n\t\t", 
+         paste(names(table( plot )[ table( plot ) != 4 ]), collapse = " "),
+         "\nhave:\n\t\t", 
+         paste(table( plot )[ table( plot ) != 4 ], collapse = " "),
+         "\ncorner respectively")
+  }
+  tab = as.matrix( table(plot, origin) )
+  if ( any(tab[,1] != 3) || any(tab[,2] != 1) )
+    stop("Please verify your 'origin' vector, their must be exactly 1 TRUE and 3 FALSE by plot, those plot(s) are:\n\t\t",
+         paste(rownames(tab)[tab[,1] != 3 | tab[,2] != 1], collapse = " "))
+  
 
   # data table --------------------------------------------------------------
 
