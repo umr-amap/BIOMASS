@@ -207,14 +207,15 @@ for (method in c("log1", "log2", "log3", "weibull", "michaelis")) {
 
 context("compute Feld Region")
 test_that("compute Feld Region", {
-  
-  expect_equal( unique( computeFeldRegion(coord) ), "SEAsia")
+  expect_equal(unique(computeFeldRegion(coord)), "SEAsia")
   expect_length(computeFeldRegion(coord), nrow(coord))
-  
-  expect_equal( unique( computeFeldRegion(coord, level = "world") ), "Pantropical" )
-  expect_equal(computeFeldRegion(coord, level = rep(c("region", "continent", "world"), length.out = nrow(coord))), 
-               rep(c("SEAsia", "SEAsia", "Pantropical"), length.out = nrow(coord)))
-  
+
+  expect_equal(unique(computeFeldRegion(coord, level = "world")), "Pantropical")
+  expect_equal(
+    computeFeldRegion(coord, level = rep(c("region", "continent", "world"), length.out = nrow(coord))),
+    rep(c("SEAsia", "SEAsia", "Pantropical"), length.out = nrow(coord))
+  )
+
   expect_error(computeFeldRegion(coord, level = c("region", "region")))
   expect_error(computeFeldRegion(coord, level = "fgaz"))
 })
@@ -222,18 +223,17 @@ test_that("compute Feld Region", {
 
 context("Analysis of Procrust")
 test_that("Analysis of Procrust", {
-  
-  X = expand.grid(X = c(0,1), Y = c(0,1))
-  Y = expand.grid(X = c(11, 10), Y = c(10, 11))
-  
-  lis = procrust(Y, X)
+  X <- expand.grid(X = c(0, 1), Y = c(0, 1))
+  Y <- expand.grid(X = c(11, 10), Y = c(10, 11))
+
+  lis <- procrust(Y, X)
   expect_is(lis, "list")
   expect_length(lis, 2)
-  
+
   expect_is(lis$rotation, "matrix")
   expect_is(lis$translation, "matrix")
-  
-  expect_equivalent(as.matrix(Y), sweep( as.matrix(X) %*% lis$rotation, 2, lis$translation, "+"))
+
+  expect_equivalent(as.matrix(Y), sweep(as.matrix(X) %*% lis$rotation, 2, lis$translation, "+"))
 })
 
 
@@ -246,22 +246,15 @@ coord <- cbind(long, lat)
 
 context("lat long to UTM")
 test_that("lat long to UTM", {
-  
   skip_if_not_installed("proj4")
-  
-  
-  UTM = latlong2UTM(coord)
+
+
+  UTM <- latlong2UTM(coord)
   expect_is(UTM, "data.frame")
-  
+
   expect_equal(dim(UTM), c(3, 5))
-  
-  for (i in c(1, 2, 4, 5)) expect_is(UTM[,i], "numeric")
-  expect_is(UTM[,3], "character")
-  expect_equal(unique(UTM[,3]), "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-  
+
+  for (i in c(1, 2, 4, 5)) expect_is(UTM[, i], "numeric")
+  expect_is(UTM[, 3], "character")
+  expect_equal(unique(UTM[, 3]), "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 })
-
-
-
-
-

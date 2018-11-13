@@ -15,7 +15,7 @@
 #'    \item{Cred_2.5}{the 2.5\% credibility intervalle for the plot or subplot}
 #'    \item{Cred_97.5}{the 97.5\% credibility intervalle for the plot or subplot}
 #' }
-#' 
+#'
 #' @export
 #'
 #' @importFrom data.table data.table :=

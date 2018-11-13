@@ -41,9 +41,10 @@ attributeTree <- function(xy, plot, CoordAbs) {
   if (nrow(xy) != length(plot)) {
     stop("Your plot vector haven't the same length than the number of row of xy")
   }
-  if(!is.data.frame(CoordAbs))
+  if (!is.data.frame(CoordAbs)) {
     stop("Your parameter 'CoordAbs' isn't a data frame")
-  
+  }
+
   if (length(unique(plot)) < length(unique(CoordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(CoordAbs$Plot)))) {
     warning(
       "The plot(s) ",
