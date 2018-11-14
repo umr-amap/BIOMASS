@@ -42,4 +42,9 @@ vignettes/VignetteBiomass_cache/html/
 tests/testthat/Rplots\.pdf
 =======
 data-raw/wdData\.csv
+<<<<<<< master
 >>>>>>> git ignore
+=======
+
+apgFamilies\.csv
+>>>>>>> data raw
