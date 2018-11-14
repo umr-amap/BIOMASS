@@ -13,10 +13,10 @@ apg[is.na(order), ':='(order = fam2, fam2 = NA_character_)]
 
 
 # Some families have bad character inside, change them
-apg[fam1 == "Montsechiaceae (extinct)", fam1 := "Montsechiaceae"]
-apg[fam1 == "[Acanthochlamydaceae]", fam1 := "Acanthochlamydaceae"]
-apg[fam1 == "Isoëtaceae", fam1 := "Isoetaceae"]
-apg[fam2 == "?Gelsemiaceae", fam2 := "Gelsemiaceae"]
+apg[, fam1 := gsub('"|(\\[)|(\\])|( \\(.+\\))|(\\?)', "", fam1), ]
+apg[, fam2 := gsub('"|(\\[)|(\\])|( \\(.+\\))|(\\?)', "", fam2), ]
+apg[fam1 %in% "Isoëtaceae", fam1 := "Isoetaceae"] 
+
 
 # Create a new column with the apg families (means, the closest ones from the order on the website)
 apg[!is.na(fam2), famAPG := fam2]
@@ -40,7 +40,7 @@ apgFamilies[famAPG == "Sabiaceae", order := "Proteales"]
 # Save the file with the old families (to be used to correct the families with the last updated ones)
 apgFamilies = unique(apgFamilies)
 a = apgFamilies
-fwrite(apgFamilies, file = "apgFamilies.csv", row.names = F)
+fwrite(apgFamilies, "data-raw/apgFamilies.csv")
 
 apgFamilies[, famSyn := NULL]
 apgFamilies = unique(apgFamilies)
