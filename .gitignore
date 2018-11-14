@@ -39,3 +39,5 @@ biomass\.Rproj
 vignettes/VignetteBiomass_cache/html/
 
 data-raw/wdData\.csv
+
+apgFamilies\.csv

@@ -42,5 +42,5 @@ all.equal(wdData[, .(family, genus, species, wd, region, referenceNumber, region
 wdData[ family != BIOMASS::wdData$family, .(Number, family)]
 wdData[, family := getTaxonomy(genus)$family]
 
-diff = wdData[ family != BIOMASS::wdData$family, .(Number, family, genus)]
+diff = wdData[ family != BIOMASS::wdData$family, .(Number, family, genus, species, wd)]
 BIOMASS::wdData[diff$Number, c()]
