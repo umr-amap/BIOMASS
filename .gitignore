@@ -41,3 +41,9 @@ vignettes/VignetteBiomass_cache/html/
 data-raw/wdData\.csv
 
 apgFamilies\.csv
+
+data-raw/vascularKew\.csv
+
+data-raw/genList_tpl\.csv
+
+data-raw/dupGenusToSub\.csv
