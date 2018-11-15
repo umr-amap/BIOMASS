@@ -43,7 +43,7 @@
 #' # The summary by plot
 #' summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)
 
-summaryByPlot <- function(plot, subplot = plot, AGB_simu) {
+summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
 
 
   # parameters verification -------------------------------------------------
