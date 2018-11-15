@@ -47,4 +47,13 @@ data-raw/wdData\.csv
 =======
 
 apgFamilies\.csv
+<<<<<<< master
 >>>>>>> data raw
+=======
+
+data-raw/vascularKew\.csv
+
+data-raw/genList_tpl\.csv
+
+data-raw/dupGenusToSub\.csv
+>>>>>>> Data
