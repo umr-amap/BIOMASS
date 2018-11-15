@@ -11,6 +11,7 @@ if (!file.exists("data-raw/wdData.csv")) {
   wdData <- readxl::read_xls(tmp, sheet = 2)
   setDT(wdData)
   fwrite(wdData, file = "data-raw/wdData.csv")
+  
 }
 
 wdData <- fread("data-raw/wdData.csv", stringsAsFactors = F)
