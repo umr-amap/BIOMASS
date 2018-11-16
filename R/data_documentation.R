@@ -38,7 +38,7 @@
 #' }
 #' @details This dataset is used in the function \code{\link{retrieveH}}
 #' to predict height from diameter depending on the region.
-#' @references
+#' @references 
 #' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} 
 #' Biogeosciences, 9, 3381–3403.
 #' @examples
@@ -79,7 +79,7 @@
 #' @docType data
 #' @usage data("KarnatakaForest")
 #' @format
-#' A data frame with 65965 observations on the following 8 variables :
+#' A data frame with 65889 observations on the following 8 variables :
 #' \describe{
 #'   \item{\code{plotId}}{Names of the plots}
 #'   \item{\code{treeId}}{Tree Id, contains a letter (A, B, C...) when an individual has multiple stems}
@@ -112,8 +112,8 @@
 #'   \item{\code{plotId}}{Names of the plots}
 #'   \item{\code{genus}}{Genus}
 #'   \item{\code{species}}{Species}
-#'   \item{\code{D}}{Diameter}
-#'   \item{\code{H}}{Height}
+#'   \item{\code{D}}{Diameter (cm)}
+#'   \item{\code{H}}{Height (m)}
 #'   \item{\code{lat}}{Latitude}
 #'   \item{\code{long}}{Longitude}
 #' }

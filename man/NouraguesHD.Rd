@@ -9,8 +9,8 @@
   \item{\code{plotId}}{Names of the plots}
   \item{\code{genus}}{Genus}
   \item{\code{species}}{Species}
-  \item{\code{D}}{Diameter}
-  \item{\code{H}}{Height}
+  \item{\code{D}}{Diameter (cm)}
+  \item{\code{H}}{Height (m)}
   \item{\code{lat}}{Latitude}
   \item{\code{long}}{Longitude}
 }}
