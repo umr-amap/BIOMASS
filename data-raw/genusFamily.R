@@ -260,4 +260,5 @@ genusFamily[genusFamily$genus == "Zieria", "family"] <- "Rutaceae"
 
 genusFamily <- unique(genusFamily)
 fwrite(genusFamily, file = "data-raw/genusFamily.csv")
+setDF(genusFamily)
 usethis::use_data(genusFamily, compress = "xz")
