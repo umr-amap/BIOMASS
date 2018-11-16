@@ -44,4 +44,5 @@ fwrite(apgFamilies, "data-raw/apgFamilies.csv")
 apgFamilies[, famSyn := NULL]
 apgFamilies <- unique(apgFamilies)
 
+setDF(apgFamilies)
 usethis::use_data(apgFamilies, compress = "xz")

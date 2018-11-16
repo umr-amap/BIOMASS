@@ -47,6 +47,8 @@ all.equal(wdData[, .(family, genus, species, wd, region, referenceNumber, region
 wdData[ family != BIOMASS::wdData$family, .(Number, family)]
 wdData[, family := getTaxonomy(genus)$family]
 
+
+setDF(wdData)
 usethis::use_data(wdData)
 
 
