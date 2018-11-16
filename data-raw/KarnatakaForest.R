@@ -31,8 +31,9 @@ data_Kar <- melt(datatot,
 data_Kar <- data_Kar[TreeGirth != 0]
 
 
-# update the tree id: add a letter for each stems
-data_Kar[, treeId := paste(treeId, LETTERS[.GRP], sep = "_"), by = stem]
+# update the tree id: add a letter for each stems if there is different stem
+data_Kar[, N := .N, by = treeId]
+data_Kar[ N > 1, treeId := paste(treeId, LETTERS[.GRP], sep = "_"), by = stem]
 
 
 
@@ -45,7 +46,7 @@ KarnatakaForest <- data_Kar[, .(plotId = PlotID, treeId, family = Family, genus,
 setorder(KarnatakaForest, plotId)
 
 
-usethis::use_data(KarnatakaForest)
+usethis::use_data(setDF(KarnatakaForest))
 
 
 
