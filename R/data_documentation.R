@@ -38,8 +38,8 @@
 #' }
 #' @details This dataset is used in the function \code{\link{retrieveH}}
 #' to predict height from diameter depending on the region.
-#' @references 
-#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} 
+#' @references
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.}
 #' Biogeosciences, 9, 3381–3403.
 #' @examples
 #' data(feldCoef)
@@ -91,7 +91,7 @@
 #'   \item{\code{long}}{Longitude}
 #' }
 #' @references
-#' Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental 
+#' Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental
 #' gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
 #' @examples
 #' data(KarnatakaForest)
