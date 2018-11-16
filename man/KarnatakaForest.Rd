@@ -26,6 +26,7 @@ data(KarnatakaForest)
 str(KarnatakaForest)
 }
 \references{
-Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
+Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental 
+gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
 }
 \keyword{datasets}
