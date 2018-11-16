@@ -28,5 +28,8 @@ Suggests:
 	rmarkdown (>= 1.10),
     	testthat (>= 2.0),
 	covr (>= 3.2),
-	proj4 (>= 1.0-8)
+	proj4 (>= 1.0-8),
+	purrr (>= 0.2.5),
+	MCMCglmm (>= 2.26),
+	rvest (>= 0.3.2)
 RoxygenNote: 6.1.1
