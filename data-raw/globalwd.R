@@ -43,8 +43,13 @@ all.equal(wdData[, .(family, genus, species, wd, region, referenceNumber, region
   check.attributes = FALSE
 )
 
+
+
 wdData[ family != BIOMASS::wdData$family, .(Number, family)]
 wdData[, family := getTaxonomy(genus)$family]
+
+usethis::use_data(wdData)
+
 
 diff <- wdData[ family != BIOMASS::wdData$family, .(Number, family, genus, species, wd)]
 BIOMASS::wdData[diff$Number, c()]
