@@ -239,9 +239,9 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
       
       result
     }))
+    if(verbose)
+      message("\nDone")
   }
-  if(verbose)
-    message("\nDone")
   
   # build reference taxonomy from cached and queried ones
   fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill=TRUE)
@@ -275,7 +275,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   )]
   
   # cache full taxonomy for further use
-  if(useCache) {
+  if(useCache && nrow(queriedTaxo)) {
     
     # complete taxo with matched names and accepted names
     matchedTaxo <- unique(fullTaxo[submittedName!=matchedName], by="matchedName")[
