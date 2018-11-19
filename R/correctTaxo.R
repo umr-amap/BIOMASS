@@ -163,7 +163,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   
     # for each slice of queries
     if(verbose)
-      message("Progress 0%", appendLF = FALSE)
+      pb <- utils::txtProgressBar(style=3)
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
       
       # build query
@@ -235,12 +235,12 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
       )]
       
       if(verbose)
-        message("\rProgress ",ceiling(100*slice$slice[1]/length(slices)),"%", appendLF = FALSE)
-      
+        utils::setTxtProgressBar(pb,slice$slice[1]/length(slices))
+
       result
     }))
     if(verbose)
-      message("\nDone")
+      close(pb)
   }
   
   # build reference taxonomy from cached and queried ones
@@ -275,7 +275,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   )]
   
   # cache full taxonomy for further use
-  if(useCache && nrow(queriedTaxo)) {
+  if(useCache && !is.null(queriedTaxo)) {
     
     # complete taxo with matched names and accepted names
     matchedTaxo <- unique(fullTaxo[submittedName!=matchedName], by="matchedName")[
