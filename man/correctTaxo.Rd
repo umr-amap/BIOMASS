@@ -4,7 +4,8 @@
 \alias{correctTaxo}
 \title{Checking typos in names}
 \usage{
-correctTaxo(genus, species = NULL, score = 0.5)
+correctTaxo(genus, species = NULL, score = 0.5, useCache = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)
@@ -13,6 +14,10 @@ or (genus + species + author) may be given (see example).}
 \item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
 
 \item{score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.}
+
+\item{useCache}{logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)}
+
+\item{verbose}{logical. If TRUE various messages are displayed during process}
 }
 \value{
 The function returns a dataframe with the corrected (or not) genera and species.
@@ -50,5 +55,5 @@ standardization of plant names}. BMC bioinformatics, 14, 1.
 Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 }
 \author{
-Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
+Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 }
