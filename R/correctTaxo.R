@@ -47,7 +47,7 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = FALSE) {
   WAIT_DELAY <- 0.5 # delay between requests to taxosaurus (to reduce load on server)
   SLICE_SIZE <- 30 # number of taxa sought per request to taxosaurus
 
@@ -64,7 +64,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
     if (length(genus) != length(species)) {
       stop("You should provide two vectors of genera and species of the same length")
     }
-    if(any(is.na(genus) & !is.na(species))) {
+    if (any(is.na(genus) & !is.na(species))) {
       stop("Species must have a genus")
     }
   }
@@ -137,8 +137,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
       } else {
 
         # TODO display file date
-        if(verbose){
-          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)['mtime']))
+        if (verbose) {
+          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)["mtime"]))
         }
         cachedTaxo <- fread(file = cachePath)
         cachedTaxo[, from := "cache"]
@@ -164,11 +164,12 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   if (nrow(missingTaxo)) {
 
     # split missing taxo in chunks of 30
-    slices <- split(missingTaxo[, slice:=ceiling(.I/SLICE_SIZE)], by="slice", keep.by=TRUE)
-  
+    slices <- split(missingTaxo[, slice := ceiling(.I / SLICE_SIZE)], by = "slice", keep.by = TRUE)
+
     # for each slice of queries
-    if(verbose)
+    if (verbose) {
       message("Progress 0%", appendLF = FALSE)
+    }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
 
       # build query
@@ -190,7 +191,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
 
         # be polite with server
         Sys.sleep(WAIT_DELAY)
-        
+
         # fetch answer
         qryResult <- httr::GET(retrieveURL)
 
@@ -240,16 +241,18 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
         matchedName = NA_character_,
         from = "taxosaurus(not_found)"
       )]
-      
-      if(verbose)
-        message("\rProgress ",ceiling(100*slice$slice[1]/length(slices)),"%", appendLF = FALSE)
-      
+
+      if (verbose) {
+        message("\rProgress ", ceiling(100 * slice$slice[1] / length(slices)), "%", appendLF = FALSE)
+      }
+
       result
     }))
   }
-  if(verbose)
+  if (verbose) {
     message("\nDone")
-  
+  }
+
   # build reference taxonomy from cached and queried ones
   fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
 
