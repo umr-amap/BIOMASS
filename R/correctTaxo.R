@@ -47,30 +47,32 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
+  WAIT_DELAY <- 0.5 # delay between requests to taxosaurus (to reduce load on server)
+  SLICE_SIZE <- 30 # number of taxa sought per request to taxosaurus
 
   # check parameters -------------------------------------------------
 
   if (all(is.na(genus))) {
-    stop("Please supply at least one name")
+    stop("Please supply at least one name for genus")
   }
 
   if (!is.null(species)) {
-    if (all(is.na(species)) && all(is.na(genus))) {
-      stop("Please supply at least one name")
+    if (all(is.na(species))) {
+      stop("Please supply at least one name for species")
     }
     if (length(genus) != length(species)) {
-      stop("You should provide two vectors of genus and species of the same length")
+      stop("You should provide two vectors of genera and species of the same length")
     }
-    if (any(is.na(genus) & !is.na(species))) {
-      stop("Species with no genuses are not allowed!")
+    if(any(is.na(genus) & !is.na(species))) {
+      stop("Species must have a genus")
     }
   }
 
   # Check if package httr is available
   if (!requireNamespace("httr", quietly = T)) {
     stop(
-      'To use this function, you must install "httr" library \n\n',
+      'To use this function, you must install the "httr" library \n\n',
       '\t\tinstall.packages("httr")'
     )
   }
@@ -162,9 +164,11 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   if (nrow(missingTaxo)) {
 
     # split missing taxo in chunks of 30
-    slices <- split(missingTaxo[, slice := ceiling(.I / 30)], by = "slice", keep.by = FALSE)
-
+    slices <- split(missingTaxo[, slice:=ceiling(.I/SLICE_SIZE)], by="slice", keep.by=TRUE)
+  
     # for each slice of queries
+    if(verbose)
+      message("Progress 0%", appendLF = FALSE)
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
 
       # build query
@@ -185,8 +189,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       repeat {
 
         # be polite with server
-        Sys.sleep(1)
-
+        Sys.sleep(WAIT_DELAY)
+        
         # fetch answer
         qryResult <- httr::GET(retrieveURL)
 
@@ -236,11 +240,16 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
         matchedName = NA_character_,
         from = "taxosaurus(not_found)"
       )]
-
+      
+      if(verbose)
+        message("\rProgress ",ceiling(100*slice$slice[1]/length(slices)),"%", appendLF = FALSE)
+      
       result
     }))
   }
-
+  if(verbose)
+    message("\nDone")
+  
   # build reference taxonomy from cached and queried ones
   fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
 
