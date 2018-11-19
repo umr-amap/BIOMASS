@@ -1,9 +1,10 @@
-if(getRversion()>="2.15.1") {
+if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "query","from","submittedName","slice",".I",
-    "..score","matchedName","outName","nameModified",
-    "genusCorrected","speciesCorrected","acceptedName",
-    ".N","."))
+    "query", "from", "submittedName", "slice", ".I",
+    "..score", "matchedName", "outName", "nameModified",
+    "genusCorrected", "speciesCorrected", "acceptedName",
+    ".N", "."
+  ))
 }
 
 #' Checking typos in names
@@ -46,7 +47,7 @@ if(getRversion()>="2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = FALSE) {
 
   # check parameters -------------------------------------------------
 
@@ -61,7 +62,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
     if (length(genus) != length(species)) {
       stop("You should provide two vectors of genus and species of the same length")
     }
-    if(any(is.na(genus) & !is.na(species))) {
+    if (any(is.na(genus) & !is.na(species))) {
       stop("Species with no genuses are not allowed!")
     }
   }
@@ -77,13 +78,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   # sub-function definition -------------------------------------------------
 
   # split x always returning count columns (padding with NA)
-  tstrsplit_NA <- function(x, pattern = " ", count=2) {
+  tstrsplit_NA <- function(x, pattern = " ", count = 2) {
     # NOTE extraneous columns ignored maybe better paste them together
     split <- utils::head(tstrsplit(x, pattern), count)
-    
+
     # pad with NA
     if (length(split) < count) {
-      split <- c(split, rep(NA_character_, count-length(split)))
+      split <- c(split, rep(NA_character_, count - length(split)))
     }
     split
   }
@@ -93,7 +94,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
   genus <- as.character(genus)
 
   if (is.null(species)) {
-    
+
     # Create a dataframe with the original values
     userTaxo <- data.table(
       genus = NA_character_,
@@ -103,195 +104,208 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
     # split genus (query)
     userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
   } else {
-    
     species <- as.character(species)
-    
+
     # Create a dataframe with the original values
     userTaxo <- data.table(
-      genus = genus, 
+      genus = genus,
       species = species,
       query = genus
     )
     # species can be NA so handle it with care when pasting
-    userTaxo[!is.na(genus) & !is.na(species), query:=paste(query, species)]
+    userTaxo[!is.na(genus) & !is.na(species), query := paste(query, species)]
   }
 
   # get unique values
   qryTaxo <- unique(userTaxo[!is.na(query)])
-  
+
   # get cached taxonomic corrections if needed -------------------------------------------------
-  
+
   cachedTaxo <- NULL
-  
-  if(is.null(useCache) || useCache) {
+
+  if (is.null(useCache) || useCache) {
     cachePath <- folderControl(correctTaxo = T)
-    
-    if(file.exists(cachePath)) {
-      
+
+    if (file.exists(cachePath)) {
+
       # should we remove cache ?
-      if(is.null(useCache)) {
+      if (is.null(useCache)) {
         file.remove(cachePath)
         useCache <- TRUE
       } else {
-        
+
         # TODO display file date
+        if(verbose){
+          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)['mtime']))
+        }
         cachedTaxo <- fread(file = cachePath)
-        cachedTaxo[, from:="cache"]
-        
+        cachedTaxo[, from := "cache"]
+
         # if not the right format then ignore it!
-        if(!("submittedName" %in% names(cachedTaxo)))
+        if (!("submittedName" %in% names(cachedTaxo))) {
           cachedTaxo <- NULL
+        }
       }
     }
   }
-  
+
   # init cachedTaxo with empty data
-  if(is.null(cachedTaxo))
-    cachedTaxo <-  data.table(submittedName=character(0),score=numeric(0),matchedName=character(0),from=character(0))  
-  
+  if (is.null(cachedTaxo)) {
+    cachedTaxo <- data.table(submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0))
+  }
+
   # identify taxo not present in cache
-  missingTaxo <- qryTaxo[!cachedTaxo[,.(submittedName)], on=c(query="submittedName")]
+  missingTaxo <- qryTaxo[!cachedTaxo[, .(submittedName)], on = c(query = "submittedName")]
 
   # query taxosaurus for missing taxo if any
   queriedTaxo <- NULL
-  if(nrow(missingTaxo)) {
-    
+  if (nrow(missingTaxo)) {
+
     # split missing taxo in chunks of 30
-    slices <- split(missingTaxo[, slice:=ceiling(.I/30)], by="slice", keep.by=FALSE)
-  
+    slices <- split(missingTaxo[, slice := ceiling(.I / 30)], by = "slice", keep.by = FALSE)
+
     # for each slice of queries
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-      
+
       # build query
       baseURL <- "http://taxosaurus.org/submit"
       qry <- paste(gsub(" ", "+", slice$query, fixed = T), collapse = "%0A")
       args <- list(query = qry)
-      
+
       # send query
       qryResult <- httr::GET(baseURL, query = args)
-      
+
       # check for errors
-      if(httr::http_error(qryResult))
+      if (httr::http_error(qryResult)) {
         httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
-      
+      }
+
       # wait for response
       retrieveURL <- qryResult$url
       repeat {
-        
+
         # be polite with server
         Sys.sleep(1)
-        
+
         # fetch answer
         qryResult <- httr::GET(retrieveURL)
-        
-        # normal waiting bahaviour is redirecting to self with 302 status
+
+        # normal waiting behaviour is redirecting to self with 302 status
         # if not then break from waiting loop
-        if(httr::status_code(qryResult) != 302) 
+        if (httr::status_code(qryResult) != 302) {
           break
+        }
       }
-      
+
       # check for errors
-      if(httr::http_error(qryResult))
-        httr::stop_for_status(qryResult,"get answer from taxosaurus service. Retry maybe later")
-      
+      if (httr::http_error(qryResult)) {
+        httr::stop_for_status(qryResult, "get answer from taxosaurus service. Retry maybe later")
+      }
+
       # parse answer from taxosaurus
       answer <- jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"), FALSE)
 
       # WARNING when no match is found, taxosaurus does not return an answer
-      
+
       # do we have answers ?
-      if(length(answer$names)) {
-        
-        # function to preprocess match      
+      if (length(answer$names)) {
+
+        # function to preprocess match
         flatten <- function(match) {
-          match$annotations <- paste(sprintf("%s(%s)", names(match$annotations), match$annotations), collapse=", ")
+          match$annotations <- paste(sprintf("%s(%s)", names(match$annotations), match$annotations), collapse = ", ")
           match$score <- as.numeric(match$score)
           match
         }
-        
+
         # get first match (highest score) for each submitted name
         result <- rbindlist(lapply(answer$names, function(name) c(
-          submittedName = name$submittedName,
-          flatten(name$matches[[1]]),
-          from = "taxosaurus"
-        )))
-        
+            submittedName = name$submittedName,
+            flatten(name$matches[[1]]),
+            from = "taxosaurus"
+          )))
       } else {
-        
+
         # nothing found ! Pathological case -> return empty answer
-        result <- data.table(submittedName=character(0), score=numeric(0), matchedName=character(0), from=character(0))
+        result <- data.table(submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0))
       }
-      
+
       # handle not founds (as taxosaurus does not give answers for them)
-      result <- result[slice[,.(query)], on=c(submittedName="query"), nomatch=NA]
+      result <- result[slice[, .(query)], on = c(submittedName = "query"), nomatch = NA]
       result[is.na(from), `:=`(
         score = 1, # I'm positive. It does not exist !
         matchedName = NA_character_,
         from = "taxosaurus(not_found)"
       )]
-      
+
       result
     }))
   }
-  
+
   # build reference taxonomy from cached and queried ones
-  fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill=TRUE)
-  
+  fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
+
   # inject taxo names in original (user provided) taxonomy
-  userTaxo[fullTaxo, on=c(query="submittedName"), `:=`(
-    outName      = ifelse(score>=..score, matchedName, query), 
-    nameModified = ifelse(score>=..score, "TRUE", "NoMatch(low_score)"),
+  userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
+    outName = ifelse(score >= ..score, matchedName, query),
+    nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
     from = from
   )]
-  
+
   # if nothing changed tell it
-  userTaxo[!is.na(outName) & (outName==query) & (nameModified!="NoMatch(low_score)"),
+  userTaxo[
+    !is.na(outName) & (outName == query) & (nameModified != "NoMatch(low_score)"),
     nameModified := "FALSE"
   ]
-  
+
   # split name
   userTaxo[, c("genusCorrected", "speciesCorrected") := tstrsplit_NA(outName)]
-  
+
   # If genera or species not found by TNRS
   # Genera
-  userTaxo[(nameModified=="TRUE") & is.na(genusCorrected) & !is.na(genus), 
+  userTaxo[
+    (nameModified == "TRUE") & is.na(genusCorrected) & !is.na(genus),
     c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")
   ]
-  
+
   # Species
-  userTaxo[(nameModified %in% c("TRUE","TaxaNotFound")) & is.na(speciesCorrected) & !is.na(species),
+  userTaxo[
+    (nameModified %in% c("TRUE", "TaxaNotFound")) & is.na(speciesCorrected) & !is.na(species),
     `:=`(
       speciesCorrected = species,
-      nameModified = ifelse(nameModified=="TRUE", "SpNotFound", nameModified)
-  )]
-  
+      nameModified = ifelse(nameModified == "TRUE", "SpNotFound", nameModified)
+    )
+  ]
+
   # cache full taxonomy for further use
-  if(useCache) {
-    
+  if (useCache) {
+
     # complete taxo with matched names and accepted names
-    matchedTaxo <- unique(fullTaxo[submittedName!=matchedName], by="matchedName")[
-      ,`:=`(submittedName=matchedName, score=1)]
-    
-    acceptedTaxo <- unique(fullTaxo[(submittedName!=acceptedName) & (acceptedName!=matchedName)], by="acceptedName")[
-      ,`:=`(submittedName=acceptedName, matchedName=acceptedName, score=1)]
-    
-    fullTaxo <- rbindlist(list(fullTaxo,matchedTaxo,acceptedTaxo))[submittedName!=""]
-    
+    matchedTaxo <- unique(fullTaxo[submittedName != matchedName], by = "matchedName")[
+      , `:=`(submittedName = matchedName, score = 1)
+    ]
+
+    acceptedTaxo <- unique(fullTaxo[(submittedName != acceptedName) & (acceptedName != matchedName)], by = "acceptedName")[
+      , `:=`(submittedName = acceptedName, matchedName = acceptedName, score = 1)
+    ]
+
+    fullTaxo <- rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""]
+
     # write cache
-    fwrite(fullTaxo[order(submittedName),-"from"], file=cachePath)
-    if(verbose)
+    fwrite(fullTaxo[order(submittedName), -"from"], file = cachePath)
+    if (verbose) {
       message("Cache updated")
+    }
   }
-  
+
   # stats
-  if(verbose) {
-    stats <- userTaxo[,by=from,.N]
-    message("Source ",paste(sprintf("%s:%d",stats$from,stats$N),collapse=", "))
-    
-    stats <- userTaxo[,by=nameModified,.N]
-    message("Corrections ",paste(sprintf("%s:%d",stats$nameModified,stats$N),collapse=", "))
+  if (verbose) {
+    stats <- userTaxo[, by = from, .N]
+    message("Source ", paste(sprintf("%s:%d", stats$from, stats$N), collapse = ", "))
+
+    stats <- userTaxo[, by = nameModified, .N]
+    message("Corrections ", paste(sprintf("%s:%d", stats$nameModified, stats$N), collapse = ", "))
   }
-  
+
   # return corrected taxo
-  data.frame(userTaxo[,.(genusCorrected, speciesCorrected, nameModified)])
+  data.frame(userTaxo[, .(genusCorrected, speciesCorrected, nameModified)])
 }
