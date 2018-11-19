@@ -1,3 +1,11 @@
+if(getRversion()>="2.15.1") {
+  utils::globalVariables(c(
+    "query","from","submittedName","slice",".I",
+    "..score","matchedName","outName","nameModified",
+    "genusCorrected","speciesCorrected","acceptedName",
+    ".N","."))
+}
+
 #' Checking typos in names
 #'
 #' This function corrects typos for a given taxonomic name using the Taxonomic
@@ -17,6 +25,8 @@
 #'  or (genus + species + author) may be given (see example).
 #' @param species (optional) Vector of species to be checked (same size as the genus vector).
 #' @param score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
+#' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
+#' @param verbose logical. If TRUE various messages are displayed during process
 #'
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
@@ -24,23 +34,21 @@
 #' standardization of plant names}. BMC bioinformatics, 14, 1.
 #' @references Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
 #'
-#' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
+#' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'
 #' @examples
 #' \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
 #' \dontrun{correctTaxo(genus = "Astrocarium standleanum")}
 #'
 #' @export
-#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF
+#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF rbindlist
 #' @importFrom rappdirs user_data_dir
 #' @importFrom jsonlite fromJSON
+#' @importFrom utils head
 #'
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
 
-
-correctTaxo <- function(genus, species = NULL, score = 0.5) {
-
-  # parameters verification -------------------------------------------------
-
+  # check parameters -------------------------------------------------
 
   if (all(is.na(genus))) {
     stop("Please supply at least one name")
@@ -53,9 +61,12 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
     if (length(genus) != length(species)) {
       stop("You should provide two vectors of genus and species of the same length")
     }
+    if(any(is.na(genus) & !is.na(species))) {
+      stop("Species with no genuses are not allowed!")
+    }
   }
 
-  # Check if they have the package httr
+  # Check if package httr is available
   if (!requireNamespace("httr", quietly = T)) {
     stop(
       'To use this function, you must install "httr" library \n\n',
@@ -63,215 +74,224 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
     )
   }
 
-
   # sub-function definition -------------------------------------------------
 
-  strsplit_NA <- function(x, patern = " ") {
-    split <- tstrsplit(x, patern)
-    if (length(split) == 1) {
-      return(c(split, NA_character_))
+  # split x always returning count columns (padding with NA)
+  tstrsplit_NA <- function(x, pattern = " ", count=2) {
+    # NOTE extraneous columns ignored maybe better paste them together
+    split <- utils::head(tstrsplit(x, pattern), count)
+    
+    # pad with NA
+    if (length(split) < count) {
+      split <- c(split, rep(NA_character_, count-length(split)))
     }
-    return(split)
+    split
   }
-
-
-
-
-  # preparation of log file -------------------------------------------------
-  path <- folderControl(correctTaxo = T)
-
-  if (!file.exists(path)) {
-    file_exist <- F
-  } else {
-    taxo_already_have <- fread(file = path, colClasses = list(character = 1:3))
-    if (nrow(taxo_already_have) != 0) {
-      taxo_already_have[, c("genus", "species") := strsplit_NA(query)]
-      taxo_already_have[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
-      setkey(taxo_already_have, query)
-      file_exist <- T
-    } else {
-      file_exist <- F
-    }
-  }
-
-
 
   # Data preparation --------------------------------------------------------
 
   genus <- as.character(genus)
 
-  if (!is.null(species)) {
-    species <- as.character(species)
-
+  if (is.null(species)) {
+    
     # Create a dataframe with the original values
-    oriData <- data.table(
-      genus = genus, species = species,
-      query = paste(genus, species), id = 1:length(genus)
+    userTaxo <- data.table(
+      genus = NA_character_,
+      species = NA_character_,
+      query = genus
     )
+    # split genus (query)
+    userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
   } else {
-
+    
+    species <- as.character(species)
+    
     # Create a dataframe with the original values
-    oriData <- data.table(
-      genus = sapply(strsplit(genus, " "), "[", 1),
-      species = sapply(strsplit(genus, " "), "[", 2),
-      query = genus, id = 1:length(genus)
+    userTaxo <- data.table(
+      genus = genus, 
+      species = species,
+      query = genus
     )
-  }
-  setkey(oriData, query)
-
-
-  # Regroup unique query and filter the column species and genus if they are NA in the same time
-  query <- oriData[!(is.na(genus) & is.na(species)), query, by = query][, 2]
-  query[, c("genus", "species") := strsplit_NA(query)]
-
-
-  # Comparison between the taxo we already have and the taxo we want. We would have the unique taxo between the two.
-  if (file_exist) {
-    if (exists("taxo_already_have")) {
-      query <- query[!taxo_already_have, on = "query"]
-    }
+    # species can be NA so handle it with care when pasting
+    userTaxo[!is.na(genus) & !is.na(species), query:=paste(query, species)]
   }
 
-  # End the function if we already have all the data needed
-  if (nrow(query) == 0) {
-    out <- merge(oriData,
-      taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected, score1)],
-      all.x = T, by = "query"
-    )
-    out[score1 < score, ":="(genusCorrected = genus, speciesCorrected = species, nameModified = "NoMatch(low_score)")]
-    out <- setDF(out[order(id), c("genusCorrected", "speciesCorrected", "nameModified")])
-    return(out)
-  }
-
-
-  getpost <- "get"
-  if (nrow(query) > 50) {
-    getpost <- "post"
-  }
-
-
-
-  # If there is too much data, better submit it in separated queries
-  splitby <- 30
-  query[, slicedQu := rep(1:ceiling(length(query) / splitby), each = splitby, length.out = length(query))]
-
-
-
-  # sending and retrive the data from taxosaurus ----------------------------
-  dropNulls <- function(x) x[!vapply(x, is.null, FUN.VALUE = logical(1))]
-  con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
-
-  url <- "http://taxosaurus.org/submit"
-
-  setkey(query, query)
-
-  for (s in query[, unique(slicedQu)])
-  {
-    x <- query[slicedQu == s, query]
-
-    if (getpost == "get") {
-      query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
-      args <- dropNulls(list(query = query2))
-      out <- httr::GET(url, query = args)
-      retrieve <- out$url
-    } else {
-      loc <- tempfile(fileext = ".txt")
-      write.table(data.frame(x, stringsAsFactors = FALSE), file = loc, col.names = FALSE, row.names = FALSE)
-      args <- dropNulls(list(file = httr::upload_file(loc), source = "iPlant_TNRS"))
-      out <- httr::POST(url, body = args, httr::config(followlocation = 0))
-      tt <- con_utf8(out)
-      message <- fromJSON(tt, FALSE)[["message"]]
-      retrieve <- fromJSON(tt, FALSE)[["uri"]]
-    }
-
-    print(paste("Calling", retrieve, "progression :", s, "/", query[, max(slicedQu)]))
-
-    timeout <- "wait"
-    while (timeout == "wait") {
-      ss <- httr::GET(retrieve)
-      output <- fromJSON(con_utf8(ss), FALSE)
-      if (!grepl("is still being processed", output["message"]) == TRUE) {
-        timeout <- "done"
+  # get unique values
+  qryTaxo <- unique(userTaxo[!is.na(query)])
+  
+  # get cached taxonomic corrections if needed -------------------------------------------------
+  
+  cachedTaxo <- NULL
+  
+  if(is.null(useCache) || useCache) {
+    cachePath <- folderControl(correctTaxo = T)
+    
+    if(file.exists(cachePath)) {
+      
+      # should we remove cache ?
+      if(is.null(useCache)) {
+        file.remove(cachePath)
+        useCache <- TRUE
+      } else {
+        
+        # TODO display file date
+        cachedTaxo <- fread(file = cachePath)
+        cachedTaxo[, from:="cache"]
+        
+        # if not the right format then ignore it!
+        if(!("submittedName" %in% names(cachedTaxo)))
+          cachedTaxo <- NULL
       }
-      Sys.sleep(1)
-    }
-
-    out <- dropNulls(output$names)
-
-    if (length(out) > 0) {
-      submittedName <- sapply(out, function(x) x$submittedName)
-      receiveData <- t(sapply(out, function(x) c(x[[2]][[1]]$matchedName, x[[2]][[1]]$score)))
-
-      # Remove some parasite characters
-      submittedName <- gsub("\"", "", submittedName)
-      submittedName <- gsub("\r", "", submittedName)
-      receiveData[, 1] <- gsub("\"", "", receiveData[, 1])
-      receiveData[, 1] <- gsub("\r", "", receiveData[, 1])
-
-
-      query[chmatch(submittedName, query), ":="(matchedName = receiveData[, 1], score1 = as.double(receiveData[, 2]))]
     }
   }
+  
+  # init cachedTaxo with empty data
+  if(is.null(cachedTaxo))
+    cachedTaxo <-  data.table(submittedName=character(0),score=numeric(0),matchedName=character(0),from=character(0))  
+  
+  # identify taxo not present in cache
+  missingTaxo <- qryTaxo[!cachedTaxo[,.(submittedName)], on=c(query="submittedName")]
 
+  # query taxosaurus for missing taxo if any
+  queriedTaxo <- NULL
+  if(nrow(missingTaxo)) {
+    
+    # split missing taxo in chunks of 30
+    slices <- split(missingTaxo[, slice:=ceiling(.I/30)], by="slice", keep.by=FALSE)
+  
+    # for each slice of queries
+    queriedTaxo <- rbindlist(lapply(slices, function(slice) {
+      
+      # build query
+      baseURL <- "http://taxosaurus.org/submit"
+      qry <- paste(gsub(" ", "+", slice$query, fixed = T), collapse = "%0A")
+      args <- list(query = qry)
+      
+      # send query
+      qryResult <- httr::GET(baseURL, query = args)
+      
+      # check for errors
+      if(httr::http_error(qryResult))
+        httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
+      
+      # wait for response
+      retrieveURL <- qryResult$url
+      repeat {
+        
+        # be polite with server
+        Sys.sleep(1)
+        
+        # fetch answer
+        qryResult <- httr::GET(retrieveURL)
+        
+        # normal waiting bahaviour is redirecting to self with 302 status
+        # if not then break from waiting loop
+        if(httr::status_code(qryResult) != 302) 
+          break
+      }
+      
+      # check for errors
+      if(httr::http_error(qryResult))
+        httr::stop_for_status(qryResult,"get answer from taxosaurus service. Retry maybe later")
+      
+      # parse answer from taxosaurus
+      answer <- jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"), FALSE)
 
-  # data analysis -----------------------------------------------------------
-  query[, slicedQu := NULL]
-
-  # If score ok
-  query[score1 >= score, ":="(outName = matchedName, nameModified = as.character(TRUE))]
-
-  # If score non ok
-  query[score1 < score, c("outName", "nameModified") := list(query, "NoMatch(low_score)")]
-
-  # If no modified name value set nameModified as False
-  query[!is.na(outName) & outName == query & nameModified != "NoMatch(low_score)", nameModified := as.character(FALSE)]
-
-
-
-
-  query[, c("genusCorrected", "speciesCorrected") := strsplit_NA(outName)]
-
-  # # If genera or species not found by TNRS
+      # WARNING when no match is found, taxosaurus does not return an answer
+      
+      # do we have answers ?
+      if(length(answer$names)) {
+        
+        # function to preprocess match      
+        flatten <- function(match) {
+          match$annotations <- paste(sprintf("%s(%s)", names(match$annotations), match$annotations), collapse=", ")
+          match$score <- as.numeric(match$score)
+          match
+        }
+        
+        # get first match (highest score) for each submitted name
+        result <- rbindlist(lapply(answer$names, function(name) c(
+          submittedName = name$submittedName,
+          flatten(name$matches[[1]]),
+          from = "taxosaurus"
+        )))
+        
+      } else {
+        
+        # nothing found ! Pathological case -> return empty answer
+        result <- data.table(submittedName=character(0), score=numeric(0), matchedName=character(0), from=character(0))
+      }
+      
+      # handle not founds (as taxosaurus does not give answers for them)
+      result <- result[slice[,.(query)], on=c(submittedName="query"), nomatch=NA]
+      result[is.na(from), `:=`(
+        score = 1, # I'm positive. It does not exist !
+        matchedName = NA_character_,
+        from = "taxosaurus(not_found)"
+      )]
+      
+      result
+    }))
+  }
+  
+  # build reference taxonomy from cached and queried ones
+  fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill=TRUE)
+  
+  # inject taxo names in original (user provided) taxonomy
+  userTaxo[fullTaxo, on=c(query="submittedName"), `:=`(
+    outName      = ifelse(score>=..score, matchedName, query), 
+    nameModified = ifelse(score>=..score, "TRUE", "NoMatch(low_score)"),
+    from = from
+  )]
+  
+  # if nothing changed tell it
+  userTaxo[!is.na(outName) & (outName==query) & (nameModified!="NoMatch(low_score)"),
+    nameModified := "FALSE"
+  ]
+  
+  # split name
+  userTaxo[, c("genusCorrected", "speciesCorrected") := tstrsplit_NA(outName)]
+  
+  # If genera or species not found by TNRS
   # Genera
-  filt <- query$nameModified == TRUE & is.na(query$genusCorrected) & !is.na(query$genus)
-  query[filt, c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")]
-
+  userTaxo[(nameModified=="TRUE") & is.na(genusCorrected) & !is.na(genus), 
+    c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")
+  ]
+  
   # Species
-  filt <- (query$nameModified == TRUE | query$nameModified == "TaxaNotFound") & is.na(query$speciesCorrected) & !is.na(query$species)
-  query[filt, speciesCorrected := species]
-  query[filt & nameModified != "TaxaNotFound", nameModified := "SpNotFound"]
-
-
-
-
-
-  # merge the data for the return -------------------------------------------
-
-  out <- merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected, score1)]
-
-  if (file_exist) {
-    setkey(out, query)
-    out[taxo_already_have,
-      ":="(nameModified = i.nameModified,
-        genusCorrected = i.genusCorrected,
-        speciesCorrected = i.speciesCorrected,
-        score1 = i.score1),
-      on = "query"
-    ]
+  userTaxo[(nameModified %in% c("TRUE","TaxaNotFound")) & is.na(speciesCorrected) & !is.na(species),
+    `:=`(
+      speciesCorrected = species,
+      nameModified = ifelse(nameModified=="TRUE", "SpNotFound", nameModified)
+  )]
+  
+  # cache full taxonomy for further use
+  if(useCache) {
+    
+    # complete taxo with matched names and accepted names
+    matchedTaxo <- unique(fullTaxo[submittedName!=matchedName], by="matchedName")[
+      ,`:=`(submittedName=matchedName, score=1)]
+    
+    acceptedTaxo <- unique(fullTaxo[(submittedName!=acceptedName) & (acceptedName!=matchedName)], by="acceptedName")[
+      ,`:=`(submittedName=acceptedName, matchedName=acceptedName, score=1)]
+    
+    fullTaxo <- rbindlist(list(fullTaxo,matchedTaxo,acceptedTaxo))[submittedName!=""]
+    
+    # write cache
+    fwrite(fullTaxo[order(submittedName),-"from"], file=cachePath)
+    if(verbose)
+      message("Cache updated")
   }
-
-
-
-  # write all the new data on the log file created --------------------------
-  fwrite(query[, .(outName, nameModified, score1), by = query],
-    file = path, sep = ",", append = T
-  )
-
-
-  message("Your new result has been saved/append in the file :", path)
-  out[, c("genus1", "species1") := strsplit_NA(query) ]
-  out[score1 < score, ":="(genusCorrected = genus1, speciesCorrected = species1, nameModified = "NoMatch(low_score)")]
-  out <- setDF(out[order(id), .(genusCorrected, speciesCorrected, nameModified)])
-
-  return(out)
+  
+  # stats
+  if(verbose) {
+    stats <- userTaxo[,by=from,.N]
+    message("Source ",paste(sprintf("%s:%d",stats$from,stats$N),collapse=", "))
+    
+    stats <- userTaxo[,by=nameModified,.N]
+    message("Corrections ",paste(sprintf("%s:%d",stats$nameModified,stats$N),collapse=", "))
+  }
+  
+  # return corrected taxo
+  data.frame(userTaxo[,.(genusCorrected, speciesCorrected, nameModified)])
 }
