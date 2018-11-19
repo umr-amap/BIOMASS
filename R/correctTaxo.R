@@ -289,7 +289,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   ]
 
   # cache full taxonomy for further use
-  if (useCache && nrow(queriedTaxo)) {
+  if (useCache && !is.null(queriedTaxo)) {
 
     # complete taxo with matched names and accepted names
     matchedTaxo <- unique(fullTaxo[submittedName != matchedName], by = "matchedName")[
