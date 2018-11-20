@@ -18,7 +18,6 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 test <- TRUE
 CACHE <- TRUE
 require(knitr)
-devtools::load_all("~/Bureau/document arthur/biomass/")
 ```
 
 #Load BIOMASS and datasets
