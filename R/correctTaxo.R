@@ -17,6 +17,9 @@ if (getRversion() >= "2.15.1") {
 #' @details
 #' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
 #' to avoid the replication of time-consuming servor requests.
+#' 
+#' By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using  options:
+#' \code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
 #'
 #'
 #' @inheritSection folderControl Localisation
@@ -47,9 +50,9 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE) {
-  WAIT_DELAY <- 0.5 # delay between requests to taxosaurus (to reduce load on server)
-  SLICE_SIZE <- 30 # number of taxa sought per request to taxosaurus
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
+  WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to taxosaurus (to reduce load on server)
+  BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to taxosaurus
 
   # check parameters -------------------------------------------------
 
@@ -164,21 +167,19 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   if (nrow(missingTaxo)) {
 
     # split missing taxo in chunks of 30
-    slices <- split(missingTaxo[, slice := ceiling(.I / SLICE_SIZE)], by = "slice", keep.by = TRUE)
-
+    slices <- split(missingTaxo[, slice:=ceiling(.I/BATCH_SIZE)], by="slice", keep.by=TRUE)
+  
     # for each slice of queries
     if (verbose) {
       pb <- utils::txtProgressBar(style = 3)
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-
-      # build query
-      baseURL <- "http://taxosaurus.org/submit"
-      qry <- paste(gsub(" ", "+", slice$query, fixed = T), collapse = "%0A")
-      args <- list(query = qry)
-
+      
       # send query
-      qryResult <- httr::GET(baseURL, query = args)
+      qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
+        query = paste(slice$query, collapse="\n"),
+        source = "iPlant_TNRS"
+      ))
 
       # check for errors
       if (httr::http_error(qryResult)) {
@@ -186,7 +187,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       }
 
       # wait for response
-      retrieveURL <- qryResult$url
+      retrieveURL <- qryResult$headers$location
       repeat {
 
         # be polite with server
