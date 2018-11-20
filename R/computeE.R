@@ -1,3 +1,9 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "RASTval", "long", "lat", "slice", "i.RASTval"
+  ))
+}
+
 #' Retrieving Chave's environmental index
 #'
 #' Extract the Chave et al. 2014's environmental index thanks to the coordinates of the data.
@@ -60,7 +66,8 @@ computeE <- function(coord) {
 
   # set the coord in a data.table
   coord <- as.data.table(coord)
-
+  setnames(coord, colnames(coord), c("long", "lat"))
+  
   #
   coord_unique <- unique(coord)
   coord_unique <- na.omit(coord_unique)
@@ -73,7 +80,7 @@ computeE <- function(coord) {
   i <- 1
   while (anyNA(coord_unique$RASTval)) {
     r <- r + 5000
-    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(long, lat), buffer = r), mean, na.rm = T)]
 
     if (i > 8) {
       coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
@@ -86,5 +93,5 @@ computeE <- function(coord) {
     i <- i + 1
   }
 
-  return(coord[coord_unique, on = c("V1", "V2"), RASTval])
+  return(coord[coord_unique, on = c("long", "lat"), RASTval])
 }
