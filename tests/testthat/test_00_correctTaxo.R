@@ -1,4 +1,4 @@
-library(BIOMASS)
+require(data.table)
 
 data("KarnatakaForest")
 genus <- KarnatakaForest$genus[1:10]
@@ -21,7 +21,7 @@ test_that("CorrectTaxo", {
   taxoBegin <- data.frame(as.character(genus), as.character(species), stringsAsFactors = F)
 
   expect_equivalent(taxoFalse[, 1:2], taxoBegin[taxo$nameModified == FALSE, ])
-  expect_error(correctTaxo(genus, species[1:9]), "You should provide two vectors of genus and species of the same length")
+  expect_error(correctTaxo(genus, species[1:9]), "You should provide two vectors of genera and species of the same length")
 
   expect_equal(correctTaxo(paste(genus, species)), taxo)
   expect_error(correctTaxo(genus = rep(NA, 20), species = rep(NA, 20)), "Please supply at least one name")
@@ -32,7 +32,7 @@ test_that("CorrectTaxo", {
     data.frame(
       genusCorrected = c("Manniophyton", "?"),
       speciesCorrected = c("fulvum", "?"),
-      nameModified = c("TRUE", "NoMatch(low_score)"), stringsAsFactors = F
+      nameModified = c("TRUE", "TaxaNotFound"), stringsAsFactors = F
     )
   )
 
@@ -42,8 +42,8 @@ test_that("CorrectTaxo", {
   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
   expect_true(file.exists(path))
 
-  a <- read.table(path, header = T, sep = ",")
-  expect_equal(names(a), c("query", "outName", "nameModified", "score1"))
+  a <- setDF(fread(path, header = T, sep = ","))
+  expect_equal(names(a), c("submittedName", "acceptedName", "sourceId", "score", "matchedName", "annotations", "uri"))
   expect_gt(nrow(a), 0)
 
   expect_equal(
@@ -51,7 +51,7 @@ test_that("CorrectTaxo", {
     data.frame(
       genusCorrected = c("Magnophyton", "?"),
       speciesCorrected = c("fulvum", "?"),
-      nameModified = c("NoMatch(low_score)", "NoMatch(low_score)"), stringsAsFactors = F
+      nameModified = c("NoMatch(low_score)", "TaxaNotFound"), stringsAsFactors = F
     )
   )
 })
