@@ -48,7 +48,7 @@ if(getRversion()>="2.15.1") {
 #'
 correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verbose=FALSE) {
   WAIT_DELAY <- 0.5 # delay between requests to taxosaurus (to reduce load on server)
-  SLICE_SIZE <- 30 # number of taxa sought per request to taxosaurus
+  SLICE_SIZE <- 50 # number of taxa sought per request to taxosaurus
 
   # check parameters -------------------------------------------------
 
@@ -166,20 +166,18 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache=FALSE, verb
       pb <- utils::txtProgressBar(style=3)
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
       
-      # build query
-      baseURL <- "http://taxosaurus.org/submit"
-      qry <- paste(gsub(" ", "+", slice$query, fixed = T), collapse = "%0A")
-      args <- list(query = qry)
-      
       # send query
-      qryResult <- httr::GET(baseURL, query = args)
-      
+      qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
+        query = paste(slice$query, collapse="\n"),
+        source = "iPlant_TNRS"
+      ))
+
       # check for errors
       if(httr::http_error(qryResult))
         httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
       
       # wait for response
-      retrieveURL <- qryResult$url
+      retrieveURL <- qryResult$headers$location
       repeat {
         
         # be polite with server
