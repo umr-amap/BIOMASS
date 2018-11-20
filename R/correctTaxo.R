@@ -167,9 +167,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     slices <- split(missingTaxo[, slice := ceiling(.I / SLICE_SIZE)], by = "slice", keep.by = TRUE)
 
     # for each slice of queries
-    if (verbose) {
-      message("Progress 0%", appendLF = FALSE)
-    }
+    if(verbose)
+      pb <- utils::txtProgressBar(style=3)
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
 
       # build query
@@ -241,16 +240,14 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
         matchedName = NA_character_,
         from = "taxosaurus(not_found)"
       )]
-
-      if (verbose) {
-        message("\rProgress ", ceiling(100 * slice$slice[1] / length(slices)), "%", appendLF = FALSE)
-      }
+      
+      if(verbose)
+        utils::setTxtProgressBar(pb,slice$slice[1]/length(slices))
 
       result
     }))
-    if (verbose) {
-      message("\nDone")
-    }
+    if(verbose)
+      close(pb)
   }
 
   # build reference taxonomy from cached and queried ones
@@ -289,8 +286,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   ]
 
   # cache full taxonomy for further use
-  if (useCache && !is.null(queriedTaxo)) {
-
+  if(useCache && !is.null(queriedTaxo)) {
+    
     # complete taxo with matched names and accepted names
     matchedTaxo <- unique(fullTaxo[submittedName != matchedName], by = "matchedName")[
       , `:=`(submittedName = matchedName, score = 1)
