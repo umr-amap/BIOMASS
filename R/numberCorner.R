@@ -1,6 +1,6 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "n.row","corner","X","Y","Plot"
+    "n.row", "corner", "X", "Y", "Plot"
   ))
 }
 

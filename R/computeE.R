@@ -67,7 +67,7 @@ computeE <- function(coord) {
   # set the coord in a data.table
   coord <- as.data.table(coord)
   setnames(coord, colnames(coord), c("long", "lat"))
-  
+
   #
   coord_unique <- unique(coord)
   coord_unique <- na.omit(coord_unique)
