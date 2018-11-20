@@ -1,3 +1,9 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    ".GRP"
+  ))
+}
+
 #' Fitting height-diameter models
 #'
 #' This function fits and compares (optional) height-diameter models.

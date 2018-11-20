@@ -4,14 +4,14 @@
 \alias{summaryByPlot}
 \title{Mixing the tree}
 \usage{
-summaryByPlot(plot, subplot = plot, AGB_simu)
+summaryByPlot(AGB_simu, plot, subplot = plot)
 }
 \arguments{
+\item{AGB_simu}{Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list}
+
 \item{plot}{Vector with the code of plot}
 
 \item{subplot}{vector with the code of the subplot}
-
-\item{AGB_simu}{Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list}
 }
 \value{
 a data frame where :

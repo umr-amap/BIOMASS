@@ -1,3 +1,10 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "id", "family"
+  ))
+}
+
+
 #' Retrieving the taxonomy
 #'
 #' From a genus, the function \code{getTaxonomy} finds the APG III family, and optionally the

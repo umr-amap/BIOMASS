@@ -1,3 +1,10 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "indice_line", "indice_col", "V1"
+  ))
+}
+
+
 #' Mixing the tree
 #'
 #' This function mixes the AGB of the tree that doesn't have a subplot assigned.

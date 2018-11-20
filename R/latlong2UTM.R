@@ -1,3 +1,9 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "codeUTM", "long", "lat"
+  ))
+}
+
 #' Translate the long lat coordinate in UTM coordinate
 #'
 #' @inheritParams computeE

@@ -134,6 +134,14 @@ credperplotChave <- sapply(resultMC, "[", 4)
 Rejou-Mechain M., Tanguy A., Piponiot C., Chave J., Herault B. (2016). BIOMASS :
 An R Package for estimating above-ground biomass and its uncertainty in tropical forests. R package version 1.0.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/AMAP-dev/BIOMASS}
+  \item Report bugs at \url{https://github.com/AMAP-dev/BIOMASS/issues}
+}
+
+}
 \author{
 \packageAuthor{BIOMASS}
 

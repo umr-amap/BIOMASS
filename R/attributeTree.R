@@ -1,3 +1,11 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "XRel", "X", "Y", "YRel", "Plot",
+    "i.Xmax", "i.Ymax", "Xmax", "Xplot",
+    "Ymax", "Yplot", "subplot"
+  ))
+}
+
 #' Attribute the tree to the subplot
 #'
 #' Fonction to attribute the trees on each subplot, the trees that are at the exterior

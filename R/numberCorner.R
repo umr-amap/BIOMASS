@@ -1,3 +1,9 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "n.row","corner","X","Y","Plot"
+  ))
+}
+
 #' Get the UTM coordinates with the corner of the plot
 #'
 #' @description

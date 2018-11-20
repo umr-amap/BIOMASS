@@ -1,3 +1,9 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "X", "Y", ".SD"
+  ))
+}
+
 #' Cut plots in pieces
 #'
 #' This function cut all the plot in smaller rectangle pieces that you can give dimensions (with dimX and dimY), and give the
@@ -73,7 +79,6 @@ cutPlot <- function(UTMcoord, plot, corner, gridsize = 100, dimX = 200, dimY = 2
     a <- as.matrix(data[order(corner), .(X, Y)])
 
     # Do the matrix for the procrust problem
-    dist_a <- as.matrix(floor(dist(a)))
     b <- matrix(0, nrow = 4, ncol = 2)
     b[2:3, 1] <- unique(data[, dimX])
     b[3:4, 2] <- unique(data[, dimY])

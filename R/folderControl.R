@@ -101,8 +101,8 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
   }
 
   zip_url <- switch(nameFile,
-    "CWD_zip" = "http://chave.ups-tlse.fr/pantropical_allometry/CWD.bil.zip",
-    "E_zip" = "http://chave.ups-tlse.fr/pantropical_allometry/E.bil.zip"
+    "CWD_zip" = "http://amap-dev.cirad.fr/attachments/download/1513/CWD_zip",
+    "E_zip" = "http://amap-dev.cirad.fr/attachments/download/1514/E_zip"
   )
 
   DEMzip <- download.file(zip_url, destfile = path1)

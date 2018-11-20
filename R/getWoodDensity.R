@@ -1,3 +1,13 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "regionId", "i.family", "wd", "wd.x", "wd.y", "taxo", ".EACHI",
+    "meanWDsp", "nIndsp", "sdWDsp", "meanWD", "meanWDgn", "nInd", "nIndgn",
+    "sdWD", "sdWDgn", "levelWD", "meanWDfm", "nIndfm", "sdWDfm",
+    "meanWDst", "nIndst", "sdWDst"
+  ))
+}
+
+
 #' Estimating wood density
 #'
 #' The function estimates the wood density (WD) of the trees from their taxonomy or from their
