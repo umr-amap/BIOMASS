@@ -174,9 +174,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       pb <- utils::txtProgressBar(style = 3)
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-
       baseURL <- "http://taxosaurus.org/submit"
-      
+
       # send query
       qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
         query = paste(slice$query, collapse = "\n"),

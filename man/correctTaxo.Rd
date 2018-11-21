@@ -5,7 +5,7 @@
 \title{Checking typos in names}
 \usage{
 correctTaxo(genus, species = NULL, score = 0.5, useCache = TRUE,
-  verbose = TRUE)
+  verbose = FALSE)
 }
 \arguments{
 \item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)
@@ -31,7 +31,7 @@ This function has been adapted from the \code{tnrs} function from the taxize pac
 This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
 to avoid the replication of time-consuming servor requests.
 
-By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using  options:
+By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
 \code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
 }
 \section{Localisation}{
