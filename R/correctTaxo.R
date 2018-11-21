@@ -50,7 +50,7 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = FALSE) {
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to taxosaurus (to reduce load on server)
   BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to taxosaurus
 
@@ -175,6 +175,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
 
+      baseURL <- "http://taxosaurus.org/submit"
+      
       # send query
       qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
         query = paste(slice$query, collapse = "\n"),
