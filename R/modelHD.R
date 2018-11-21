@@ -84,194 +84,193 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom data.table data.table
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
-
+  
   # parameters verification -------------------------------------------------
-
+  
   # Check if there is enough data to compute an accurate model
   nbNonNA <- sum(!is.na(H))
   if (nbNonNA < 15) {
     stop("The data has not enough height data (less than 15 non NA)")
   }
-
+  
   if (length(H) != length(D)) {
     stop("Your vector D and H don't have the same length")
   }
-
-
+  
+  if(!is.null(method))
+    method = tolower(method)
+  
   methods <- c("log1", "log2", "log3", "weibull", "michaelis")
-  if (!is.null(method) && !(tolower(method) %in% methods)) {
-    stop("Chose your method among those ones : log1, log2, log3, weibull, michaelis")
+  if (!is.null(method) && !(method %in% methods)) {
+    stop("Chose your method among those ones : ", paste(methods, collapse = ", "))
   }
-
+  
   if (!is.logical(useWeight)) {
     stop("UseWeight argument must be a boolean")
   }
-
+  
   if (!is.logical(drawGraph)) {
     stop("drawGraph argument must be a boolean")
   }
-
-
-
-
-  # Data processing ---------------------------------------------------------
-
-  Hdata <- data.table(H = H, D = D)
-  Hdata <- na.omit(Hdata) # Remove NA values
-  weight <- NULL
-
-  # Vector of diameter used only for visualisation purpose
-  D_Plot <- seq(from = Hdata[, floor(min(D))], to = Hdata[, ceiling(max(D))], 0.5)
-
-  # If the measures need to be weighted
-  if (useWeight == TRUE) {
-    weight <- Hdata[, D^2 * H]
-  } # weight is proportional to tree volume
-
-
-
-  # If we gave the function a method ----------------------------------------
-
-  if (!is.null(method)) {
-    RSElog <- NULL
-    method <- tolower(method)
-
+  
+  
+  
+  # functions ----------------------------------------------------------------
+  
+  # fonction to choose the fonction
+  modSelect = function(Hdata, method, useGraph = FALSE){
+    
+    output = list()
+    
+    
     ################## Log-log model
-    if (grepl("log", method)) {
-      # Fit the log model
-      modSelected <- loglogFunction(Hdata, method)
-      RSElog <- summary(modSelected)$sigma
-
+    if (grepl("log", method)){
+      mod = loglogFunction(Hdata, method)
+      output$RSElog <- summary(mod)$sigma
+      
+      
       # Baskerville correction 1972
-      RSElog_2 <- 0.5 * RSElog^2
-      Hpredict <- exp(predict(modSelected) + RSElog_2)
-    }
-
-    ################## Weibull 3 parameters
-    if (method == "weibull") {
-      modSelected <- weibullFunction(Hdata, weight)
-      Hpredict <- predict(modSelected)
-    }
-
-    ################## Michaelis-Menten function
-    if (method == "michaelis") {
-      modSelected <- michaelisFunction(Hdata, weight)
-      Hpredict <- predict(modSelected)
-    }
-
-
-    ####### if drawGraph is true
-    if (drawGraph) {
-      if (grepl("log", method)) {
-        logD <- data.frame(logD = log(D_Plot))
-        Hpredict_plot <- exp(predict(modSelected, newdata = logD) + RSElog_2)
-      } else {
-        D_ <- data.frame(D = D_Plot)
-        Hpredict_plot <- predict(modSelected, newdata = data.frame(D = D_Plot))
+      output$Hpredict <- exp(predict(mod) + 0.5 * output$RSElog^2)
+      
+      if(useGraph)
+        output$Hpredict_plot <- exp(predict(mod, newdata = data.frame(logD = log(D_Plot))) + 0.5 * output$RSElog^2)
+      
+    } else {
+      
+      ################## Weibull 3 parameters
+      if (method == "michaelis") {
+        mod <- michaelisFunction(Hdata, weight)
       }
-
-      par(mar = c(5, 5, 3, 3))
-      plot(Hdata$D, Hdata$H,
-        pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
-        xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
-        main = paste("Selected model : ", method), cex.main = 2, axes = F, frame.plot = F
-      )
-      grid(col = "grey80", lty = 1, equilogs = F)
-      axis(side = 1, lty = "blank", las = 1)
-      axis(side = 2, lty = "blank", las = 1)
-      lines(D_Plot, Hpredict_plot, lwd = 2, col = "blue")
-      legend("bottomright", c("Data", "Model selected"),
-        lty = c(3, 1), lwd = c(3, 3),
-        col = c("grey", "blue"), cex = 1.5
-      )
+      
+      ################## Michaelis-Menten function
+      if (method == "weibull") {
+        mod <- weibullFunction(Hdata, weight)
+      }
+      output$Hpredict <- predict(mod)
+      output$RSElog = NA_real_
+      
+      if(useGraph)
+        output$Hpredict_plot <- predict(mod, newdata = data.frame(D = D_Plot))
     }
+    
+    names(output$Hpredict) = NULL
+    res <- Hdata$H - output$Hpredict
+    
+    
+    output$method = method 
+    output$RSE = sqrt(sum(res^2) / summary(mod)$df[2]) # Residual standard error
+    output$Average_bias = (mean(output$Hpredict) - mean(Hdata$H)) / mean(Hdata$H)
+    output$residuals = res
+    output$mod = mod
+    
+    
+    return(output)
   }
-  else {
-    # Compare Models ----------------------------------------------------------
-
-    logD_plot <- data.frame(logD = log(D_Plot))
-    D_plot_ <- data.frame(D = D_Plot)
-
-    # Plot everything
+  
+  
+  
+  # function to draw the beining of the graph
+  drawPlotBegin = function(givenMethod = FALSE){
     par(mar = c(5, 5, 3, 3))
     plot(Hdata$D, Hdata$H,
-      pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
-      xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
-      main = "Model comparison", cex.main = 2, axes = F, frame.plot = F
+         pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
+         xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
+         main = ifelse( givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod)), 
+         cex.main = 2, axes = F, frame.plot = F
     )
     grid(col = "grey80", lty = 1, equilogs = F)
     axis(side = 1, lty = "blank", las = 1)
     axis(side = 2, lty = "blank", las = 1)
-
+  }
+  
+  
+  # Data processing ---------------------------------------------------------
+  
+  Hdata <- data.table(H = H, D = D)
+  Hdata <- na.omit(Hdata) # Remove NA values
+  weight <- NULL
+  
+  # Vector of diameter used only for visualisation purpose
+  D_Plot <- seq(from = Hdata[, floor(min(D))], to = Hdata[, ceiling(max(D))], 0.5)
+  
+  # If the measures need to be weighted
+  if (useWeight == TRUE) {
+    weight <- Hdata[, D^2 * H]
+  } # weight is proportional to tree volume
+  
+  
+  
+  # If we gave the function a method ----------------------------------------
+  
+  if (!is.null(method)) {
+    
+    output = modSelect(Hdata, method, drawGraph)
+    
+    ####### if drawGraph is true
+    if (drawGraph) {
+      drawPlotBegin(method)
+      
+      lines(D_Plot, output$Hpredict_plot, lwd = 2, col = "blue")
+      legend("bottomright", c("Data", "Model selected"),
+             lty = c(3, 1), lwd = c(3, 3),
+             col = c("grey", "blue"), cex = 1.5
+      )
+    }
+    
+    ################## Return the model chosen
+    
+    # Results (RSE, model coefficient, residuals, R?)
+    
+    out <- list(
+      input = list(H = Hdata$H, D = Hdata$D),
+      model = output$mod,
+      residuals = output$residuals,
+      coefficients = summary(output$mod)$coefficients,
+      R.squared = summary(output$mod)$r.squared,
+      formula = summary(output$mod)$call,
+      method = method,
+      predicted = output$Hpredict,
+      RSE = output$RSE
+    )
+    
+    if (grepl("log", method)) {
+      out$RSElog <- output$RSElog
+    }
+    
+    return(out)
+    
+  } else {
+    # Compare Models ----------------------------------------------------------
+    
+    drawPlotBegin()
     color <- c("blue", "green", "red", "orange", "purple")
-
-
+    
     result <- rbindlist(lapply(1:length(methods), function(i) {
       method <- methods[i]
-
-      if (grepl("log", method)) {
-        mod <- loglogFunction(Hdata, method)
-        RSElog <- summary(mod)$sigma
-
-        Hpredict <- exp(predict(mod) + 0.5 * RSElog^2)
-        Hpredict_plot <- exp(predict(mod, newdata = logD_plot) + 0.5 * RSElog^2)
-      } else {
-        if (method == "michaelis") {
-          mod <- michaelisFunction(Hdata, weight)
-        }
-
-        if (method == "weibull") {
-          mod <- weibullFunction(Hdata, weight)
-        }
-        Hpredict <- predict(mod)
-        Hpredict_plot <- predict(mod, newdata = D_plot_)
-        RSElog <- NA_real_
-      }
-
-      res <- Hdata$H - Hpredict
-
-      lines(D_Plot, Hpredict_plot, lwd = 2, col = color[i], lty = i)
-
-      return(list(
+      
+      out = modSelect(Hdata, method, useGraph = T)
+      
+      lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      
+      output = list(
         method = method, color = color[i],
-        RSE = sqrt(sum(res^2) / summary(mod)$df[2]), # Residual standard error
-        RSElog = RSElog,
-        Average_bias = (mean(Hpredict) - mean(Hdata$H)) / mean(Hdata$H)
-      ))
-    }))
-
+        RSE = out$RSE, # Residual standard error
+        RSElog = out$RSElog,
+        Average_bias = out$Average_bias
+      )
+      
+      return(output)
+      
+    }), fill = T)
+    
     legend("bottomright", methods,
-      lty = 1:5, lwd = 2, cex = 1,
-      col = color
+           lty = 1:5, lwd = 2, cex = 1,
+           col = color
     )
-
+    
+    message("If you want to use a particular model, use the parameter 'method' in this function.")
     return(data.frame(result))
   }
-
-  ################## Return the model chosen
-
-  # Results (RSE, model coefficient, residuals, R?)
-
-  names(Hpredict) <- NULL
-
-  Residuals <- Hdata$H - Hpredict
-  RSE <- sqrt(sum(Residuals^2, na.rm = TRUE) / summary(modSelected)$df[2])
-
-  output <- list(
-    input = list(H = Hdata$H, D = Hdata$D),
-    model = modSelected,
-    residuals = Residuals,
-    coefficients = summary(modSelected)$coefficients,
-    R.squared = summary(modSelected)$r.squared,
-    formula = summary(modSelected)$call,
-    method = method,
-    predicted = Hpredict,
-    RSE = RSE
-  )
-
-  if (grepl("log", method)) {
-    output$RSElog <- RSElog
-  }
-
-  return(output)
+  
+  
 }

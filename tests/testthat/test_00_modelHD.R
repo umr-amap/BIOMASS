@@ -1,4 +1,4 @@
-options(stringsAsFactors = FALSE)
+require(data.table)
 
 data("NouraguesHD")
 D <- NouraguesHD$D
@@ -50,4 +50,22 @@ test_that("NA characters", {
   H1[ sample(1:length(H), size = 1038) ] <- NA
 
   expect_error(modelHD(D, H1), "NA")
+})
+
+test_that("Without parameters", {
+  Res <- expect_message(modelHD(D, H, useWeight = T), "If you want to use a particular model")
+
+  expect_is(Res, "data.frame")
+  expect_equal(ncol(Res), 5)
+
+  res <- "method  color      RSE    RSElog Average_bias
+log1   blue 4.305060 0.2231136  0.004227454
+log2  green 4.222718 0.2215495  0.003121671
+log3    red 4.225362 0.2216716  0.003157274
+weibull orange 4.307951        NA  0.002823978
+michaelis purple 4.294488        NA  0.014564152
+"
+
+
+  expect_equal(Res, fread(res, data.table = F), tolerance = 10^-6)
 })
