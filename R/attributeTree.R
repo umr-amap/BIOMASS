@@ -12,7 +12,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @param xy The coordinate of the trees for each plot
 #' @param plot The label of the plot (same length as the number of row of xy)
-#' @param CoordAbs Output of the function cutPlot
+#' @param CoordAbs Output of the function \code{\link{cutPlot}}
 #'
 #' @return A vector with the subplot for each trees
 #' @export

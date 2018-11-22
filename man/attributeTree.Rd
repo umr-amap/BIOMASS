@@ -11,7 +11,7 @@ attributeTree(xy, plot, CoordAbs)
 
 \item{plot}{The label of the plot (same length as the number of row of xy)}
 
-\item{CoordAbs}{Output of the function cutPlot}
+\item{CoordAbs}{Output of the function \code{\link{cutPlot}}}
 }
 \value{
 A vector with the subplot for each trees
