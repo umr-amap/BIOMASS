@@ -63,18 +63,18 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
 
   if (file_exists) {
     ## If the file isn't a zip but exist
-    if (!grepl("_zip$", nameFile, ignore.case = TRUE)) {
+    if (!grepl("\\.zip$", nameFile, ignore.case = TRUE)) {
       return(list("path" = path1, "sep" = sep))
     }
 
 
     ## If the file is a zip, exists and its size is ok, we do not download again the file
     size <- switch(nameFile,
-      "E_zip" = 31202482,
-      "CWD_zip" = 15765207
+      "E.zip" = 31202482,
+      "CWD.zip" = 15765207
     )
     if (file.info(path1)$size >= size) {
-      unzip(path1, exdir = paste(path, strsplit(nameFile, "_")[[1]][1], sep = sep))
+      unzip(path1, exdir = paste(path, strsplit(nameFile, ".")[[1]][1], sep = sep))
       return()
     }
   }
@@ -96,17 +96,17 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
 
   ###### If nameFile isn't a zip file return in the function with zip file on him
   if (!grepl("zip", nameFile)) {
-    folderControl(nameFile = paste(nameFile, "zip", sep = "_"))
+    folderControl(nameFile = paste(nameFile, "zip", sep = "."))
     return(list("path" = path1, "sep" = sep))
   }
 
   zip_url <- switch(nameFile,
-    "CWD_zip" = "http://amap-dev.cirad.fr/attachments/download/1513/CWD_zip",
-    "E_zip" = "http://amap-dev.cirad.fr/attachments/download/1514/E_zip"
+    "CWD.zip" = "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
+    "E.zip" = "http://amap-dev.cirad.fr/attachments/download/1521/E.zip"
   )
 
   DEMzip <- download.file(zip_url, destfile = path1)
-  unzip(path1, exdir = paste(path, strsplit(nameFile, "_")[[1]][1], sep = sep))
+  unzip(path1, exdir = paste(path, sub("\\.zip$", "", nameFile), sep = sep))
   message("Your file ", nameFile, " has been download and deziped in this folder : ", path)
 
   return()
