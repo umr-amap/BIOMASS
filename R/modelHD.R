@@ -130,16 +130,11 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
         output$Hpredict_plot <- exp(predict(mod, newdata = data.frame(logD = log(D_Plot))) + 0.5 * output$RSElog^2)
       }
     } else {
+      mod <- switch(method,
+        michaelis = michaelisFunction(Hdata, weight), # Michaelis-Menten function
+        weibull = weibullFunction(Hdata, weight) # Weibull 3 parameters
+      )
 
-      ################## Weibull 3 parameters
-      if (method == "michaelis") {
-        mod <- michaelisFunction(Hdata, weight)
-      }
-
-      ################## Michaelis-Menten function
-      if (method == "weibull") {
-        mod <- weibullFunction(Hdata, weight)
-      }
       output$Hpredict <- predict(mod)
       output$RSElog <- NA_real_
 
@@ -235,15 +230,20 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   } else {
     # Compare Models ----------------------------------------------------------
 
-    drawPlotBegin()
-    color <- c("blue", "green", "red", "orange", "purple")
+    if (drawGraph) {
+      drawPlotBegin()
+      color <- c("blue", "green", "red", "orange", "purple")
+    }
+
 
     result <- rbindlist(lapply(1:length(methods), function(i) {
       method <- methods[i]
 
       out <- modSelect(Hdata, method, useGraph = T)
 
-      lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      if (drawGraph) {
+        lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      }
 
       output <- list(
         method = method, color = color[i],
@@ -255,10 +255,12 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
       return(output)
     }), fill = T)
 
-    legend("bottomright", methods,
-      lty = 1:5, lwd = 2, cex = 1,
-      col = color
-    )
+    if (drawGraph) {
+      legend("bottomright", methods,
+        lty = 1:5, lwd = 2, cex = 1,
+        col = color
+      )
+    }
 
     message("If you want to use a particular model, use the parameter 'method' in this function.")
     return(data.frame(result))
