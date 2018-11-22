@@ -39,3 +39,15 @@ biomass\.Rproj
 vignettes/VignetteBiomass_cache/html/
 
 tests/testthat/Rplots\.pdf
+
+data-raw/wdData\.csv
+
+apgFamilies\.csv
+
+
+data-raw/vascularKew\.csv
+
+data-raw/genList_tpl\.csv
+
+data-raw/dupGenusToSub\.csv
+

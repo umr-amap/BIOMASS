@@ -21,11 +21,14 @@ et al. 2012., with the associated RSE.
 \details{
 This dataset is used in the function \code{\link{retrieveH}}
 to predict height from diameter depending on the region.
-Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
 }
 \examples{
 data(feldCoef)
 str(feldCoef)
+}
+\references{
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} 
+Biogeosciences, 9, 3381–3403.
 }
 \keyword{datasets}
 \keyword{internal}
