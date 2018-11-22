@@ -47,8 +47,12 @@ See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 }
 
 \examples{
-\dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
-\dontrun{correctTaxo(genus = "Astrocarium standleanum")}
+\dontrun{
+correctTaxo(genus = "Astrocarium", species = "standleanum")
+}
+\dontrun{
+correctTaxo(genus = "Astrocarium standleanum")
+}
 
 }
 \references{

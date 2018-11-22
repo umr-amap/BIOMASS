@@ -55,22 +55,24 @@
 #' @export
 #'
 #' @examples
-#'
+#' 
 #' # Load a data set
 #' data(NouraguesHD)
-#'
+#' 
 #' # To model the height from a dataset
-#' \dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)}
-#'
+#' \dontrun{
+#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
+#' }
+#' 
 #' # If the method needed is known
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
-#'
+#' 
 #' # Using weights
-#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
-#'                    drawGraph = TRUE)
-#'
-#'
+#' HDmodel <- modelHD(
+#'   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
+#'   drawGraph = TRUE
+#' )
 #' @importFrom graphics legend lines par plot grid axis
 #' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict coef
 #' @importFrom utils data download.file unzip write.table
@@ -230,10 +232,8 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   } else {
     # Compare Models ----------------------------------------------------------
 
-    if (drawGraph) {
-      drawPlotBegin()
-      color <- c("blue", "green", "red", "orange", "purple")
-    }
+    drawPlotBegin()
+    color <- c("blue", "green", "red", "orange", "purple")
 
 
     result <- rbindlist(lapply(1:length(methods), function(i) {
@@ -241,9 +241,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
 
       out <- modSelect(Hdata, method, useGraph = T)
 
-      if (drawGraph) {
-        lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
-      }
+      lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
 
       output <- list(
         method = method, color = color[i],
@@ -255,12 +253,10 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
       return(output)
     }), fill = T)
 
-    if (drawGraph) {
-      legend("bottomright", methods,
-        lty = 1:5, lwd = 2, cex = 1,
-        col = color
-      )
-    }
+    legend("bottomright", methods,
+      lty = 1:5, lwd = 2, cex = 1,
+      col = color
+    )
 
     message("If you want to use a particular model, use the parameter 'method' in this function.")
     return(data.frame(result))

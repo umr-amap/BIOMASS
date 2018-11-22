@@ -38,12 +38,15 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 
 # Retrieving wood density values
 KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-                              stand = KarnatakaForest$plotId)
+  stand = KarnatakaForest$plotId
+)
 
 # Propagating errors with a standard error in wood density in one plot
 filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
-resultMC <- AGBmonteCarlo(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-                          errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel)
+resultMC <- AGBmonteCarlo(
+  D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
+  errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
+)
 
 plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId \%in\% c("BSP20", "BSP14") ]
 

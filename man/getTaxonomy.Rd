@@ -23,7 +23,6 @@ order, from the \code{\link{genusFamily}} database and the \code{\link{apgFamili
 getTaxonomy("Aphelandra")
 # ... and the order
 getTaxonomy("Aphelandra", findOrder = TRUE)
-
 }
 \author{
 Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN

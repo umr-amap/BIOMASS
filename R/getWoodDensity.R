@@ -80,23 +80,28 @@ if (getRversion() >= "2.15.1") {
 #' @examples
 #' # Load a data set
 #' data(KarnatakaForest)
-#'
+#' 
 #' # Compute the Wood Density up to the genus level and give the mean wood density of the dataset
-#' WD <- getWoodDensity(genus = KarnatakaForest$genus,
-#'                      species = KarnatakaForest$species)
-#'
+#' WD <- getWoodDensity(
+#'   genus = KarnatakaForest$genus,
+#'   species = KarnatakaForest$species
+#' )
+#' 
 #' # Compute the Wood Density up to the genus level and then give the mean wood density per stand
-#' WD <- getWoodDensity(genus = KarnatakaForest$genus,
-#'                      species = KarnatakaForest$species,
-#'                      stand = KarnatakaForest$plotId)
-#'
+#' WD <- getWoodDensity(
+#'   genus = KarnatakaForest$genus,
+#'   species = KarnatakaForest$species,
+#'   stand = KarnatakaForest$plotId
+#' )
+#' 
 #' # Compute the Wood Density up to the family level and then give the mean wood density per stand
-#' WD <- getWoodDensity(family = KarnatakaForest$family,
-#'                      genus = KarnatakaForest$genus,
-#'                      species = KarnatakaForest$species,
-#'                      stand = KarnatakaForest$plotId)
+#' WD <- getWoodDensity(
+#'   family = KarnatakaForest$family,
+#'   genus = KarnatakaForest$genus,
+#'   species = KarnatakaForest$species,
+#'   stand = KarnatakaForest$plotId
+#' )
 #' str(WD)
-#'
 #' @seealso \code{\link{wdData}}, \code{\link{sd_10}}
 #' @keywords Wood density
 #' @importFrom data.table data.table := setDF setDT setkey copy chmatch %chin%

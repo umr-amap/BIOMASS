@@ -61,14 +61,18 @@ data(KarnatakaForest)
 
 # Modelling height-diameter relationship
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+
 # Retrieving wood density values
 KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-                              stand = KarnatakaForest$plotId)
+  stand = KarnatakaForest$plotId
+)
 
 # Propagating errors with a standard error in wood density in one plot
-filt <- KarnatakaForest$plotId=="BSP20"
-resultMC <- AGBmonteCarlo(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-                          errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel)
+filt <- KarnatakaForest$plotId == "BSP20"
+resultMC <- AGBmonteCarlo(
+  D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
+  errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
+)
 str(resultMC)
 
 # If only the coordinates are available
@@ -76,20 +80,27 @@ lat <- KarnatakaForest$lat[filt]
 long <- KarnatakaForest$long[filt]
 coord <- cbind(long, lat)
 \dontrun{
-  resultMC <- AGBmonteCarlo(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-                            errWD = KarnatakaWD$sdWD[filt], coord = coord)
-  str(resultMC)}
+resultMC <- AGBmonteCarlo(
+  D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
+  errWD = KarnatakaWD$sdWD[filt], coord = coord
+)
+str(resultMC)
+}
 
 # Propagating errors with a standard error in wood density in all plots at once
-KarnatakaForest$meanWD = KarnatakaWD$meanWD
-KarnatakaForest$sdWD = KarnatakaWD$sdWD
-
+KarnatakaForest$meanWD <- KarnatakaWD$meanWD
+KarnatakaForest$sdWD <- KarnatakaWD$sdWD
 \dontrun{
-  resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
-                 function(x) AGBmonteCarlo(D = x$D, WD = x$meanWD, errWD = x$sdWD,
-                                           HDmodel = HDmodel, Dpropag = "chave2004"))
-  meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
-  credperplot <- sapply(resultMC, "[", 4)}
+resultMC <- by(
+  KarnatakaForest, KarnatakaForest$plotId,
+  function(x) AGBmonteCarlo(
+      D = x$D, WD = x$meanWD, errWD = x$sdWD,
+      HDmodel = HDmodel, Dpropag = "chave2004"
+    )
+)
+meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
+credperplot <- sapply(resultMC, "[", 4)
+}
 
 }
 \references{

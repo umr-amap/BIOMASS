@@ -29,16 +29,17 @@ Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{FeldRegion <- computeFeldRegion(coord)}
+\dontrun{
+FeldRegion <- computeFeldRegion(coord)
+}
 
 # Several study sites (here three sites)
 long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
-\dontrun{FeldRegion <- computeFeldRegion(coord)}
-
-
-
+\dontrun{
+FeldRegion <- computeFeldRegion(coord)
+}
 
 }
 \references{

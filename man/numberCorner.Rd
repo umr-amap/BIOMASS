@@ -42,7 +42,7 @@ plot <- rep("plot1", 4)
 origin <- c(FALSE, FALSE, TRUE, FALSE)
 
 # if you turn clock wise
-corner = numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = TRUE)
+corner <- numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = TRUE)
 
 # Plot the plot
 plot(coord, asp = 1)
@@ -50,7 +50,7 @@ text(coord, labels = corner$corner, pos = 1)
 
 
 # if you turn anti clock wise
-corner = numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = FALSE)
+corner <- numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = FALSE)
 
 # Plot the plot
 plot(coord, asp = 1)

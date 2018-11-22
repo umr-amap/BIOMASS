@@ -67,17 +67,19 @@ All the back transformations for log-log models are done using the Baskerville c
 data(NouraguesHD)
 
 # To model the height from a dataset
-\dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)}
+\dontrun{
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
+}
 
 # If the method needed is known
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
 
 # Using weights
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
-                   drawGraph = TRUE)
-
-
+HDmodel <- modelHD(
+  D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
+  drawGraph = TRUE
+)
 }
 \seealso{
 \code{\link{retrieveH}}, \code{\link{predictHeight}}

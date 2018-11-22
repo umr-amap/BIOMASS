@@ -52,7 +52,9 @@ H <- retrieveH(D = NouraguesHD$D, model = model)
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{H <- retrieveH(D = NouraguesHD$D, coord = coord)}
+\dontrun{
+H <- retrieveH(D = NouraguesHD$D, coord = coord)
+}
 
 # If the only data available is the region of your spot
 H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")

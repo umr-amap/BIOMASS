@@ -49,7 +49,6 @@ plot(coord, main = "example", xlim = c(4900, 5300), ylim = c(4900, 5300), asp = 
 text(coord, labels = corner, pos = 1)
 points(cut$XAbs, cut$YAbs, pch = "+")
 legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
-
 }
 \author{
 Arthur PERE

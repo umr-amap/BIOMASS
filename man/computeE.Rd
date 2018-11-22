@@ -46,13 +46,17 @@ See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{E <- computeE(coord)}
+\dontrun{
+E <- computeE(coord)
+}
 
 # Several study sites (here three sites)
 long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
-\dontrun{E <- computeE(coord)}
+\dontrun{
+E <- computeE(coord)
+}
 
 }
 \references{

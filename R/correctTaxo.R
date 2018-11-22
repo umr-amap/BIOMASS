@@ -41,9 +41,13 @@ if (getRversion() >= "2.15.1") {
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'
 #' @examples
-#' \dontrun{correctTaxo(genus = "Astrocarium", species="standleanum")}
-#' \dontrun{correctTaxo(genus = "Astrocarium standleanum")}
-#'
+#' \dontrun{
+#' correctTaxo(genus = "Astrocarium", species = "standleanum")
+#' }
+#' \dontrun{
+#' correctTaxo(genus = "Astrocarium standleanum")
+#' }
+#' 
 #' @export
 #' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF rbindlist
 #' @importFrom rappdirs user_data_dir

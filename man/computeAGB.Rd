@@ -41,22 +41,26 @@ This function uses two different ways of computing the above-ground biomass of a
 # Create variables
 D <- 10:99
 WD <- runif(length(D), min = 0.1, max = 1)
-H <- D^(2/3)
+H <- D^(2 / 3)
 
 # If you have height data
-AGB <- computeAGB(D,WD,H)
+AGB <- computeAGB(D, WD, H)
 
 # If you don't have height data and a single site
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{AGB <- computeAGB(D, WD, coord = coord)}
+\dontrun{
+AGB <- computeAGB(D, WD, coord = coord)
+}
 
 # If you don't have height data and several sites (here three)
 lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 coord <- cbind(long, lat)
-\dontrun{AGB <- computeAGB(D, WD, coord = coord)}
+\dontrun{
+AGB <- computeAGB(D, WD, coord = coord)
+}
 
 }
 \references{

@@ -39,19 +39,20 @@
 #' # Load a database
 #' data(NouraguesHD)
 #' model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
-#'
+#' 
 #' # If any height model is available
 #' H <- retrieveH(D = NouraguesHD$D, model = model)
-#'
+#' 
 #' # If the only data available are the coordinates of your spot
 #' lat <- 4.08
 #' long <- -52.68
 #' coord <- cbind(long, lat)
-#' \dontrun{H <- retrieveH(D = NouraguesHD$D, coord = coord)}
-#'
+#' \dontrun{
+#' H <- retrieveH(D = NouraguesHD$D, coord = coord)
+#' }
+#' 
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
-
 retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
 
 
