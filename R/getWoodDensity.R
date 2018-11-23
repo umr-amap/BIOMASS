@@ -176,7 +176,9 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     subWdData[!is.na(regionId), wd := wd.x][is.na(regionId), wd := wd.y][, ":="(wd.x = NULL, wd.y = NULL)]
   }
 
-  message("The reference dataset contains ", nrow(subWdData), " wood density values")
+  if (verbose) {
+    message("The reference dataset contains ", nrow(subWdData), " wood density values")
+  }
 
   # Creating an input dataframe
   inputData <- data.table(genus = as.character(genus), species = as.character(species))
@@ -196,7 +198,9 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   }
 
   taxa <- unique(inputData, by = c("family", "genus", "species"))
-  message("Your taxonomic table contains ", nrow(taxa), " taxa")
+  if (verbose) {
+    message("Your taxonomic table contains ", nrow(taxa), " taxa")
+  }
 
   # utilitary function : paste y values inside x when one x value is NA
   coalesce <- function(x, y) {
@@ -211,9 +215,21 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   # Select only the relevant data
   meanWdData <- subWdData[(family %in% taxa$family | genus %in% taxa$genus | species %in% taxa$species), ]
 
+  if (nrow(meanWdData) == 0) {
+    stop("Our database haven't any of your family, genus and species")
+  }
 
 
+  # If there is no genus or species level
+  inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
 
+
+  if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
+    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
+    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
+    stop("There is no exact match among the family, genus and species, try with 'addWoodDensity' 
+         or inform the 'family' or increase the 'region'")
+  }
 
   # Extracting data ---------------------------------------------------------
 
