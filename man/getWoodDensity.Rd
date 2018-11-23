@@ -5,7 +5,7 @@
 \title{Estimating wood density}
 \usage{
 getWoodDensity(genus, species, stand = NULL, family = NULL,
-  region = "World", addWoodDensityData = NULL)
+  region = "World", addWoodDensityData = NULL, verbose = TRUE)
 }
 \arguments{
 \item{genus}{Vector of genus names}
@@ -45,6 +45,8 @@ set to 'World', but you can restrict the WD estimates to a single region :
 combined with the global wood density database. The dataframe should be organized
 in a dataframe with three (or four) columns: "genus","species","wd", the fourth
 column "family" is optional.}
+
+\item{verbose}{A logical, give some statistic whith the database}
 }
 \value{
 Returns a dataframe containing the following information:

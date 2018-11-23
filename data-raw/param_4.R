@@ -24,6 +24,5 @@ mod$VCV <- as.matrix(mod$VCV)
 param_4 <- data.frame(mod$Sol, sqrt(mod$VCV))
 
 
-colnames(param_4) = c("intercept", "logagbt", "sd")
+colnames(param_4) <- c("intercept", "logagbt", "sd")
 usethis::use_data(param_4)
-

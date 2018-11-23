@@ -27,7 +27,7 @@ data(feldCoef)
 str(feldCoef)
 }
 \references{
-Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} 
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.}
 Biogeosciences, 9, 3381–3403.
 }
 \keyword{datasets}
