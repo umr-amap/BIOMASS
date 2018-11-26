@@ -66,5 +66,5 @@ usethis::use_data(wdData, overwrite = F)
 # wdData[, Number := seq(.N)]
 # wdData[ family != BIOMASS::wdData$family, .(Number, family)]
 # wdData[, family := getTaxonomy(genus)$family]
-# 
+#
 # diff <- wdData[ family != BIOMASS::wdData$family, .(Number, family, genus, species, wd)]

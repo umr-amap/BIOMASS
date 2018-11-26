@@ -63,9 +63,12 @@ INPUT:
 	
 	Those files contain all the data needed for Karnataka Forest database.
 
+
+
 5. NouraguesHD, NouraguesHD.R
 
 INPUT: NouraguesHD.csv
+
 
 
 6. sd_10, sd_10.R
@@ -73,9 +76,12 @@ INPUT: NouraguesHD.csv
 INPUT: the data from the table wdData, see 3. 
 
 
+
 7. param_4, param_4.R
 
 INPUT: Allometry-database-2012m_data.csv
+
+
 
 8.param_7, param_7.R
 

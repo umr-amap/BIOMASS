@@ -10,11 +10,11 @@ require(data.table)
 data_wd <- setDT(copy(BIOMASS::wdData))
 
 
-species = data_wd[, .(family, genus, wd, .N), by = species][N >= 10][, .(sd = sd(wd)), by = species][, mean(sd)]
+species <- data_wd[, .(family, genus, wd, .N), by = species][N >= 10][, .(sd = sd(wd)), by = species][, mean(sd)]
 
-genus = data_wd[, .(family, wd, .N), by = genus][N >= 10][, .(sd = sd(wd)), by = genus][, mean(sd)]
+genus <- data_wd[, .(family, wd, .N), by = genus][N >= 10][, .(sd = sd(wd)), by = genus][, mean(sd)]
 
-family = data_wd[, .(family, wd, .N), by = family][N >= 10][, .(sd = sd(wd)), by = family][, mean(sd)]
+family <- data_wd[, .(family, wd, .N), by = family][N >= 10][, .(sd = sd(wd)), by = family][, mean(sd)]
 
-sd_10 = data.frame(taxo = c("species", "genus", "family"), sd = c(species, genus, family))
+sd_10 <- data.frame(taxo = c("species", "genus", "family"), sd = c(species, genus, family))
 usethis::use_data(sd_10, overwrite = F)

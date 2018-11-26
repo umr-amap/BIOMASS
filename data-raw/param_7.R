@@ -52,10 +52,3 @@ colnames(param7_bis) <- c("intercept", "temp", "cwd", "prec", "logwsg", "logdbh"
 
 summary(param7_bis)
 summary(param_7)
-
-
-
-
-
-
-

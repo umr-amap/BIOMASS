@@ -64,7 +64,6 @@ tplList[apgFamilies[, .(famAPG, family = famSyn)], on = "family", family := i.fa
 # TO UPDATE KEW GENERA --------------------------------
 
 if (!file.exists("data-raw/vascularKew.csv")) {
-
   listFam <- read_html("http://data.kew.org/vpfg1992/genlist.html")
   listFam <- listFam %>% html_nodes("ul") %>% html_nodes("li") %>% html_text()
   listFam <- listFam[grepl("[A-Z]{2,}", listFam)]
