@@ -83,8 +83,12 @@ INPUT: Allometry-database-2012m_data.csv
 
 
 
-8.param_7, param_7.R
+8. param_7, param_7.R
 
 INPUT:
 	- Allometry-database-2012m_data.csv
 	- Allometry-database-2012n_envsub.csv
+
+
+9. Feldpausch Coefficient
+	For this one there is no code just it's a copy/paste of the table 3 on the paper: Feldpausch et al. 2012.
