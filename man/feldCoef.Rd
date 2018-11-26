@@ -16,7 +16,7 @@ data("feldCoef")
 }
 \description{
 Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
-et al. 2012., with the associated RSE.
+et al. 2012. in the table 3, with the associated RSE.
 }
 \details{
 This dataset is used in the function \code{\link{retrieveH}}
