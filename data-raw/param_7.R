@@ -13,6 +13,7 @@ data[, AGBlog := log(Dry.total.AGB..kg.)]
 setnames(data, c("Trunk.diameter..cm.", "Total.height..m.", "Wood.specific.gravity"), c("D", "H", "WD"))
 data[, Comp := H * WD * D^2 ]
 data <- data[!is.na(Comp), ]
+data[, logwsg := log(WD)]
 
 # remove the trees where the heigth is less than 1.3 m
 data <- data[H >= 1.3, ]
@@ -42,18 +43,9 @@ colnames(Env) <- paste0("Env", 1:ncol(Env))
 
 
 # param_7 -----------------------------------------------------------------
-data_tmp <- data.table(
-  AGBlog = data$AGBlog,
-  logwsg = log(data$WD),
-  D = data$D,
-  Env[, 1:1000]
-)
 
-data2 <- melt(data_tmp, measure.vars = grep("Env", colnames(data_tmp)))
-
-
-form <- as.formula("AGBlog ~ value + logwsg + I(log(D)) + I(log(D)^2)")
-mod2 <- system.time(MCMCglmm(form, random = ~variable, data = as.data.frame(data2), pr = T, nitt = 1))
+form <- as.formula("AGBlog ~ temp + cwd + prec + logwsg + I(log(D)) + I(log(D)^2)")
+mod2 <- MCMCglmm(form, data = as.data.frame(data), pr = T, nitt = 13001)
 
 param7_bis <- data.frame(mod2$Sol, sqrt(as.matrix(mod2$VCV)))
 colnames(param7_bis) <- c("intercept", "temp", "cwd", "prec", "logwsg", "logdbh", "logdbh2", "sd")
@@ -67,7 +59,3 @@ summary(param_7)
 
 
 
-
-form <- as.formula("AGBlog ~ (I(log(WD)) + I(log(D)) + I(log(D)^2)) ")
-form_ra <- as.formula("~ temp + cwd + prec")
-mod2 <- MCMCglmm(form, random = form_ra, data = data, pr = T, nitt = 13001)

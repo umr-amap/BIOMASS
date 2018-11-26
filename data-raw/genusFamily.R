@@ -64,7 +64,6 @@ tplList[apgFamilies[, .(famAPG, family = famSyn)], on = "family", family := i.fa
 # TO UPDATE KEW GENERA --------------------------------
 
 if (!file.exists("data-raw/vascularKew.csv")) {
-  require(purrr)
 
   listFam <- read_html("http://data.kew.org/vpfg1992/genlist.html")
   listFam <- listFam %>% html_nodes("ul") %>% html_nodes("li") %>% html_text()
@@ -90,7 +89,7 @@ if (!file.exists("data-raw/vascularKew.csv")) {
   }
 
 
-  file <- map_dfr(listFam, file_)
+  file <- rbindlist(lapply(listFam[1:2], file_))
   write.csv(file, "data-raw/vascularKew.csv", row.names = F)
 }
 

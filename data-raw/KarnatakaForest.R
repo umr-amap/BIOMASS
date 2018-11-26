@@ -5,6 +5,7 @@ dataflo <- fread("data-raw/Macroplot_data_Rev.txt")
 datasp <- fread("data-raw/Species_list.txt")
 datalat <- fread("data-raw/Site_variables.txt")
 
+
 # merge the data
 datatot <- merge(dataflo, datasp, by = "SpCode")
 datatot[datalat, on = "PlotID", ":="(lat = i.LatDec, long = i.LongDec)]

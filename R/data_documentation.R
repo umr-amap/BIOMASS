@@ -24,7 +24,7 @@
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #'
 #' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
-#' et al. 2012., with the associated RSE.
+#' et al. 2012. in the table 3, with the associated RSE.
 #'
 #' @docType data
 #' @usage data("feldCoef")

@@ -6,6 +6,7 @@ apg <- apg[!grepl("^$", V1), ]
 apg[, c("fam1", "fam2", "order") := tstrsplit(V1, "=")]
 apg[, ":="(fam1 = gsub("(^ )|( $)", "", fam1), fam2 = gsub("(^ )|( $)", "", fam2), order = gsub("(^ )|( $)", "", order))]
 
+# remove the first column where there is all raw data
 apg[, V1 := NULL]
 
 # When the order is NA but fam2 isn't : means that fam2 contains the order
@@ -45,4 +46,4 @@ apgFamilies[, famSyn := NULL]
 apgFamilies <- unique(apgFamilies)
 
 setDF(apgFamilies)
-usethis::use_data(apgFamilies, compress = "xz")
+usethis::use_data(apgFamilies, compress = "xz", overwrite = F)
