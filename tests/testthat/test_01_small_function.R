@@ -3,6 +3,7 @@ options(stringsAsFactors = FALSE)
 data("KarnatakaForest")
 data("NouraguesHD")
 
+KarnatakaForest <- KarnatakaForest[1:50, ]
 
 # Argument repetitive
 D <- KarnatakaForest$D
@@ -22,7 +23,7 @@ test_that("Compute E", {
   E <- computeE(coord)
 
   expect_is(E, "numeric")
-  expect_length(E, 61965)
+  expect_length(E, 50)
 
   expect_equal(computeE(cbind(12, 50)), 1.129928, tolerance = 0.1)
 })
@@ -37,7 +38,7 @@ test_that("getBioclimParam", {
   B <- getBioclimParam(coord)
 
   expect_is(B, "data.frame")
-  expect_equal(dim(B), c(61965, 3))
+  expect_equal(dim(B), c(50, 3))
 
   expect_equal(getBioclimParam(cbind(12, 50)),
     data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
@@ -64,13 +65,13 @@ test_that("With the HDmodel", {
   expect_is(H, "list")
   expect_is(H$H, "numeric")
   expect_is(H$RSE, "numeric")
-  expect_equal(length(H$H), 61965)
+  expect_equal(length(H$H), 50)
 
-  expect_equal(H$RSE, 4.222, tolerance = 0.001)
+  expect_equal(H$RSE, 4.1, tolerance = 0.001)
   RSE <- H$RSE
 
   H <- retrieveH(c(2, 3), model = HDmodel)
-  expect_equal(H$H, c(3.968837, 5.672954), tolerance = 0.0001)
+  expect_equal(H$H, c(3.82, 5.52), tolerance = 0.01)
   expect_equal(H$RSE, RSE)
 })
 
@@ -82,7 +83,7 @@ test_that("With the coordonate", {
   expect_length(H, 2)
   expect_is(H$H, "numeric")
   expect_is(H$RSE, "numeric")
-  expect_length(H$H, 61965)
+  expect_length(H$H, 50)
   expect_equal(H$RSE, 0.243)
   RSE <- H$RSE
 
@@ -100,7 +101,7 @@ test_that("With the region", {
   expect_is(H, "list")
   expect_is(H$H, "numeric")
   expect_is(H$RSE, "numeric")
-  expect_length(H$H, 61965)
+  expect_length(H$H, 50)
   expect_equal(H$RSE, 5.691)
   RSE <- H$RSE
 
@@ -117,27 +118,30 @@ test_that("With the region", {
 
 context("Function getTaxonomy")
 test_that("Without finding the order", {
-  Taxo <- getTaxonomy(KarnatakaForest$genus[1:50])
+  Taxo <- getTaxonomy(KarnatakaForest$genus)
 
-  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus[1:50]))
+  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus))
   expect_is(Taxo, "data.frame")
   expect_equal(dim(Taxo), c(50, 2))
   expect_is(Taxo[, 1], "character")
   expect_is(Taxo[, 2], "character")
 
   Taxo <- Taxo[order(Taxo$inputGenus), ]
-  expect_equivalent(
-    Taxo[1:3, ],
-    data.frame(
-      "inputGenus" = c("Alangium", "Albizia", "Albizia"),
-      "family" = c("Cornaceae", "Fabaceae", "Fabaceae")
-    )
-  )
+
+
+  res <- "inputGenus      family
+  Acacia    Fabaceae
+  Alangium   Cornaceae
+  Albizia    Fabaceae
+  Allophylus Sapindaceae
+  Alseodaphne   Lauraceae"
+
+  expect_equivalent(unique(Taxo), fread(res, data.table = F))
 })
 
 test_that("With finding the order", {
-  Taxo <- getTaxonomy(KarnatakaForest$genus[1:50], findOrder = T)
-  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus[1:50]))
+  Taxo <- getTaxonomy(KarnatakaForest$genus, findOrder = T)
+  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus))
 
   expect_is(Taxo, "data.frame")
   expect_equal(dim(Taxo), c(50, 3))
@@ -146,14 +150,16 @@ test_that("With finding the order", {
   expect_is(Taxo[, 3], "character")
 
   Taxo <- Taxo[order(Taxo$inputGenus), ]
-  expect_equivalent(
-    Taxo[1:3, ],
-    data.frame(
-      "inputGenus" = c("Alangium", "Albizia", "Albizia"),
-      "family" = c("Cornaceae", "Fabaceae", "Fabaceae"),
-      "order" = c("Cornales", "Fabales", "Fabales")
-    )
-  )
+
+  res <- "inputGenus      family      order
+  Acacia    Fabaceae    Fabales
+  Alangium   Cornaceae   Cornales
+  Albizia    Fabaceae    Fabales
+  Allophylus Sapindaceae Sapindales
+  Alseodaphne   Lauraceae   Laurales"
+
+
+  expect_equivalent(unique(Taxo), fread(res, data.table = F))
 })
 
 

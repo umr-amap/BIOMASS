@@ -5,7 +5,7 @@
 \title{Checking typos in names}
 \usage{
 correctTaxo(genus, species = NULL, score = 0.5, useCache = TRUE,
-  verbose = FALSE)
+  verbose = TRUE)
 }
 \arguments{
 \item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)

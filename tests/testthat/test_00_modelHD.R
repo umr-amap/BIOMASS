@@ -1,6 +1,5 @@
 require(data.table)
 
-data("NouraguesHD")
 D <- NouraguesHD$D
 H <- NouraguesHD$H
 
@@ -47,7 +46,7 @@ for (method in c("log1", "log2", "log3", "michaelis", "weibull")) {
 
 test_that("NA characters", {
   H1 <- H
-  H1[ sample(1:length(H), size = 1038) ] <- NA
+  H1[ seq(length(H) - 5) ] <- NA
 
   expect_error(modelHD(D, H1), "NA")
 })
@@ -59,11 +58,11 @@ test_that("Without parameters", {
   expect_equal(ncol(Res), 5)
 
   res <- "method  color      RSE    RSElog Average_bias
-log1   blue 4.305060 0.2231136  0.004227454
-log2  green 4.222718 0.2215495  0.003121671
-log3    red 4.225362 0.2216716  0.003157274
-weibull orange 4.307951        NA  0.002823978
-michaelis purple 4.294488        NA  0.014564152
+log1   blue 4.189344 0.2211142  0.004163822
+log2  green 4.101697 0.2194192  0.003014340
+log3    red 4.103827 0.2195255  0.003040592
+weibull orange 4.171569        NA  0.005214190
+michaelis purple 4.166207        NA  0.014758850
 "
 
 

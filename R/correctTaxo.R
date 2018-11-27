@@ -54,7 +54,7 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE) {
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to taxosaurus (to reduce load on server)
   BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to taxosaurus
 

@@ -24,7 +24,7 @@
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #'
 #' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
-#' et al. 2012., with the associated RSE.
+#' et al. 2012. in the table 3, with the associated RSE.
 #'
 #' @docType data
 #' @usage data("feldCoef")
@@ -38,7 +38,9 @@
 #' }
 #' @details This dataset is used in the function \code{\link{retrieveH}}
 #' to predict height from diameter depending on the region.
-#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences, 9, 3381–3403.
+#' @references
+#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.}
+#' Biogeosciences, 9, 3381–3403.
 #' @examples
 #' data(feldCoef)
 #' str(feldCoef)
@@ -77,19 +79,20 @@
 #' @docType data
 #' @usage data("KarnatakaForest")
 #' @format
-#' A data frame with 65965 observations on the following 8 variables :
+#' A data frame with 65889 observations on the following 8 variables :
 #' \describe{
 #'   \item{\code{plotId}}{Names of the plots}
 #'   \item{\code{treeId}}{Tree Id, contains a letter (A, B, C...) when an individual has multiple stems}
 #'   \item{\code{family}}{Family}
 #'   \item{\code{genus}}{Genus}
 #'   \item{\code{species}}{Species}
-#'   \item{\code{D}}{Diameter}
+#'   \item{\code{D}}{Diameter (cm)}
 #'   \item{\code{lat}}{Latitude}
 #'   \item{\code{long}}{Longitude}
 #' }
 #' @references
-#' Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
+#' Ramesh, B. R. et al. (2010). \emph{Forest stand structure and composition in 96 sites along environmental
+#' gradients in the central Western Ghats of India} Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
 #' @examples
 #' data(KarnatakaForest)
 #' str(KarnatakaForest)
@@ -109,8 +112,8 @@
 #'   \item{\code{plotId}}{Names of the plots}
 #'   \item{\code{genus}}{Genus}
 #'   \item{\code{species}}{Species}
-#'   \item{\code{D}}{Diameter}
-#'   \item{\code{H}}{Height}
+#'   \item{\code{D}}{Diameter (cm)}
+#'   \item{\code{H}}{Height (m)}
 #'   \item{\code{lat}}{Latitude}
 #'   \item{\code{long}}{Longitude}
 #' }
