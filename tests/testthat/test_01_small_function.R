@@ -67,11 +67,11 @@ test_that("With the HDmodel", {
   expect_is(H$RSE, "numeric")
   expect_equal(length(H$H), 50)
 
-  expect_equal(H$RSE, 4.1, tolerance = 0.001)
+  expect_equal(H$RSE, 4.22, tolerance = 0.001)
   RSE <- H$RSE
 
   H <- retrieveH(c(2, 3), model = HDmodel)
-  expect_equal(H$H, c(3.82, 5.52), tolerance = 0.01)
+  expect_equal(H$H, c(3.97, 5.67), tolerance = 0.01)
   expect_equal(H$RSE, RSE)
 })
 
