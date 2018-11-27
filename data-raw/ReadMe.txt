@@ -1,7 +1,10 @@
 In this folder you can find all the files needed to process the all the datasets of the BIOMASS package. 
 
 In this file, you have all the file .R which is used to remake the database of the corresponding name. Below the title you have all the file and internet link you need to redo the database.
-To
+
+To remake a database, just go to the end of the file where you see this function :
+	usethis::use_data()
+and add (or modified) the argument "overwrite" to set this one to "TRUE" in this function.
 
 
 1. AGP FAMILIES, apgfamily.R
