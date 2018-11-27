@@ -65,9 +65,9 @@ INPUT:
 
 
 
-5. NouraguesHD, NouraguesHD.R
+5. NouraguesHD
 
-INPUT: NouraguesHD.csv
+	For this one, we lost the code to reconstruct the database, but this isn't false data
 
 
 
