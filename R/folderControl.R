@@ -45,12 +45,8 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
     if (!file.exists(path1)) {
       file.rename(nameFile, path1)
       message("Your folder \"", nameFile, "\" has been moved in this folder : ", path)
-    } else {
-      message(
-        "Your folder \"", nameFile, "\" already exists in this path : ", path, " and in working directory. ",
-        "You can delete the folder ", nameFile
-      )
     }
+    
     file_exists <- T
   }
 
@@ -74,7 +70,7 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
       "CWD.zip" = 15765207
     )
     if (file.info(path1)$size >= size) {
-      unzip(path1, exdir = paste(path, strsplit(nameFile, ".")[[1]][1], sep = sep))
+      unzip(path1, exdir = paste(path, sub("\\.zip$", "", nameFile), sep = sep))
       return()
     }
   }
