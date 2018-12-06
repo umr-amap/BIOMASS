@@ -44,7 +44,7 @@ folderControl <- function(nameFile = "", correctTaxo = FALSE) {
   if (file.exists(nameFile)) {
     if (!file.exists(path1)) {
       file.copy(nameFile, path, recursive = T)
-      file.remove(nameFile)
+      file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
       message("Your folder \"", nameFile, "\" has been moved in this folder : ", path)
     }
     
