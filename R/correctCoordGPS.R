@@ -19,14 +19,14 @@
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
-#' @return If you haven't outliers or RmOutliers = TRUE, there will be a list with :
+#' @return If you haven't outliers or rmOutliers = TRUE, there will be a list with :
 #' \describe{
 #'    \item{corner}{a matrix with the coordinate of the corners whith no order in particular}
 #'    \item{polygon}{a spatial polygone}
 #' }
-#' However if you have outliers and RmOutliers = FALSE, there will be data frame with :
+#' However if you have outliers and rmOutliers = FALSE, there will be data frame with :
 #' \describe{
-#'    \item{outlayers}{the line of your longlat or UTMcoord data frame, where it's an outlayers}
+#'    \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
 #'    \item{X}{the UTM coordinate X outlayer}
 #'    \item{Y}{the UTM coordinate X outlayer}
 #' }
@@ -63,7 +63,7 @@
 #' )
 #' bb <- correctCoordGPS(
 #'   UTMcoord = UTMcoord, CoordRel = CoordRel,
-#'   rangeX = c(0, 100), rangeY = c(0, 100), RmOutliers = TRUE
+#'   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 #' )
 #' \dontrun{
 #' correctCoordGPS(
@@ -78,25 +78,25 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   # parameters verification -------------------------------------------------
 
 
-  if (is.null(longlat) && is.null(UTMcoord)) {
+  if (is.null(longlat) && is.null(projCoord)) {
     stop("Give me at least one system of coordinate")
   }
-  if (!is.null(longlat) && !is.null(UTMcoord)) {
-    stop("You are giving too much arguments : longlat and UTMcoord")
+  if (!is.null(longlat) && !is.null(projCoord)) {
+    stop("You are giving too much arguments : longlat and projCoord")
   }
 
   if (length(rangeX) != 2 || length(rangeY) != 2) {
     stop("The rangeX and/or rangeY must be length equal to 2")
   }
-  if (length(MaxDist) != 1) {
-    stop("Your argument MaxDist must be one double")
+  if (length(maxDist) != 1) {
+    stop("Your argument maxDist must be one double")
   }
 
-  if (!all(between(CoordRel[, 1], lower = rangeX[1], upper = rangeX[2]) &
-    between(CoordRel[, 2], lower = rangeY[1], upper = rangeY[2]))) {
+  if (!all(between(coordRel[, 1], lower = rangeX[1], upper = rangeX[2]) &
+    between(coordRel[, 2], lower = rangeY[1], upper = rangeY[2]))) {
     stop("The coordRel must be inside the range")
   }
-  if ((!is.null(longlat) && dim(longlat) != dim(CoordRel)) || (!is.null(UTMcoord) && dim(UTMcoord) != dim(CoordRel))) {
+  if ((!is.null(longlat) && dim(longlat) != dim(coordRel)) || (!is.null(projCoord) && dim(projCoord) != dim(coordRel))) {
     stop("Your argument of coordinate and relative coordinate aren't the same dimension")
   }
 
@@ -108,23 +108,23 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   # Transform the geographic coordinate into UTM coordinate
   if (!is.null(longlat)) {
-    UTMcoord <- latlong2UTM(longlat)[, c("X", "Y")]
+    projCoord <- latlong2UTM(longlat)[, c("X", "Y")]
   }
 
   # Transformation CoordRel to CoordAbs
-  res <- procrust(UTMcoord, CoordRel)
-  coordAbs <- as.matrix(CoordRel) %*% res$rotation
+  res <- procrust(projCoord, coordRel)
+  coordAbs <- as.matrix(coordRel) %*% res$rotation
   coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
 
   # Calculate the distances between the GNSS measurement and the CoordAbs
-  dist <- sqrt((coordAbs[, 1] - UTMcoord[, 1])^2 + (coordAbs[, 2] - UTMcoord[, 2])^2)
-  outlayers <- which(dist > MaxDist)
+  dist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
+  outliers <- which(dist > maxDist)
 
 
-  # retransform the coordRel without the outlayers
-  if (RmOutliers) {
-    res <- procrust(UTMcoord[-outlayers, ], CoordRel[-outlayers, ])
-    coordAbs <- as.matrix(CoordRel) %*% res$rotation
+  # retransform the coordRel without the outliers
+  if (rmOutliers) {
+    res <- procrust(projCoord[-outliers, ], coordRel[-outliers, ])
+    coordAbs <- as.matrix(coordRel) %*% res$rotation
     coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
   }
 
@@ -147,10 +147,10 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
   if (drawPlot) {
-    plot(UTMcoord[-outlayers, ],
+    plot(projCoord[-outliers, ],
       col = "grey30", main = "Plot drawing",
-      xlim = range(UTMcoord[, 1], coordAbs[, 1]),
-      ylim = range(UTMcoord[, 1], coordAbs[, 2]),
+      xlim = range(projCoord[, 1], coordAbs[, 1]),
+      ylim = range(projCoord[, 1], coordAbs[, 2]),
       asp = 1, xlab = "X", ylab = "Y", axes = F, frame.plot = F
     )
     grid(col = "grey80", lty = 1)
@@ -158,9 +158,9 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     axis(side = 2, lty = "blank", las = 1)
     plot(sps, add = T)
     points(coordAbs, col = "black", pch = 15, cex = 1.3)
-    points(UTMcoord[outlayers, ], col = "red", pch = 4, cex = 1)
+    points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
 
-    legend("center", c("GPS measurements", ifelse(RmOutliers, "outlayers (discarded)", "outlayers"), "Corrected coord"),
+    legend("center", c("GPS measurements", ifelse(rmOutliers, "outliers (discarded)", "outliers"), "Corrected coord"),
       col = c("grey30", "red", "black"),
       pch = c(1, 4, 15), bg = "grey90"
     )
@@ -171,12 +171,12 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
 
-  if (length(outlayers) != 0 & (nrow(UTMcoord) - length(outlayers)) > 3 & !RmOutliers) {
+  if (length(outliers) != 0 & (nrow(projCoord) - length(outliers)) > 3 & !rmOutliers) {
     message(
-      "Be carefull, you may have GNSS measurement outlayers. \n",
-      "Removing them may improve the georeferencing of your plot (see  the RmOutliers argument)."
+      "Be carefull, you may have GNSS measurement outliers. \n",
+      "Removing them may improve the georeferencing of your plot (see  the rmOutliers argument)."
     )
-    return(cbind(outlayers, UTMcoord[outlayers, ]))
+    return(cbind(outliers, projCoord[outliers, ]))
   }
 
 

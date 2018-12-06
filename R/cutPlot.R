@@ -45,10 +45,10 @@ if (getRversion() >= "2.15.1") {
 cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200) {
 
   # parameter verification --------------------------------------------------
-  if (nrow(UTMcoord) != length(plot)) {
+  if (nrow(projCoord) != length(plot)) {
     stop("Your vector plot and the number of row of your UTMcoord data frame aren't the same")
   }
-  if (nrow(UTMcoord) != length(corner)) {
+  if (nrow(projCoord) != length(corner)) {
     stop("Your vector corner and the number of row of your UTMcoord data frame aren't the same")
   }
   if (length(gridsize) != 1 || !is.numeric(gridsize)) {
@@ -69,7 +69,7 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
 
 
 
-  Coord <- data.table(Plot = plot, X = UTMcoord[, 1], Y = UTMcoord[, 2], corner = corner)
+  Coord <- data.table(Plot = plot, X = projCoord[, 1], Y = projCoord[, 2], corner = corner)
   dimRel <- data.table(Plot = unique(plot), dimX = dimX, dimY = dimY)
 
 

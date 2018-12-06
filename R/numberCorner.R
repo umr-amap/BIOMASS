@@ -38,7 +38,7 @@ if (getRversion() >= "2.15.1") {
 #' origin <- c(FALSE, FALSE, TRUE, FALSE)
 #' 
 #' # if you turn clock wise
-#' corner <- numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = TRUE)
+#' corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = TRUE)
 #' 
 #' # Plot the plot
 #' plot(coord, asp = 1)
@@ -46,7 +46,7 @@ if (getRversion() >= "2.15.1") {
 #' 
 #' 
 #' # if you turn anti clock wise
-#' corner <- numberCorner(UTMcoord = coord, plot = plot, origin = origin, clockWise = FALSE)
+#' corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = FALSE)
 #' 
 #' # Plot the plot
 #' plot(coord, asp = 1)
@@ -56,10 +56,10 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
 
   # Parameters verification -------------------------------------------------
 
-  if (is.null(longlat) && is.null(UTMcoord)) {
+  if (is.null(longlat) && is.null(projCoord)) {
     stop("Give me at least one system of coordinate")
   }
-  if (!is.null(longlat) && !is.null(UTMcoord)) {
+  if (!is.null(longlat) && !is.null(projCoord)) {
     stop("Please choose between the two coordinate")
   }
   if (length(plot) != length(origin)) {
@@ -69,8 +69,8 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   if (!is.null(longlat) && nrow(longlat) != length(plot)) {
     stop("Your vector plot and origin isn't the same length of longlat")
   }
-  if (!is.null(UTMcoord) && nrow(UTMcoord) != length(plot)) {
-    stop("Your vector plot and origin isn't the same length of UTMcoord")
+  if (!is.null(projCoord) && nrow(projCoord) != length(plot)) {
+    stop("Your vector plot and origin isn't the same length of projCoord")
   }
   tab <- as.numeric(table(plot))
   if (any(as.numeric(table(plot)) != 4)) {
@@ -102,8 +102,8 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
     ]
   }
 
-  if (!is.null(UTMcoord)) {
-    Coord <- data.table(UTMcoord, Plot = plot)
+  if (!is.null(projCoord)) {
+    Coord <- data.table(projCoord, Plot = plot)
     setnames(Coord, colnames(Coord), new = c("X", "Y", "Plot"))
   }
 

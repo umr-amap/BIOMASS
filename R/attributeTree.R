@@ -48,29 +48,29 @@ attributeTree <- function(xy, plot, coordAbs) {
   if (nrow(xy) != length(plot)) {
     stop("Your plot vector haven't the same length than the number of row of xy")
   }
-  if (!is.data.frame(CoordAbs)) {
+  if (!is.data.frame(coordAbs)) {
     stop("Your parameter 'CoordAbs' isn't a data frame")
   }
 
-  if (length(unique(plot)) < length(unique(CoordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(CoordAbs$Plot)))) {
+  if (length(unique(plot)) < length(unique(coordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(coordAbs$Plot)))) {
     warning(
       "The plot(s) ",
-      sort(unique(plot))[ sort(unique(plot)) != sort(unique(CoordAbs$Plot))],
+      sort(unique(plot))[ sort(unique(plot)) != sort(unique(coordAbs$Plot))],
       " won't be computed but will appeared as the label of the plot"
     )
   }
 
   Coord <- data.table(xy, Plot = plot)
   setnames(Coord, colnames(Coord), c("X", "Y", "Plot"))
-  setDT(CoordAbs)
+  setDT(coordAbs)
 
   # Attribute the tree to there subplot
-  gridsize <- max(CoordAbs[, diff(XRel)])
+  gridsize <- max(coordAbs[, diff(XRel)])
   Coord[, ":="(Xplot = floor(X / gridsize), Yplot = floor(Y / gridsize))]
 
 
   # Mark NA if the tree are out of the limits of the plot
-  Coord[CoordAbs[, .(Xmax = max(XRel), Ymax = max(YRel)), by = Plot],
+  Coord[coordAbs[, .(Xmax = max(XRel), Ymax = max(YRel)), by = Plot],
     on = "Plot",
     ":="(Xmax = i.Xmax, Ymax = i.Ymax)
   ]
