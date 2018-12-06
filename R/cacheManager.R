@@ -1,4 +1,4 @@
-#' Controling files and folders
+#' Manage the cache
 #'
 #' The function creates a folder (only once) and then controls files that needed to be downloaded and
 #' placed in this folder.
@@ -14,7 +14,6 @@
 #' See this function for more information : \code{\link[rappdirs]{user_data_dir}}
 #'
 #' @param nameFile the name of the file or folder
-#' @param correctTaxo (binary) if we are in the correctTaxo function
 #'
 #' @return the path to the folder, and the separator if correctTaxo is False
 #' @author Arthur PERE
@@ -24,16 +23,16 @@
 #' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 
-folderControl <- function(nameFile = "", correctTaxo = FALSE) {
-  sep <- if (grepl("win", Sys.info()["sysname"], ignore.case = T)) "\\" else "/"
+cacheManager <- function(nameFile = "") {
+
   path <- user_data_dir("BIOMASS")
 
   if (!dir.exists(path)) {
     dir.create(path, recursive = T)
   }
 
-  if (correctTaxo) {
-    return(paste(path, "correctTaxo.log", sep = sep))
+  if (nameFile == "correctTaxo") {
+    return(paste(path, "correctTaxo.log", sep = "/"))
   }
 
 
