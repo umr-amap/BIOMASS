@@ -4,11 +4,11 @@
 \alias{cutPlot}
 \title{Cut plots in pieces}
 \usage{
-cutPlot(UTMcoord, plot, corner, gridsize = 100, dimX = 200,
+cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
   dimY = 200)
 }
 \arguments{
-\item{UTMcoord}{A data frame with the UTM coordinate with X and Y on the first and second colonne respectively}
+\item{projCoord}{A data frame with the projected coordinate with X and Y on the first and second colonne respectively}
 
 \item{plot}{Vector with the code of the plot}
 

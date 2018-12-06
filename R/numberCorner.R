@@ -17,7 +17,7 @@ if (getRversion() >= "2.15.1") {
 #' }
 #'
 #' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param UTMcoord (optionnal) data frame with the UTM coordinate in X Y
+#' @param projCoord (optionnal) data frame with the projected coordinate in X Y
 #' @param plot A vector of codes (names) of the plots
 #' @param origin A logical vector with TRUE corresponding of the origin of the axis of each plot.
 #' @param clockWise A logical, do you turn clock wise between the axis X and Y
@@ -51,7 +51,7 @@ if (getRversion() >= "2.15.1") {
 #' # Plot the plot
 #' plot(coord, asp = 1)
 #' text(coord, labels = corner$corner, pos = 1)
-numberCorner <- function(longlat = NULL, UTMcoord = NULL, plot, origin, clockWise) {
+numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWise) {
 
 
   # Parameters verification -------------------------------------------------

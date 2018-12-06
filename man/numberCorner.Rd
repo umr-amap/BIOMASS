@@ -4,12 +4,12 @@
 \alias{numberCorner}
 \title{Get the UTM coordinates with the corner of the plot}
 \usage{
-numberCorner(longlat = NULL, UTMcoord = NULL, plot, origin, clockWise)
+numberCorner(longlat = NULL, projCoord = NULL, plot, origin, clockWise)
 }
 \arguments{
 \item{longlat}{(optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
 
-\item{UTMcoord}{(optionnal) data frame with the UTM coordinate in X Y}
+\item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
 
 \item{plot}{A vector of codes (names) of the plots}
 

@@ -4,14 +4,14 @@
 \alias{attributeTree}
 \title{Attribute the tree to the subplot}
 \usage{
-attributeTree(xy, plot, CoordAbs)
+attributeTree(xy, plot, coordAbs)
 }
 \arguments{
 \item{xy}{The coordinate of the trees for each plot}
 
 \item{plot}{The label of the plot (same length as the number of row of xy)}
 
-\item{CoordAbs}{Output of the function \code{\link{cutPlot}}}
+\item{coordAbs}{Output of the function \code{\link{cutPlot}}}
 }
 \value{
 A vector with the subplot for each trees

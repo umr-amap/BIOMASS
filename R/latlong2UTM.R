@@ -46,7 +46,7 @@ latlong2UTM <- function(coord) {
 
   # Convert into UTM
   coord[, codeUTM := codelatlong2UTM(long, lat)]
-  coord[, c("X", "Y") := split(t(proj4::project(cbind(long, lat), proj = unique(codeUTM))), 1:2), by = codeUTM]
+  coord[, c("X", "Y") := proj4::project(.(long, lat), proj = unique(.BY)), by = codeUTM]
 
   setDF(coord)
 

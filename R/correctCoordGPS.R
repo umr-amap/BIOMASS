@@ -9,13 +9,13 @@
 #'
 #'
 #' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param UTMcoord (optionnal) data frame with the UTM coordinate in X Y
-#' @param CoordRel data frame with the relative coordinate in the same order than the longlat or UTMcoord
+#' @param projCoord (optionnal) data frame with the projected coordinate in X Y
+#' @param coordRel data frame with the relative coordinate in the same order than the longlat or UTMcoord
 #' @param rangeX a vector of length equal 2 with the min of the range for X
 #' @param rangeY a vector of length equal 2 with the min of the range for Y
-#' @param MaxDist a double with the maximum for the distance you want to use to make outliers
+#' @param maxDist a double with the maximum for the distance you want to use to make outliers
 #' @param drawPlot a logical if you want to draw the plot
-#' @param RmOutliers a logical if you want to remove the outliers
+#' @param rmOutliers a logical if you want to remove the outliers
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
@@ -72,7 +72,7 @@
 #' )
 #' }
 #' 
-correctCoordGPS <- function(longlat = NULL, UTMcoord = NULL, CoordRel, rangeX, rangeY, MaxDist = 10, drawPlot = F, RmOutliers = F) {
+correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY, maxDist = 10, drawPlot = F, rmOutliers = F) {
 
 
   # parameters verification -------------------------------------------------

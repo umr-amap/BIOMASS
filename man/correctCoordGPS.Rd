@@ -4,25 +4,25 @@
 \alias{correctCoordGPS}
 \title{Correct the GPS coordinate}
 \usage{
-correctCoordGPS(longlat = NULL, UTMcoord = NULL, CoordRel, rangeX,
-  rangeY, MaxDist = 10, drawPlot = F, RmOutliers = F)
+correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
+  rangeY, maxDist = 10, drawPlot = F, rmOutliers = F)
 }
 \arguments{
 \item{longlat}{(optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
 
-\item{UTMcoord}{(optionnal) data frame with the UTM coordinate in X Y}
+\item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
 
-\item{CoordRel}{data frame with the relative coordinate in the same order than the longlat or UTMcoord}
+\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or UTMcoord}
 
 \item{rangeX}{a vector of length equal 2 with the min of the range for X}
 
 \item{rangeY}{a vector of length equal 2 with the min of the range for Y}
 
-\item{MaxDist}{a double with the maximum for the distance you want to use to make outliers}
+\item{maxDist}{a double with the maximum for the distance you want to use to make outliers}
 
 \item{drawPlot}{a logical if you want to draw the plot}
 
-\item{RmOutliers}{a logical if you want to remove the outliers}
+\item{rmOutliers}{a logical if you want to remove the outliers}
 }
 \value{
 If you haven't outliers or RmOutliers = TRUE, there will be a list with :

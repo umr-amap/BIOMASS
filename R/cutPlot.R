@@ -10,7 +10,7 @@ if (getRversion() >= "2.15.1") {
 #' coordinate of the grid in return.
 #' This function actually use the procrustes analysis to fit the rectangle you gave to the plot you have.
 #'
-#' @param UTMcoord A data frame with the UTM coordinate with X and Y on the first and second colonne respectively
+#' @param projCoord A data frame with the projected coordinate with X and Y on the first and second colonne respectively
 #' @param plot Vector with the code of the plot
 #' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
 #' (see the result of the \code{\link{numberCorner}})
@@ -42,7 +42,7 @@ if (getRversion() >= "2.15.1") {
 #' text(coord, labels = corner, pos = 1)
 #' points(cut$XAbs, cut$YAbs, pch = "+")
 #' legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
-cutPlot <- function(UTMcoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200) {
+cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200) {
 
   # parameter verification --------------------------------------------------
   if (nrow(UTMcoord) != length(plot)) {
