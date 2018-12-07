@@ -37,7 +37,7 @@ cacheManager <- function(nameFile = "") {
 
 
 
-  path1 <- normalizePath(paste(path, nameFile, sep = "/"))
+  path1 <- file.path(path, nameFile)
   file_exists <- F
   ############# if the folder exists in the working directory
   if (file.exists(nameFile)) {

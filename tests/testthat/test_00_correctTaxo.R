@@ -36,9 +36,9 @@ test_that("CorrectTaxo", {
     )
   )
 
-  skip_if_not_function("folderControl")
+  skip_if_not_function("cacheManager")
 
-  path <- folderControl(correctTaxo = T)
+  path <- cacheManager("correctTaxo")
   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
   expect_true(file.exists(path))
 
