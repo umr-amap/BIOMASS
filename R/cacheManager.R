@@ -38,14 +38,12 @@ cacheManager <- function(nameFile = "") {
 
 
   path1 <- file.path(path, nameFile)
-  file_exists <- F
+  file_exists <- file.exists(path1)
   ############# if the folder exists in the working directory
-  if (file.exists(nameFile)) {
-    if (!file.exists(path1)) {
-      file.copy(nameFile, path, recursive = T)
-      file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
-      message("Your folder '", nameFile, "' has been moved in this folder : ", path)
-    }
+  if (file.exists(nameFile) && !file_exists) {
+    file.copy(nameFile, path, recursive = T)
+    file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
+    message("Your folder '", nameFile, "' has been moved in this folder : ", path)
 
     file_exists <- T
   }
