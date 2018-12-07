@@ -15,45 +15,45 @@
 #'
 #' @param nameFile the name of the file or folder
 #'
-#' @return the path to the folder
+#' @return the path to the file we need
 #'
 #' @author Arthur PERE
 #' @seealso \code{\link[rappdirs]{user_data_dir}}
 #'
 #' @keywords Internal
-#' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 
 cacheManager <- function(nameFile) {
-  path <- user_data_dir("BIOMASS")
+  
+  basePath <- cachePath()
 
-  if (!dir.exists(path)) dir.create(path, recursive = T, showWarnings = F)
+  if (!dir.exists(basePath)) dir.create(basePath, recursive = T, showWarnings = F)
 
   if (nameFile == "correctTaxo") {
-    return(paste(path, "correctTaxo.log", sep = "/"))
+    return(cachePath("correctTaxo.log"))
   }
 
   if (nameFile == "FELD") {
     return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = T))
   }
 
-  path1 <- file.path(path, nameFile)
+  path <- cachePath(nameFile)
 
   ############# if the folder exists in the designed folder
-  file_exists <- file.exists(path1)
+  file_exists <- file.exists(path)
 
   ############# if the folder exists in the working directory
   if (file.exists(nameFile) && !file_exists) {
-    file.copy(nameFile, path, recursive = T)
+    file.copy(nameFile, basePath, recursive = T)
     file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
-    message("Your folder '", nameFile, "' has been moved in this folder : ", path)
+    message("Your folder '", nameFile, "' has been moved in this folder : ", basePath)
 
     file_exists <- T
   }
 
   # if the file is empty
-  if (file_exists && length(dir(path1)) == 0) {
-    file.remove(path1)
+  if (file_exists && length(dir(path)) == 0) {
+    file.remove(path)
     file_exists <- F
   }
 
@@ -66,9 +66,9 @@ cacheManager <- function(nameFile) {
       nameFileZip <- paste0(nameFile, ".zip")
 
       if (file.exists(nameFileZip)) {
-        unzip(nameFileZip, exdir = path1)
+        unzip(nameFileZip, exdir = path)
       } else {
-        unzip(paste0(path1, ".zip"), exdir = path1)
+        unzip(paste0(path, ".zip"), exdir = path)
       }
     },
     warning = function(cond) {
@@ -81,18 +81,35 @@ cacheManager <- function(nameFile) {
       )
 
       DEMzip <- download.file(zip_url, destfile = tmp)
-      unzip(tmp, exdir = path1)
+      unzip(tmp, exdir = path)
     },
     finally = {
-      message("Your file ", nameFile, " has been download and/or deziped in this folder : ", path)
+      message("Your file ", nameFile, " has been download and/or deziped in this folder : ", basePath)
+      
+      # update the flag
+      writeLines(Sys.Date(), cachePath(".last_check"))
     }
     )
   }
   
-  path1 = switch (nameFile,
-    "wc2-5" = file.path(path1, c("bio4.bil", "bio15.bil")),
-    file.path(path1, paste0(nameFile, ".bil"))
+  
+  
+  # give the full path expect for the wc2-5 file who have two file we need.
+  path = switch (nameFile,
+    "wc2-5" = file.path(path, c("bio4.bil", "bio15.bil")),
+    file.path(path, paste0(nameFile, ".bil"))
   )
   
-  return(path1)
+  return(path)
+}
+
+
+#' @importFrom rappdirs user_data_dir
+#' @keywords Internal
+cachePath <- function(path = NULL) {
+  basePath <- user_data_dir("BIOMASS")
+  if (!is.null(path)) {
+    basePath <- file.path(basePath, path)
+  }
+  basePath
 }

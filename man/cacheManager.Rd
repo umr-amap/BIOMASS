@@ -4,13 +4,13 @@
 \alias{cacheManager}
 \title{Manage the cache}
 \usage{
-cacheManager(nameFile = "")
+cacheManager(nameFile)
 }
 \arguments{
 \item{nameFile}{the name of the file or folder}
 }
 \value{
-the path to the folder
+the path to the file we need
 }
 \description{
 The function creates a folder (only once) and then controls files that needed to be downloaded and
