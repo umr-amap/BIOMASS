@@ -15,7 +15,8 @@
 #'
 #' @param nameFile the name of the file or folder
 #'
-#' @return the path to the folder, and the separator if correctTaxo is False
+#' @return the path to the folder
+#'
 #' @author Arthur PERE
 #' @seealso \code{\link[rappdirs]{user_data_dir}}
 #'
@@ -24,7 +25,6 @@
 #' @importFrom utils download.file unzip
 
 cacheManager <- function(nameFile = "") {
-
   path <- user_data_dir("BIOMASS")
 
   if (!dir.exists(path)) {
@@ -37,16 +37,16 @@ cacheManager <- function(nameFile = "") {
 
 
 
-  path1 <- paste(path, nameFile, sep = sep)
+  path1 <- normalizePath(paste(path, nameFile, sep = "/"))
   file_exists <- F
   ############# if the folder exists in the working directory
   if (file.exists(nameFile)) {
     if (!file.exists(path1)) {
       file.copy(nameFile, path, recursive = T)
       file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
-      message("Your folder \"", nameFile, "\" has been moved in this folder : ", path)
+      message("Your folder '", nameFile, "' has been moved in this folder : ", path)
     }
-    
+
     file_exists <- T
   }
 
@@ -58,52 +58,36 @@ cacheManager <- function(nameFile = "") {
 
 
   if (file_exists) {
-    ## If the file isn't a zip but exist
-    if (!grepl("\\.zip$", nameFile, ignore.case = TRUE)) {
-      return(list("path" = path1, "sep" = sep))
-    }
-
-
-    ## If the file is a zip, exists and its size is ok, we do not download again the file
-    size <- switch(nameFile,
-      "E.zip" = 31202482,
-      "CWD.zip" = 15765207
-    )
-    if (file.info(path1)$size >= size) {
-      unzip(path1, exdir = paste(path, sub("\\.zip$", "", nameFile), sep = sep))
-      return()
-    }
+    return(path1)
   }
 
 
 
   ############# if the folder does not exist anywhere
-  ###### if the folder asked is the World Climate
-  if (nameFile == "wc2-5") {
-    ### Get the BioClim param from the http://www.worldclim.org website
-    bioData <- getData("worldclim", var = "bio", res = 2.5, path = path)
-    unzip(paste(path1, "bio_2-5m_bil.zip", sep = sep), exdir = paste(path, "wc2-5", sep = sep), files = c("bio4.bil", "bio15.bil"))
+  tryCatch({
+    nameFileZip <- paste0(nameFile, ".zip")
 
-    message("Your file ", nameFile, " has been download and deziped in this folder : ", path)
-    return(list("path" = path1, "sep" = sep))
+
+    if (file.exists(nameFileZip)) {
+      unzip(nameFileZip, exdir = path1)
+    } else {
+      unzip(paste0(path1, ".zip"), exdir = path1)
+    }
+  },
+  warning = function(cond) {
+    tmp <- tempfile(pattern = nameFile, fileext = ".zip")
+    zip_url <- switch(nameFile,
+      "wc2-5" = "http://amap-dev.cirad.fr/attachments/download/1525/wc2-5.zip",
+      "CWD" = "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
+      "E" = "http://amap-dev.cirad.fr/attachments/download/1521/E.zip"
+    )
+
+    DEMzip <- download.file(zip_url, destfile = tmp)
+    unzip(tmp, exdir = path1)
+  },
+  finally = {
+    message("Your file ", nameFile, " has been download and/or deziped in this folder : ", path)
   }
-
-
-
-  ###### If nameFile isn't a zip file return in the function with zip file on him
-  if (!grepl("zip", nameFile)) {
-    folderControl(nameFile = paste(nameFile, "zip", sep = "."))
-    return(list("path" = path1, "sep" = sep))
-  }
-
-  zip_url <- switch(nameFile,
-    "CWD.zip" = "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
-    "E.zip" = "http://amap-dev.cirad.fr/attachments/download/1521/E.zip"
   )
-
-  DEMzip <- download.file(zip_url, destfile = path1)
-  unzip(path1, exdir = paste(path, sub("\\.zip$", "", nameFile), sep = sep))
-  message("Your file ", nameFile, " has been download and deziped in this folder : ", path)
-
-  return()
+  return(path1)
 }

@@ -15,7 +15,7 @@ if (getRversion() >= "2.15.1") {
 #' @param coord Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).
 #'
 #'
-#' @inheritSection folderControl Localisation
+#' @inheritSection cacheManager Localisation
 #'
 #' @details
 #' The Chave's environmental index, \code{E}, has been shown to be an important covariable in
@@ -58,10 +58,10 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom data.table as.data.table
 
 computeE <- function(coord) {
-  path <- folderControl("E")
+  path <- cacheManager("E")
 
   # find the raster
-  nam <- file.path(path$path, "E.bil")
+  nam <- file.path(path, "E.bil")
   RAST <- raster(nam)
 
   if (is.null(dim(coord))) {

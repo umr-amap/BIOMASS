@@ -25,14 +25,14 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 \item{rmOutliers}{a logical if you want to remove the outliers}
 }
 \value{
-If you haven't outliers or RmOutliers = TRUE, there will be a list with :
+If you haven't outliers or rmOutliers = TRUE, there will be a list with :
 \describe{
    \item{corner}{a matrix with the coordinate of the corners whith no order in particular}
    \item{polygon}{a spatial polygone}
 }
-However if you have outliers and RmOutliers = FALSE, there will be data frame with :
+However if you have outliers and rmOutliers = FALSE, there will be data frame with :
 \describe{
-   \item{outlayers}{the line of your longlat or UTMcoord data frame, where it's an outlayers}
+   \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
    \item{X}{the UTM coordinate X outlayer}
    \item{Y}{the UTM coordinate X outlayer}
 }
@@ -67,7 +67,7 @@ aa <- correctCoordGPS(
 )
 bb <- correctCoordGPS(
   UTMcoord = UTMcoord, CoordRel = CoordRel,
-  rangeX = c(0, 100), rangeY = c(0, 100), RmOutliers = TRUE
+  rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 )
 \dontrun{
 correctCoordGPS(
