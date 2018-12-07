@@ -58,11 +58,9 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom data.table as.data.table
 
 computeE <- function(coord) {
-  path <- cacheManager("E")
 
   # find the raster
-  nam <- file.path(path, "E.bil")
-  RAST <- raster(nam)
+  RAST <- raster(cacheManager("E"))
 
   if (is.null(dim(coord))) {
     return(extract(RAST, matrix(coord, ncol = 2)))

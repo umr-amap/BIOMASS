@@ -52,12 +52,11 @@ getBioclimParam <- function(coord) {
   coord <- apply(coord, 1:2, as.numeric)
 
   pathwc <- cacheManager("wc2-5")
-  pathcwd <- cacheManager("CWD")
 
   ### Load rasters
-  tempSeas_rast <- raster(file.path(pathwc, "bio4.bil"))
-  precSeas_rast <- raster(file.path(pathwc, "bio15.bil"))
-  CWD_rast <- raster(file.path(pathcwd, "CWD.bil"))
+  tempSeas_rast <- raster(pathwc[1])
+  precSeas_rast <- raster(pathwc[2])
+  CWD_rast <- raster(cacheManager("CWD"))
 
   ### Extract the raster value
   tempSeas <- extract(tempSeas_rast, coord, "bilinear") * 10^-3

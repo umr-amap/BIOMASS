@@ -24,24 +24,24 @@
 #' @importFrom rappdirs user_data_dir
 #' @importFrom utils download.file unzip
 
-cacheManager <- function(nameFile = "") {
+cacheManager <- function(nameFile) {
   path <- user_data_dir("BIOMASS")
 
-  if (!dir.exists(path)) {
-    dir.create(path, recursive = T)
-  }
+  if (!dir.exists(path)) dir.create(path, recursive = T, showWarnings = F)
 
   if (nameFile == "correctTaxo") {
     return(paste(path, "correctTaxo.log", sep = "/"))
   }
 
-
+  if (nameFile == "FELD") {
+    return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = T))
+  }
 
   path1 <- file.path(path, nameFile)
-  
+
   ############# if the folder exists in the designed folder
   file_exists <- file.exists(path1)
-  
+
   ############# if the folder exists in the working directory
   if (file.exists(nameFile) && !file_exists) {
     file.copy(nameFile, path, recursive = T)
@@ -51,37 +51,48 @@ cacheManager <- function(nameFile = "") {
     file_exists <- T
   }
 
-  if (file_exists) {
-    return(path1)
+  # if the file is empty
+  if (file_exists && length(dir(path1)) == 0) {
+    file.remove(path1)
+    file_exists <- F
   }
+
 
 
 
   ############# if the folder does not exist anywhere
-  tryCatch({
-    nameFileZip <- paste0(nameFile, ".zip")
+  if (!file_exists) {
+    tryCatch({
+      nameFileZip <- paste0(nameFile, ".zip")
 
+      if (file.exists(nameFileZip)) {
+        unzip(nameFileZip, exdir = path1)
+      } else {
+        unzip(paste0(path1, ".zip"), exdir = path1)
+      }
+    },
+    warning = function(cond) {
+      tmp <- tempfile(pattern = nameFile, fileext = ".zip")
+      zip_url <- switch(nameFile,
+        "wc2-5" = "http://amap-dev.cirad.fr/attachments/download/1525/wc2-5.zip",
+        "CWD" = "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
+        "E" = "http://amap-dev.cirad.fr/attachments/download/1521/E.zip",
+        stop("You demand something we don't understand.")
+      )
 
-    if (file.exists(nameFileZip)) {
-      unzip(nameFileZip, exdir = path1)
-    } else {
-      unzip(paste0(path1, ".zip"), exdir = path1)
+      DEMzip <- download.file(zip_url, destfile = tmp)
+      unzip(tmp, exdir = path1)
+    },
+    finally = {
+      message("Your file ", nameFile, " has been download and/or deziped in this folder : ", path)
     }
-  },
-  warning = function(cond) {
-    tmp <- tempfile(pattern = nameFile, fileext = ".zip")
-    zip_url <- switch(nameFile,
-      "wc2-5" = "http://amap-dev.cirad.fr/attachments/download/1525/wc2-5.zip",
-      "CWD" = "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
-      "E" = "http://amap-dev.cirad.fr/attachments/download/1521/E.zip"
     )
-
-    DEMzip <- download.file(zip_url, destfile = tmp)
-    unzip(tmp, exdir = path1)
-  },
-  finally = {
-    message("Your file ", nameFile, " has been download and/or deziped in this folder : ", path)
   }
+  
+  path1 = switch (nameFile,
+    "wc2-5" = file.path(path1, c("bio4.bil", "bio15.bil")),
+    file.path(path1, paste0(nameFile, ".bil"))
   )
+  
   return(path1)
 }

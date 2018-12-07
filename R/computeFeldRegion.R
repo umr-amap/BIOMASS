@@ -61,8 +61,7 @@ computeFeldRegion <- function(coord, level = "region") {
 
   # raster ------------------------------------------------------------------
 
-
-  RAST <- raster(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = T))
+  RAST <- raster(cacheManager("FELD"))
   # Extract the raster value
   RASTval <- extract(RAST, coord)
   FeldRegion <- as.vector(factorValues(RAST, RASTval, att = "Region"))[, 1]
