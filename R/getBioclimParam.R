@@ -55,8 +55,8 @@ getBioclimParam <- function(coord) {
   pathcwd <- cacheManager("CWD")
 
   ### Load rasters
-  tempSeas_rast <- raster(file.path(path, "bio4.bil"))
-  precSeas_rast <- raster(file.path(path, "bio15.bil"))
+  tempSeas_rast <- raster(file.path(pathwc, "bio4.bil"))
+  precSeas_rast <- raster(file.path(pathwc, "bio15.bil"))
   CWD_rast <- raster(file.path(pathcwd, "CWD.bil"))
 
   ### Extract the raster value
