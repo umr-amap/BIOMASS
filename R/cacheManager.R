@@ -38,7 +38,10 @@ cacheManager <- function(nameFile = "") {
 
 
   path1 <- file.path(path, nameFile)
+  
+  ############# if the folder exists in the designed folder
   file_exists <- file.exists(path1)
+  
   ############# if the folder exists in the working directory
   if (file.exists(nameFile) && !file_exists) {
     file.copy(nameFile, path, recursive = T)
@@ -47,13 +50,6 @@ cacheManager <- function(nameFile = "") {
 
     file_exists <- T
   }
-
-
-  ############# if the folder exists in the designed folder
-  if (file.exists(path1)) {
-    file_exists <- T
-  }
-
 
   if (file_exists) {
     return(path1)
