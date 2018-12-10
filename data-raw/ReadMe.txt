@@ -9,11 +9,6 @@ and add (or modified) the argument "overwrite" to set this one to "TRUE" in this
 
 1. AGP FAMILIES, apgfamily.R
 
-APGIII.csv: comes from the ANGIOSPERM PHYLOGENY WEBSITE, Family names.
-	http://www.mobot.org/MOBOT/research/APweb/
-	tab families
-	You can just copied/paste the text in the corresponding file.
-
 OUTPUT: apgFamilies.csv : a file with 3 columns: 
 	- order, 
 	- famAPG = family 
