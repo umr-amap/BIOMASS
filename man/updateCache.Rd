@@ -18,8 +18,9 @@ This function update the cache for the environemental variable, meaning the file
 }
 }
 \examples{
-updateCache()
-
+\dontrun{
+   updateCache()
+}
 }
 \author{
 Arthur PERE

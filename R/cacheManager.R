@@ -135,8 +135,9 @@ checkTime <- function() {
 #' 
 #' @importFrom utils download.file unzip
 #' @examples
-#' updateCache()
-#' 
+#' \dontrun{
+#'    updateCache()
+#' }
 updateCache <- function(nameFile = NULL) {
 
   # the url of the differents zip to download

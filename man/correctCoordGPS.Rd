@@ -12,7 +12,7 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 
 \item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
 
-\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or UTMcoord}
+\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
 
 \item{rangeX}{a vector of length equal 2 with the min of the range for X}
 
@@ -32,7 +32,7 @@ If you haven't outliers or rmOutliers = TRUE, there will be a list with :
 }
 However if you have outliers and rmOutliers = FALSE, there will be data frame with :
 \describe{
-   \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
+   \item{outliers}{the line of your longlat or projCoord data frame, where it's an outliers}
    \item{X}{the UTM coordinate X outlayer}
    \item{Y}{the UTM coordinate X outlayer}
 }
@@ -42,10 +42,10 @@ If you have multiple GPS coordinate for one plot, you can use this function to c
 with the polygon associated.
 }
 \details{
-You must give one parameter between longlat and UTMcoord
+You must give one parameter between longlat and projCoord
 }
 \examples{
-UTMcoord <- data.frame(
+projCoord <- data.frame(
   X = c(
     runif(5, min = 9, max = 11), runif(5, min = 8, max = 12),
     runif(5, min = 80, max = 120), runif(5, min = 90, max = 110)
@@ -55,23 +55,23 @@ UTMcoord <- data.frame(
     runif(5, min = 8, max = 12), runif(5, min = 90, max = 110)
   )
 )
-UTMcoord <- UTMcoord + 1000
+projCoord <- projCoord + 1000
 CoordRel <- data.frame(
   X = c(rep(0, 10), rep(100, 10)),
   Y = c(rep(c(rep(0, 5), rep(100, 5)), 2))
 )
 
 aa <- correctCoordGPS(
-  UTMcoord = UTMcoord, CoordRel = CoordRel,
+  projCoord = projCoord, coordRel = CoordRel,
   rangeX = c(0, 100), rangeY = c(0, 100)
 )
 bb <- correctCoordGPS(
-  UTMcoord = UTMcoord, CoordRel = CoordRel,
+  projCoord = projCoord, coordRel = CoordRel,
   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 )
 \dontrun{
 correctCoordGPS(
-  UTMcoord = UTMcoord, CoordRel = CoordRel,
+  projCoord = projCoord, coordRel = CoordRel,
   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE
 )
 }

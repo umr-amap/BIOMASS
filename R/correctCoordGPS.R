@@ -5,12 +5,12 @@
 #' with the polygon associated.
 #'
 #' @details
-#' You must give one parameter between longlat and UTMcoord
+#' You must give one parameter between longlat and projCoord
 #'
 #'
 #' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
 #' @param projCoord (optionnal) data frame with the projected coordinate in X Y
-#' @param coordRel data frame with the relative coordinate in the same order than the longlat or UTMcoord
+#' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
 #' @param rangeX a vector of length equal 2 with the min of the range for X
 #' @param rangeY a vector of length equal 2 with the min of the range for Y
 #' @param maxDist a double with the maximum for the distance you want to use to make outliers
@@ -26,7 +26,7 @@
 #' }
 #' However if you have outliers and rmOutliers = FALSE, there will be data frame with :
 #' \describe{
-#'    \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
+#'    \item{outliers}{the line of your longlat or projCoord data frame, where it's an outliers}
 #'    \item{X}{the UTM coordinate X outlayer}
 #'    \item{Y}{the UTM coordinate X outlayer}
 #' }
@@ -41,7 +41,7 @@
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
 #' @examples
-#' UTMcoord <- data.frame(
+#' projCoord <- data.frame(
 #'   X = c(
 #'     runif(5, min = 9, max = 11), runif(5, min = 8, max = 12),
 #'     runif(5, min = 80, max = 120), runif(5, min = 90, max = 110)
@@ -51,23 +51,23 @@
 #'     runif(5, min = 8, max = 12), runif(5, min = 90, max = 110)
 #'   )
 #' )
-#' UTMcoord <- UTMcoord + 1000
+#' projCoord <- projCoord + 1000
 #' CoordRel <- data.frame(
 #'   X = c(rep(0, 10), rep(100, 10)),
 #'   Y = c(rep(c(rep(0, 5), rep(100, 5)), 2))
 #' )
 #' 
 #' aa <- correctCoordGPS(
-#'   UTMcoord = UTMcoord, CoordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = CoordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100)
 #' )
 #' bb <- correctCoordGPS(
-#'   UTMcoord = UTMcoord, CoordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = CoordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 #' )
 #' \dontrun{
 #' correctCoordGPS(
-#'   UTMcoord = UTMcoord, CoordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = CoordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE
 #' )
 #' }

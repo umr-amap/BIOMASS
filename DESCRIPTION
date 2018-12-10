@@ -3,8 +3,14 @@ Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
 Version: 2.0
 Date: 2017-01-03
-Author: Maxime REJOU-MECHAIN, Ariane TANGUY, Camille PIPONIOT, Jerome CHAVE, Bruno HERAULT, Arthur PERE
-Maintainer: Maxime REJOU-MECHAIN <maxime.rejou@gmail.com>
+Authors@R: c(
+	person("Maxime", "REJOU-MECHAIN", email = "maxime.rejou@gmail.com", role = c("aut", "cre")),
+	person("Ariane", "TANGUY", role = c("aut")),
+	person("Camille", "PIPONIOT", role = c("aut")),
+	person("Jerome", "CHAVE", email = "jerome.chave@univ-tlse3.fr", role = c("aut")),
+	person("Bruno", "HERAULT", email = "bruno.herault@cirad.fr", role = c("aut")),
+	person("Arthur", "PERE", email = "arthur.pere@cirad.fr", role = c("aut"))
+  )
 Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) estimate the above-ground biomass/carbon at the stand level with associated uncertainty. To cite BIOMASS, please use citation("BIOMASS").
 License: GPL-2
 Encoding: UTF-8
