@@ -1,7 +1,7 @@
 * version 2.0
 - Improvement of the speed for most of functions
 - new function : cumputeFeldRegion, attributTree, correctCoordGPS, cutPlot, latlong2UTM, numberCorner, summaryByPlot
-- Re-writing of the dataset Karnataka forest, there is missing stem in the last databas
+- Re-writing of the dataset Karnataka forest, there is missing stem in the last database
 
 * version 1.2
 - Duplicated genera from the plantList have been fixed in the "genusFamily" dataset (e.g. The family Jungermanniaceae was given for the genus Massularia, now the dataset gives the Rubiaceae family)

@@ -75,8 +75,7 @@
 #' )
 #' @importFrom graphics legend lines par plot grid axis
 #' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict coef
-#' @importFrom utils data download.file unzip write.table
-#' @importFrom methods is
+#' @importFrom utils data
 #' @importFrom data.table data.table
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
