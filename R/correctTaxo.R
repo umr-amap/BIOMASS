@@ -22,7 +22,7 @@ if (getRversion() >= "2.15.1") {
 #' \code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
 #'
 #'
-#' @inheritSection folderControl Localisation
+#' @inheritSection cacheManager Localisation
 #'
 #'
 #' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
@@ -133,7 +133,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   cachedTaxo <- NULL
 
   if (is.null(useCache) || useCache) {
-    cachePath <- folderControl(correctTaxo = T)
+    cachePath <- cacheManager("correctTaxo")
 
     if (file.exists(cachePath)) {
 

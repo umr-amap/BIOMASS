@@ -32,7 +32,8 @@ latlong2UTM <- function(coord) {
   setnames(coord, colnames(coord), c("long", "lat"))
 
   if (!requireNamespace("proj4")) {
-    stop("Please install the package 'proj4'")
+    stop("Please install the package 'proj4'\n
+         \t\tinstall.packages('proj4').")
   }
 
   # Function to find UTM zone: assumes that data longitudes to the west of the

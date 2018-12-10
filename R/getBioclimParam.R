@@ -9,7 +9,7 @@
 #' However, as soon as the raster is downloaded once, the function then runs fast.
 #'
 #'
-#' @inheritSection folderControl Localisation
+#' @inheritSection cacheManager Localisation
 #'
 #' @inheritParams computeE
 #'
@@ -51,13 +51,12 @@
 getBioclimParam <- function(coord) {
   coord <- apply(coord, 1:2, as.numeric)
 
-  pathwc <- folderControl("wc2-5")
-  pathcwd <- folderControl("CWD")
+  pathwc <- cacheManager("wc2-5")
 
   ### Load rasters
-  tempSeas_rast <- raster(paste(pathwc$path, "bio4.bil", sep = pathwc$sep))
-  precSeas_rast <- raster(paste(pathwc$path, "bio15.bil", sep = pathwc$sep))
-  CWD_rast <- raster(paste(pathcwd$path, "CWD.bil", sep = pathcwd$sep))
+  tempSeas_rast <- raster(pathwc[1])
+  precSeas_rast <- raster(pathwc[2])
+  CWD_rast <- raster(cacheManager("CWD"))
 
   ### Extract the raster value
   tempSeas <- extract(tempSeas_rast, coord, "bilinear") * 10^-3
