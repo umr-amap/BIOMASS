@@ -21,8 +21,6 @@
 #' @seealso \code{\link[rappdirs]{user_data_dir}}
 #'
 #' @keywords Internal
-#' @importFrom utils download.file unzip
-
 cacheManager <- function(nameFile) {
   basePath <- cachePath()
 
@@ -56,7 +54,7 @@ cacheManager <- function(nameFile) {
     file_exists <- F
   }
 
-  if (!getOption("BIOMASS.ignore_update", FALSE)) {
+  if (!getOption("BIOMASS.ignore_update", TRUE)) {
     checkTime()
   }
 
@@ -94,7 +92,9 @@ checkTime <- function() {
   if (!file.exists(cachePath(".last_check"))) {
     writeLines(as.character(Sys.Date()), cachePath(".last_check"))
   } else {
-    check_interval <- 31
+    
+    check_interval <- 1830 # this message will appear every 5 years 
+    
     last_check <- as.Date(readLines(cachePath(".last_check")))
     if ((Sys.Date() - last_check) > check_interval) {
       message(
@@ -104,6 +104,9 @@ checkTime <- function() {
         "You can ignore this message, and if you want to you can prevent this message to appear by using\n",
         "\t\toptions(BIOMASS.ignore_update=TRUE)"
       )
+
+      # update the flag
+      writeLines(as.character(Sys.Date()), cachePath(".last_check"))
     }
   }
 
@@ -113,7 +116,27 @@ checkTime <- function() {
 
 
 
-### TODO : document this function
+
+#' Update the cache for the different function
+#' 
+#' This function update the cache for the environemental variable, meaning the file :
+#' \itemize{
+#'   \item wc2-5
+#'   \item CWD
+#'   \item E
+#' }
+#'
+#' @param nameFile The name of the file you want to update. If it's NULL the function will update all the files.
+#'
+#' @return NULL
+#' @export
+#'
+#' @author Arthur PERE
+#' 
+#' @importFrom utils download.file unzip
+#' @examples
+#' updateCache()
+#' 
 updateCache <- function(nameFile = NULL) {
 
   # the url of the differents zip to download
