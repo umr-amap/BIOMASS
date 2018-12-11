@@ -217,8 +217,8 @@ KarnatakaForestsub$HfeldRSE <- dataHfeld$RSE
 **Propagate error for all tree at once using the local HD model constructed above (modelHD), i.e. non-independent allometric errors will be assigned to all trees at each iteration, independently of plots.**
 ```{r, cache=CACHE}
 resultMC <- AGBmonteCarlo(D = KarnatakaForestsub$D, WD = KarnatakaForestsub$WD, errWD = KarnatakaForestsub$sdWD, HDmodel = HDmodel, Dpropag = "chave2004")
-Res = summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
-Res = Res[order(Res$AGB), ]
+Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
+Res <- Res[order(Res$AGB), ]
 plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
@@ -229,16 +229,16 @@ segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red
 **Using the Feldpaush regional HD averaged model (code only given)**
 ```{r, eval=F, cache=CACHE}
 resultMC <- AGBmonteCarlo(
-      D = KarnatakaForestsub$D, 
-      WD = KarnatakaForestsub$WD, 
-      errWD = KarnatakaForestsub$sdWD,
-      H = KarnatakaForestsub$Hfeld,
-      errH = KarnatakaForestsub$HfeldRSE, 
-      Dpropag = "chave2004"
+  D = KarnatakaForestsub$D,
+  WD = KarnatakaForestsub$WD,
+  errWD = KarnatakaForestsub$sdWD,
+  H = KarnatakaForestsub$Hfeld,
+  errH = KarnatakaForestsub$HfeldRSE,
+  Dpropag = "chave2004"
 )
 
-Res = summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
-Res = Res[order(Res$AGB), ]
+Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
+Res <- Res[order(Res$AGB), ]
 plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
@@ -246,14 +246,14 @@ segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red
 **Per plot using the Chave et al. (2014) Equation 7 (code only given)**
 ```{r, eval=F,cache=CACHE}
 resultMC <- AGBmonteCarlo(
-      D = KarnatakaForestsub$D, 
-      WD = KarnatakaForestsub$WD, 
-      errWD = KarnatakaForestsub$sdWD,
-      coord = cbind(KarnatakaForestsub$long, KarnatakaForestsub$lat),
-      Dpropag = "chave2004"
+  D = KarnatakaForestsub$D,
+  WD = KarnatakaForestsub$WD,
+  errWD = KarnatakaForestsub$sdWD,
+  coord = cbind(KarnatakaForestsub$long, KarnatakaForestsub$lat),
+  Dpropag = "chave2004"
 )
-Res = summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
-Res = Res[order(Res$AGB), ]
+Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
+Res <- Res[order(Res$AGB), ]
 plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
@@ -275,20 +275,16 @@ NouraguesHD$RSEmix[filt] <- HDmodel$RSE
 ```
 (@) Apply the AGBmonteCarlo by setting the height values and their errors (which depend on wether the tree was directly measured or estimated)
 ```{r eval=F, cache=CACHE}
-resultMC <- by(NouraguesHD, NouraguesHD$plotId,
-  function(x) AGBmonteCarlo(
-      D = x$D, WD = x$WD, errWD = x$sdWD,
-      H = NouraguesHD$Hmix, errH = NouraguesHD$RSEmix,
-      Dpropag = "chave2004"
-    ),
-  simplify = F
+wd <- getWoodDensity(NouraguesHD$genus, NouraguesHD$species)
+resultMC <- AGBmonteCarlo(
+  D = NouraguesHD$D, WD = wd$meanWD, errWD = wd$sdWD,
+  H = NouraguesHD$Hmix, errH = NouraguesHD$RSEmix,
+  Dpropag = "chave2004"
 )
-meanAGBperplot <- sapply(resultMC, function(x) x$meanAGB)
-credinf <- sapply(resultMC, function(x) x$credibilityAGB[1])
-credsup <- sapply(resultMC, function(x) x$credibilityAGB[2])
-ord <- order(meanAGBperplot)
-plot(meanAGBperplot[ord], pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(credsup)), las = 1, cex.lab = 1.3)
-segments(1:length(ord), credinf[ord], 1:length(ord), credsup[ord], col = "red")
+Res <- summaryByPlot(resultMC$AGB_simu, NouraguesHD$plotId)
+Res <- Res[order(Res$AGB), ]
+plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
+segments(1:nrow(Res), Res$Cred_2.5, 1:nrow(Res), Res$Cred_97.5, col = "red")
 ```
 
 ##Add your tricks
