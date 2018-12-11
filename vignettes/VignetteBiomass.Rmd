@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 test <- TRUE
 CACHE <- TRUE
 require(knitr)
+require(BIOMASS)
 ```
 
 #Load BIOMASS and datasets

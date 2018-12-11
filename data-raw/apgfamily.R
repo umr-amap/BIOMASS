@@ -5,6 +5,7 @@ require(taxize)
 
 a = setDT( taxize::apgFamilies() )
 a[family == "Iso&euml;taceae", family := "Isoetaceae"]
+a[, family := gsub("\"", "", family)]
 
 setnames(a, c("family", "synonym"), c("famAPG", "famSyn"))
 
@@ -19,3 +20,14 @@ apgFamilies <- unique(apgFamilies)
 
 setDF(apgFamilies)
 usethis::use_data(apgFamilies, compress = "xz", overwrite = F)
+
+
+apgFamiliesOrg = setDT(copy(BIOMASS::apgFamilies))
+apgFamiliesOrg = apgFamiliesOrg[base::order(order)]
+apgFamilies = apgFamilies[base::order(order)]
+
+result = merge(apgFamiliesOrg, apgFamilies, all = T, by = "famAPG")
+result = result[is.na(order.x) | is.na(order.y) | order.x != order.y]
+setnames(result, c("order.x", "order.y"), c('order_old', 'order_new'))
+
+fwrite(result, '../result_order.csv')

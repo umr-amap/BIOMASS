@@ -73,8 +73,8 @@ if (!file.exists("data-raw/vascularKew.csv")) {
 
   # And retrieve all the .txt who contains all the genera / family
 
-
-  file_ <- function(x) {
+  file <- rbindlist(lapply(listFam, function(x){
+    
     file <- NULL
     while (!is.data.frame(file)) {
       file <- try(read.csv(paste("http://data.kew.org/vpfg1992/", x, ".TXT", sep = ""), header = F, stringsAsFactors = F), silent = T)
@@ -83,12 +83,10 @@ if (!file.exists("data-raw/vascularKew.csv")) {
     print(x)
     colnames(file) <- c("num", "smthg", "genus", "Author", "numAgain")
     file$family <- paste(substr(x, 1, 1), tolower(substr(x, 2, nchar(x))), sep = "")
-
+    
     return(file)
-  }
-
-
-  file <- rbindlist(lapply(listFam[1:2], file_))
+    
+  }))
   write.csv(file, "data-raw/vascularKew.csv", row.names = F)
 }
 
@@ -133,7 +131,7 @@ if (!file.exists("data-raw/dupGenus_TNRS.txt")) {
   stop(
     "Please submite the file 'dupGenusToSub.csv' to this site:\n\t\t",
     "http://tnrs.iplantcollaborative.org/TNRSapp.html\n",
-    "\t take the detailed report\n",
+    "\t take the detailed report, in UTF-8\n",
     "\t and deplace/rename it in the folder 'data-raw/dupGenus_TNRS.txt'"
   )
 }
@@ -260,3 +258,23 @@ genusFamily <- unique(genusFamily)
 fwrite(genusFamily, file = "data-raw/genusFamily.csv")
 setDF(genusFamily)
 usethis::use_data(genusFamily, compress = "xz")
+
+
+
+
+genusFamily = genusFamily[base::order(family)]
+genusFamilyOrg = setDT(copy(BIOMASS::genusFamily))
+genusFamilyOrg = genusFamilyOrg[base::order(family)]
+
+result = merge(genusFamilyOrg, genusFamily, all = T, by = "genus")
+result = result[is.na(family.x) | is.na(family.y) | family.x != family.y]
+
+result = merge(result, apgFamilies, by.x = "family.y", by.y = "famAPG", all.x = T)
+result = result[family.x != famSyn | is.na(family.x) | is.na(family.y)]
+
+setnames(result, c("family.x", "family.y"), c('family_old', 'family_new'))
+
+fwrite(result, '../result_family.csv')
+
+
+
