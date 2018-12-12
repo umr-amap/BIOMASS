@@ -19,7 +19,7 @@ This function update the cache for the environemental variable, meaning the file
 }
 \examples{
 \dontrun{
-   updateCache()
+updateCache()
 }
 }
 \author{

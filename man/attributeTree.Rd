@@ -14,10 +14,11 @@ attributeTree(xy, plot, coordAbs)
 \item{coordAbs}{Output of the function \code{\link{cutPlot}}}
 }
 \value{
-A vector with the subplot for each trees
+A vector with the code of the subplot for each trees, the code will be plot_X_Y. X and Y are the coordinate where the tree
+is inside the plot in regards to the corresponding subplot.
 }
 \description{
-Fonction to attribute the trees on each subplot, the trees that are at the exterior
+Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 }
 \examples{
 

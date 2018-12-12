@@ -23,8 +23,8 @@ if (getRversion() >= "2.15.1") {
 #'   \item{Plot}{ The code of the plot you use }
 #'   \item{XRel}{ The relative coordinate for the axis X (following the corner 1->2) for the plot }
 #'   \item{YRel}{ The relative coordinate for the axis Y (following the corner 1->4) for the plot }
-#'   \item{XAbs}{ The absolute coordinate (UTM) for the axis X (following the corner 1->2)}
-#'   \item{YAbs}{ The absolute coordinate (UTM) for the axis Y (following the corner 1->4)}
+#'   \item{XAbs}{ The absolute coordinate (projected) for the axis X (following the corner 1->2)}
+#'   \item{YAbs}{ The absolute coordinate (projected) for the axis Y (following the corner 1->4)}
 #' }
 #' @export
 #' @author Arthur PERE

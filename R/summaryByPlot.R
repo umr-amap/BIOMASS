@@ -5,11 +5,20 @@ if (getRversion() >= "2.15.1") {
 }
 
 
-#' Mixing the tree
+#' Summarize the matrix given by \code{\link{AGBmonteCarlo}} by plot (or subplot)
 #'
-#' This function mixes the AGB of the tree that doesn't have a subplot assigned.
-#' The AGB for those trees will be added with a random tree (in the same plot or
-#' if the tree haven't a plot in all the plot) on each column of the matrix.
+#' @description
+#' This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot, or subplot 
+#' if given. 
+#' It's gives the mean, and the credibility intervalle [2.5\%, 97.5\%].
+#' 
+#' For the trees who haven't subplot because the coordinate of the trees isn't in the range of the plot 
+#' (you can mark those by NA in the subplot vector), the AGB of those trees will be spread between the trees of the plot.
+#' More precisly, the AGB will be randomly add to the first tree in each subplots for the given plot, for each iteration 
+#' in the function \code{\link{AGBmonteCarlo}}.
+#' 
+#' For the trees who haven't any attribute plots (mark as NA in the plot vector), the same treatment than earlier will apply
+#' expect for all the fist trees in all subplot (indepent of the plot).
 #'
 #' @param plot Vector with the code of plot
 #' @param subplot vector with the code of the subplot
@@ -19,8 +28,8 @@ if (getRversion() >= "2.15.1") {
 #' \describe{
 #'    \item{plot/subplot}{the code of the plot/subplot}
 #'    \item{AGB}{the mean of AGB for the plot or subplot}
-#'    \item{Cred_2.5}{the 2.5\% credibility intervalle for the plot or subplot}
-#'    \item{Cred_97.5}{the 97.5\% credibility intervalle for the plot or subplot}
+#'    \item{Cred_2.5}{the quantile 2.5\% for the plot or subplot}
+#'    \item{Cred_97.5}{the quantile 97.5\% for the plot or subplot}
 #' }
 #'
 #' @export
@@ -51,7 +60,7 @@ if (getRversion() >= "2.15.1") {
 #' plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId %in% c("BSP20", "BSP14") ]
 #' 
 #' # The summary by plot
-#' summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)
+#' summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)
 summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
 
 
