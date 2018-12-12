@@ -118,7 +118,7 @@ checkTime <- function() {
 
 #' Update the cache for the different function
 #'
-#' This function update the cache for the environemental variable, meaning the file :
+#' This function update the cache for the environemental variable, meaning the files :
 #' \itemize{
 #'   \item wc2-5
 #'   \item CWD
@@ -140,10 +140,10 @@ checkTime <- function() {
 updateCache <- function(nameFile = NULL) {
 
   # the url of the differents zip to download
-  zip_urls <- c(
-    "http://amap-dev.cirad.fr/attachments/download/1525/wc2-5.zip",
-    "http://amap-dev.cirad.fr/attachments/download/1520/CWD.zip",
-    "http://amap-dev.cirad.fr/attachments/download/1521/E.zip"
+  zip_urls <- list(
+    "wc2-5" = "https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip",
+    "CWD" = "https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/CWD.zip",
+    "E" = "https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/E.zip"
   )
 
 
@@ -161,7 +161,7 @@ updateCache <- function(nameFile = NULL) {
     return()
   }
 
-
+  # if the user want to update all the climate variable
   if (is.null(nameFile)) {
     lapply(zip_urls, function(url_zip) {
       nameFile <- sub(".zip$", "", basename(url_zip))
@@ -179,21 +179,21 @@ updateCache <- function(nameFile = NULL) {
 
   tryCatch({
     if (!is.null(nameFile)) {
+      # if the zip exist and isn't damaged
       ifelse(file.exists(nameFileZip),
         unzip(nameFileZip, exdir = path),
         unzip(paste0(path, ".zip"), exdir = path)
       )
     } else {
-      warning()
+      warning("There is no name!")
     }
-  },
+  }, # if it's damaged we recharge it
   warning = function(cond) {
-    zip_url <- switch(nameFile,
-      "wc2-5" = zip_urls[1],
-      "CWD" = zip_urls[2],
-      "E" = zip_urls[3],
+    zip_url <- zip_urls[[nameFile]]
+    if (is.null(zip_url)){
       stop("You demand something we don't understand.")
-    )
+    }
+      
     downloadZip(zip_url, path)
     return()
   },
