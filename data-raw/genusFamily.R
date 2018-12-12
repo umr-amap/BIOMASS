@@ -73,8 +73,7 @@ if (!file.exists("data-raw/vascularKew.csv")) {
 
   # And retrieve all the .txt who contains all the genera / family
 
-  file <- rbindlist(lapply(listFam, function(x){
-    
+  file <- rbindlist(lapply(listFam, function(x) {
     file <- NULL
     while (!is.data.frame(file)) {
       file <- try(read.csv(paste("http://data.kew.org/vpfg1992/", x, ".TXT", sep = ""), header = F, stringsAsFactors = F), silent = T)
@@ -83,9 +82,8 @@ if (!file.exists("data-raw/vascularKew.csv")) {
     print(x)
     colnames(file) <- c("num", "smthg", "genus", "Author", "numAgain")
     file$family <- paste(substr(x, 1, 1), tolower(substr(x, 2, nchar(x))), sep = "")
-    
+
     return(file)
-    
   }))
   write.csv(file, "data-raw/vascularKew.csv", row.names = F)
 }
@@ -262,19 +260,16 @@ usethis::use_data(genusFamily, compress = "xz")
 
 
 
-genusFamily = genusFamily[base::order(family)]
-genusFamilyOrg = setDT(copy(BIOMASS::genusFamily))
-genusFamilyOrg = genusFamilyOrg[base::order(family)]
+genusFamily <- genusFamily[base::order(family)]
+genusFamilyOrg <- setDT(copy(BIOMASS::genusFamily))
+genusFamilyOrg <- genusFamilyOrg[base::order(family)]
 
-result = merge(genusFamilyOrg, genusFamily, all = T, by = "genus")
-result = result[is.na(family.x) | is.na(family.y) | family.x != family.y]
+result <- merge(genusFamilyOrg, genusFamily, all = T, by = "genus")
+result <- result[is.na(family.x) | is.na(family.y) | family.x != family.y]
 
-result = merge(result, apgFamilies, by.x = "family.y", by.y = "famAPG", all.x = T)
-result = result[family.x != famSyn | is.na(family.x) | is.na(family.y)]
+result <- merge(result, apgFamilies, by.x = "family.y", by.y = "famAPG", all.x = T)
+result <- result[family.x != famSyn | is.na(family.x) | is.na(family.y)]
 
-setnames(result, c("family.x", "family.y"), c('family_old', 'family_new'))
+setnames(result, c("family.x", "family.y"), c("family_old", "family_new"))
 
-fwrite(result, '../result_family.csv')
-
-
-
+fwrite(result, "../result_family.csv")

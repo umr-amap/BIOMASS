@@ -45,9 +45,10 @@ if (getRversion() >= "2.15.1") {
 cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200) {
 
   # parameter verification --------------------------------------------------
-  if (!is.data.frame(projCoord))
-    projCoord = data.frame(projCoord)
-  
+  if (!is.data.frame(projCoord)) {
+    projCoord <- data.frame(projCoord)
+  }
+
   if (nrow(projCoord) != length(plot)) {
     stop("Your vector plot and the number of row of your UTMcoord data frame aren't the same")
   }

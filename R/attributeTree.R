@@ -15,7 +15,7 @@ if (getRversion() >= "2.15.1") {
 #' @param coordAbs Output of the function \code{\link{cutPlot}}
 #'
 #' @return A vector with the code of the subplot for each trees, the code will be plot_X_Y. X and Y are the coordinate where the tree
-#' is inside the plot
+#' is inside the plot in regards to the corresponding subplot.
 #' @export
 #' @author Arthur PERE
 #' @importFrom data.table data.table setDT between setnames

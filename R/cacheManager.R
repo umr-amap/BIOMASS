@@ -92,9 +92,8 @@ checkTime <- function() {
   if (!file.exists(cachePath(".last_check"))) {
     writeLines(as.character(Sys.Date()), cachePath(".last_check"))
   } else {
-    
-    check_interval <- 1830 # this message will appear every 5 years 
-    
+    check_interval <- 1830 # this message will appear every 5 years
+
     last_check <- as.Date(readLines(cachePath(".last_check")))
     if ((Sys.Date() - last_check) > check_interval) {
       message(
@@ -118,7 +117,7 @@ checkTime <- function() {
 
 
 #' Update the cache for the different function
-#' 
+#'
 #' This function update the cache for the environemental variable, meaning the file :
 #' \itemize{
 #'   \item wc2-5
@@ -132,11 +131,11 @@ checkTime <- function() {
 #' @export
 #'
 #' @author Arthur PERE
-#' 
+#'
 #' @importFrom utils download.file unzip
 #' @examples
 #' \dontrun{
-#'    updateCache()
+#' updateCache()
 #' }
 updateCache <- function(nameFile = NULL) {
 

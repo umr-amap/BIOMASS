@@ -65,12 +65,14 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   if (length(plot) != length(origin)) {
     stop("Your vector plot and origin aren't the same length")
   }
-  
-  if (!is.null(longlat) && !is.data.frame(longlat)) 
-    longlat = as.data.frame(longlat, fix.empty.names = F)
-  if (!is.null(projCoord) && !is.data.frame(projCoord))
-    projCoord = as.data.frame(longlat, fix.empty.names = F)
-  
+
+  if (!is.null(longlat) && !is.data.frame(longlat)) {
+    longlat <- as.data.frame(longlat, fix.empty.names = F)
+  }
+  if (!is.null(projCoord) && !is.data.frame(projCoord)) {
+    projCoord <- as.data.frame(longlat, fix.empty.names = F)
+  }
+
   if (!is.null(longlat) && nrow(longlat) != length(plot)) {
     stop("Your vector plot and origin isn't the same length of longlat")
   }

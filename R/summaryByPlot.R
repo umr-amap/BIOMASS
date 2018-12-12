@@ -25,7 +25,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @export
 #'
-#' @importFrom data.table data.table :=
+#' @importFrom data.table data.table := first
 #' @importFrom stats quantile
 #' @examples
 #' 
