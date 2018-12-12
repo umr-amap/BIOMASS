@@ -28,29 +28,12 @@
 *.utf8.md
 *.knit.md
 
-# Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
-rsconnect/
-.Rproj.user
-
-test/*
-
 biomass\.Rproj
 
-vignettes/VignetteBiomass_cache/html/
-<<<<<<< master
+vignettes/VignetteBiomass_cache/*
 
-<<<<<<< master
 tests/testthat/Rplots\.pdf
-=======
 data-raw/wdData\.csv
-<<<<<<< master
->>>>>>> git ignore
-=======
-
-data-raw/wdData\.csv
-
-apgFamilies\.csv
-
 
 data-raw/vascularKew\.csv
 
