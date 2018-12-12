@@ -45,6 +45,9 @@ attributeTree <- function(xy, plot, coordAbs) {
 
 
   # parameters verification -------------------------------------------------
+  if (!is.data.frame(xy)) {
+    xy <- data.frame(xy)
+  }
 
   if (nrow(xy) != length(plot)) {
     stop("Your plot vector haven't the same length than the number of row of xy")
