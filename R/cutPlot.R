@@ -4,13 +4,13 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Cut plots in pieces
+#' Divides a plot in subplots
 #'
-#' This function cut all the plot in smaller rectangle pieces that you can give dimensions (with dimX and dimY), and give the
-#' coordinate of the grid in return.
-#' This function actually use the procrustes analysis to fit the rectangle you gave to the plot you have.
+#' This function divides a plot in subplots (with dimX and dimY) and gives the
+#' coordinates of the grid in return.
+#' This function uses a procrustes analysis to fit the rectangle you gave to the plot you have. #######????????
 #'
-#' @param projCoord A data frame with the projected coordinate with X and Y on the first and second colonne respectively
+#' @param projCoord A data frame with the projected coordinates with X and Y on the first and second colonne respectively
 #' @param plot Vector with the code of the plot
 #' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
 #' (see the result of the \code{\link{numberCorner}})
@@ -50,22 +50,22 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
   }
 
   if (nrow(projCoord) != length(plot)) {
-    stop("Your vector plot and the number of row of your UTMcoord data frame aren't the same")
+    stop("Length of plot and the number of row of your UTMcoord data frame are different")
   }
   if (nrow(projCoord) != length(corner)) {
-    stop("Your vector corner and the number of row of your UTMcoord data frame aren't the same")
+    stop("Length of corner and the number of row of your UTMcoord data frame are different")
   }
   if (length(gridsize) != 1 || !is.numeric(gridsize)) {
-    stop("The parameter 'gridsize' must be one number")
+    stop("Gridsize must contain 1 numeric value")
   }
   if (!(length(dimX) %in% c(1, length(unique(plot))))) {
-    stop("Your dimX vector must be the length 1 or the length unique(plot)")
+    stop("Your dimX vector must be of length 1 or of length equal to length(unique(plot))")
   }
   if (!(length(dimY) %in% c(1, length(unique(plot))))) {
-    stop("Your dimY vector must be the length 1 or the length unique(plot)")
+    stop("Your dimY vector must be of length 1 or of length equal to length(unique(plot))")
   }
   if (any(gridsize > dimX) || any(gridsize > dimY)) {
-    stop("Your gridsize is superior of your dimension X or Y")
+    stop("Your gridsize is larger than the X or Y dimensions")
   }
 
 

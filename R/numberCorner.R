@@ -7,20 +7,19 @@ if (getRversion() >= "2.15.1") {
 #' Get the UTM coordinates with the corner of the plot
 #'
 #' @description
-#' To get the UTM coordinates from the latitude and longitude of the corners of a plot.
-#' The function also numbered the corner conter clockwise, respecting the origin of the axes for the plot.
-#' The corners are numbered from 1 to 4 for each plot, 1 being the origin of the axes
+#' Get the UTM coordinates from the latitude and longitude of the corners of a plot.
+#' The function also assign a number to the corners in a clockwise or counterclockwise way, with the number 1 for the XY origin.
 #' Corner numbering is done as followed:
 #' \itemize{
 #'    \item axis X: the corner 1 to the corner 2
 #'    \item axis Y: the corner 1 to the corner 4
 #' }
 #'
-#' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param projCoord (optionnal) data frame with the projected coordinate in X Y
+#' @param longlat (optionnal) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).
+#' @param projCoord (optionnal) data frame with the projected coordinates in X Y
 #' @param plot A vector of codes (names) of the plots
 #' @param origin A logical vector with TRUE corresponding of the origin of the axis of each plot.
-#' @param clockWise A logical, do you turn clock wise between the axis X and Y
+#' @param clockWise A logical, whether the numbering should be done in a clockwise (TRUE) or counterclockwise (FALSE) way. FALSE by default.
 #'
 #' @return A data frame with:
 #' \describe{
@@ -45,7 +44,7 @@ if (getRversion() >= "2.15.1") {
 #' text(coord, labels = corner$corner, pos = 1)
 #' 
 #' 
-#' # if you turn anti clock wise
+#' # Using a counterclockwise way
 #' corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = FALSE)
 #' 
 #' # Plot the plot
@@ -57,13 +56,13 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   # Parameters verification -------------------------------------------------
 
   if (is.null(longlat) && is.null(projCoord)) {
-    stop("Give me at least one system of coordinate")
+    stop("Give at least one set of coordinates: longlat or projCoord")
   }
   if (!is.null(longlat) && !is.null(projCoord)) {
-    stop("Please choose between the two coordinate")
+    stop("Give only one set of coordinates: longlat or projCoord")
   }
   if (length(plot) != length(origin)) {
-    stop("Your vector plot and origin aren't the same length")
+    stop("Vectors plot and origin have not the same length")
   }
 
   if (!is.null(longlat) && !is.data.frame(longlat)) {
@@ -74,15 +73,15 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   }
 
   if (!is.null(longlat) && nrow(longlat) != length(plot)) {
-    stop("Your vector plot and origin isn't the same length of longlat")
+    stop("The length of vectors plot and origin id different from the number of rows of longlat")
   }
   if (!is.null(projCoord) && nrow(projCoord) != length(plot)) {
-    stop("Your vector plot and origin isn't the same length of projCoord")
+    stop("The length of vectors plot and origin id different from the number of rows of projCoord")
   }
   tab <- as.numeric(table(plot))
   if (any(as.numeric(table(plot)) != 4)) {
     stop(
-      "Your vector plot isn't a multiple of 4, the plot(s):\n\t\t",
+      "Lenght of vector plot is not a multiple of 4, the plot(s):\n\t\t",
       paste(names(table(plot)[ table(plot) != 4 ]), collapse = " "),
       "\nhave:\n\t\t",
       paste(table(plot)[ table(plot) != 4 ], collapse = " "),
@@ -92,7 +91,7 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   tab <- as.matrix(table(plot, origin))
   if (any(tab[, 1] != 3) || any(tab[, 2] != 1)) {
     stop(
-      "Please verify your 'origin' vector, their must be exactly 1 TRUE and 3 FALSE by plot, those plot(s) are:\n\t\t",
+      "Please verify your 'origin' vector, it should contain 1 TRUE and 3 FALSE by plot, those plot(s) are:\n\t\t",
       paste(rownames(tab)[tab[, 1] != 3 | tab[, 2] != 1], collapse = " ")
     )
   }
@@ -124,7 +123,7 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   cornerFun <- function(x, y, Origin, clockWise) {
     coord <- data.table(X = x, Y = y, n.row = 1:length(x), corner = as.numeric(NA))
 
-    # if the plot the square is turn at 45° in relation to the horizontal
+    # if the plot the square is turn at 45° in relation to the horizontal ######??????
     # rotate the coordinate by 45°
     if (any(rank(coord$X) == 4)) {
       rot <- matrix(c(cos(pi / 4), sin(pi / 4), -sin(pi / 4), cos(pi / 4)), nrow = 2)

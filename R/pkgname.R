@@ -1,6 +1,7 @@
 #' @references
-#' Rejou-Mechain M., Tanguy A., Piponiot C., Chave J., Herault B. (2016). BIOMASS :
-#' An R Package for estimating above-ground biomass and its uncertainty in tropical forests. R package version 1.0.
+#' Réjou-Méchain M., Tanguy A., Piponiot C., Chave J., Hérault B. (2017). BIOMASS :
+#' An R Package for estimating above-ground biomass and its uncertainty in tropical forests. 
+#' Methods in Ecology and Evolution, 8(9), 1163-1167.
 #'
 #' @author \packageAuthor{BIOMASS}
 #' @author Maintainer: \packageMaintainer{BIOMASS}
@@ -10,6 +11,7 @@
 #' \dontrun{
 #' library(BIOMASS)
 #' 
+#' # Dataset containing plot inventory data from Karnataka,India (Ramesh et al. 2010)
 #' data(KarnatakaForest)
 #' str(KarnatakaForest)
 #' 
@@ -56,7 +58,7 @@
 #'   method = "log2", useWeight = TRUE
 #' )
 #' 
-#' # Compute models specific to given stands
+#' # Compute plot-specific H-D models
 #' HDmodelPerPlot <- by(NouraguesHD, NouraguesHD$plotId,
 #'   function(x) modelHD(D = x$D, H = x$H, method = "weibull", useWeight = T),
 #'   simplify = FALSE

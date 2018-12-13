@@ -1,9 +1,9 @@
 #' Procrust analysis
 #'
-#' Do the procrust analysis X is the target matrix, Y is the matrix we want to fit to the target.
-#' This procrust analysis give just a translation vector and a rotation matrix
+#' Do a procrust analysis. X is the target matrix, Y is the matrix we want to fit to the target.
+#' This function returns a translation vector and a rotation matrix
 #' After the procrust problem you \strong{must} do the rotation before the translation.
-#' \strong{Warning :} The order of the between the lines of the matrix X and Y must be respected.
+#' \strong{Warning :} The order of the between the lines of the matrix X and Y must be respected. #####??????
 #' \strong{The order of the value on both matrix is important}
 #'
 #' @param X the target matrix

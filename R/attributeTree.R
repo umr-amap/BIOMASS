@@ -6,12 +6,12 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Attribute the tree to the subplot
+#' Attribute trees to subplots
 #'
 #' Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 #'
-#' @param xy The coordinate of the trees for each plot
-#' @param plot The label of the plot (same length as the number of row of xy)
+#' @param xy The coordinates of the trees for each plot
+#' @param plot The label of the plot (same length as the number of rows of xy)
 #' @param coordAbs Output of the function \code{\link{cutPlot}}
 #'
 #' @return A vector with the code of the subplot for each trees, the code will be plot_X_Y. X and Y are the coordinate where the tree
@@ -36,10 +36,10 @@ if (getRversion() >= "2.15.1") {
 #' cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
 #' 
 #' 
-#' # The attribute the plot
+#' # The attribute the plot ######???
 #' plot <- rep(c("plot1", "plot2"), 100)
 #' 
-#' # attribute the trees to subplot
+#' # attribute trees to subplots
 #' attributeTree(xy, plot, cut)
 attributeTree <- function(xy, plot, coordAbs) {
 
@@ -68,12 +68,12 @@ attributeTree <- function(xy, plot, coordAbs) {
   setnames(Coord, colnames(Coord), c("X", "Y", "Plot"))
   setDT(coordAbs)
 
-  # Attribute the tree to there subplot
+  # Attribute the tree to there subplot ######??? repeated too many times
   gridsize <- max(coordAbs[, diff(XRel)])
   Coord[, ":="(Xplot = floor(X / gridsize), Yplot = floor(Y / gridsize))]
 
 
-  # Mark NA if the tree are out of the limits of the plot
+  # Assign NA to the trees that are out of the limits of the plot
   Coord[coordAbs[, .(Xmax = max(XRel), Ymax = max(YRel)), by = Plot],
     on = "Plot",
     ":="(Xmax = i.Xmax, Ymax = i.Ymax)

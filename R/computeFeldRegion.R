@@ -1,14 +1,14 @@
-#' Retrieving the Feldpausch regions
+#' Retrieving Feldpausch regions
 #'
 #' Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
 #'
 #' @inheritParams computeE
-#' @param level a string or a vector of string, the length must be matched the number of row of the parameter coord.
-#' This parameter will be used for grow the scale you which to look at for the Feldpausch regions. There are tree levels :
+#' @param level a string or a vector of string, the length must match the number of rows of the parameter coord.
+#' This parameter gives the scale at which Feldpausch regions should be assigned. There are tree levels:
 #' \describe{
-#'    \item{region}{The smaller scale and the value by default}
-#'    \item{continent}{The medium scale, only the value which who are in Africa and America will be changed}
-#'    \item{world}{The larger scale, all the value will be replaced by "Pantropical"}
+#'    \item{region}{Models assign at sub-continent levels, value by default}
+#'    \item{continent}{Models assign at the Africa, South America, Asia and Australia levels}
+#'    \item{world}{Pantropical model }
 #' }
 #'
 #' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
@@ -36,7 +36,7 @@
 #' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest
 #' biomass estimates.} Biogeosciences, 9, 3381–3403.
 #'
-#' @author Arthur PERE, Ted FELDPAUSCH
+#' @author Arthur PERE
 #'
 #' @importFrom raster raster extract factorValues
 computeFeldRegion <- function(coord, level = "region") {
@@ -46,10 +46,10 @@ computeFeldRegion <- function(coord, level = "region") {
 
 
   if (!(length(level) %in% c(1, nrow(coord)))) {
-    stop("The vector region must be a length of 1 or the number of row of your coord parameter")
+    stop("The vector region must be a length of 1 or the number of rows of your coord parameter")
   }
   if (!all(grepl("(^world$)|(^region$)|(^continent$)", tolower(level)))) {
-    stop("The level parameter must have this tree level : 'region', 'continent' or 'world'")
+    stop("The level parameter must be one of this tree levels: 'region', 'continent' or 'world'")
   }
 
 
@@ -73,7 +73,7 @@ computeFeldRegion <- function(coord, level = "region") {
   }
 
 
-  # level different of world and region -------------------------------------
+  # level different from world and region -------------------------------------
 
 
 
@@ -86,13 +86,11 @@ computeFeldRegion <- function(coord, level = "region") {
   FeldRegion[ level == "world" ] <- "Pantropical"
 
   # Replace the continent level by different value:
-  # The african region will be at the same level Africa
+  
   FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Africa)", replacement = "Africa",
     FeldRegion[ level == "continent" ]
   )
-
-  # The south america region will be at the same level SAmerica
   FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Amazonia|Shield)", replacement = "SAmerica",
     FeldRegion[ level == "continent" ]

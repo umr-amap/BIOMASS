@@ -1,8 +1,7 @@
-#' Correct the GPS coordinate
+#' Correct the GPS coordinates
 #'
 #' @description
-#' If you have multiple GPS coordinate for one plot, you can use this function to correct them and take the corner of the plot
-#' with the polygon associated.
+#' This function build the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 #'
 #' @details
 #' You must give one parameter between longlat and projCoord
@@ -10,25 +9,26 @@
 #'
 #' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
 #' @param projCoord (optionnal) data frame with the projected coordinate in X Y
+#' @param coordRel data frame with the plot relative coordinates in the same order than the longlat or UTMcoord
+#' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
+#' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
+#' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)
+#' @param drawPlot a logical if you want to display a graphical representation
+#' @param rmOutliers a logical if you want to remove the outliers from coordinates calculation
 #' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
-#' @param rangeX a vector of length equal 2 with the min of the range for X
-#' @param rangeY a vector of length equal 2 with the min of the range for Y
-#' @param maxDist a double with the maximum for the distance you want to use to make outliers
-#' @param drawPlot a logical if you want to draw the plot
-#' @param rmOutliers a logical if you want to remove the outliers
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
-#' @return If you haven't outliers or rmOutliers = TRUE, there will be a list with :
+#' @return If you there are no outliers or rmOutliers = TRUE, a list with:
 #' \describe{
-#'    \item{corner}{a matrix with the coordinate of the corners whith no order in particular}
-#'    \item{polygon}{a spatial polygone}
+#'    \item{corner}{a matrix with the coordinates of the corners}
+#'    \item{polygon}{a spatial polygon}
 #' }
-#' However if you have outliers and rmOutliers = FALSE, there will be data frame with :
+#' If you have outliers and rmOutliers = FALSE, a data frame with:
 #' \describe{
-#'    \item{outliers}{the line of your longlat or projCoord data frame, where it's an outliers}
-#'    \item{X}{the UTM coordinate X outlayer}
-#'    \item{Y}{the UTM coordinate X outlayer}
+#'    \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
+#'    \item{X}{the UTM coordinates X outlayer}
+#'    \item{Y}{the UTM coordinates X outlayer}
 #' }
 #'
 #'
@@ -79,25 +79,25 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
   if (is.null(longlat) && is.null(projCoord)) {
-    stop("Give me at least one system of coordinate")
+    stop("Give at least one set of coordinates: longlat or projCoord")
   }
   if (!is.null(longlat) && !is.null(projCoord)) {
-    stop("You are giving too much arguments : longlat and projCoord")
+    stop("Give only one set of coordinates: longlat or projCoord")
   }
 
   if (length(rangeX) != 2 || length(rangeY) != 2) {
-    stop("The rangeX and/or rangeY must be length equal to 2")
+    stop("The rangeX and/or rangeY must be of length 2")
   }
   if (length(maxDist) != 1) {
-    stop("Your argument maxDist must be one double")
+    stop("Your argument maxDist must be of length 1")
   }
 
   if (!all(between(coordRel[, 1], lower = rangeX[1], upper = rangeX[2]) &
     between(coordRel[, 2], lower = rangeY[1], upper = rangeY[2]))) {
-    stop("The coordRel must be inside the range")
+    stop("coordRel must be inside the X and Y ranges")
   }
   if ((!is.null(longlat) && dim(longlat) != dim(coordRel)) || (!is.null(projCoord) && dim(projCoord) != dim(coordRel))) {
-    stop("Your argument of coordinate and relative coordinate aren't the same dimension")
+    stop("GPS and relative coordinates are not of the same dimension")
   }
 
 
@@ -116,7 +116,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   coordAbs <- as.matrix(coordRel) %*% res$rotation
   coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
 
-  # Calculate the distances between the GNSS measurement and the CoordAbs
+  # Calculate the distances between the GNSS measurements and the CoordAbs
   dist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
   outliers <- which(dist > maxDist)
 
@@ -128,11 +128,11 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
   }
 
-  # Create the matrix of ralatif corners
+  # Create the matrix of ralatif corners  #######????????
   cornerCoord <- as.matrix(expand.grid(X = sort(rangeX), Y = sort(rangeY)))
-  cornerCoord <- cornerCoord[c(1, 2, 4, 3), ] # switch between the line 3 and 4
+  cornerCoord <- cornerCoord[c(1, 2, 4, 3), ] # switch between the lines 3 and 4 #######????????
 
-  # Transform the matrix of relatif corners to absolute corner
+  # Transform the matrix of relatif corners to absolute corner  #######????????
   cornerCoord <- as.matrix(cornerCoord) %*% res$rotation
   cornerCoord <- sweep(cornerCoord, 2, res$translation, FUN = "+")
 

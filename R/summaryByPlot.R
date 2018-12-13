@@ -5,6 +5,7 @@ if (getRversion() >= "2.15.1") {
 }
 
 
+#' Summary of AGB error propagation by plot
 #' Summarize the matrix given by \code{\link{AGBmonteCarlo}} by plot (or subplot)
 #'
 #' @description
@@ -19,10 +20,13 @@ if (getRversion() >= "2.15.1") {
 #' 
 #' For the trees who haven't any attribute plots (mark as NA in the plot vector), the same treatment than earlier will apply
 #' expect for all the fist trees in all subplot (indepent of the plot).
+#' This function returns a summary of the posterior distribution of AGB values per plots. 
+#' The AGB of trees that cannot be assigned a plot are randomly assigned to a plot at each iteration of the AGB monte Carlo approach
+#'  
 #'
 #' @param plot Vector with the code of plot
 #' @param subplot vector with the code of the subplot
-#' @param AGB_simu Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list
+#' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)
 #'
 #' @return a data frame where :
 #' \describe{
@@ -50,7 +54,7 @@ if (getRversion() >= "2.15.1") {
 #'   stand = KarnatakaForest$plotId
 #' )
 #' 
-#' # Propagating errors with a standard error in wood density in one plot
+#' # Propagating errors
 #' filt <- KarnatakaForest$plotId %in% c("BSP20", "BSP14")
 #' resultMC <- AGBmonteCarlo(
 #'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],

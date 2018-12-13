@@ -1,6 +1,6 @@
 #' Manage the cache
 #'
-#' The function creates a folder (only once) and then controls files that needed to be downloaded and
+#' The function creates a folder (only once) and then controls files that need to be downloaded and
 #' placed in this folder.
 #'
 #' @section Localisation:
@@ -66,7 +66,7 @@ cacheManager <- function(nameFile) {
 
 
 
-  # give the full path expect for the wc2-5 file who have two file we need.
+  # give the full path expect for the wc2-5 file who have two files we need.
   path <- switch(nameFile,
     "wc2-5" = file.path(path, c("bio4.bil", "bio15.bil")),
     file.path(path, paste0(nameFile, ".bil"))
@@ -102,7 +102,7 @@ checkTime <- function() {
         "You can verify if the cache is updated by using this function\n",
         "\t\tupdateCache()\n",
         "Be careful, all the environement variable will be deleted and updated.\n",
-        "You can ignore this message, and if you want to you can prevent this message to appear by using\n",
+        "You can ignore this message, and can prevent this message to appear again by using\n",
         "\t\toptions(BIOMASS.ignore_update=TRUE)"
       )
 
@@ -119,8 +119,8 @@ checkTime <- function() {
 
 
 #' Update the cache for the different function
-#'
-#' This function update the cache for the environemental variable, meaning the files :
+#' 
+#' This function update the cache for the environmental variables:
 #' \itemize{
 #'   \item wc2-5
 #'   \item CWD
