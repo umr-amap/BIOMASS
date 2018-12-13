@@ -8,7 +8,7 @@ Authors@R: c(
 	person("Ariane", "Tanguy", role = c("aut")),
 	person("Camille", "Piponiot", role = c("aut")),
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
-	person("Bruno", "Herault", email = "bruno.herault@cirad.fr", role = c("aut", "dtc")),
+	person("Bruno", "Herault", email = "bruno.herault@cirad.fr", role = c("aut")),
 	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
