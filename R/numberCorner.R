@@ -104,7 +104,7 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
     Coord <- data.table(longlat, Plot = plot)
     setnames(Coord, colnames(Coord), new = c("long", "lat", "Plot"))
 
-    Coord <- Coord[setDT(latlong2UTM(.(long, lat))),
+    Coord <- Coord[setDT(latlong2UTM(cbind(long, lat))),
       on = c("long", "lat")
     ]
   }
