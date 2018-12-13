@@ -2,13 +2,13 @@
 % Please edit documentation in R/cutPlot.R
 \name{cutPlot}
 \alias{cutPlot}
-\title{Cut plots in pieces}
+\title{Divides a plot in subplots}
 \usage{
 cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
   dimY = 200)
 }
 \arguments{
-\item{projCoord}{A data frame with the projected coordinate with X and Y on the first and second colonne respectively}
+\item{projCoord}{A data frame with the projected coordinates with X and Y on the first and second colonne respectively}
 
 \item{plot}{Vector with the code of the plot}
 
@@ -32,9 +32,9 @@ This function return a data frame with :
 }
 }
 \description{
-This function cut all the plot in smaller rectangle pieces that you can give dimensions (with dimX and dimY), and give the
-coordinate of the grid in return.
-This function actually use the procrustes analysis to fit the rectangle you gave to the plot you have.
+This function divides a plot in subplots (with dimX and dimY) and gives the
+coordinates of the grid in return.
+This function uses a procrustes analysis to fit the rectangle you gave to the plot you have. #######????????
 }
 \examples{
 

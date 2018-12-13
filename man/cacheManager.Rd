@@ -13,7 +13,7 @@ cacheManager(nameFile)
 the path to the file we need
 }
 \description{
-The function creates a folder (only once) and then controls files that needed to be downloaded and
+The function creates a folder (only once) and then controls files that need to be downloaded and
 placed in this folder.
 }
 \section{Localisation}{

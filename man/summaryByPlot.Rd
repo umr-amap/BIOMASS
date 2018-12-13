@@ -2,38 +2,30 @@
 % Please edit documentation in R/summaryByPlot.R
 \name{summaryByPlot}
 \alias{summaryByPlot}
-\title{Summarize the matrix given by \code{\link{AGBmonteCarlo}} by plot (or subplot)}
+\title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
 summaryByPlot(AGB_simu, plot, subplot = plot)
 }
 \arguments{
-\item{AGB_simu}{Matrix which result for the function \code{\link{AGBmonteCarlo}} on the AGB_simu element of the list}
+\item{AGB_simu}{Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)}
 
 \item{plot}{Vector with the code of plot}
-
-\item{subplot}{vector with the code of the subplot}
 }
 \value{
 a data frame where :
 \describe{
-   \item{plot/subplot}{the code of the plot/subplot}
-   \item{AGB}{the mean of AGB for the plot or subplot}
-   \item{Cred_2.5}{the quantile 2.5\% for the plot or subplot}
-   \item{Cred_97.5}{the quantile 97.5\% for the plot or subplot}
+   \item{plot}{the code of the plot}
+   \item{AGB}{the mean of AGB for the plot}
+   \item{Cred_2.5}{the quantile 2.5\% for the plot}
+   \item{Cred_97.5}{the quantile 97.5\% for the plot}
 }
 }
 \description{
-This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot, or subplot 
-if given. 
-It's gives the mean, and the credibility intervalle [2.5\%, 97.5\%].
-
-For the trees who haven't subplot because the coordinate of the trees isn't in the range of the plot 
-(you can mark those by NA in the subplot vector), the AGB of those trees will be spread between the trees of the plot.
-More precisly, the AGB will be randomly add to the first tree in each subplots for the given plot, for each iteration 
-in the function \code{\link{AGBmonteCarlo}}.
-
-For the trees who haven't any attribute plots (mark as NA in the plot vector), the same treatment than earlier will apply
-expect for all the fist trees in all subplot (indepent of the plot).
+This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot.
+}
+\details{
+If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned 
+to a plot at each iteration of the AGB monte Carlo approach.
 }
 \examples{
 
@@ -49,7 +41,7 @@ KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
   stand = KarnatakaForest$plotId
 )
 
-# Propagating errors with a standard error in wood density in one plot
+# Propagating errors
 filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
 resultMC <- AGBmonteCarlo(
   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],

@@ -10,7 +10,7 @@ updateCache(nameFile = NULL)
 \item{nameFile}{The name of the file you want to update. If it's NULL the function will update all the files.}
 }
 \description{
-This function update the cache for the environemental variable, meaning the file :
+This function update the cache for the environmental variables:
 \itemize{
   \item wc2-5
   \item CWD

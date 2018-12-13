@@ -7,15 +7,15 @@
 numberCorner(longlat = NULL, projCoord = NULL, plot, origin, clockWise)
 }
 \arguments{
-\item{longlat}{(optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
+\item{longlat}{(optionnal) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).}
 
-\item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
+\item{projCoord}{(optionnal) data frame with the projected coordinates in X Y}
 
 \item{plot}{A vector of codes (names) of the plots}
 
 \item{origin}{A logical vector with TRUE corresponding of the origin of the axis of each plot.}
 
-\item{clockWise}{A logical, do you turn clock wise between the axis X and Y}
+\item{clockWise}{A logical, whether the numbering should be done in a clockwise (TRUE) or counterclockwise (FALSE) way.}
 }
 \value{
 A data frame with:
@@ -27,9 +27,8 @@ A data frame with:
 }
 }
 \description{
-To get the UTM coordinates from the latitude and longitude of the corners of a plot.
-The function also numbered the corner conter clockwise, respecting the origin of the axes for the plot.
-The corners are numbered from 1 to 4 for each plot, 1 being the origin of the axes
+Get the UTM coordinates from the latitude and longitude of the corners of a plot.
+The function also assign a number to the corners in a clockwise or counterclockwise way, with the number 1 for the XY origin.
 Corner numbering is done as followed:
 \itemize{
    \item axis X: the corner 1 to the corner 2
@@ -49,7 +48,7 @@ plot(coord, asp = 1)
 text(coord, labels = corner$corner, pos = 1)
 
 
-# if you turn anti clock wise
+# Using a counterclockwise way
 corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = FALSE)
 
 # Plot the plot

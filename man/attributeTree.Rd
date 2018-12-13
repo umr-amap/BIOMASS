@@ -2,14 +2,14 @@
 % Please edit documentation in R/attributeTree.R
 \name{attributeTree}
 \alias{attributeTree}
-\title{Attribute the tree to the subplot}
+\title{Attribute trees to subplots}
 \usage{
 attributeTree(xy, plot, coordAbs)
 }
 \arguments{
-\item{xy}{The coordinate of the trees for each plot}
+\item{xy}{The coordinates of the trees for each plot}
 
-\item{plot}{The label of the plot (same length as the number of row of xy)}
+\item{plot}{The label of the plot (same length as the number of rows of xy)}
 
 \item{coordAbs}{Output of the function \code{\link{cutPlot}}}
 }
@@ -22,7 +22,7 @@ Fonction to attribute the trees on each subplot, the trees that are at the exter
 }
 \examples{
 
-# trees relative coordinate
+# Trees relative coordinates
 xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
 
 
@@ -36,10 +36,10 @@ plot <- rep(c("plot1", "plot2"), each = 4)
 cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
 
 
-# The attribute the plot
+# Assign a plot to 200 trees
 plot <- rep(c("plot1", "plot2"), 100)
 
-# attribute the trees to subplot
+# attribute trees to subplots
 attributeTree(xy, plot, cut)
 }
 \author{

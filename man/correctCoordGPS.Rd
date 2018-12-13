@@ -2,7 +2,7 @@
 % Please edit documentation in R/correctCoordGPS.R
 \name{correctCoordGPS}
 \alias{correctCoordGPS}
-\title{Correct the GPS coordinate}
+\title{Correct the GPS coordinates}
 \usage{
 correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
   rangeY, maxDist = 10, drawPlot = F, rmOutliers = F)
@@ -12,34 +12,30 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 
 \item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
 
+\item{coordRel}{data frame with the plot relative coordinates in the same order than the longlat or UTMcoord}
+
+\item{rangeX}{a vector of length 2 giving the range for plot relative X coordinates}
+
+\item{rangeY}{a vector of length 2 giving the range for plot relative Y coordinates}
+
+\item{maxDist}{a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)}
+
+\item{drawPlot}{a logical if you want to display a graphical representation}
+
+\item{rmOutliers}{a logical if you want to remove the outliers from coordinates calculation}
+
 \item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
-
-\item{rangeX}{a vector of length equal 2 with the min of the range for X}
-
-\item{rangeY}{a vector of length equal 2 with the min of the range for Y}
-
-\item{maxDist}{a double with the maximum for the distance you want to use to make outliers}
-
-\item{drawPlot}{a logical if you want to draw the plot}
-
-\item{rmOutliers}{a logical if you want to remove the outliers}
 }
 \value{
-If you haven't outliers or rmOutliers = TRUE, there will be a list with :
+If you there are no outliers or rmOutliers = TRUE, a list with:
 \describe{
-   \item{corner}{a matrix with the coordinate of the corners whith no order in particular}
-   \item{polygon}{a spatial polygone}
-}
-However if you have outliers and rmOutliers = FALSE, there will be data frame with :
-\describe{
-   \item{outliers}{the line of your longlat or projCoord data frame, where it's an outliers}
-   \item{X}{the UTM coordinate X outlayer}
-   \item{Y}{the UTM coordinate X outlayer}
+   \item{corner}{a matrix with the coordinates of the corners}
+   \item{polygon}{a spatial polygon}
+   \item{outliers}{Coordinates lines considered as outliers, if any}
 }
 }
 \description{
-If you have multiple GPS coordinate for one plot, you can use this function to correct them and take the corner of the plot
-with the polygon associated.
+This function build the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 }
 \details{
 You must give one parameter between longlat and projCoord

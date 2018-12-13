@@ -1,0 +1,23 @@
+bibentry(
+  bibtype = "Article",
+  title = "BIOMASS : an {R} package for estimating above-ground biomass and its uncertainty in tropical forests",
+  volume = "8",
+  issn = "2041210X",
+  url = "http://doi.wiley.com/10.1111/2041-210X.12753",
+  doi = "10.1111/2041-210X.12753",
+  language = "en",
+  number = "9",
+  urldate = "2018-12-13",
+  journal = "Methods in Ecology and Evolution",
+  author = c(
+    person("Maxime", "Rejou-Mechain"),
+    person("Ariane", "Tanguy"),
+    person("Camille", "Piponiot"),
+    person("Jerome", "Chave"),
+    person("Bruno", "Herault")
+  ),
+  editor = person("Sarah", "Goslee"),
+  year = "2017",
+  
+  mheader = "To cite BIOMASS in publications use:"
+)

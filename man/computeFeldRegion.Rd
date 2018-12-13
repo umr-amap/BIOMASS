@@ -2,19 +2,19 @@
 % Please edit documentation in R/computeFeldRegion.R
 \name{computeFeldRegion}
 \alias{computeFeldRegion}
-\title{Retrieving the Feldpausch regions}
+\title{Retrieving Feldpausch regions}
 \usage{
 computeFeldRegion(coord, level = "region")
 }
 \arguments{
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 
-\item{level}{a string or a vector of string, the length must be matched the number of row of the parameter coord.
-This parameter will be used for grow the scale you which to look at for the Feldpausch regions. There are tree levels :
+\item{level}{a string or a vector of string, the length must match the number of rows of the parameter coord.
+This parameter gives the scale at which Feldpausch regions should be assigned. There are tree levels:
 \describe{
-   \item{region}{The smaller scale and the value by default}
-   \item{continent}{The medium scale, only the value which who are in Africa and America will be changed}
-   \item{world}{The larger scale, all the value will be replaced by "Pantropical"}
+   \item{region}{Models assign at sub-continent levels, value by default}
+   \item{continent}{Models assign at the Africa, South America, Asia and Australia levels}
+   \item{world}{Pantropical model}
 }}
 }
 \value{
@@ -22,7 +22,7 @@ The function returns a vector with the Feldpausch et al. (2012)'s regions that c
 incorporated in the \code{retrieveH} function.
 }
 \description{
-Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
+Extract the Feldpausch et al. (2012)'s regions using local coordinates.
 }
 \examples{
 #' # One study site
@@ -47,5 +47,5 @@ Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical f
 biomass estimates.} Biogeosciences, 9, 3381–3403.
 }
 \author{
-Arthur PERE, Ted FELDPAUSCH
+Arthur PERE
 }
