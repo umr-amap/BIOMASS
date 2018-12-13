@@ -89,12 +89,12 @@ cachePath <- function(path = NULL) {
 
 #' @keywords Internal
 checkTime <- function() {
-  if (!file.exists(cachePath(".last_check"))) {
-    writeLines(as.character(Sys.Date()), cachePath(".last_check"))
+  if (!file.exists(cachePath("last_check.txt"))) {
+    writeLines(as.character(Sys.Date()), cachePath("last_check.txt"))
   } else {
     check_interval <- 1830 # this message will appear every 5 years
 
-    last_check <- as.Date(readLines(cachePath(".last_check")))
+    last_check <- as.Date(readLines(cachePath("last_check.txt")))
     if ((Sys.Date() - last_check) > check_interval) {
       message(
         "You can verify if the cache is updated by using this function\n",
@@ -105,7 +105,7 @@ checkTime <- function() {
       )
 
       # update the flag
-      writeLines(as.character(Sys.Date()), cachePath(".last_check"))
+      writeLines(as.character(Sys.Date()), cachePath("last_check.txt"))
     }
   }
 
@@ -155,7 +155,7 @@ updateCache <- function(nameFile = NULL) {
     unzip(tmp, exdir = path)
 
     # update the flag
-    writeLines(as.character(Sys.Date()), cachePath(".last_check"))
+    writeLines(as.character(Sys.Date()), cachePath("last_check.txt"))
 
     message("Your file ", nameFile, " has been download and/or deziped in this folder : ", path)
     return()
