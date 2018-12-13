@@ -1,6 +1,6 @@
 #' Retrieving Feldpausch regions
 #'
-#' Extract the Feldpausch et al. (2012)'s regions thanks to local coordinates.
+#' Extract the Feldpausch et al. (2012)'s regions using local coordinates.
 #'
 #' @inheritParams computeE
 #' @param level a string or a vector of string, the length must match the number of rows of the parameter coord.
@@ -8,7 +8,7 @@
 #' \describe{
 #'    \item{region}{Models assign at sub-continent levels, value by default}
 #'    \item{continent}{Models assign at the Africa, South America, Asia and Australia levels}
-#'    \item{world}{Pantropical model }
+#'    \item{world}{Pantropical model}
 #' }
 #'
 #' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
@@ -91,10 +91,11 @@ computeFeldRegion <- function(coord, level = "region") {
     pattern = ".+(Africa)", replacement = "Africa",
     FeldRegion[ level == "continent" ]
   )
+  
   FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Amazonia|Shield)", replacement = "SAmerica",
     FeldRegion[ level == "continent" ]
   )
-
+  
   return(FeldRegion)
 }

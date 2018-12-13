@@ -19,7 +19,7 @@ if (getRversion() >= "2.15.1") {
 #' @param projCoord (optionnal) data frame with the projected coordinates in X Y
 #' @param plot A vector of codes (names) of the plots
 #' @param origin A logical vector with TRUE corresponding of the origin of the axis of each plot.
-#' @param clockWise A logical, whether the numbering should be done in a clockwise (TRUE) or counterclockwise (FALSE) way. FALSE by default.
+#' @param clockWise A logical, whether the numbering should be done in a clockwise (TRUE) or counterclockwise (FALSE) way.
 #'
 #' @return A data frame with:
 #' \describe{

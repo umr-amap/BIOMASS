@@ -23,12 +23,7 @@
 #' \describe{
 #'    \item{corner}{a matrix with the coordinates of the corners}
 #'    \item{polygon}{a spatial polygon}
-#' }
-#' If you have outliers and rmOutliers = FALSE, a data frame with:
-#' \describe{
-#'    \item{outliers}{the line of your longlat or UTMcoord data frame, where it's an outliers}
-#'    \item{X}{the UTM coordinates X outlayer}
-#'    \item{Y}{the UTM coordinates X outlayer}
+#'    \item{outliers}{Coordinates lines considered as outliers, if any}
 #' }
 #'
 #'

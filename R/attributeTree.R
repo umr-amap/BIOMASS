@@ -22,7 +22,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @examples
 #' 
-#' # trees relative coordinate
+#' # Trees relative coordinates
 #' xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
 #' 
 #' 
@@ -36,7 +36,7 @@ if (getRversion() >= "2.15.1") {
 #' cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
 #' 
 #' 
-#' # The attribute the plot ######???
+#' # Assign a plot to 200 trees
 #' plot <- rep(c("plot1", "plot2"), 100)
 #' 
 #' # attribute trees to subplots
@@ -50,17 +50,17 @@ attributeTree <- function(xy, plot, coordAbs) {
   }
 
   if (nrow(xy) != length(plot)) {
-    stop("Your plot vector haven't the same length than the number of row of xy")
+    stop("Your plot vector have not the same length with the number of row of xy")
   }
   if (!is.data.frame(coordAbs)) {
-    stop("Your parameter 'CoordAbs' isn't a data frame")
+    stop("Your parameter 'CoordAbs' is not a data frame")
   }
 
   if (length(unique(plot)) < length(unique(coordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(coordAbs$Plot)))) {
     warning(
       "The plot(s) ",
       sort(unique(plot))[ sort(unique(plot)) != sort(unique(coordAbs$Plot))],
-      " won't be computed but will appeared as the label of the plot"
+      " will not be computed but will appear as the label of the plot"
     )
   }
 
@@ -68,7 +68,7 @@ attributeTree <- function(xy, plot, coordAbs) {
   setnames(Coord, colnames(Coord), c("X", "Y", "Plot"))
   setDT(coordAbs)
 
-  # Attribute the tree to there subplot ######??? repeated too many times
+  # Attribute the trees to the subplot
   gridsize <- max(coordAbs[, diff(XRel)])
   Coord[, ":="(Xplot = floor(X / gridsize), Yplot = floor(Y / gridsize))]
 

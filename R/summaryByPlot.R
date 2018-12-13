@@ -5,35 +5,24 @@ if (getRversion() >= "2.15.1") {
 }
 
 
-#' Summary of AGB error propagation by plot
-#' Summarize the matrix given by \code{\link{AGBmonteCarlo}} by plot (or subplot)
+#' Summarize by plot (or subplot) the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot, or subplot 
-#' if given. 
-#' It's gives the mean, and the credibility intervalle [2.5\%, 97.5\%].
-#' 
-#' For the trees who haven't subplot because the coordinate of the trees isn't in the range of the plot 
-#' (you can mark those by NA in the subplot vector), the AGB of those trees will be spread between the trees of the plot.
-#' More precisly, the AGB will be randomly add to the first tree in each subplots for the given plot, for each iteration 
-#' in the function \code{\link{AGBmonteCarlo}}.
-#' 
-#' For the trees who haven't any attribute plots (mark as NA in the plot vector), the same treatment than earlier will apply
-#' expect for all the fist trees in all subplot (indepent of the plot).
-#' This function returns a summary of the posterior distribution of AGB values per plots. 
-#' The AGB of trees that cannot be assigned a plot are randomly assigned to a plot at each iteration of the AGB monte Carlo approach
+#' This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot.
 #'  
-#'
-#' @param plot Vector with the code of plot
-#' @param subplot vector with the code of the subplot
+#' @details 
+#' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned 
+#' to a plot at each iteration of the AGB monte Carlo approach.
+#' 
 #' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)
+#' @param plot Vector with the code of plot
 #'
 #' @return a data frame where :
 #' \describe{
-#'    \item{plot/subplot}{the code of the plot/subplot}
-#'    \item{AGB}{the mean of AGB for the plot or subplot}
-#'    \item{Cred_2.5}{the quantile 2.5\% for the plot or subplot}
-#'    \item{Cred_97.5}{the quantile 97.5\% for the plot or subplot}
+#'    \item{plot}{the code of the plot}
+#'    \item{AGB}{the mean of AGB for the plot}
+#'    \item{Cred_2.5}{the quantile 2.5\% for the plot}
+#'    \item{Cred_97.5}{the quantile 97.5\% for the plot}
 #' }
 #'
 #' @export
