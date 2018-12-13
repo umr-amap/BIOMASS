@@ -6,9 +6,11 @@ getData("worldclim", var = "bio", res = 2.5, path = "data-raw/climate_variable")
 
 paste0("data-raw/climate_variable/wc2-5/", c("bio4\\.*", "bio15\\.*"))
 
-files = unlist(sapply(c("bio4", "bio15"), function(x) dir("data-raw/climate_variable/wc2-5", x, full.names = T), 
-              simplify = F), 
-       use.names = F)
+files <- unlist(sapply(c("bio4", "bio15"), function(x) dir("data-raw/climate_variable/wc2-5", x, full.names = T),
+  simplify = F
+),
+use.names = F
+)
 
 zip("data-raw/climate_variable/wc2-5.zip", files = files, flags = "-rj9X")
 
