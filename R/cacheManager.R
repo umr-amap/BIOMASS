@@ -79,6 +79,7 @@ cacheManager <- function(nameFile) {
 #' @importFrom rappdirs user_data_dir
 #' @keywords Internal
 cachePath <- function(path = NULL) {
+  # give the path of the cache
   basePath <- user_data_dir("BIOMASS")
   if (!is.null(path)) {
     basePath <- file.path(basePath, path)
@@ -89,6 +90,7 @@ cachePath <- function(path = NULL) {
 
 #' @keywords Internal
 checkTime <- function() {
+  # Check if it's time to update
   if (!file.exists(cachePath("last_check.txt"))) {
     writeLines(as.character(Sys.Date()), cachePath("last_check.txt"))
   } else {
