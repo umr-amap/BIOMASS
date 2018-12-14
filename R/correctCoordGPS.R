@@ -67,7 +67,8 @@
 #' )
 #' }
 #' 
-correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY, maxDist = 10, drawPlot = F, rmOutliers = F) {
+correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY, 
+                            maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE) {
 
 
   # parameters verification -------------------------------------------------
@@ -167,13 +168,12 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
   if (length(outliers) != 0 & (nrow(projCoord) - length(outliers)) > 3 & !rmOutliers) {
-    message(
+    warning(
       "Be carefull, you may have GNSS measurement outliers. \n",
       "Removing them may improve the georeferencing of your plot (see  the rmOutliers argument)."
     )
-    return(cbind(outliers, projCoord[outliers, ]))
   }
 
 
-  return(list(corner = cornerCoord, polygon = sps))
+  return(list(corner = cornerCoord, polygon = sps, outliers = outliers))
 }

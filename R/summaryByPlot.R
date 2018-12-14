@@ -50,19 +50,16 @@ if (getRversion() >= "2.15.1") {
 #'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 #' )
 #' 
-#' plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId %in% c("BSP20", "BSP14") ]
+#' plot <- KarnatakaForest$plotId[ filt ]
 #' 
 #' # The summary by plot
 #' summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)
-summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
+summaryByPlot <- function(AGB_simu, plot) {
 
 
   # parameters verification -------------------------------------------------
   if (length(plot) != nrow(AGB_simu)) {
     stop("Your plot vector haven't the same length as your number of row in the matrix")
-  }
-  if (length(subplot) != nrow(AGB_simu)) {
-    stop("Your subplot vector haven't the same length as your number of row in the matrix")
   }
   if (!is.matrix(AGB_simu)) {
     stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo'")
@@ -74,11 +71,14 @@ summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
 
 
 
-  Plot <- data.table(plot = plot, subplot = subplot)
-  indice_tree <- Plot[is.na(subplot), .I, by = plot]
+  Plot <- data.table(plot = plot)
+  indice_tree <- Plot[is.na(plot), .I, by = plot]
+  
+  # filter if there is there is NA in the AGB_simu
+  filter = rowSums( is.na(AGB_simu) ) > 0
 
-  # take the first tree in the database by subplot
-  indice_first <- Plot[!is.na(subplot), .(indice_line = first(.I), plot = unique(plot)), by = subplot]
+  # take the first tree in the database by plot
+  indice_first <- Plot[!is.na(plot) & !filter, .(indice_line = first(.I), plot = unique(plot)), by = plot]
 
 
 
@@ -90,17 +90,13 @@ summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
     # indice_line : a random sample of matrix line inside the plot without the trees to distribute
     # indice_col : the column index of the matrix by I
     mySample <- function(plot1, n) {
-      if (!is.na(plot1)) {
-        return(indice_first[plot == plot1, sample(indice_line, n, replace = T)])
-      } else {
         return(samples = indice_first[, sample(indice_line, n, replace = T)])
-      }
     }
     n <- ncol(AGB_simu)
     samples <- indice_tree[, .(indice_line = mySample(plot, n), indice_col = 1:n), by = I]
 
     # remove the index for the tree to distribute when it is NA
-    samples <- samples[ !(I %in% unique(which(is.na(AGB_simu), arr.ind = T)[, 1])) ]
+    samples <- samples[ !(I %in% filter) ]
   }
 
 
@@ -130,11 +126,7 @@ summaryByPlot <- function(AGB_simu, plot, subplot = plot) {
     ))
   }
 
-  AGB <- Plot[!is.na(subplot), mySummary(.I, AGB_simu), by = subplot]
-
-  if (all(na.omit(plot == subplot))) {
-    setnames(AGB, "subplot", "plot")
-  }
+  AGB <- Plot[!is.na(plot), mySummary(.I, AGB_simu), by = plot]
 
   setDF(AGB)
 

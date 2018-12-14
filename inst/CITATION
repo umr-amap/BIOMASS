@@ -1,5 +1,5 @@
 bibentry(
-  bibtype = "Article",
+  bibtype = "article",
   title = "BIOMASS : an {R} package for estimating above-ground biomass and its uncertainty in tropical forests",
   volume = "8",
   issn = "2041210X",
