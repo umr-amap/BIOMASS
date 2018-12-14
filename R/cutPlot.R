@@ -116,7 +116,7 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
               (XRel == X + gridsize & YRel == Y) | 
               (XRel == X + gridsize & YRel == Y + gridsize) | 
               (XRel == X & YRel == Y + gridsize), 
-            .(subplot = paste(plot, X/gridsize, Y/gridsize, sep = "_"), XRel, YRel, XAbs, YAbs)][c(1,2,4,3)]
+            .(subplot = paste(plot, X/gridsize, Y/gridsize, sep = "_"), XRel, YRel, XAbs, YAbs)][c(1,2,4,3), corner := seq(4)]
       
     }))
     
