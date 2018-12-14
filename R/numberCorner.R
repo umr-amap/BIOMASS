@@ -1,6 +1,6 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "n.row", "corner", "X", "Y", "Plot"
+    "n.row", "corner", "X", "Y", "plot"
   ))
 }
 
@@ -23,7 +23,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @return A data frame with:
 #' \describe{
-#'   \item{Plot}{The code of the plot}
+#'   \item{plot}{The code of the plot}
 #'   \item{X}{The coordinates X in UTM}
 #'   \item{Y}{The coordinates Y in UTM}
 #'   \item{corner}{The corner numbers}
@@ -100,8 +100,8 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   # data table --------------------------------------------------------------
 
   if (!is.null(longlat)) {
-    Coord <- data.table(longlat, Plot = plot)
-    setnames(Coord, colnames(Coord), new = c("long", "lat", "Plot"))
+    Coord <- data.table(longlat, plot = plot)
+    setnames(Coord, colnames(Coord), new = c("long", "lat", "plot"))
 
     Coord <- Coord[setDT(latlong2UTM(cbind(long, lat))),
       on = c("long", "lat")
@@ -109,8 +109,8 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   }
 
   if (!is.null(projCoord)) {
-    Coord <- data.table(projCoord, Plot = plot)
-    setnames(Coord, colnames(Coord), new = c("X", "Y", "Plot"))
+    Coord <- data.table(projCoord, plot = plot)
+    setnames(Coord, colnames(Coord), new = c("X", "Y", "plot"))
   }
 
   Coord[, origin := origin]
@@ -155,7 +155,7 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
     return(out)
   }
 
-  Coord[, corner := cornerFun(X, Y, origin, clockWise), by = Plot]
+  Coord[, corner := cornerFun(X, Y, origin, clockWise), by = plot]
 
-  return(as.data.frame(Coord[, .(Plot, X, Y, corner)]))
+  return(as.data.frame(Coord[, .(plot, X, Y, corner)]))
 }
