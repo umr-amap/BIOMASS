@@ -20,7 +20,8 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @return This function return a data frame with :
 #' \describe{
-#'   \item{Plot}{ The code of the plot you use }
+#'   \item{plot}{ The code of the plot you use }
+#'   \item{subplot}{ The code of the subplot automaticaly generated }
 #'   \item{XRel}{ The relative coordinate for the axis X (following the corner 1->2) for the plot }
 #'   \item{YRel}{ The relative coordinate for the axis Y (following the corner 1->4) for the plot }
 #'   \item{XAbs}{ The absolute coordinate (projected) for the axis X (following the corner 1->2)}
@@ -73,13 +74,14 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
 
 
 
-  Coord <- data.table(Plot = plot, X = projCoord[, 1], Y = projCoord[, 2], corner = corner)
-  dimRel <- data.table(Plot = unique(plot), dimX = dimX, dimY = dimY)
+  Coord <- data.table(plot = plot, X = projCoord[, 1], Y = projCoord[, 2], corner = corner)
+  Coord = Coord[order(corner), .SD, by = plot]
+  dimRel <- data.table(plot = unique(plot), dimX = dimX, dimY = dimY)
 
 
   # Do the grid in the plot and calcul the coordinate absolute of the points of the grid
   grid <- function(data, gridsize) {
-    a <- as.matrix(data[order(corner), .(X, Y)])
+    a <- as.matrix(data[, .(X, Y)])
 
     # Do the matrix for the procrust problem
     b <- matrix(0, nrow = 4, ncol = 2)
@@ -101,7 +103,27 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
     return(data.table(XRel = c[, 1], YRel = c[, 2], XAbs = coordAbs[, 1], YAbs = coordAbs[, 2]))
   }
 
-  Coord <- setDF(Coord[dimRel, on = "Plot"][, grid(.SD, gridsize), by = "Plot"])
-
-  return(Coord)
+  Coord <- Coord[dimRel, on = "plot"][, grid(.SD, gridsize), by = plot]
+  
+  cornerCoordinate = function(data){
+    
+    rbindlist(apply(data[XRel < max(XRel) & YRel < max(YRel), -1], 1, function(x){
+      
+      X = x["XRel"]
+      Y = x["YRel"]
+      
+      data[ (XRel == X & YRel == Y) | 
+              (XRel == X + gridsize & YRel == Y) | 
+              (XRel == X + gridsize & YRel == Y + gridsize) | 
+              (XRel == X & YRel == Y + gridsize), 
+            .(subplot = paste(plot, X/gridsize, Y/gridsize, sep = "_"), XAbs, YAbs, XRel, YRel)][c(1,2,4,3)]
+      
+    }))
+    
+  }
+  
+  Coord = Coord[, cornerCoordinate(.SD), by = plot, .SDcols = colnames(Coord)]
+  
+  
+  return(as.data.frame(Coord))
 }
