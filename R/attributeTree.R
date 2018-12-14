@@ -56,41 +56,25 @@ attributeTree <- function(xy, plot, coordAbs) {
     stop("Your parameter 'CoordAbs' is not a data frame")
   }
 
-  if (length(unique(plot)) < length(unique(coordAbs$Plot)) && any(sort(unique(plot)) != sort(unique(coordAbs$Plot)))) {
+  if (length(unique(plot)) < length(unique(coordAbs$plot)) && any(sort(unique(plot)) != sort(unique(coordAbs$plot)))) {
     warning(
       "The plot(s) ",
-      sort(unique(plot))[ sort(unique(plot)) != sort(unique(coordAbs$Plot))],
+      sort(unique(plot))[ sort(unique(plot)) != sort(unique(coordAbs$plot))],
       " will not be computed but will appear as the label of the plot"
     )
   }
 
-  Coord <- data.table(xy, Plot = plot)
-  setnames(Coord, colnames(Coord), c("X", "Y", "Plot"))
+  Coord <- data.table(xy, plot = plot)
+  setnames(Coord, colnames(Coord), c("X", "Y", "plot"))
   setDT(coordAbs)
 
   # Attribute the trees to the subplot
-  gridsize <- max(coordAbs[, diff(XRel)])
-  Coord[, ":="(Xplot = floor(X / gridsize), Yplot = floor(Y / gridsize))]
+  invisible(lapply(split(coordAbs, by = "subplot", keep.by = T), function(x){
+    
+    Coord[plot == x$plot[1] & X %between% range(x$XRel) & Y %between% range(x$YRel), 
+          subplot := x$subplot[1]]
 
-
-  # Assign NA to the trees that are out of the limits of the plot
-  Coord[coordAbs[, .(Xmax = max(XRel), Ymax = max(YRel)), by = Plot],
-    on = "Plot",
-    ":="(Xmax = i.Xmax, Ymax = i.Ymax)
-  ]
-  Coord[X < 0 | X > Xmax, Xplot := NA_integer_]
-  Coord[Y < 0 | Y > Ymax, Yplot := NA_integer_]
-
-
-  # if trees are at the superior limit of the plot
-  Coord[, ":="(Xmax = Xmax / gridsize, Ymax = Ymax / gridsize), by = Plot]
-  Coord[Xplot == Xmax, Xplot := Xplot - 1]
-  Coord[Yplot == Ymax, Yplot := Yplot - 1]
-
-  # assign the subplot and remove it if a tree is out of bounds
-  Coord[, subplot := paste(Plot, Xplot, Yplot, sep = "_")]
-  Coord[is.na(Xplot) | is.na(Yplot), subplot := NA_character_]
-  Coord[is.na(Plot), subplot := NA_character_]
+  }))
 
   return(Coord[, subplot])
 }
