@@ -56,14 +56,6 @@ attributeTree <- function(xy, plot, coordAbs) {
     stop("Your parameter 'CoordAbs' is not a data frame")
   }
 
-  if (length(unique(plot)) < length(unique(coordAbs$plot)) && any(sort(unique(plot)) != sort(unique(coordAbs$plot)))) {
-    warning(
-      "The plot(s) ",
-      sort(unique(plot))[ sort(unique(plot)) != sort(unique(coordAbs$plot))],
-      " will not be computed but will appear as the label of the plot"
-    )
-  }
-
   Coord <- data.table(xy, plot = plot)
   setnames(Coord, colnames(Coord), c("X", "Y", "plot"))
   setDT(coordAbs)
