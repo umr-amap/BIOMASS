@@ -163,7 +163,7 @@ dataHfeld <- retrieveH(
 ```{r, eval=F, cache=CACHE}
 dataHchave <- retrieveH(
   D = KarnatakaForestsub$D,
-  coord = cbind(KarnatakaForestsub$long, KarnatakaForestsub$lat)
+  coord = KarnatakaForestsub[, c("long", "lat")]
 )
 ```
 
@@ -194,7 +194,7 @@ AGBplot <- sapply(AGBPlotList, sum)
 **Compute AGB(Mg) per tree without height information (Eq. 7 from Chave et al. (2014))**
 ```{r warning=F, eval=F, cache=CACHE}
 AGBPlotListChave <- by(KarnatakaForestsub, KarnatakaForestsub$plotId,
-  function(x) computeAGB(D = x$D, WD = x$WD, coord = cbind(x$long, x$lat)),
+  function(x) computeAGB(D = x$D, WD = x$WD, coord = x[, c("long", "lat")],
   simplify = F
 )
 AGBplotChave <- sapply(AGBPlotListChave, sum)
@@ -249,7 +249,7 @@ resultMC <- AGBmonteCarlo(
   D = KarnatakaForestsub$D,
   WD = KarnatakaForestsub$WD,
   errWD = KarnatakaForestsub$sdWD,
-  coord = cbind(KarnatakaForestsub$long, KarnatakaForestsub$lat),
+  coord = KarnatakaForestsub[, c("long", "lat")],
   Dpropag = "chave2004"
 )
 Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)

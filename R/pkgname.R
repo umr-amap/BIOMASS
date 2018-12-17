@@ -11,7 +11,7 @@
 #' \dontrun{
 #' library(BIOMASS)
 #' 
-#' # Dataset containing plot inventory data from Karnataka,India (Ramesh et al. 2010)
+#' # Dataset containing plot inventory data from Karnataka, India (Ramesh et al. 2010)
 #' data(KarnatakaForest)
 #' str(KarnatakaForest)
 #' 
@@ -47,7 +47,7 @@
 #' # TREE HEIGHT
 #' 
 #' # Compare different local H-D models
-#' HDmodel <- modelHD(
+#' modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H,
 #'   drawGraph = TRUE, useWeight = TRUE
 #' )
@@ -119,15 +119,11 @@
 #' KarnatakaForest$HfeldRSE <- dataHfeld$RSE
 #' 
 #' # Per plot using the local HD model constructed above (modelHD)
-#' resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) AGBmonteCarlo(
-#'       D = x$D, WD = x$WD, H = x$H, errWD = x$sdWD,
+#' resultMC <- AGBmonteCarlo(
+#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
 #'       HDmodel = HDmodel, Dpropag = "chave2004"
-#'     ),
-#'   simplify = F
-#' )
-#' meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
-#' credperplot <- sapply(resultMC, "[", 4)
+#'     )
+#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' 
 #' # Per plot using the Feldpaush regional HD averaged model
 #' resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
@@ -141,16 +137,11 @@
 #' credperplotFeld <- sapply(resultMC, "[", 4)
 #' 
 #' # Per plot using Chave et al. (2014) Equation 7
-#' resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) AGBmonteCarlo(
-#'       D = x$D, WD = x$WD, errWD = x$sdWD,
-#'       coord = cbind(x$long, x$lat),
-#'       Dpropag = "chave2004"
-#'     ),
-#'   simplify = F
-#' )
-#' meanAGBperplotChave <- unlist(sapply(resultMC, "[", 1))
-#' credperplotChave <- sapply(resultMC, "[", 4)
+#' resultMC <- AGBmonteCarlo(
+#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
+#'       coord = KarnatakaForest[, c("long", "lat")],
+#'       Dpropag = "chave2004")
+#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' }
 #' @keywords internal
 "_PACKAGE"
