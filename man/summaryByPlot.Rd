@@ -4,10 +4,11 @@
 \alias{summaryByPlot}
 \title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_simu, plot, subplot = plot)
+summaryByPlot(AGB_simu, plot)
 }
 \arguments{
-\item{AGB_simu}{Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)}
+\item{AGB_simu}{Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list), 
+or just the result of the function \code{\link{AGBmonteCarlo}}}
 
 \item{plot}{Vector with the code of plot}
 }
@@ -24,7 +25,7 @@ a data frame where :
 This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot.
 }
 \details{
-If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned 
+If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 to a plot at each iteration of the AGB monte Carlo approach.
 }
 \examples{
@@ -48,7 +49,7 @@ resultMC <- AGBmonteCarlo(
   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 )
 
-plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId \%in\% c("BSP20", "BSP14") ]
+plot <- KarnatakaForest$plotId[ filt ]
 
 # The summary by plot
 summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)

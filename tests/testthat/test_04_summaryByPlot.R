@@ -21,7 +21,8 @@ plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId %in% c("BSP20", "BSP14") 
 
 context("summary by plot")
 test_that("summary by plot", {
-  sum <- summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)
+  sum <- summaryByPlot(resultMC$AGB_simu, plot)
+  expect_equal(sum, summaryByPlot(resultMC, plot))
 
   expect_is(sum, "data.frame")
   expect_equal(nrow(sum), length(unique(plot)))

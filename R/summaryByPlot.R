@@ -14,7 +14,8 @@ if (getRversion() >= "2.15.1") {
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach.
 #'
-#' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)
+#' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list), 
+#' or just the result of the function \code{\link{AGBmonteCarlo}}
 #' @param plot Vector with the code of plot
 #'
 #' @return a data frame where :
@@ -58,12 +59,16 @@ summaryByPlot <- function(AGB_simu, plot) {
 
 
   # parameters verification -------------------------------------------------
+  if(is.list(AGB_simu)){
+    AGB_simu = AGB_simu$AGB_simu
+  }
+  if (!is.matrix(AGB_simu)) {
+    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result")
+  }
   if (length(plot) != nrow(AGB_simu)) {
     stop("Your plot vector haven't the same length as your number of row in the matrix")
   }
-  if (!is.matrix(AGB_simu)) {
-    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo'")
-  }
+  
 
 
 
