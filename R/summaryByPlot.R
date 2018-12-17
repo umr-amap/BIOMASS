@@ -63,7 +63,7 @@ summaryByPlot <- function(AGB_simu, plot) {
     AGB_simu = AGB_simu$AGB_simu
   }
   if (!is.matrix(AGB_simu)) {
-    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result")
+    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result of the function")
   }
   if (length(plot) != nrow(AGB_simu)) {
     stop("Your plot vector haven't the same length as your number of row in the matrix")
