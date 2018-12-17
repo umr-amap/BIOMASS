@@ -15,56 +15,47 @@ weibullFunction <- function(data, weight = NULL) {
   maxIter <- 50
   converge <- FALSE
 
-  if (is.null(weight)) {
-    while (converge == FALSE && count <= 10) {
-      tt <- tryCatch(nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
-        start = init,
-        data = data,
-        control = nls.lm.control(maxiter = maxIter)
-      ),
-      error = function(e) e,
-      warning = function(w) w
-      )
+  if (anyNA(weight)) weight <- NULL
 
-      if (is(tt, "warning")) {
-        count <- count + 1
-        maxIter <- maxIter + 50
+  while (converge == FALSE && count <= 10) {
+    tt <- tryCatch({
+      if (is.null(weight)) {
+        nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
+          start = init,
+          control = nls.lm.control(maxiter = maxIter)
+        )
       } else {
-        converge <- TRUE
+        nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
+          start = init,
+          weights = weight,
+          control = nls.lm.control(maxiter = maxIter)
+        )
       }
-    }
+    },
+    error = function(e) e,
+    warning = function(w) w
+    )
 
-    model <- nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
+    if (is(tt, "warning")) {
+      count <- count + 1
+      maxIter <- maxIter + 50
+    } else {
+      converge <- TRUE
+    }
+  }
+
+  model <- if (is.null(weight)) {
+    nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
       start = init,
-      data = data,
       control = nls.lm.control(maxiter = maxIter)
     )
   } else {
-    while (converge == FALSE && count <= 10) {
-      tt <- tryCatch(nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
-        start = init,
-        data = data,
-        weights = weight,
-        control = nls.lm.control(maxiter = maxIter)
-      ),
-      error = function(e) e,
-      warning = function(w) w
-      )
-
-      if (is(tt, "warning")) {
-        count <- count + 1
-        maxIter <- maxIter + 50
-      } else {
-        converge <- TRUE
-      }
-    }
-
-    model <- nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
+    nlsLM(H ~ a * (1 - exp(-(D / b)^c)),
       start = init,
-      data = data,
       weights = weight,
       control = nls.lm.control(maxiter = maxIter)
     )
   }
+
   return(model)
 }
