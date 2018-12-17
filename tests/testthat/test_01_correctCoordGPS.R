@@ -16,38 +16,58 @@ context("correct coord GPS")
 test_that("correct coord GPS in UTM", {
 
   # whith max dist equal 10
-  expect_message(
+  expect_warning(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100)),
     "Be carefull, you may have GNSS measurement outliers"
   )
-  corr <- suppressMessages(
+  corr <- suppressWarnings(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100))
   )
-  expect_equal(dim(corr), c(9, 3))
-  expect_is(corr, "data.frame")
+  expect_is(corr, "list")
+  expect_length(corr, 3)
+  expect_equal(names(corr), c("corner", "polygon", "outliers"))
+
+  expect_is(corr$corner, "matrix")
+  expect_is(corr$polygon, "SpatialPolygons")
+  expect_is(corr$outliers, "integer")
+
+  expect_length(corr$outliers, 9)
+  expect_equal(dim(corr$corner), c(4, 2))
+
 
   # with max dist equal 15
-  expect_message(
+  expect_warning(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 15),
     "Be carefull, you may have GNSS measurement outliers"
   )
-  corr <- suppressMessages(
+  corr <- suppressWarnings(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 15)
   )
-  expect_equal(dim(corr), c(6, 3))
-  expect_is(corr, "data.frame")
+  expect_length(corr$outliers, 6)
 
   # with max dist equal 20 there isn't outliers anymore
-  expect_failure(expect_message(
+  expect_failure(expect_warning(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 20),
     "Be carefull, you may have GNSS measurement outliers"
   ))
-  corr <- correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 20)
-  expect_is(corr, "list")
-  expect_length(corr, 2)
-  expect_equal(names(corr), c("corner", "polygon"))
-  expect_equal(dim(corr$corner), c(4, 2))
-  expect_is(corr$polygon, "SpatialPolygons")
+
+
+  # with rmOutliers = TRUE
+  expect_failure(expect_warning(
+    correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE),
+    "Be carefull, you may have GNSS measurement outliers"
+  ))
+
+  corr_2 <- suppressWarnings(
+    correctCoordGPS(
+      projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100),
+      maxDist = 15, rmOutliers = TRUE
+    )
+  )
+
+  expect_equal(corr$outliers, corr_2$outliers)
+  expect_failure(expect_equal(corr$corner, corr_2$corner))
+  expect_failure(expect_equal(corr$polygon, corr_2$polygon))
 })
 
 
@@ -60,55 +80,75 @@ test_that("correct coord GPS in long lat", {
   ))
 
   # whith max dist equal 10
-  expect_message(
+  expect_warning(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100)),
     "Be carefull, you may have GNSS measurement outliers"
   )
-  corr <- suppressMessages(
+  corr <- suppressWarnings(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100))
   )
-  expect_equal(dim(corr), c(9, 3))
-  expect_is(corr, "data.frame")
+  expect_is(corr, "list")
+  expect_length(corr, 3)
+  expect_equal(names(corr), c("corner", "polygon", "outliers"))
+
+  expect_is(corr$corner, "matrix")
+  expect_is(corr$polygon, "SpatialPolygons")
+  expect_is(corr$outliers, "integer")
+
+  expect_length(corr$outliers, 9)
+  expect_equal(dim(corr$corner), c(4, 2))
+
 
   # with max dist equal 15
-  expect_message(
+  expect_warning(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 15),
     "Be carefull, you may have GNSS measurement outliers"
   )
-  corr <- suppressMessages(
+  corr <- suppressWarnings(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 15)
   )
-  expect_equal(dim(corr), c(6, 3))
-  expect_is(corr, "data.frame")
+  expect_length(corr$outliers, 6)
 
   # with max dist equal 20 there isn't outliers anymore
-  expect_failure(expect_message(
+  expect_failure(expect_warning(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 20),
     "Be carefull, you may have GNSS measurement outliers"
   ))
-  corr <- correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = 20)
-  expect_is(corr, "list")
-  expect_length(corr, 2)
-  expect_equal(names(corr), c("corner", "polygon"))
-  expect_equal(dim(corr$corner), c(4, 2))
-  expect_is(corr$polygon, "SpatialPolygons")
+
+
+  # with rmOutliers = TRUE
+  expect_failure(expect_warning(
+    correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE),
+    "Be carefull, you may have GNSS measurement outliers"
+  ))
+
+  corr_2 <- suppressWarnings(
+    correctCoordGPS(
+      longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100),
+      maxDist = 15, rmOutliers = TRUE
+    )
+  )
+
+  expect_equal(corr$outliers, corr_2$outliers)
+  expect_failure(expect_equal(corr$corner, corr_2$corner))
+  expect_failure(expect_equal(corr$polygon, corr_2$polygon))
 })
 
 
 
 test_that("correct coord GPS error", {
-  expect_error(correctCoordGPS(), "one system of coordinate")
+  expect_error(correctCoordGPS(), "Give at least one set of coordinates")
   expect_error(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = 52, rangeY = 53),
-    "length equal to 2"
+    "must be of length 2"
   )
   expect_error(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = c(15, 0)),
-    "one double"
+    "Your argument maxDist must be of length 1"
   )
   expect_error(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 40), rangeY = c(0, 40)),
-    "The coordRel must be inside the range"
+    "coordRel must be inside the X and Y ranges"
   )
   expect_error(
     correctCoordGPS(projCoord = projCoord, coordRel = rbind(coordRel, c(40, 40)), rangeX = c(0, 100), rangeY = c(0, 100)),
@@ -117,6 +157,6 @@ test_that("correct coord GPS error", {
 
   expect_error(
     correctCoordGPS(longlat = c(15, 12), projCoord = projCoord),
-    "too much arguments"
+    "Give only one set of coordinates"
   )
 })

@@ -38,10 +38,6 @@ test_that("summary by plot error", {
     "Your plot vector"
   )
   expect_error(
-    summaryByPlot(plot, subplot = plot[1:10], AGB_simu = resultMC$AGB_simu),
-    "Your subplot vector"
-  )
-  expect_error(
     summaryByPlot(plot, AGB_simu = as.data.frame(resultMC$AGB_simu)),
     "The AGB_simu must be a matrix"
   )

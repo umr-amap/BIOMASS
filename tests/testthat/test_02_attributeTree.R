@@ -18,6 +18,8 @@ plot <- rep(c("plot1", "plot2"), 5)
 context("attribute the trees")
 test_that("attribute the trees", {
   a <- attributeTree(xy, plot, cut)
+
+  expect_is(a, "character")
   expect_length(a, nrow(xy))
 
   expect_equal(
@@ -35,7 +37,6 @@ test_that("attribute the trees error", {
   expect_error(attributeTree(xy, plot, as.matrix(cut)), "data frame")
 
   plot[plot == "plot2"] <- "plot1"
-  expect_warning(attributeTree(xy, plot, cut), "computed but will appeared")
 
   xy <- rbind(xy, c(0, 300))
   xy <- rbind(xy, c(300, 0))
@@ -43,5 +44,5 @@ test_that("attribute the trees error", {
 
   plot <- rep(c("plot1", "plot2"), each = 4, length.out = nrow(xy))
 
-  expect_true(all(is.na(attributeTree(xy, plot, cut)[(nrow(xy) - 2):nrow(xy)])))
+  expect_true(all(is.na(rev(attributeTree(xy, plot, cut))[1:3])))
 })
