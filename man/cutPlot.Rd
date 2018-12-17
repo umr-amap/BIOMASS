@@ -24,7 +24,8 @@ cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
 \value{
 This function return a data frame with :
 \describe{
-  \item{Plot}{ The code of the plot you use }
+  \item{plot}{ The code of the plot you use }
+  \item{subplot}{ The code of the subplot automaticaly generated }
   \item{XRel}{ The relative coordinate for the axis X (following the corner 1->2) for the plot }
   \item{YRel}{ The relative coordinate for the axis Y (following the corner 1->4) for the plot }
   \item{XAbs}{ The absolute coordinate (projected) for the axis X (following the corner 1->2)}

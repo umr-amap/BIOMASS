@@ -5,7 +5,7 @@
 \title{Correct the GPS coordinates}
 \usage{
 correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
-  rangeY, maxDist = 10, drawPlot = F, rmOutliers = F)
+  rangeY, maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE)
 }
 \arguments{
 \item{longlat}{(optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
