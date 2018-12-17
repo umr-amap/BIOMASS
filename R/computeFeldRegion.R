@@ -86,22 +86,22 @@ computeFeldRegion <- function(coord, level = "region") {
   FeldRegion[ level == "world" ] <- "Pantropical"
 
   # Replace the continent level by different value:
-  
+
   FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Africa)", replacement = "Africa",
     FeldRegion[ level == "continent" ]
   )
-  
+
   FeldRegion[ level == "continent" ] <- sub(
     pattern = ".+(Amazonia|Shield)", replacement = "SAmerica",
     FeldRegion[ level == "continent" ]
   )
-  
-  if(anyNA(FeldRegion)){
+
+  if (anyNA(FeldRegion)) {
     warning("There is NA in your final vector, those NA will be replaced by 'Pantropical'")
   }
-  
+
   FeldRegion[is.na(FeldRegion)] <- "Pantropical"
-  
+
   return(FeldRegion)
 }

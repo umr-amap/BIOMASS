@@ -119,7 +119,7 @@ checkTime <- function() {
 
 
 #' Update the cache for the different function
-#' 
+#'
 #' This function update the cache for the environmental variables:
 #' \itemize{
 #'   \item wc2-5
@@ -192,10 +192,10 @@ updateCache <- function(nameFile = NULL) {
   }, # if it's damaged we recharge it
   warning = function(cond) {
     zip_url <- zip_urls[[nameFile]]
-    if (is.null(zip_url)){
+    if (is.null(zip_url)) {
       stop("You demand something we don't understand.")
     }
-      
+
     downloadZip(zip_url, path)
     return()
   },

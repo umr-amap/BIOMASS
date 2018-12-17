@@ -67,7 +67,7 @@
 #' )
 #' }
 #' 
-correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY, 
+correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
                             maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE) {
 
 

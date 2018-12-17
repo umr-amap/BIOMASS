@@ -75,7 +75,7 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
 
 
   Coord <- data.table(plot = plot, X = projCoord[, 1], Y = projCoord[, 2], corner = corner)
-  Coord = Coord[order(corner), .SD, by = plot]
+  Coord <- Coord[order(corner), .SD, by = plot]
   dimRel <- data.table(plot = unique(plot), dimX = dimX, dimY = dimY)
 
 
@@ -104,26 +104,24 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
   }
 
   Coord <- Coord[dimRel, on = "plot"][, grid(.SD, gridsize), by = plot]
-  
-  cornerCoordinate = function(data){
-    
-    rbindlist(apply(data[XRel < max(XRel) & YRel < max(YRel), -1], 1, function(x){
-      
-      X = x["XRel"]
-      Y = x["YRel"]
-      
-      data[ (XRel == X & YRel == Y) | 
-              (XRel == X + gridsize & YRel == Y) | 
-              (XRel == X + gridsize & YRel == Y + gridsize) | 
-              (XRel == X & YRel == Y + gridsize), 
-            .(subplot = paste(plot, X/gridsize, Y/gridsize, sep = "_"), XRel, YRel, XAbs, YAbs)][c(1,2,4,3), corner := seq(4)]
-      
+
+  cornerCoordinate <- function(data) {
+    rbindlist(apply(data[XRel < max(XRel) & YRel < max(YRel), -1], 1, function(x) {
+      X <- x["XRel"]
+      Y <- x["YRel"]
+
+      data[
+        (XRel == X & YRel == Y) |
+          (XRel == X + gridsize & YRel == Y) |
+          (XRel == X + gridsize & YRel == Y + gridsize) |
+          (XRel == X & YRel == Y + gridsize),
+        .(subplot = paste(plot, X / gridsize, Y / gridsize, sep = "_"), XRel, YRel, XAbs, YAbs)
+      ][c(1, 2, 4, 3), corner := seq(4)]
     }))
-    
   }
-  
-  Coord = Coord[, cornerCoordinate(.SD), by = plot, .SDcols = colnames(Coord)]
-  
-  
+
+  Coord <- Coord[, cornerCoordinate(.SD), by = plot, .SDcols = colnames(Coord)]
+
+
   return(as.data.frame(Coord))
 }

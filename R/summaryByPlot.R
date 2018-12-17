@@ -9,11 +9,11 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @description
 #' This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot.
-#'  
-#' @details 
-#' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned 
+#'
+#' @details
+#' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach.
-#' 
+#'
 #' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list)
 #' @param plot Vector with the code of plot
 #'
@@ -73,9 +73,9 @@ summaryByPlot <- function(AGB_simu, plot) {
 
   Plot <- data.table(plot = plot)
   indice_tree <- Plot[is.na(plot), .I, by = plot]
-  
+
   # filter if there is there is NA in the AGB_simu
-  filter = rowSums( is.na(AGB_simu) ) > 0
+  filter <- rowSums(is.na(AGB_simu)) > 0
 
   # take the first tree in the database by plot
   indice_first <- Plot[!is.na(plot) & !filter, .(indice_line = first(.I), plot = unique(plot)), by = plot]
@@ -90,7 +90,7 @@ summaryByPlot <- function(AGB_simu, plot) {
     # indice_line : a random sample of matrix line inside the plot without the trees to distribute
     # indice_col : the column index of the matrix by I
     mySample <- function(plot1, n) {
-        return(samples = indice_first[, sample(indice_line, n, replace = T)])
+      return(samples = indice_first[, sample(indice_line, n, replace = T)])
     }
     n <- ncol(AGB_simu)
     samples <- indice_tree[, .(indice_line = mySample(plot, n), indice_col = 1:n), by = I]
