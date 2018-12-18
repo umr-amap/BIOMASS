@@ -25,7 +25,8 @@ predictHeight <- function(D, model, err = FALSE) {
   ### From the diameter and the model, compute (with or without error) the heigth
   method <- model$method
   logmod <- any(grepl("log", method))
-
+  D = data.frame(D = D)
+  
   if (!err) {
     if (logmod) {
       e <- 0.5 * model$RSElog^2 # Baskerville correction
@@ -41,9 +42,9 @@ predictHeight <- function(D, model, err = FALSE) {
   }
 
   if (logmod) {
-    Hpredict <- exp(predict(model$model, data.frame(logD = log(D))) + e)
+    Hpredict <- exp(predict(model$model, D) + e)
   } else {
-    Hpredict <- predict(model$model, data.frame(D = D)) + e
+    Hpredict <- predict(model$model, D) + e
   }
 
   names(Hpredict) <- NULL
