@@ -4,7 +4,7 @@
 \alias{predictHeight}
 \title{Predicting tree height}
 \usage{
-predictHeight(D, model, err = FALSE)
+predictHeight(D, model, err = FALSE, plot = NULL)
 }
 \arguments{
 \item{D}{Vector of diameter (in cm).}
@@ -15,6 +15,8 @@ predictHeight(D, model, err = FALSE)
 zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
 for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be
 let as \code{FALSE}, the default case.}
+
+\item{plot}{a vector of the same length the plot ID}
 }
 \value{
 Returns a vector of total tree height (in m).

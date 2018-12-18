@@ -8,6 +8,7 @@
 #' zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
 #' for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be
 #' let as \code{FALSE}, the default case.
+#' @param plot a vector of the same length the plot ID
 #'
 #' @details In the case where the error is \code{FALSE} and the model is a log-log model, we use the
 #' Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
@@ -17,15 +18,24 @@
 #' @seealso \code{\link[minpack.lm]{nlsLM}}
 #'
 #'
-#'
+#' @importFrom data.table data.table
 #' @keywords Internal
-#'
-#'
-predictHeight <- function(D, model, err = FALSE) {
+predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   ### From the diameter and the model, compute (with or without error) the heigth
+  
   method <- model$method
   logmod <- any(grepl("log", method))
-  D = data.frame(D = D)
+  
+  if (!is.null(plot)){
+    data = data.table(D = D, plot = plot)
+    
+    data[, H := predictHeight(D, model[[unique(plot)]], err), by = plot]
+    
+    return(data[, H])
+  }
+  
+  
+  D = data.table(D = D)
   
   if (!err) {
     if (logmod) {
