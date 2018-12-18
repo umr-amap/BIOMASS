@@ -68,3 +68,33 @@ michaelis purple 4.294488        NA  0.014564152
 
   expect_equal(Res, fread(res, data.table = F), tolerance = 10^-6)
 })
+
+test_that("With the plot arguments", {
+  
+  plot = NouraguesHD$plotId
+  
+  Res = expect_message(modelHD(D, H, plot = plot), "If you want to use a particular model")
+  
+  expect_is(Res, "list")
+  expect_length(Res, length(unique(plot)))
+  expect_equal(names(Res), unique(plot))
+  
+  invisible(sapply(Res, function(x){ expect_is(x, "data.frame") ; expect_equal(ncol(x), 5) }))
+  expect_failure(expect_equal(Res[[1]], Res[[2]]))
+  
+  Res = modelHD(D, H, plot = plot, method = "log2")
+  
+  expect_is(Res, "list")
+  expect_length(Res, length(unique(plot)))
+  expect_equal(names(Res), unique(plot))
+  
+  invisible(sapply(Res, function(x){ expect_is(x, "list") ; expect_equal(length(x), 10) }))
+  expect_failure(expect_equal(Res[[1]], Res[[2]]))
+})
+
+
+
+
+
+
+
