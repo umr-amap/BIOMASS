@@ -16,12 +16,16 @@ minimum of 10 valid entries (i.e. having a corresponding height in H) is require
 
 \item{method}{Method used to fit the relationship.
 To be chosen between:
-    - log1, log2, log3
-      + log 1: $ log(H) = a+ b*log(D) $ (equivalent to a power model)
-      + log 2: $ log(H) = a+ b*log(D) + c*log(D)^2 $
-      + log 3: $ log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3) $
-    - weibull: $ H = a*(1-exp(-(D/b)^c) $
-    - michaelis: $ H = (A * D)/(B + D) $
+  \itemize{
+    \item log1, log2, log3
+    \itemize{
+      \item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
+      \item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
+      \item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
+    }
+    \item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
+    \item michaelis: \eqn{H = (A * D)/(B + D)}
+  }
 If \code{NULL}, all the methods will be compared.}
 
 \item{useWeight}{If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree 
@@ -33,7 +37,7 @@ volume, so that larger trees have a stronger influence during the construction o
 }
 \value{
 If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
-there will be the list with the names of the plot and inside each item there is those results.
+there will be the list with the names of the plot and inside each item their is those results.
 Returns a list with if the parameter model is not null:
 \describe{
 \item{input}{list of the data used to construct the model (list(H, D))}
