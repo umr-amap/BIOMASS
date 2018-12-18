@@ -90,6 +90,12 @@ test_that("With the plot arguments", {
   
   invisible(sapply(Res, function(x){ expect_is(x, "list") ; expect_equal(length(x), 10) }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
+  
+  Res = modelHD(D, H, plot = "plot1")
+  expect_is(Res, "data.frame")
+  
+  expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
+  
 })
 
 
