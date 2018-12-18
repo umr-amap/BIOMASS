@@ -23,10 +23,11 @@
 #'   \item \code{NAustralia}: Northern Australia
 #'   \item \code{Pantropical}: Pantropical
 #' }
+#' @param plot the plot ID, must be the same length of D, this feature is just for the model
 #'
 #' @return Returns a list  with:
 #' \item{H}{H predicted by the model}
-#' \item{RSE}{Residual Standard Error of the model}
+#' \item{RSE}{Residual Standard Error of the model, or a vector of those for each plot}
 #' @references
 #' Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
 #' Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.}
@@ -53,7 +54,7 @@
 #' 
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
-retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
+retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL) {
 
 
   # parameters verification -------------------------------------------------
@@ -79,13 +80,21 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
               - HDmodel
               - coord")
   }
-
+  
+  # the length of the plot is tested in predictHeight
+  # the names of the plot and the names of the model is tested in predictHeight
+  if(!is.null(plot) && is.null(model))
+    stop("The 'plot' vector must be with 'model' argument")
 
 
   # First case : with a model fitted with HDfunction
   if (!is.null(model)) {
-    H <- predictHeight(D, model)
-    RSE <- model$RSE
+    H <- predictHeight(D, model, plot = plot)
+    RSE <- if (!is.null(plot)) {
+      sapply(model, function(x) x$RSE)
+    } else {
+      model$RSE
+    }
   }
   else {
     # Second case : with the coordinates of your site, find the E index and estimate the H following Chave et al. 2014 Global Change Biology
@@ -120,6 +129,6 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
       H <- a * (1 - exp(-b * D^c))
     }
   }
-  output <- list(H = as.numeric(H), RSE = as.numeric(RSE))
+  output <- list(H = as.numeric(H), RSE = RSE)
   return(output)
 }

@@ -4,7 +4,8 @@
 \alias{retrieveH}
 \title{Retrieving tree height from models}
 \usage{
-retrieveH(D, model = NULL, coord = NULL, region = NULL)
+retrieveH(D, model = NULL, coord = NULL, region = NULL,
+  plot = NULL)
 }
 \arguments{
 \item{D}{Vector of diameters.}
@@ -30,11 +31,13 @@ and pantropical models proposed by Feldpausch et al. (2012). To be chosen betwee
   \item \code{NAustralia}: Northern Australia
   \item \code{Pantropical}: Pantropical
 }}
+
+\item{plot}{the plot ID, must be the same length of D, this feature is just for the model}
 }
 \value{
 Returns a list  with:
 \item{H}{H predicted by the model}
-\item{RSE}{Residual Standard Error of the model}
+\item{RSE}{Residual Standard Error of the model, or a vector of those for each plot}
 }
 \description{
 From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an
