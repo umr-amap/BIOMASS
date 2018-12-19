@@ -92,6 +92,8 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
     H <- predictHeight(D, model, plot = plot)
     RSE <- if (!is.null(plot)) {
       sapply(model, function(x) x$RSE)
+    } else if(length(model[[1]]) != 2){
+      model[[1]]$RSE
     } else {
       model$RSE
     }
