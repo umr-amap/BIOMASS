@@ -11,7 +11,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' This function corrects typos for a given taxonomic name using the Taxonomic
 #' Name Resolution Service (TNRS) via the Taxosaurus interface.
-#' This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize]{tnrs}}).
+#' This function has been adapted from the `tnrs` function from the taxize package ([taxize::tnrs()]).
 #'
 #'
 #' @details
@@ -19,7 +19,7 @@ if (getRversion() >= "2.15.1") {
 #' to avoid the replication of time-consuming servor requests.
 #'
 #' By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
-#' \code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
+#' `options(BIOMASS.batch_size=50)` for batch size, `options(BIOMASS.wait_delay=0.5)` for delay.
 #'
 #'
 #' @inheritSection cacheManager Localisation
@@ -34,9 +34,11 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
-#' @references Boyle, B. et al. (2013). \emph{The taxonomic name resolution service: An online tool for automated
-#' standardization of plant names}. BMC bioinformatics, 14, 1.
-#' @references Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}. F1000Research, 2.
+#' @references Boyle, B. et al. (2013). 
+#' _The taxonomic name resolution service: An online tool for automated standardization of plant names_.
+#' BMC bioinformatics, 14, 1.
+#' @references Chamberlain, S. A. and Szocs, E. (2013). _taxize: taxonomic search and retrieval in R_. 
+#' F1000Research, 2.
 #'
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'

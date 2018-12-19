@@ -3,19 +3,19 @@
 #' The function predicts height from diameter based on a fitted model.
 #'
 #' @param D Vector of diameter (in cm).
-#' @param model A height-diameter model output by the function \code{link{modelHD}}
-#' @param err If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of
+#' @param model A height-diameter model output by the function [modelHD()]
+#' @param err If `TRUE`, An error is taken randomly from a normal distribution with a mean of
 #' zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
-#' for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be
-#' let as \code{FALSE}, the default case.
+#' for the Monte Carlo approach (see [AGBmonteCarlo()]), otherwise it should be
+#' let as `FALSE`, the default case.
 #' @param plot a vector of the same length the plot ID
 #'
-#' @details In the case where the error is \code{FALSE} and the model is a log-log model, we use the
+#' @details In the case where the error is `FALSE` and the model is a log-log model, we use the
 #' Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 #'
 #' @return Returns a vector of total tree height (in m).
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
-#' @seealso \code{\link[minpack.lm]{nlsLM}}
+#' @seealso [minpack.lm::nlsLM]
 #'
 #'
 #' @importFrom data.table data.table

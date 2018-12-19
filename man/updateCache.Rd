@@ -7,14 +7,14 @@
 updateCache(nameFile = NULL)
 }
 \arguments{
-\item{nameFile}{The name of the file you want to update. If it's NULL the function will update all the files.}
+\item{nameFile}{The name of the file you want to update. If it's \code{NULL} the function will update all the files.}
 }
 \description{
 This function update the cache for the environmental variables:
 \itemize{
-  \item wc2-5
-  \item CWD
-  \item E
+\item wc2-5
+\item CWD
+\item E
 }
 }
 \examples{

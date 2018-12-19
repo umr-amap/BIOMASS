@@ -10,7 +10,7 @@ retrieveH(D, model = NULL, coord = NULL, region = NULL,
 \arguments{
 \item{D}{Vector of diameters.}
 
-\item{model}{A model output by the function \code{\link{modelHD}}.}
+\item{model}{A model output by the function \code{\link[=modelHD]{modelHD()}}.}
 
 \item{coord}{Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a
 matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).}
@@ -18,26 +18,28 @@ matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).}
 \item{region}{Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific
 and pantropical models proposed by Feldpausch et al. (2012). To be chosen between:
 \itemize{
-  \item \code{Africa}: Africa
-  \item \code{CAfrica}: Central Africa
-  \item \code{EAfrica}: Eastern Africa
-  \item \code{WAfrica}: Western Africa
-  \item \code{SAmerica}: Southern America
-  \item \code{BrazilianShield}: Brazilian Shield
-  \item \code{ECAmazonia}: East-Central Amazonia
-  \item \code{GuianaShield}: Guiana Shield
-  \item \code{WAmazonia}: Western Amazonia
-  \item \code{SEAsia}: South-Eastern Asia
-  \item \code{NAustralia}: Northern Australia
-  \item \code{Pantropical}: Pantropical
+\item \code{Africa}: Africa
+\item \code{CAfrica}: Central Africa
+\item \code{EAfrica}: Eastern Africa
+\item \code{WAfrica}: Western Africa
+\item \code{SAmerica}: Southern America
+\item \code{BrazilianShield}: Brazilian Shield
+\item \code{ECAmazonia}: East-Central Amazonia
+\item \code{GuianaShield}: Guiana Shield
+\item \code{WAmazonia}: Western Amazonia
+\item \code{SEAsia}: South-Eastern Asia
+\item \code{NAustralia}: Northern Australia
+\item \code{Pantropical}: Pantropical
 }}
 
 \item{plot}{the plot ID, must be the same length of D, this feature is just for the model}
 }
 \value{
 Returns a list  with:
-\item{H}{H predicted by the model}
-\item{RSE}{Residual Standard Error of the model, or a vector of those for each plot}
+\itemize{
+\item \code{H}: H predicted by the model
+\item \code{RSE} Residual Standard Error of the model, or a vector of those for each plot
+}
 }
 \description{
 From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an
@@ -64,11 +66,11 @@ H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 }
 \references{
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
-Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.}
+Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}.
 Global change biology 20.10 (2014): 3177-3190.
 }
 \seealso{
-\code{\link{modelHD}}
+\code{\link[=modelHD]{modelHD()}}
 }
 \author{
 Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE

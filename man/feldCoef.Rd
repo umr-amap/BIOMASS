@@ -5,11 +5,11 @@
 \alias{feldCoef}
 \title{Feldpausch et al. 2012 coefficients for generalized height-diameter models}
 \format{A data frame with 12 observations on the following 4 variables:
-\describe{
-  \item{\code{a}}{Coefficient a}
-  \item{\code{b}}{Coefficient b}
-  \item{\code{c}}{Coefficient c}
-  \item{\code{RSE}}{Vector of RSE}
+\itemize{
+\item \code{a}: Coefficient a
+\item \code{b}: Coefficient b
+\item \code{c}: Coefficient c
+\item \code{RSE}: Vector of RSE
 }}
 \usage{
 data("feldCoef")
@@ -19,7 +19,7 @@ Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-
 et al. 2012. in the table 3, with the associated RSE.
 }
 \details{
-This dataset is used in the function \code{\link{retrieveH}}
+This dataset is used in the function \code{\link[=retrieveH]{retrieveH()}}
 to predict height from diameter depending on the region.
 }
 \examples{
@@ -27,7 +27,7 @@ data(feldCoef)
 str(feldCoef)
 }
 \references{
-Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.}
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates}.
 Biogeosciences, 9, 3381–3403.
 }
 \keyword{datasets}

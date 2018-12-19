@@ -11,24 +11,25 @@ modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE,
 \item{D}{Vector with diameter measurements (in cm). NA values are accepted but a
 minimum of 10 valid entries (i.e. having a corresponding height in H) is required.}
 
-\item{H}{Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries 
+\item{H}{Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries
 (i.e. having a corresponding diameter in D) is required.}
 
 \item{method}{Method used to fit the relationship.
 To be chosen between:
-  \itemize{
-    \item log1, log2, log3
-    \itemize{
-      \item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
-      \item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
-      \item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
-    }
-    \item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
-    \item michaelis: \eqn{H = (A * D)/(B + D)}
-  }
+\itemize{
+\item log1, log2, log3
+\itemize{
+\item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
+\item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
+\item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
+}
+\item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
+\item michaelis: \eqn{H = (A * D)/(B + D)}
+}
+
 If \code{NULL}, all the methods will be compared.}
 
-\item{useWeight}{If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree 
+\item{useWeight}{If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 volume, so that larger trees have a stronger influence during the construction of the model).}
 
 \item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D.}
@@ -39,34 +40,34 @@ volume, so that larger trees have a stronger influence during the construction o
 If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
 there will be the list with the names of the plot and inside each item their is those results.
 Returns a list with if the parameter model is not null:
-\describe{
-\item{input}{list of the data used to construct the model (list(H, D))}
-\item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
-\item{RSE}{Residual Standard Error of the model}
-\item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-\item{residuals}{Residuals of the model}
-\item{coefficients}{Coefficients of the model}
-\item{R.squared}{\eqn{R^2} of the model}
-\item{formula}{Formula of the model}
-\item{method}{Name of the method used to construct the model}
-\item{predicted}{Predicted height values}
+\itemize{
+\item \code{input}: list of the data used to construct the model (list(H, D))
+\item \code{model}: outputs of the model (same outputs as given by \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:nls]{stats::nls()}})
+\item \code{RSE}: Residual Standard Error of the model
+\item \code{RSElog}: Residual Standard Error of the log model (\code{NULL} if other model)
+\item \code{residuals}: Residuals of the model
+\item \code{coefficients}: Coefficients of the model
+\item \code{R.squared}: \eqn{R^2} of the model
+\item \code{formula}: Formula of the model
+\item \code{method}: Name of the method used to construct the model
+\item \code{predicted}: Predicted height values
 }
 
 If the parameter model is null, the function return a graph with all the methods for
 comparison, the function also return a data.frame with:
-\describe{
-\item{method}{The method that had been used to construct the graph}
-\item{color}{The color of the curve in the graph}
-\item{RSE}{Residual Standard Error of the model}
-\item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-\item{Average_bias}{The average bias for the model}
+\itemize{
+\item \code{method}: The method that had been used to construct the graph
+\item \code{color}: The color of the curve in the graph
+\item \code{RSE}: Residual Standard Error of the model
+\item \code{RSElog}: Residual Standard Error of the log model (\code{NULL} if other model)
+\item \code{Average_bias}: The average bias for the model
 }
 }
 \description{
 This function fits and compares (optional) height-diameter models.
 }
 \details{
-All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, 
+All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2},
 where RSE is the Residual Standard Error).
 }
 \examples{
@@ -90,7 +91,7 @@ HDmodel <- modelHD(
 )
 }
 \seealso{
-\code{\link{retrieveH}}, \code{\link{predictHeight}}
+\code{\link[=retrieveH]{retrieveH()}}, \code{\link[=predictHeight]{predictHeight()}}
 }
 \author{
 Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY

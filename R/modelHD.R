@@ -8,21 +8,18 @@
 #' (i.e. having a corresponding diameter in D) is required.
 #' @param method Method used to fit the relationship.
 #' To be chosen between:
-#'   \itemize{
-#'     \item log1, log2, log3
-#'     \itemize{
-#'       \item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
-#'       \item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
-#'       \item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
-#'     }
-#'     \item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
-#'     \item michaelis: \eqn{H = (A * D)/(B + D)}
-#'   }
-#' If \code{NULL}, all the methods will be compared.
-#' @param useWeight If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree 
+#'   - log1, log2, log3
+#'     + log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
+#'     + log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
+#'     + log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
+#'   - weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
+#'   - michaelis: \eqn{H = (A * D)/(B + D)}
+#'   
+#' If `NULL`, all the methods will be compared.
+#' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree 
 #' volume, so that larger trees have a stronger influence during the construction of the model).
-#' @param drawGraph If \code{TRUE}, a graphic will illustrate the relationship between H and D.
-#' @param plot The plot ID, must be either \code{NULL} or just one value, or a vector the same length as D
+#' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D.
+#' @param plot The plot ID, must be either `NULL` or just one value, or a vector the same length as D
 #'
 #' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, 
 #' where RSE is the Residual Standard Error).
@@ -32,32 +29,30 @@
 #' If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
 #' there will be the list with the names of the plot and inside each item their is those results.
 #' Returns a list with if the parameter model is not null:
-#' \describe{
-#' \item{input}{list of the data used to construct the model (list(H, D))}
-#' \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
-#' \item{RSE}{Residual Standard Error of the model}
-#' \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-#' \item{residuals}{Residuals of the model}
-#' \item{coefficients}{Coefficients of the model}
-#' \item{R.squared}{\eqn{R^2} of the model}
-#' \item{formula}{Formula of the model}
-#' \item{method}{Name of the method used to construct the model}
-#' \item{predicted}{Predicted height values}
-#' }
+#'   - `input`: list of the data used to construct the model (list(H, D))
+#'   - `model`: outputs of the model (same outputs as given by [stats::lm()], [stats::nls()])
+#'   - `RSE`: Residual Standard Error of the model
+#'   - `RSElog`: Residual Standard Error of the log model (\code{NULL} if other model)
+#'   - `residuals`: Residuals of the model
+#'   - `coefficients`: Coefficients of the model
+#'   - `R.squared`: \eqn{R^2} of the model
+#'   - `formula`: Formula of the model
+#'   - `method`: Name of the method used to construct the model
+#'   - `predicted`: Predicted height values
+#' 
 #'
 #' If the parameter model is null, the function return a graph with all the methods for
 #' comparison, the function also return a data.frame with:
-#' \describe{
-#' \item{method}{The method that had been used to construct the graph}
-#' \item{color}{The color of the curve in the graph}
-#' \item{RSE}{Residual Standard Error of the model}
-#' \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-#' \item{Average_bias}{The average bias for the model}
-#' }
+#'   - `method`: The method that had been used to construct the graph
+#'   - `color`: The color of the curve in the graph
+#'   - `RSE`: Residual Standard Error of the model
+#'   - `RSElog`: Residual Standard Error of the log model (`NULL` if other model)
+#'   - `Average_bias`: The average bias for the model
+#' 
 #'
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
-#' @seealso \code{\link{retrieveH}}, \code{\link{predictHeight}}
+#' @seealso [retrieveH()], [predictHeight()]
 #'
 #' @export
 #'

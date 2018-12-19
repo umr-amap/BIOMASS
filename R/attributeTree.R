@@ -11,11 +11,11 @@ if (getRversion() >= "2.15.1") {
 #' Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 #'
 #' @param xy The coordinates of the trees for each plot
-#' @param plot The label of the plot (same length as the number of rows of xy)
-#' @param coordAbs Output of the function \code{\link{cutPlot}}
+#' @param plot The label of the plot (same length as the number of rows of `xy`)
+#' @param coordAbs Output of the function [cutPlot()]
 #'
-#' @return A vector with the code of the subplot for each trees, the code will be plot_X_Y. X and Y are the coordinate where the tree
-#' is inside the plot in regards to the corresponding subplot.
+#' @return A vector with the code of the subplot for each trees, the code will be `plot_X_Y`. `X` and `Y` are the coordinate 
+#' where the tree is inside the plot in regards to the corresponding subplot.
 #' @export
 #' @author Arthur PERE
 #' @importFrom data.table data.table setDT between setnames

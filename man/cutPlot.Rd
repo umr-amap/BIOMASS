@@ -13,7 +13,7 @@ cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
 \item{plot}{Vector with the code of the plot}
 
 \item{corner}{Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
-(see the result of the \code{\link{numberCorner}})}
+(see the result of the \code{\link[=numberCorner]{numberCorner()}})}
 
 \item{gridsize}{The size of the grid}
 
@@ -23,19 +23,19 @@ cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
 }
 \value{
 This function return a data frame with :
-\describe{
-  \item{plot}{ The code of the plot you use }
-  \item{subplot}{ The code of the subplot automaticaly generated }
-  \item{XRel}{ The relative coordinate for the axis X (following the corner 1->2) for the plot }
-  \item{YRel}{ The relative coordinate for the axis Y (following the corner 1->4) for the plot }
-  \item{XAbs}{ The absolute coordinate (projected) for the axis X (following the corner 1->2)}
-  \item{YAbs}{ The absolute coordinate (projected) for the axis Y (following the corner 1->4)}
+\itemize{
+\item \code{plot}:  The code of the plot you use
+\item \code{subplot}:  The code of the subplot automaticaly generated
+\item \code{XRel}:  The relative coordinate for the axis X (following the corner 1->2) for the plot
+\item \code{YRel}:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
+\item \code{XAbs}:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
+\item \code{YAbs}:  The absolute coordinate (projected) for the axis Y (following the corner 1->4)
 }
 }
 \description{
 This function divides a plot in subplots (with dimX and dimY) and gives the
 coordinates of the grid in return.
-This function uses a procrustes analysis to fit the rectangle you gave to the plot you have. #######????????
+This function uses a procrustes analysis to fit the rectangle you gave to the plot you have.
 }
 \examples{
 

@@ -5,16 +5,16 @@
 \alias{param_7}
 \title{Posterior distribution of parameters associated with the equation 7 by Chave et al. 2014.}
 \format{A data frame with 1001 observations on the following 9 variables.
-\describe{
-  \item{\code{intercept}}{Vector of intercept values}
-  \item{\code{logwsg}}{Vector of the model coefficients associated with log(wood density)}
-  \item{\code{logdbh}}{Vector of the model coefficients associated with log(diameter)}
-  \item{\code{logdbh2}}{Vector of the model coefficients associated with log(diameter)^2}
-  \item{\code{E}}{Vector of the model coefficients associated with the environmental index E}
-  \item{\code{sd}}{Vector of model residual standard error (RSE) values}
-  \item{\code{temp}}{Vector of the model coefficients associated with temperature seasonality}
-  \item{\code{cwd}}{Vector of the model coefficients associated with climatic water deficit}
-  \item{\code{prec}}{Vector of the model coefficients associated with precipitation seasonality}
+\itemize{
+\item \code{intercept}: Vector of intercept values
+\item \code{logwsg}: Vector of the model coefficients associated with log(wood density)
+\item \code{logdbh}: Vector of the model coefficients associated with log(diameter)
+\item \code{logdbh2}: Vector of the model coefficients associated with log(diameter)^2
+\item \code{E}: Vector of the model coefficients associated with the environmental index E
+\item \code{sd}: Vector of model residual standard error (RSE) values
+\item \code{temp}: Vector of the model coefficients associated with temperature seasonality
+\item \code{cwd}: Vector of the model coefficients associated with climatic water deficit
+\item \code{prec}: Vector of the model coefficients associated with precipitation seasonality
 }}
 \usage{
 data("param_7")
@@ -24,7 +24,7 @@ This matrix contains the posterior distribution of the parameters of the Equatio
 obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{
-This dataset is used in the function \code{\link{AGBmonteCarlo}}.
+This dataset is used in the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}.
 }
 \examples{
 data(param_7)

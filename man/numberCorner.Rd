@@ -19,11 +19,11 @@ numberCorner(longlat = NULL, projCoord = NULL, plot, origin, clockWise)
 }
 \value{
 A data frame with:
-\describe{
-  \item{plot}{The code of the plot}
-  \item{X}{The coordinates X in UTM}
-  \item{Y}{The coordinates Y in UTM}
-  \item{corner}{The corner numbers}
+\itemize{
+\item \code{plot}: The code of the plot
+\item \code{X}: The coordinates X in UTM
+\item \code{Y}: The coordinates Y in UTM
+\item \code{corner}: The corner numbers
 }
 }
 \description{
@@ -31,8 +31,8 @@ Get the UTM coordinates from the latitude and longitude of the corners of a plot
 The function also assign a number to the corners in a clockwise or counterclockwise way, with the number 1 for the XY origin.
 Corner numbering is done as followed:
 \itemize{
-   \item axis X: the corner 1 to the corner 2
-   \item axis Y: the corner 1 to the corner 4
+\item axis X: the corner 1 to the corner 2
+\item axis Y: the corner 1 to the corner 4
 }
 }
 \examples{

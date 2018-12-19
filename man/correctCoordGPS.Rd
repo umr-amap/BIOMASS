@@ -28,10 +28,10 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 }
 \value{
 If you there are no outliers or rmOutliers = TRUE, a list with:
-\describe{
-   \item{corner}{a matrix with the coordinates of the corners}
-   \item{polygon}{a spatial polygon}
-   \item{outliers}{Coordinates lines considered as outliers, if any}
+\itemize{
+\item \code{corner}: a matrix with the coordinates of the corners
+\item \code{polygon}: a spatial polygon
+\item \code{outliers}: Coordinates lines considered as outliers, if any
 }
 }
 \description{

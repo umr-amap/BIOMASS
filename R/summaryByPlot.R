@@ -8,23 +8,21 @@ if (getRversion() >= "2.15.1") {
 #' Summarize by plot (or subplot) the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarize the matrix \code{AGB_simu} given by the function \code{\link{AGBmonteCarlo}} by plot.
+#' This function summarize the matrix `AGB_simu` given by the function [AGBmonteCarlo()] by plot.
 #'
 #' @details
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach.
 #'
-#' @param AGB_simu Matrix resulting from the function \code{\link{AGBmonteCarlo}} (AGB_simu element of the list), 
-#' or just the result of the function \code{\link{AGBmonteCarlo}}
+#' @param AGB_simu Matrix resulting from the function [AGBmonteCarlo()] (AGB_simu element of the list), 
+#' or just the result of the function [AGBmonteCarlo()]
 #' @param plot Vector with the code of plot
 #'
 #' @return a data frame where :
-#' \describe{
-#'    \item{plot}{the code of the plot}
-#'    \item{AGB}{the mean of AGB for the plot}
-#'    \item{Cred_2.5}{the quantile 2.5\% for the plot}
-#'    \item{Cred_97.5}{the quantile 97.5\% for the plot}
-#' }
+#'   - `plot`: the code of the plot
+#'   - `AGB`: the mean of AGB for the plot
+#'   - `Cred_2.5`: the quantile 2.5\% for the plot
+#'   - `Cred_97.5`: the quantile 97.5\% for the plot
 #'
 #' @export
 #'

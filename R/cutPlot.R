@@ -8,25 +8,24 @@ if (getRversion() >= "2.15.1") {
 #'
 #' This function divides a plot in subplots (with dimX and dimY) and gives the
 #' coordinates of the grid in return.
-#' This function uses a procrustes analysis to fit the rectangle you gave to the plot you have. #######????????
+#' This function uses a procrustes analysis to fit the rectangle you gave to the plot you have.
 #'
 #' @param projCoord A data frame with the projected coordinates with X and Y on the first and second colonne respectively
 #' @param plot Vector with the code of the plot
 #' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
-#' (see the result of the \code{\link{numberCorner}})
+#' (see the result of the [numberCorner()])
 #' @param gridsize The size of the grid
 #' @param dimX A vector of the real size for the X axis for the plot (can be given one value it will be replicate for each plot)
 #' @param dimY A vector of the real size for the Y axis for the plot (can be given one value it will be replicate for each plot)
 #'
 #' @return This function return a data frame with :
-#' \describe{
-#'   \item{plot}{ The code of the plot you use }
-#'   \item{subplot}{ The code of the subplot automaticaly generated }
-#'   \item{XRel}{ The relative coordinate for the axis X (following the corner 1->2) for the plot }
-#'   \item{YRel}{ The relative coordinate for the axis Y (following the corner 1->4) for the plot }
-#'   \item{XAbs}{ The absolute coordinate (projected) for the axis X (following the corner 1->2)}
-#'   \item{YAbs}{ The absolute coordinate (projected) for the axis Y (following the corner 1->4)}
-#' }
+#'   - `plot`:  The code of the plot you use
+#'   - `subplot`:  The code of the subplot automaticaly generated
+#'   - `XRel`:  The relative coordinate for the axis X (following the corner 1->2) for the plot
+#'   - `YRel`:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
+#'   - `XAbs`:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
+#'   - `YAbs`:  The absolute coordinate (projected) for the axis Y (following the corner 1->4)
+#'   
 #' @export
 #' @author Arthur PERE
 #' @importFrom data.table data.table :=

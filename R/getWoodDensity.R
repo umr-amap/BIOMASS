@@ -24,25 +24,24 @@ if (getRversion() >= "2.15.1") {
 #' level will be attributed at family level if available.
 #' @param region Region (or vector of region) of interest of your sample. By default, Region is
 #' set to 'World', but you can restrict the WD estimates to a single region :
-#' \itemize{
-#'   \item \code{AfricaExtraTrop}: Africa (extra tropical)
-#'   \item \code{AfricaTrop}: Africa (tropical)
-#'   \item \code{Australia}: Australia
-#'   \item \code{AustraliaTrop}: Australia (tropical)
-#'   \item \code{CentralAmericaTrop}: Central America (tropical)
-#'   \item \code{China}: China
-#'   \item \code{Europe}: Europe
-#'   \item \code{India}: India
-#'   \item \code{Madagascar}: Madagascar
-#'   \item \code{Mexico}: Mexico
-#'   \item \code{NorthAmerica}: North America
-#'   \item \code{Oceania}: Oceania
-#'   \item \code{SouthEastAsia}: South-East Asia
-#'   \item \code{SouthEastAsiaTrop}: South-East Asia (tropical)
-#'   \item \code{SouthAmericaExtraTrop}: South America (extra tropical)
-#'   \item \code{SouthAmericaTrop}: South America (tropical)
-#'   \item \code{World}: World
-#' }
+#'   - `AfricaExtraTrop`: Africa (extra tropical)
+#'   - `AfricaTrop`: Africa (tropical)
+#'   - `Australia`: Australia
+#'   - `AustraliaTrop`: Australia (tropical)
+#'   - `CentralAmericaTrop`: Central America (tropical)
+#'   - `China`: China
+#'   - `Europe`: Europe
+#'   - `India`: India
+#'   - `Madagascar`: Madagascar
+#'   - `Mexico`: Mexico
+#'   - `NorthAmerica`: North America
+#'   - `Oceania`: Oceania
+#'   - `SouthEastAsia`: South-East Asia
+#'   - `SouthEastAsiaTrop`: South-East Asia (tropical)
+#'   - `SouthAmericaExtraTrop`: South America (extra tropical)
+#'   - `SouthAmericaTrop`: South America (tropical)
+#'   - `World`: World
+#'   
 #' @param addWoodDensityData A dataframe containing additional wood density data to be
 #'  combined with the global wood density database. The dataframe should be organized
 #'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth
@@ -56,26 +55,27 @@ if (getRversion() >= "2.15.1") {
 #'
 #' The function also provides an estimate of the error associated with the wood density estimate
 #'  (i.e. a standard deviation): a mean standard deviation value is given to the tree at the
-#'  appropriate taxonomic level using the \code{\link{sd_10}} dataset.
+#'  appropriate taxonomic level using the [sd_10] dataset.
 #'
 #'
 #' @return Returns a dataframe containing the following information:
-#' \item{family}{(if set) Family}
-#' \item{genus}{Genus}
-#' \item{species}{Species}
-#' \item{meanWD}{Mean wood density}
-#' \item{sdWD}{Standard deviation of the wood density that can be used in error propagation
-#' (see \code{\link{sd_10}} and \code{\link{AGBmonteCarlo}})}
-#' \item{levelWD}{Level at which wood density has been calculated. Can be species, genus, family,
-#' Dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)}
-#' \item{nInd}{Number of individuals taken into account to compute the mean wood density}
+#'   - `family`: (if set) Family
+#'   - `genus`: Genus
+#'   - `species`: Species
+#'   - `meanWD`: Mean wood density
+#'   - `sdWD`: Standard deviation of the wood density that can be used in error propagation
+#' (see [sd_10] and [AGBmonteCarlo()])
+#'   - `levelWD`: Level at which wood density has been calculated. Can be species, genus, family,
+#' dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)
+#'   - `nInd`: Number of individuals taken into account to compute the mean wood density
+#'   
 #' @export
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
 #'
 #' @references
-#' Chave, J., et al. \emph{Towards a worldwide wood economics spectrum.} Ecology letters 12.4 (2009): 351-366.
-#' Zanne, A. E., et al. \emph{Global wood density database.} Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
+#' Chave, J., et al. _Towards a worldwide wood economics spectrum_. Ecology letters 12.4 (2009): 351-366.
+#' Zanne, A. E., et al. _Global wood density database_. Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
 #'
 #'
 #' @examples
@@ -103,7 +103,7 @@ if (getRversion() >= "2.15.1") {
 #'   stand = KarnatakaForest$plotId
 #' )
 #' str(WD)
-#' @seealso \code{\link{wdData}}, \code{\link{sd_10}}
+#' @seealso [wdData], [sd_10]
 #' @keywords Wood density
 #' @importFrom data.table data.table := setDF setDT setkey copy chmatch %chin%
 #'

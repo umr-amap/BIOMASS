@@ -21,10 +21,9 @@ However, as soon as the raster is downloaded once, the function then runs fast.
 The Chave's environmental index, \code{E}, has been shown to be an important covariable in
 the diameter-height relationship for tropical trees. It is calculated as:
 \deqn{E = 1.e-3 * (0.178 * TS - 0.938 * CWD - 6.61 * PS)}
-where \eqn{TS} is temperature seasonality as defined in the Worldclim dataset (bioclimatic variable 4),
-\eqn{CWD} is the climatic water deficit (in mm/yr, see Chave et al. 2014) and \eqn{PS} is the
+where \code{TS} is temperature seasonality as defined in the Worldclim dataset (bioclimatic variable 4),
+\code{CWD} is the climatic water deficit (in mm/yr, see Chave et al. 2014) and \code{PS} is the
 precipitation seasonality as defined in the Worldclim dataset (bioclimatic variable 15).
-
 
 The E index is extracted from a raster file (2.5 arc-second resolution, or ca. 5 km) available
 at http://chave.ups-tlse.fr/pantropical_allometry.htm
@@ -38,7 +37,8 @@ The localisation of the folder is :
 \item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
 \item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
 }
-See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+
+See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
 }
 
 \examples{

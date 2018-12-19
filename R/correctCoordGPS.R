@@ -20,11 +20,10 @@
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
 #' @return If you there are no outliers or rmOutliers = TRUE, a list with:
-#' \describe{
-#'    \item{corner}{a matrix with the coordinates of the corners}
-#'    \item{polygon}{a spatial polygon}
-#'    \item{outliers}{Coordinates lines considered as outliers, if any}
-#' }
+#'    - `corner`: a matrix with the coordinates of the corners
+#'    - `polygon`: a spatial polygon
+#'    - `outliers`: Coordinates lines considered as outliers, if any
+#' 
 #'
 #'
 #' @export

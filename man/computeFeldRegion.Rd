@@ -11,10 +11,10 @@ computeFeldRegion(coord, level = "region")
 
 \item{level}{a string or a vector of string, the length must match the number of rows of the parameter coord.
 This parameter gives the scale at which Feldpausch regions should be assigned. There are tree levels:
-\describe{
-   \item{region}{Models assign at sub-continent levels, value by default}
-   \item{continent}{Models assign at the Africa, South America, Asia and Australia levels}
-   \item{world}{Pantropical model}
+\itemize{
+\item \code{region}: Models assign at sub-continent levels, value by default
+\item \code{continent}: Models assign at the Africa, South America, Asia and Australia levels
+\item \code{world}: Pantropical model
 }}
 }
 \value{
@@ -43,8 +43,8 @@ FeldRegion <- computeFeldRegion(coord)
 
 }
 \references{
-Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest
-biomass estimates.} Biogeosciences, 9, 3381–3403.
+Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest biomass estimates.}
+Biogeosciences, 9, 3381–3403.
 }
 \author{
 Arthur PERE

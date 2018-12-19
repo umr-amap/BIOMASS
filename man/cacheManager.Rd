@@ -25,11 +25,12 @@ The localisation of the folder is :
 \item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
 \item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
 }
-See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+
+See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
 }
 
 \seealso{
-\code{\link[rappdirs]{user_data_dir}}
+\code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
 }
 \author{
 Arthur PERE

@@ -9,13 +9,13 @@ attributeTree(xy, plot, coordAbs)
 \arguments{
 \item{xy}{The coordinates of the trees for each plot}
 
-\item{plot}{The label of the plot (same length as the number of rows of xy)}
+\item{plot}{The label of the plot (same length as the number of rows of \code{xy})}
 
-\item{coordAbs}{Output of the function \code{\link{cutPlot}}}
+\item{coordAbs}{Output of the function \code{\link[=cutPlot]{cutPlot()}}}
 }
 \value{
-A vector with the code of the subplot for each trees, the code will be plot_X_Y. X and Y are the coordinate where the tree
-is inside the plot in regards to the corresponding subplot.
+A vector with the code of the subplot for each trees, the code will be \code{plot_X_Y}. \code{X} and \code{Y} are the coordinate
+where the tree is inside the plot in regards to the corresponding subplot.
 }
 \description{
 Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA

@@ -9,11 +9,11 @@ predictHeight(D, model, err = FALSE, plot = NULL)
 \arguments{
 \item{D}{Vector of diameter (in cm).}
 
-\item{model}{A height-diameter model output by the function \code{link{modelHD}}}
+\item{model}{A height-diameter model output by the function \code{\link[=modelHD]{modelHD()}}}
 
 \item{err}{If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of
 zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
-for the Monte Carlo approach (see \code{\link{AGBmonteCarlo}}), otherwise it should be
+for the Monte Carlo approach (see \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}), otherwise it should be
 let as \code{FALSE}, the default case.}
 
 \item{plot}{a vector of the same length the plot ID}
@@ -29,7 +29,7 @@ In the case where the error is \code{FALSE} and the model is a log-log model, we
 Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 }
 \seealso{
-\code{\link[minpack.lm]{nlsLM}}
+\link[minpack.lm:nlsLM]{minpack.lm::nlsLM}
 }
 \author{
 Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
