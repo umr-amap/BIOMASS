@@ -26,10 +26,14 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   method <- model$method
   logmod <- any(grepl("log", method))
   
-  if(is.null(plot) && !all(names(model[[1]]) == c("H", "D")))
+  if(is.null(plot) && length(model[[1]]) != 2 )
     model = model[[1]]
   
-  if (!is.null(plot) && length(unique(plot)) != 1){
+  if (!is.null(plot) && length(model[[1]]) != 2){
+    if(length(plot) == 1){
+      plot = rep(plot, length(D)) 
+    }
+    
     if(length(plot) != length(D))
       stop("The argument plot and D have not the same length")
     
