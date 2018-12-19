@@ -146,8 +146,47 @@ for (method in c("log1", "log2", "log3", "weibull", "michaelis")) {
       expect_length(predictHeight(D, HDmodel, err = err), length(D))
       expect_is(predictHeight(D, HDmodel, err = err), "numeric")
     }
+    
   })
 }
+
+test_that("predictHeigth with plot argument", {
+  
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = method,
+    useWeight = TRUE
+  )
+  
+  expect_failure(expect_error(predictHeight(D, HDmodel, plot = "Plot1")))
+  
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = method,
+    useWeight = TRUE,
+    plot = NouraguesHD$plotId
+  )
+  
+  expect_length(predictHeight(D, HDmodel), length(D))
+  expect_length(predictHeight(D, HDmodel, plot = "Plot1"), length(D))
+  expect_failure(expect_equal(predictHeight(D, HDmodel, plot = "Plot1"), 
+                              predictHeight(D, HDmodel, plot = "Plot2")))
+  expect_error(predictHeight(D, HDmodel, plot = "AAA"), "name")
+  expect_error(predictHeight(D, HDmodel, plot = c("Plot1", "Plot2")), "length")
+  
+  expect_failure(expect_error(predictHeight(D, HDmodel)))
+  
+  plot = rep(c("Plot1", "Plot2"), length.out = length(D))
+  
+  Res = predictHeight(D, HDmodel, plot = plot)
+  expect_failure(expect_equal(Res, predictHeight(D, HDmodel, plot = "Plot1")))
+  expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot1"])
+  expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot2"])
+  expect_failure(expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot1"]))
+  expect_failure(expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot2"]))
+})
 
 
 

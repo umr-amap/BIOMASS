@@ -14,7 +14,7 @@ for (method in c("log1", "log2", "log3", "michaelis", "weibull")) {
     test_that(paste("Method", method, "useWeight", useWeight), {
       HDmodel <- modelHD(D, H, method = method, useWeight = useWeight)
 
-      logMethod <- ifelse(length(grep("log", method)) == 0, FALSE, TRUE)
+      logMethod <- grepl("log", method)
 
       expect_is(HDmodel, "list")
       expect_equal(length(HDmodel), ifelse(logMethod, 10, 9))

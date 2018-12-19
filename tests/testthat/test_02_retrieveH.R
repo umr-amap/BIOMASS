@@ -59,8 +59,19 @@ test_that("With the region", {
 
 test_that("With the plot", {
   
+  model = modelHD(NouraguesHD$D, 
+                  NouraguesHD$H, 
+                  method = "log2", 
+                  plot = NouraguesHD$plotId)
   
+  D = NouraguesHD$D
   
+  H = retrieveH(D, model, plot = NouraguesHD$plotId)
+  expect_length(H$H, length(D))
+  expect_length(H$RSE, length(unique(NouraguesHD$plotId)))
   
+  H = retrieveH(D, model)
+  expect_length(H$H, length(D))
+  expect_length(H$RSE, 1)
   
 })
