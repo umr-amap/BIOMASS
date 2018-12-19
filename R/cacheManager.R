@@ -181,7 +181,7 @@ updateCache <- function(nameFile = NULL) {
 
   tryCatch({
     if (!is.null(nameFile)) {
-      # if the zip exist and isn't damaged
+      # if the zip exist and is not damaged
       ifelse(file.exists(nameFileZip),
         unzip(nameFileZip, exdir = path),
         unzip(paste0(path, ".zip"), exdir = path)
@@ -193,7 +193,7 @@ updateCache <- function(nameFile = NULL) {
   warning = function(cond) {
     zip_url <- zip_urls[[nameFile]]
     if (is.null(zip_url)) {
-      stop("You demand something we don't understand.")
+      stop("You demand something we do not understand.")
     }
 
     downloadZip(zip_url, path)

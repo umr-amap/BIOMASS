@@ -31,11 +31,11 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   
   if (!is.null(plot) && length(unique(plot)) != 1){
     if(length(plot) != length(D))
-      stop("The argument plot and D haven't the same length")
+      stop("The argument plot and D have not the same length")
     
     if(any( !plot %in% names(model) ))
       stop("There is those name(s): ",  paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "),
-           " that isn't in the model but is in the plot")
+           " that is not in the model but is in the plot")
     
     
     data = data.table(D = D, plot = plot)

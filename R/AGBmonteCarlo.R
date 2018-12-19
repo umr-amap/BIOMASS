@@ -115,7 +115,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   }
 
   if (len != length(WD) || len != length(errWD)) {
-    stop("One of vector WD or errWD doesn't have the same length as D")
+    stop("One of vector WD or errWD does not have the same length as D")
   }
 
   if (is.null(HDmodel) & is.null(coord) & is.null(H)) {

@@ -96,7 +96,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
 
   if (length(H) != length(D)) {
-    stop("Your vector D and H don't have the same length")
+    stop("Your vector D and H do not have the same length")
   }
 
   if (!is.null(method)) {

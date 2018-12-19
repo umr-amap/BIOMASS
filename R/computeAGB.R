@@ -38,7 +38,7 @@
 #' # If you have height data
 #' AGB <- computeAGB(D, WD, H)
 #' 
-#' # If you don't have height data and a single site
+#' # If you do not have height data and a single site
 #' lat <- 4.08
 #' long <- -52.68
 #' coord <- cbind(long, lat)
@@ -46,7 +46,7 @@
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
 #' 
-#' # If you don't have height data and several sites (here three)
+#' # If you do not have height data and several sites (here three)
 #' lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 #' long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 #' coord <- cbind(long, lat)

@@ -114,11 +114,11 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   # Parameters verification -------------------------------------------------
 
   if (length(genus) != length(species)) {
-    stop("Your data (genus and species) don't have the same length")
+    stop("Your data (genus and species) do not have the same length")
   }
 
   if (!is.null(family) && (length(genus) != length(family))) {
-    stop("Your family vector and your genus/species vectors don't have the same length")
+    stop("Your family vector and your genus/species vectors do not have the same length")
 
     if (any(colSums(table(family, genus) > 0, na.rm = T) >= 2)) {
       stop("One or more of your genus are in two or more family")
@@ -126,7 +126,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   }
 
   if (!is.null(stand) && (length(genus) != length(stand))) {
-    stop("Your stand vector and your genus/species vectors don't have the same length")
+    stop("Your stand vector and your genus/species vectors do not have the same length")
   }
 
   if (!is.null(addWoodDensityData)) {
@@ -216,7 +216,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   meanWdData <- subWdData[(family %in% taxa$family | genus %in% taxa$genus | species %in% taxa$species), ]
 
   if (nrow(meanWdData) == 0) {
-    stop("Our database haven't any of your family, genus and species")
+    stop("Our database have not any of your family, genus and species")
   }
 
 

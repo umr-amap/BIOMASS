@@ -66,7 +66,7 @@ summaryByPlot <- function(AGB_simu, plot) {
     stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result of the function")
   }
   if (length(plot) != nrow(AGB_simu)) {
-    stop("Your plot vector haven't the same length as your number of row in the matrix")
+    stop("Your plot vector have not the same length as your number of row in the matrix")
   }
   
 
@@ -117,7 +117,7 @@ summaryByPlot <- function(AGB_simu, plot) {
 
       # if the tree belong among the subplot
       if (nrow(subsample) != 0) {
-        # sum for the trees I whose aren't in the subplot, by column
+        # sum for the trees I whose are not in the subplot, by column
         sums <- subsample[, sum(matrix[I, unique(indice_col)], na.rm = T), by = indice_col]
         sums[is.na(V1), V1 := 0] # if there is any NA update the table
         resAGB[sums$indice_col] <- resAGB[sums$indice_col] + sums$V1 # sum the result of the table
