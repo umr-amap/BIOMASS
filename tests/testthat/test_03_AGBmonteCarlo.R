@@ -117,7 +117,7 @@ test_that("AGB monte Carlo on the HDmodel", {
   expect_length(AGB$credibilityAGB, 2)
   expect_is(AGB$credibilityAGB, "numeric")
 
-  expect_equal(dim(AGB$AGB_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_is(AGB$AGB_simu, "matrix")
   expect_is(AGB$AGB_simu[1, 1], "numeric")
 })
@@ -139,7 +139,7 @@ test_that("AGB monte Carlo on the H", {
   expect_length(AGB$credibilityAGB, 2)
   expect_is(AGB$credibilityAGB, "numeric")
 
-  expect_equal(dim(AGB$AGB_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_is(AGB$AGB_simu, "matrix")
   expect_is(AGB$AGB_simu[1, 1], "numeric")
 })
@@ -161,7 +161,7 @@ test_that("AGB monte Carlo on the coord", {
   expect_length(AGB$credibilityAGB, 2)
   expect_is(AGB$credibilityAGB, "numeric")
 
-  expect_equal(dim(AGB$AGB_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_is(AGB$AGB_simu, "matrix")
   expect_is(AGB$AGB_simu[1, 1], "numeric")
 
@@ -187,7 +187,7 @@ test_that("AGB monte Carlo on the Dpropag", {
   expect_length(AGB$credibilityAGB, 2)
   expect_is(AGB$credibilityAGB, "numeric")
 
-  expect_equal(dim(AGB$AGB_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_is(AGB$AGB_simu, "matrix")
   expect_is(AGB$AGB_simu[1, 1], "numeric")
 })
@@ -209,7 +209,7 @@ test_that("AGB monte Carlo on the Carbon", {
   expect_length(AGB$credibilityAGC, 2)
   expect_is(AGB$credibilityAGC, "numeric")
 
-  expect_equal(dim(AGB$AGC_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGC_simu), c(length(D), nIter))
   expect_is(AGB$AGC_simu, "matrix")
   expect_is(AGB$AGC_simu[1, 1], "numeric")
 })
@@ -230,7 +230,7 @@ test_that("AGB monte Carlo on the Dlim", {
   expect_length(AGB$credibilityAGC, 2)
   expect_is(AGB$credibilityAGC, "numeric")
 
-  expect_equal(dim(AGB$AGC_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGC_simu), c(length(D), nIter))
   expect_is(AGB$AGC_simu, "matrix")
   expect_is(AGB$AGC_simu[1, 1], "numeric")
 
@@ -254,10 +254,39 @@ test_that("AGB with NA", {
   expect_length(AGB$credibilityAGB, 2)
   expect_is(AGB$credibilityAGB, "numeric")
 
-  expect_equal(dim(AGB$AGB_simu), c(100, nIter))
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_is(AGB$AGB_simu, "matrix")
   expect_is(AGB$AGB_simu[1, 1], "numeric")
 
   expect_true(all(is.na(AGB$AGB_simu[1:5, ])))
   expect_false(all(is.na(AGB$AGB_simu[1:6, ])))
+})
+
+
+test_that("With the plot value", {
+  
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = "log2",
+    useWeight = TRUE,
+    plot = NouraguesHD$plotId
+  )
+  
+  WD = suppressMessages(getWoodDensity(NouraguesHD$genus, NouraguesHD$species))
+  D = NouraguesHD$D
+  
+  set.seed(2)
+  AGB = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = NouraguesHD$plotId)
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
+  
+  set.seed(2)
+  AGB_plot1 = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot1")
+  expect_failure(expect_equal(AGB_plot1, AGB))
+  
+  set.seed(2)
+  AGB_plot2 = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot2")
+  expect_failure(expect_equal(AGB_plot2, AGB))
+  
+  expect_failure(expect_equal(AGB_plot1, AGB_plot2))
 })

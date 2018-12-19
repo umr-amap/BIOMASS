@@ -6,7 +6,7 @@
 \usage{
 AGBmonteCarlo(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-  Carbon = FALSE, Dlim = NULL)
+  Carbon = FALSE, Dlim = NULL, plot = NULL)
 }
 \arguments{
 \item{D}{Vector of tree diameters (in cm)}
@@ -37,6 +37,8 @@ with the diameter measurements or \code{"chave2004"} (an important error on 5 pe
 
 \item{Dlim}{(optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
 \code{Dlim} will have a 0 value in the output).}
+
+\item{plot}{The plot ID for each trees}
 }
 \value{
 Returns a list  with (if Carbon is FALSE):

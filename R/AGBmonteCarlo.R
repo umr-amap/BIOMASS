@@ -19,7 +19,8 @@
 #' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
-#' \code{Dlim} will have a 0 value in the output).
+#' `Dlim` will have a 0 value in the output).
+#' @param plot The plot ID for each trees
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
@@ -91,7 +92,8 @@
 #' @export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000, Carbon = FALSE, Dlim = NULL) {
+                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000, 
+                          Carbon = FALSE, Dlim = NULL, plot = NULL) {
   len <- length(D)
 
   # parameters verification -------------------------------------------------
@@ -147,7 +149,12 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              - a matrix with two columns (longitude and latitude) 
              having the same number of rows as the number of trees (length(D))")
   }
-
+  
+  # the length of the plot is tested in predictHeight
+  # the names of the plot and the names of the model is tested in predictHeight
+  if(!is.null(plot) && is.null(HDmodel))
+    stop("The 'plot' vector must be with 'model' argument")
+  
 
 
   # function truncated random gausien law -----------------------------------
@@ -207,7 +214,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   if (!is.null(HDmodel) | !is.null(H)) {
     if (!is.null(HDmodel)) {
       # Propagation of the error thanks to the local model of H
-      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE))
+      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE, plot = plot))
     } else {
       # Propagation of the error using the errH value(s)
       upper <- max(H, na.rm = T) + 15
