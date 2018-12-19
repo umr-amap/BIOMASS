@@ -26,7 +26,18 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   method <- model$method
   logmod <- any(grepl("log", method))
   
-  if (!is.null(plot)){
+  if(is.null(plot) && !all(names(model[[1]]) == c("H", "D")))
+    model = model[[1]]
+  
+  if (!is.null(plot) && length(unique(plot)) != 1){
+    if(length(plot) != length(D))
+      stop("The argument plot and D haven't the same length")
+    
+    if(any( !plot %in% names(model) ))
+      stop("There is those name(s): ",  paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "),
+           " that isn't in the model but is in the plot")
+    
+    
     data = data.table(D = D, plot = plot)
     
     data[, H := predictHeight(D, model[[unique(plot)]], err), by = plot]
