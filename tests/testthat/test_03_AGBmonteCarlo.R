@@ -51,7 +51,7 @@ test_that("AGBmonteCarlo error", {
 
   expect_error(
     AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD[1], H = H),
-    "One of vector WD or errWD doesn't have the same length as D"
+    "One of vector WD or errWD does not have the same length as D"
   )
 
   expect_error(

@@ -15,7 +15,7 @@ suppressMessages({
 
     expect_error(
       getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected[1:10]),
-      "don't have the same length"
+      "do not have the same length"
     )
 
     WD <- getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected)
