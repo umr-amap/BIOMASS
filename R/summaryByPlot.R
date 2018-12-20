@@ -18,7 +18,7 @@ if (getRversion() >= "2.15.1") {
 #' or just the result of the function [AGBmonteCarlo()]
 #' @param plot Vector with the code of plot
 #'
-#' @return a data frame where :
+#' @return a data frame where:
 #'   - `plot`: the code of the plot
 #'   - `AGB`: the mean of AGB for the plot
 #'   - `Cred_2.5`: the quantile 2.5\% for the plot

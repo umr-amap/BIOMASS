@@ -15,7 +15,8 @@ if (getRversion() >= "2.15.1") {
 #' zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
 #' for the Monte Carlo approach (see [AGBmonteCarlo()]), otherwise it should be
 #' let as `FALSE`, the default case.
-#' @param plot a vector of the same length the plot ID
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @details In the case where the error is `FALSE` and the model is a log-log model, we use the
 #' Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
@@ -28,13 +29,13 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom data.table data.table
 #' @keywords Internal
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
-  ### From the diameter and the model, compute (with or without error) the heigth
+  ### From the diameter and the model, compute (with or without error) the height
 
   method <- model$method
   logmod <- any(grepl("log", method))
 
   if (is.null(plot) && length(model[[1]]) != 2) {
-    model <- model[[1]]
+    stop("The argument model contains different HD models, use the argument plot to assign a given model to the trees")
   }
 
   if (!is.null(plot) && length(model[[1]]) != 2) {
@@ -48,9 +49,8 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
 
     if (any(!plot %in% names(model))) {
       stop(
-        "There is those name(s): ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "),
-        " that is not in the model but is in the plot"
-      )
+        "Cannot find a HD model corresponding to ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", ")
+        )
     }
 
 

@@ -18,8 +18,9 @@
 #' If `NULL`, all the methods will be compared.
 #' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 #' volume, so that larger trees have a stronger influence during the construction of the model).
-#' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D.
-#' @param plot The plot ID, must be either `NULL` or just one value, or a vector the same length as D
+#' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D. Only if argument `plot` is null.
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2},
 #' where RSE is the Residual Standard Error).
@@ -127,7 +128,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     })
 
     if (is.null(method)) {
-      message("If you want to use a particular model, use the parameter 'method' in this function.")
+      message("To build a HD model you must use the parameter 'method' in this function")
     }
 
     return(output)
@@ -284,7 +285,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       col = color
     )
 
-    message("If you want to use a particular model, use the parameter 'method' in this function.")
+    message("To build a HD model you must use the parameter 'method' in this function")
     return(data.frame(result))
   }
 }
