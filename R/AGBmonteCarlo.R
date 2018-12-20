@@ -20,7 +20,8 @@
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
-#' @param plot The plot ID for each trees
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
@@ -298,7 +299,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       AGB_simu = AGB_simu
     )
   } else {
-    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical angiosperm stems carbon content)
+    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical 
+    # angiosperm stems carbon content)
     AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
     sum_AGC_simu <- colSums(AGC_simu, na.rm = T)
     res <- list(

@@ -16,7 +16,8 @@ zero and a standard deviation equalled to the residual standard error of the mod
 for the Monte Carlo approach (see \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}), otherwise it should be
 let as \code{FALSE}, the default case.}
 
-\item{plot}{a vector of the same length the plot ID}
+\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
+stand-specific HD models.}
 }
 \value{
 Returns a vector of total tree height (in m).

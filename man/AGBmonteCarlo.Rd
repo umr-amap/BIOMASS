@@ -38,7 +38,8 @@ with the diameter measurements or \code{"chave2004"} (an important error on 5 pe
 \item{Dlim}{(optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
 \code{Dlim} will have a 0 value in the output).}
 
-\item{plot}{The plot ID for each trees}
+\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
+stand-specific HD models.}
 }
 \value{
 Returns a list  with (if Carbon is FALSE):

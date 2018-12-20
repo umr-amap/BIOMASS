@@ -32,9 +32,10 @@ If \code{NULL}, all the methods will be compared.}
 \item{useWeight}{If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 volume, so that larger trees have a stronger influence during the construction of the model).}
 
-\item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D.}
+\item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D. Only if argument \code{plot} is null.}
 
-\item{plot}{The plot ID, must be either \code{NULL} or just one value, or a vector the same length as D}
+\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
+stand-specific HD models.}
 }
 \value{
 If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,

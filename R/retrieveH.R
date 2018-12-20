@@ -22,13 +22,14 @@
 #'   - `NAustralia`: Northern Australia
 #'   - `Pantropical`: Pantropical
 #'
-#' @param plot the plot ID, must be the same length of D, this feature is just for the model
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @return Returns a list  with:
 #'   - `H`: H predicted by the model
 #'   - `RSE` Residual Standard Error of the model, or a vector of those for each plot
 #' @references
-#' Feldpausch et al. _Tree height integrated into pantropical forest biomass estimates._ Biogeosciences (2012): 3381-3403.
+#' Feldpausch et al. _Tree height integrated into pantropical forest biomass estimates_. Biogeosciences (2012): 3381-3403.
 #' Chave et al. _Improved allometric models to estimate the aboveground biomass of tropical trees_.
 #' Global change biology 20.10 (2014): 3177-3190.
 #' @author Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE

@@ -32,7 +32,8 @@ and pantropical models proposed by Feldpausch et al. (2012). To be chosen betwee
 \item \code{Pantropical}: Pantropical
 }}
 
-\item{plot}{the plot ID, must be the same length of D, this feature is just for the model}
+\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
+stand-specific HD models.}
 }
 \value{
 Returns a list  with:
@@ -65,7 +66,7 @@ H <- retrieveH(D = NouraguesHD$D, coord = coord)
 H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 }
 \references{
-Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
+Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates}. Biogeosciences (2012): 3381-3403.
 Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}.
 Global change biology 20.10 (2014): 3177-3190.
 }

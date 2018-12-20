@@ -132,13 +132,12 @@ HDmodel <- modelHD(
 **Compute models specific to given stands**
 
 ```{r, cache=CACHE}
-HDmodelPerPlot <- by(NouraguesHD, NouraguesHD$plotId,
-  function(x) modelHD(D = x$D, H = x$H, method = "weibull", useWeight = T),
-  simplify = FALSE
+HDmodelPerPlot <- modelHD(
+  D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull",
+  useWeight = T, plot = NouraguesHD$plotId
 )
-RSEmodels <- sapply(HDmodelPerPlot, function(x) x$RSE)
-ResHD <- t(rbind(sapply(HDmodelPerPlot, function(x) coef(x$model)), RSE = RSEmodels))
-kable(ResHD, row.names = F, digits = 3)
+ResHD <- t(sapply(HDmodelPerPlot, function(x) c(coef(x$model), RSE = x$RSE)))
+kable(ResHD, row.names = T, digits = 3)
 ```
 
 
@@ -184,28 +183,28 @@ AGBtree <- computeAGB(
 ```
 **Compute AGB(Mg) per plot**
 ```{r warning=F, cache=CACHE}
-AGBPlotList <- by(KarnatakaForestsub, KarnatakaForestsub$plotId,
-  function(x) computeAGB(D = x$D, WD = x$WD, H = x$H),
-  simplify = F
-)
-AGBplot <- sapply(AGBPlotList, sum)
+AGBplot <- summaryByPlot(AGBtree, KarnatakaForestsub$plotId)
 ```
 
 **Compute AGB(Mg) per tree without height information (Eq. 7 from Chave et al. (2014))**
 ```{r warning=F, eval=F, cache=CACHE}
-AGBPlotListChave <- by(KarnatakaForestsub, KarnatakaForestsub$plotId,
-  function(x) computeAGB(D = x$D, WD = x$WD, coord = x[, c("long", "lat")],
-  simplify = F
+AGBplotChave <- summaryByPlot(
+  computeAGB(
+    D = KarnatakaForestsub$D, WD = KarnatakaForestsub$WD,
+    coord = KarnatakaForestsub[, c("long", "lat")]
+  ),
+  KarnatakaForestsub$plotId
 )
-AGBplotChave <- sapply(AGBPlotListChave, sum)
 ```
 **Compute AGB(Mg) per tree with Feldpausch et al. (2012) regional H-D model**
 ```{r warning=F, cache=CACHE}
-AGBPlotListFeld <- by(KarnatakaForestsub, KarnatakaForestsub$plotId,
-  function(x) computeAGB(D = x$D, WD = x$WD, H = x$Hfeld),
-  simplify = F
+AGBplotFeld <- summaryByPlot(
+  computeAGB(
+    D = KarnatakaForestsub$D, WD = KarnatakaForestsub$WD,
+    H = KarnatakaForestsub$Hfeld
+  ),
+  plot = KarnatakaForestsub$plotId
 )
-AGBplotFeld <- sapply(AGBPlotListFeld, sum)
 ```
 
 # Propagate AGB errors
