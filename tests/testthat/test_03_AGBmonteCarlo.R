@@ -264,7 +264,6 @@ test_that("AGB with NA", {
 
 
 test_that("With the plot value", {
-  
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,
@@ -272,21 +271,21 @@ test_that("With the plot value", {
     useWeight = TRUE,
     plot = NouraguesHD$plotId
   )
-  
-  WD = suppressMessages(getWoodDensity(NouraguesHD$genus, NouraguesHD$species))
-  D = NouraguesHD$D
-  
+
+  WD <- suppressMessages(getWoodDensity(NouraguesHD$genus, NouraguesHD$species))
+  D <- NouraguesHD$D
+
   set.seed(2)
-  AGB = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = NouraguesHD$plotId)
+  AGB <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = NouraguesHD$plotId)
   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
-  
+
   set.seed(2)
-  AGB_plot1 = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot1")
+  AGB_plot1 <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot1")
   expect_failure(expect_equal(AGB_plot1, AGB))
-  
+
   set.seed(2)
-  AGB_plot2 = AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot2")
+  AGB_plot2 <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot2")
   expect_failure(expect_equal(AGB_plot2, AGB))
-  
+
   expect_failure(expect_equal(AGB_plot1, AGB_plot2))
 })

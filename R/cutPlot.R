@@ -1,6 +1,6 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "X", "Y", ".SD"
+    "X", "Y", ".SD", "XRel", "YRel", "XAbs", "YAbs"
   ))
 }
 
@@ -25,7 +25,7 @@ if (getRversion() >= "2.15.1") {
 #'   - `YRel`:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
 #'   - `XAbs`:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
 #'   - `YAbs`:  The absolute coordinate (projected) for the axis Y (following the corner 1->4)
-#'   
+#'
 #' @export
 #' @author Arthur PERE
 #' @importFrom data.table data.table :=

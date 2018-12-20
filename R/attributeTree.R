@@ -1,8 +1,6 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "XRel", "X", "Y", "YRel", "Plot",
-    "i.Xmax", "i.Ymax", "Xmax", "Xplot",
-    "Ymax", "Yplot", "subplot"
+    "subplot", "plot", "X", "Y"
   ))
 }
 
@@ -14,11 +12,11 @@ if (getRversion() >= "2.15.1") {
 #' @param plot The label of the plot (same length as the number of rows of `xy`)
 #' @param coordAbs Output of the function [cutPlot()]
 #'
-#' @return A vector with the code of the subplot for each trees, the code will be `plot_X_Y`. `X` and `Y` are the coordinate 
+#' @return A vector with the code of the subplot for each trees, the code will be `plot_X_Y`. `X` and `Y` are the coordinate
 #' where the tree is inside the plot in regards to the corresponding subplot.
 #' @export
 #' @author Arthur PERE
-#' @importFrom data.table data.table setDT between setnames
+#' @importFrom data.table data.table setDT %between% setnames
 #'
 #' @examples
 #' 

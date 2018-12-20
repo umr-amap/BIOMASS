@@ -79,11 +79,12 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
               - HDmodel
               - coord")
   }
-  
+
   # the length of the plot is tested in predictHeight
   # the names of the plot and the names of the model is tested in predictHeight
-  if(!is.null(plot) && is.null(model))
+  if (!is.null(plot) && is.null(model)) {
     stop("The 'plot' vector must be with 'model' argument")
+  }
 
 
   # First case : with a model fitted with HDfunction
@@ -91,7 +92,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
     H <- predictHeight(D, model, plot = plot)
     RSE <- if (!is.null(plot)) {
       sapply(model, function(x) x$RSE)
-    } else if(length(model[[1]]) != 2){
+    } else if (length(model[[1]]) != 2) {
       model[[1]]$RSE
     } else {
       model$RSE

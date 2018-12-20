@@ -14,7 +14,7 @@ if (getRversion() >= "2.15.1") {
 #'    - `codeUTM`: The code `proj4` for UTM
 #'    - `X`: The X UTM coordinate
 #'    - `Y`: The Y UTM coordinate
-#' 
+#'
 #' @export
 #' @importFrom data.table as.data.table :=
 #' @examples

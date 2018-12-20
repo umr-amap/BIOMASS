@@ -29,7 +29,7 @@ In the case where the error is \code{FALSE} and the model is a log-log model, we
 Baskerville correction, a bias correction factor used to get unbiased backtransformation values.
 }
 \seealso{
-\link[minpack.lm:nlsLM]{minpack.lm::nlsLM}
+\code{\link[minpack.lm:nlsLM]{minpack.lm::nlsLM()}}
 }
 \author{
 Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE

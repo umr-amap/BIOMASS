@@ -59,10 +59,11 @@
 #' )
 #' 
 #' # Compute plot-specific H-D models
-#' HDmodelPerPlot <- by(NouraguesHD, NouraguesHD$plotId,
-#'   function(x) modelHD(D = x$D, H = x$H, method = "weibull", useWeight = T),
-#'   simplify = FALSE
+#' HDmodelPerPlot <- modelHD(NouraguesHD$D, NouraguesHD$H,
+#'   method = "weibull",
+#'   useWeight = T, plot = NouraguesHD$plotId
 #' )
+#' 
 #' RSEmodels <- sapply(HDmodelPerPlot, function(x) x$RSE)
 #' Coeffmodels <- lapply(HDmodelPerPlot, function(x) x$coefficients)
 #' 
@@ -120,10 +121,10 @@
 #' 
 #' # Per plot using the local HD model constructed above (modelHD)
 #' resultMC <- AGBmonteCarlo(
-#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
-#'       HDmodel = HDmodel, Dpropag = "chave2004"
-#'     )
-#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
+#'   HDmodel = HDmodel, Dpropag = "chave2004"
+#' )
+#' resMC <- summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' 
 #' # Per plot using the Feldpaush regional HD averaged model
 #' resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
@@ -138,10 +139,11 @@
 #' 
 #' # Per plot using Chave et al. (2014) Equation 7
 #' resultMC <- AGBmonteCarlo(
-#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
-#'       coord = KarnatakaForest[, c("long", "lat")],
-#'       Dpropag = "chave2004")
-#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
+#'   coord = KarnatakaForest[, c("long", "lat")],
+#'   Dpropag = "chave2004"
+#' )
+#' resMC <- summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' }
 #' @keywords internal
 "_PACKAGE"

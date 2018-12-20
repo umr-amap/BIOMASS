@@ -4,7 +4,7 @@
 #'
 #' @param D Vector with diameter measurements (in cm). NA values are accepted but a
 #' minimum of 10 valid entries (i.e. having a corresponding height in H) is required.
-#' @param H Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries 
+#' @param H Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries
 #' (i.e. having a corresponding diameter in D) is required.
 #' @param method Method used to fit the relationship.
 #' To be chosen between:
@@ -14,18 +14,18 @@
 #'     + log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
 #'   - weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
 #'   - michaelis: \eqn{H = (A * D)/(B + D)}
-#'   
+#'
 #' If `NULL`, all the methods will be compared.
-#' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree 
+#' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 #' volume, so that larger trees have a stronger influence during the construction of the model).
 #' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D.
 #' @param plot The plot ID, must be either `NULL` or just one value, or a vector the same length as D
 #'
-#' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, 
+#' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2},
 #' where RSE is the Residual Standard Error).
 #'
 #'
-#' @return 
+#' @return
 #' If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
 #' there will be the list with the names of the plot and inside each item their is those results.
 #' Returns a list with if the parameter model is not null:
@@ -39,7 +39,7 @@
 #'   - `formula`: Formula of the model
 #'   - `method`: Name of the method used to construct the model
 #'   - `predicted`: Predicted height values
-#' 
+#'
 #'
 #' If the parameter model is null, the function return a graph with all the methods for
 #' comparison, the function also return a data.frame with:
@@ -48,7 +48,7 @@
 #'   - `RSE`: Residual Standard Error of the model
 #'   - `RSElog`: Residual Standard Error of the log model (`NULL` if other model)
 #'   - `Average_bias`: The average bias for the model
-#' 
+#'
 #'
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY

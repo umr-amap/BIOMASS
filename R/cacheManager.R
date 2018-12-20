@@ -9,7 +9,7 @@
 #'   - On Mac OS X : `~/Library/Application Support/BIOMASS`
 #'   - On Windows 7 up to 10 : `C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS`
 #'   - On Windows XP : `C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS`
-#' 
+#'
 #' See this function for more information : [rappdirs::user_data_dir()]
 #'
 #' @param nameFile the name of the file or folder

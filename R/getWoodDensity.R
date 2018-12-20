@@ -41,7 +41,7 @@ if (getRversion() >= "2.15.1") {
 #'   - `SouthAmericaExtraTrop`: South America (extra tropical)
 #'   - `SouthAmericaTrop`: South America (tropical)
 #'   - `World`: World
-#'   
+#'
 #' @param addWoodDensityData A dataframe containing additional wood density data to be
 #'  combined with the global wood density database. The dataframe should be organized
 #'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth
@@ -68,7 +68,7 @@ if (getRversion() >= "2.15.1") {
 #'   - `levelWD`: Level at which wood density has been calculated. Can be species, genus, family,
 #' dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)
 #'   - `nInd`: Number of individuals taken into account to compute the mean wood density
-#'   
+#'
 #' @export
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY

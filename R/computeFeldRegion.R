@@ -31,7 +31,7 @@
 #' }
 #' 
 #' @references
-#' Feldpausch, T.R., et al. (2012). _Tree height integrated into pantropical forest biomass estimates._ 
+#' Feldpausch, T.R., et al. (2012). _Tree height integrated into pantropical forest biomass estimates._
 #' Biogeosciences, 9, 3381–3403.
 #'
 #' @author Arthur PERE

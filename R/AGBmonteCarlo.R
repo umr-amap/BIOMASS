@@ -33,8 +33,8 @@
 #'
 #' @references Chave, J. et al. (2004). _Error propagation and scaling for tropical forest biomass estimates_.
 #' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
-#' @references Rejou-Mechain et al. (2017). 
-#' _BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests_. 
+#' @references Rejou-Mechain et al. (2017).
+#' _BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests_.
 #' Methods in Ecology and Evolution, 8 (9), 1163-1167.
 #'
 #' @author Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
@@ -92,7 +92,7 @@
 #' @export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000, 
+                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
                           Carbon = FALSE, Dlim = NULL, plot = NULL) {
   len <- length(D)
 
@@ -149,12 +149,13 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              - a matrix with two columns (longitude and latitude) 
              having the same number of rows as the number of trees (length(D))")
   }
-  
+
   # the length of the plot is tested in predictHeight
   # the names of the plot and the names of the model is tested in predictHeight
-  if(!is.null(plot) && is.null(HDmodel))
+  if (!is.null(plot) && is.null(HDmodel)) {
     stop("The 'plot' vector must be with 'model' argument")
-  
+  }
+
 
 
   # function truncated random gausien law -----------------------------------

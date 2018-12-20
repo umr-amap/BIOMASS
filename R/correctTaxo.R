@@ -34,10 +34,10 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
-#' @references Boyle, B. et al. (2013). 
+#' @references Boyle, B. et al. (2013).
 #' _The taxonomic name resolution service: An online tool for automated standardization of plant names_.
 #' BMC bioinformatics, 14, 1.
-#' @references Chamberlain, S. A. and Szocs, E. (2013). _taxize: taxonomic search and retrieval in R_. 
+#' @references Chamberlain, S. A. and Szocs, E. (2013). _taxize: taxonomic search and retrieval in R_.
 #' F1000Research, 2.
 #'
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU

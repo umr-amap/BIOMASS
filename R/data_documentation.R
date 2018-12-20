@@ -7,7 +7,7 @@
 #' A data frame with 502 observations on the following 2 variables:
 #'   - `order`: Vector of order
 #'   - `famAPG`: Vector of APGIII families
-#'   
+#'
 #' @usage data("apgFamilies")
 #' @source Stevens, P. F. (2001 onwards). _Angiosperm Phylogeny Website_.
 #' Version 12, July 2012. Retrieved on 2016-07-25 http://www.mobot.org/MOBOT/research/APweb/
@@ -33,7 +33,7 @@
 #'   - `b`: Coefficient b
 #'   - `c`: Coefficient c
 #'   - `RSE`: Vector of RSE
-#'   
+#'
 #' @details This dataset is used in the function [retrieveH()]
 #' to predict height from diameter depending on the region.
 #' @references
@@ -57,9 +57,9 @@
 #' @format A data frame with 28107 observations on the following 2 variables:
 #'   - `family`: Vector of families APGIII corrected
 #'   - `genus`: Vector of genus
-#'   
+#'
 #' @source
-#' WCSP (2015). _World Checklist of Selected Plant Families_. 
+#' WCSP (2015). _World Checklist of Selected Plant Families_.
 #' Facilitated by the Royal Botanic Gardens, Kew. Published on the Internet; http://apps.kew.org/wcsp/ Retrieved 2015-12-17.
 #'
 #' The Plant List (2013). Version 1.1. Published on the Internet; http://www.theplantlist.org/ Retrieved 2016-08-25.
@@ -86,10 +86,10 @@
 #'   - `D`: Diameter (cm)
 #'   - `lat`: Latitude
 #'   - `long`: Longitude
-#'   
+#'
 #' @references
-#' Ramesh, B. R. et al. (2010). 
-#' _Forest stand structure and composition in 96 sites along environmental gradients in the central Western Ghats of India_ 
+#' Ramesh, B. R. et al. (2010).
+#' _Forest stand structure and composition in 96 sites along environmental gradients in the central Western Ghats of India_
 #' Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
 #' @examples
 #' data(KarnatakaForest)
@@ -113,9 +113,9 @@
 #'   - `H`: Height (m)
 #'   - `lat`: Latitude
 #'   - `long`: Longitude
-#'   
+#'
 #' @references
-#' Réjou-Méchain, M. et al. (2015). 
+#' Réjou-Méchain, M. et al. (2015).
 #' _Using repeated small-footprint LiDAR acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest_
 #' Remote Sensing of Environment, 169, 93-101.
 #' @examples
@@ -139,7 +139,7 @@
 #'   - `intercept`: Vector of intercept values
 #'   - `logagbt`: Vector of the model coefficients associated with the product wood density * diameter^2 * height
 #'   - `sd`: Vector of model residual standard error (RSE) values
-#'   
+#'
 #' @details This dataset is used in the function [AGBmonteCarlo()].
 #' @references
 #' Chave et al. (2014) _Improved allometric models to estimate the aboveground biomass of tropical trees_,
@@ -169,7 +169,7 @@
 #'   - `temp`: Vector of the model coefficients associated with temperature seasonality
 #'   - `cwd`: Vector of the model coefficients associated with climatic water deficit
 #'   - `prec`: Vector of the model coefficients associated with precipitation seasonality
-#'   
+#'
 #' @details This dataset is used in the function [AGBmonteCarlo()].
 #' @references
 #' Chave et al. (2014) _Improved allometric models to estimate the aboveground biomass of tropical trees_,
@@ -195,7 +195,7 @@
 #' A data frame with 3 observations on the following 2 variables:
 #'   - `taxo`: Character vector with the different taxonomical levels (family, genus, species)
 #'   - `sd`: Numeric vector giving the mean standard deviation of wood density values
-#'   
+#'
 #' @details This dataset is used in the function [getWoodDensity()].
 #' @references
 #' Rejou-Mechain et al. (2017).
@@ -223,7 +223,7 @@
 #'   - `region`: a character vector of regions (see [getWoodDensity()])
 #'   - `referenceNumber`: a numeric vector of reference numbers (bibliography)
 #'   - `regionId`: a character vector of region ids
-#'   
+#'
 #' @details This dataset is used in the function [getWoodDensity()], to estimate a taxon-average wood density value.
 #' @references
 #' Chave et al. (2009) _Towards a worldwide wood economics spectrum._ Ecology letters 12:4, 351-366.
@@ -267,7 +267,7 @@
 #' @references
 #' Michaelis, L., & Menten, M. L. (1913). _Die kinetik der invertinwirkung_. Biochem. z, 49(333-369), 352.
 #' Weibull, W. (1951). _Wide applicability_. Journal of applied mechanics, 103.
-#' Baskerville, G. L. (1972). _Use of logarithmic regression in the estimation of plant biomass_. 
+#' Baskerville, G. L. (1972). _Use of logarithmic regression in the estimation of plant biomass_.
 #' Canadian Journal of Forest Research, 2(1), 49-53.
 #'
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY

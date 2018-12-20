@@ -12,7 +12,7 @@ if (getRversion() >= "2.15.1") {
 #' Corner numbering is done as followed:
 #'   - axis X: the corner 1 to the corner 2
 #'   - axis Y: the corner 1 to the corner 4
-#' 
+#'
 #'
 #' @param longlat (optionnal) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).
 #' @param projCoord (optionnal) data frame with the projected coordinates in X Y
@@ -25,7 +25,7 @@ if (getRversion() >= "2.15.1") {
 #'   - `X`: The coordinates X in UTM
 #'   - `Y`: The coordinates Y in UTM
 #'   - `corner`: The corner numbers
-#' 
+#'
 #' @export
 #' @importFrom data.table data.table :=
 #' @author Arthur PERE, Maxime REJOU-MECHAIN

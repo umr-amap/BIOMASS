@@ -1,3 +1,10 @@
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "H"
+  ))
+}
+
+
 #' Predicting tree height
 #'
 #' The function predicts height from diameter based on a fitted model.
@@ -15,43 +22,48 @@
 #'
 #' @return Returns a vector of total tree height (in m).
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
-#' @seealso [minpack.lm::nlsLM]
+#' @seealso [minpack.lm::nlsLM()]
 #'
 #'
 #' @importFrom data.table data.table
 #' @keywords Internal
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   ### From the diameter and the model, compute (with or without error) the heigth
-  
+
   method <- model$method
   logmod <- any(grepl("log", method))
-  
-  if(is.null(plot) && length(model[[1]]) != 2 )
-    model = model[[1]]
-  
-  if (!is.null(plot) && length(model[[1]]) != 2){
-    if(length(plot) == 1){
-      plot = rep(plot, length(D)) 
+
+  if (is.null(plot) && length(model[[1]]) != 2) {
+    model <- model[[1]]
+  }
+
+  if (!is.null(plot) && length(model[[1]]) != 2) {
+    if (length(plot) == 1) {
+      plot <- rep(plot, length(D))
     }
-    
-    if(length(plot) != length(D))
+
+    if (length(plot) != length(D)) {
       stop("The argument plot and D have not the same length")
-    
-    if(any( !plot %in% names(model) ))
-      stop("There is those name(s): ",  paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "),
-           " that is not in the model but is in the plot")
-    
-    
-    data = data.table(D = D, plot = plot)
-    
+    }
+
+    if (any(!plot %in% names(model))) {
+      stop(
+        "There is those name(s): ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "),
+        " that is not in the model but is in the plot"
+      )
+    }
+
+
+    data <- data.table(D = D, plot = plot)
+
     data[, H := predictHeight(D, model[[unique(plot)]], err), by = plot]
-    
+
     return(data[, H])
   }
-  
-  
-  D = data.table(D = D)
-  
+
+
+  D <- data.table(D = D)
+
   if (!err) {
     if (logmod) {
       e <- 0.5 * model$RSElog^2 # Baskerville correction
