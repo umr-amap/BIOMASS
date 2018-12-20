@@ -8,21 +8,22 @@ if (getRversion() >= "2.15.1") {
 #' Summarize by plot (or subplot) the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarize the matrix `AGB_simu` given by the function [AGBmonteCarlo()] by plot.
+#' This function summarize the matrix `AGB_simu` given by the function [AGBmonteCarlo()] by plot. Or just do the sums
+#' for each plot of the AGB if the argument `AGB_simu` is the resulting vector from the function [computeAGB()].
 #'
 #' @details
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach.
 #'
 #' @param AGB_simu Matrix resulting from the function [AGBmonteCarlo()] (AGB_simu element of the list),
-#' or just the result of the function [AGBmonteCarlo()]
+#' or just the result of the function [AGBmonteCarlo()]. Or the vector resulting from the function [computeAGB()]
 #' @param plot Vector with the code of plot
 #'
 #' @return a data frame where:
 #'   - `plot`: the code of the plot
 #'   - `AGB`: the mean of AGB for the plot
-#'   - `Cred_2.5`: the quantile 2.5\% for the plot
-#'   - `Cred_97.5`: the quantile 97.5\% for the plot
+#'   - `Cred_2.5`: the quantile 2.5\% for the plot, if it's the matrix
+#'   - `Cred_97.5`: the quantile 97.5\% for the plot, if it's the matrix
 #'
 #' @export
 #'
@@ -60,17 +61,33 @@ summaryByPlot <- function(AGB_simu, plot) {
   if (is.list(AGB_simu)) {
     AGB_simu <- AGB_simu$AGB_simu
   }
-  if (!is.matrix(AGB_simu)) {
-    stop("The AGB_simu must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result of the function")
+  if (!is.matrix(AGB_simu) && !is.vector(AGB_simu)) {
+    stop(
+      "The AGB_simu must be a matrix you have for the result of the function ",
+      "'AGBmonteCarlo', or just the result of the function. ",
+      "Or the result from the function 'computeAGB'"
+    )
   }
-  if (length(plot) != nrow(AGB_simu)) {
+  if (length(plot) != ifelse(is.matrix(AGB_simu), nrow(AGB_simu), length(AGB_simu))) {
     stop("Your 'plot' vector have not the same length as your number of row in the matrix")
   }
 
 
+  # function if it's a vector -----------------------------------------------
+  if (is.vector(AGB_simu)) {
+    data <- data.table(AGB = AGB_simu, plot = plot)
+    data <- na.omit(data, cols = "AGB")
 
+    unique_plot <- unique(na.omit(plot))
 
-  # function ----------------------------------------------------------------
+    data[is.na(plot), plot := sample(unique_plot, .N, replace = T)]
+    AGB <- data[, .(AGB = sum(AGB)), by = plot]
+
+    setDF(AGB)
+    return(AGB)
+  }
+
+  # function if it's a matrix -----------------------------------------------
 
 
 
