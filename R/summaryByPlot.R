@@ -8,22 +8,22 @@ if (getRversion() >= "2.15.1") {
 #' Summarize by plot (or subplot) the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarize the matrix `AGB_simu` given by the function [AGBmonteCarlo()] by plot. Or just do the sums
-#' for each plot of the AGB if the argument `AGB_simu` is the resulting vector from the function [computeAGB()].
+#' This function summarizes the matrix `AGB_val` given by the function [AGBmonteCarlo()] by plot. Or just do the sums
+#' for each plot of the AGB if the argument `AGB_val` is the resulting vector from the function [computeAGB()].
 #'
 #' @details
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
-#' to a plot at each iteration of the AGB monte Carlo approach.
+#' to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from [computeAGB()].
 #'
-#' @param AGB_simu Matrix resulting from the function [AGBmonteCarlo()] (AGB_simu element of the list),
-#' or just the result of the function [AGBmonteCarlo()]. Or the vector resulting from the function [computeAGB()]
+#' @param AGB_val Matrix resulting from the function [AGBmonteCarlo()] (AGB_val element of the list),
+#' or just the output of the function [AGBmonteCarlo()]. Or the output of the function [computeAGB()]
 #' @param plot Vector with the code of plot
 #'
 #' @return a data frame where:
 #'   - `plot`: the code of the plot
-#'   - `AGB`: the mean of AGB for the plot
-#'   - `Cred_2.5`: the quantile 2.5\% for the plot, if it's the matrix
-#'   - `Cred_97.5`: the quantile 97.5\% for the plot, if it's the matrix
+#'   - `AGB`: AGB value at the plot level
+#'   - `Cred_2.5`: the quantile 2.5\% for the plot (when output of [AGBmonteCarlo()] is used)
+#'   - `Cred_97.5`: the quantile 97.5\% for the plot (when output of [AGBmonteCarlo()] is used)
 #'
 #' @export
 #'
@@ -53,39 +53,36 @@ if (getRversion() >= "2.15.1") {
 #' plot <- KarnatakaForest$plotId[ filt ]
 #' 
 #' # The summary by plot
-#' summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)
+#' summaryByPlot(AGB_val = resultMC$AGB_simu, plot)
 #' 
 #' # The summary by plot for computeAGB
 #' H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
 #' AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
 #' summaryByPlot(AGB, plot)
-summaryByPlot <- function(AGB_simu, plot) {
+summaryByPlot <- function(AGB_val, plot) {
 
 
   # parameters verification -------------------------------------------------
-  if (is.list(AGB_simu)) {
-    AGB_simu <- AGB_simu$AGB_simu
+  if (is.list(AGB_val)) {
+    AGB_val <- AGB_val$AGB_simu
   }
-  if (!is.matrix(AGB_simu) && !is.vector(AGB_simu)) {
+  if (!is.matrix(AGB_val) && !is.vector(AGB_val)) {
     stop(
-      "The AGB_simu must be a matrix you have for the result of the function ",
+      "The AGB_val must be a matrix you have for the result of the function ",
       "'AGBmonteCarlo', or just the result of the function. ",
       "Or the result from the function 'computeAGB'"
     )
   }
-  if (length(plot) != ifelse(is.matrix(AGB_simu), nrow(AGB_simu), length(AGB_simu))) {
+  if (length(plot) != ifelse(is.matrix(AGB_val), nrow(AGB_val), length(AGB_val))) {
     stop("Your 'plot' vector have not the same length as your number of row in the matrix")
   }
 
 
   # function if it's a vector -----------------------------------------------
-  if (is.vector(AGB_simu)) {
-    data <- data.table(AGB = AGB_simu, plot = plot)
-    data <- na.omit(data, cols = "AGB")
-
-    unique_plot <- unique(na.omit(plot))
-
-    data[is.na(plot), plot := sample(unique_plot, .N, replace = T)]
+  if (is.vector(AGB_val)) {
+    data <- data.table(AGB = AGB_val, plot = plot)
+    data <- na.omit(data)
+    
     AGB <- data[, .(AGB = sum(AGB)), by = plot]
 
     setDF(AGB)
@@ -99,8 +96,8 @@ summaryByPlot <- function(AGB_simu, plot) {
   Plot <- data.table(plot = plot)
   indice_tree <- Plot[is.na(plot), .I, by = plot]
 
-  # filter if there is there is NA in the AGB_simu
-  filter <- rowSums(is.na(AGB_simu)) > 0
+  # filter if there is there is NA in the AGB_val
+  filter <- rowSums(is.na(AGB_val)) > 0
 
   # take the first tree in the database by plot
   indice_first <- Plot[!is.na(plot) & !filter, .(indice_line = first(.I), plot = unique(plot)), by = plot]
@@ -117,7 +114,7 @@ summaryByPlot <- function(AGB_simu, plot) {
     mySample <- function(plot1, n) {
       return(samples = indice_first[, sample(indice_line, n, replace = T)])
     }
-    n <- ncol(AGB_simu)
+    n <- ncol(AGB_val)
     samples <- indice_tree[, .(indice_line = mySample(plot, n), indice_col = 1:n), by = I]
 
     # remove the index for the tree to distribute when it is NA
@@ -151,7 +148,7 @@ summaryByPlot <- function(AGB_simu, plot) {
     ))
   }
 
-  AGB <- Plot[!is.na(plot), mySummary(.I, AGB_simu), by = plot]
+  AGB <- Plot[!is.na(plot), mySummary(.I, AGB_val), by = plot]
 
   setDF(AGB)
 

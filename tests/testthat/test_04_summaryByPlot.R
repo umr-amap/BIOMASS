@@ -29,7 +29,7 @@ test_that("summary by plot", {
   expect_equal(colnames(sum), c("plot", "AGB", "Cred_2.5", "Cred_97.5"))
   
   plot[ sample(1:length(plot), 100) ] <- NA
-  expect_failure(expect_equal(sum, summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)))
+  expect_failure(expect_equal(sum, summaryByPlot(resultMC$AGB_simu, plot)))
   
 })
 
@@ -43,16 +43,17 @@ test_that("summary by plot with the vector", {
   expect_equal(ncol(sum), 2)
   
   plot[ sample(1:length(plot), 100) ] <- NA
-  expect_failure(expect_equal(sum, summaryByPlot(AGB_simu = resultAGB, plot)))
+  expect_failure(expect_equal(sum, summaryByPlot(resultAGB, plot)))
+  expect_equal(nrow(summaryByPlot(resultAGB, plot)), length(unique(plot)) - 1)
 })
 
 test_that("summary by plot error", {
   expect_error(
-    summaryByPlot(plot[1:10], AGB_simu = resultMC$AGB_simu),
+    summaryByPlot(resultMC$AGB_simu, plot[1:10]),
     "vector"
   )
   expect_error(
-    summaryByPlot(plot, AGB_simu = as.data.frame(resultMC$AGB_simu)),
+    summaryByPlot(as.data.frame(resultMC$AGB_simu), plot),
     "matrix"
   )
   

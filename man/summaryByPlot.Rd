@@ -4,11 +4,11 @@
 \alias{summaryByPlot}
 \title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_simu, plot)
+summaryByPlot(AGB_val, plot)
 }
 \arguments{
-\item{AGB_simu}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_simu element of the list),
-or just the result of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}. Or the vector resulting from the function \code{\link[=computeAGB]{computeAGB()}}}
+\item{AGB_val}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_val element of the list),
+or just the output of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}. Or the output of the function \code{\link[=computeAGB]{computeAGB()}}}
 
 \item{plot}{Vector with the code of plot}
 }
@@ -16,18 +16,18 @@ or just the result of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}
 a data frame where:
 \itemize{
 \item \code{plot}: the code of the plot
-\item \code{AGB}: the mean of AGB for the plot
-\item \code{Cred_2.5}: the quantile 2.5\% for the plot, if it's the matrix
-\item \code{Cred_97.5}: the quantile 97.5\% for the plot, if it's the matrix
+\item \code{AGB}: AGB value at the plot level
+\item \code{Cred_2.5}: the quantile 2.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
+\item \code{Cred_97.5}: the quantile 97.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 }
 }
 \description{
-This function summarize the matrix \code{AGB_simu} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums
-for each plot of the AGB if the argument \code{AGB_simu} is the resulting vector from the function \code{\link[=computeAGB]{computeAGB()}}.
+This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums
+for each plot of the AGB if the argument \code{AGB_val} is the resulting vector from the function \code{\link[=computeAGB]{computeAGB()}}.
 }
 \details{
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
-to a plot at each iteration of the AGB monte Carlo approach.
+to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from \code{\link[=computeAGB]{computeAGB()}}.
 }
 \examples{
 
@@ -53,7 +53,7 @@ resultMC <- AGBmonteCarlo(
 plot <- KarnatakaForest$plotId[ filt ]
 
 # The summary by plot
-summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)
+summaryByPlot(AGB_val = resultMC$AGB_simu, plot)
 
 # The summary by plot for computeAGB
 H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H

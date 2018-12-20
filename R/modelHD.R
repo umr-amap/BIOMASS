@@ -19,7 +19,7 @@
 #' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 #' volume, so that larger trees have a stronger influence during the construction of the model).
 #' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D. Only if argument `plot` is null.
-#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
 #'
 #' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2},
@@ -53,7 +53,7 @@
 #'
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
-#' @seealso [retrieveH()], [predictHeight()]
+#' @seealso [retrieveH()]
 #'
 #' @export
 #'
@@ -116,6 +116,15 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     stop("The length of the 'plot' vector must be either 1 or the length of D")
   }
 
+
+  if (!is.null(plot)) {
+    drawGraph <- FALSE
+  }
+
+
+
+  # If there is a plot ID ---------------------------------------------------
+
   # if there is multiple plots in the plot vector
   if (!is.null(plot) && length(unique(plot)) != 1) {
     Hdata <- data.table(H = H, D = D, plot = plot)
@@ -154,6 +163,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
         output$Hpredict_plot <- exp(predict(mod, newdata = D_Plot) + 0.5 * output$RSElog^2)
       }
     } else {
+      ######### The others HD models
       mod <- switch(method,
         michaelis = michaelisFunction(Hdata, weight), # Michaelis-Menten function
         weibull = weibullFunction(Hdata, weight) # Weibull 3 parameters
@@ -170,7 +180,6 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     names(output$Hpredict) <- NULL
     res <- Hdata$H - output$Hpredict
 
-
     output$method <- method
     output$RSE <- sqrt(sum(res^2) / summary(mod)$df[2]) # Residual standard error
     output$Average_bias <- (mean(output$Hpredict) - mean(Hdata$H)) / mean(Hdata$H)
@@ -186,9 +195,6 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   # function to draw the beining of the graph
   drawPlotBegin <- function(givenMethod = FALSE, plotId) {
     main_title <- ifelse(givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod))
-    main_title <- ifelse(is.null(plotId), main_title,
-      paste(main_title, "for", plotId)
-    )
 
     par(mar = c(5, 5, 3, 3))
     plot(Hdata$D, Hdata$H,
@@ -257,18 +263,17 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
 
     return(out)
   } else {
+
     # Compare Models ----------------------------------------------------------
-
-    drawPlotBegin(plotId = plot)
+    if (is.null(plot)) {
+      drawPlotBegin(plotId = plot)
+    }
     color <- c("blue", "green", "red", "orange", "purple")
-
 
     result <- rbindlist(lapply(1:length(methods), function(i) {
       method <- methods[i]
 
-      out <- modSelect(Hdata, method, useGraph = T)
-
-      lines(D_Plot$D, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      out <- modSelect(Hdata, method, useGraph = is.null(plot))
 
       output <- list(
         method = method, color = color[i],
@@ -277,13 +282,22 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
         Average_bias = out$Average_bias
       )
 
+      if (is.null(plot)) {
+        lines(D_Plot$D, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      }
+      if (!is.null(plot)) {
+        output[["color"]] <- NULL
+      }
+      
       return(output)
     }), fill = T)
 
-    legend("bottomright", methods,
-      lty = 1:5, lwd = 2, cex = 1,
-      col = color
-    )
+    if (is.null(plot)) {
+      legend("bottomright", methods,
+        lty = 1:5, lwd = 2, cex = 1,
+        col = color
+      )
+    }
 
     message("To build a HD model you must use the parameter 'method' in this function")
     return(data.frame(result))

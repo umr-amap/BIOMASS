@@ -80,7 +80,7 @@ test_that("With the plot arguments", {
 
   invisible(sapply(Res, function(x) {
     expect_is(x, "data.frame")
-    expect_equal(ncol(x), 5)
+    expect_equal(ncol(x), 4)
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 

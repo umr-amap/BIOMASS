@@ -92,7 +92,7 @@ HDmodel <- modelHD(
 )
 }
 \seealso{
-\code{\link[=retrieveH]{retrieveH()}}, \code{\link[=predictHeight]{predictHeight()}}
+\code{\link[=retrieveH]{retrieveH()}}
 }
 \author{
 Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
