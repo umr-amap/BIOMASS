@@ -5,10 +5,10 @@
 \alias{param_4}
 \title{Posterior distribution of Chave et al.'s 2014 equation 4 parameters}
 \format{A data frame with 1001 observations on the following 3 variables.
-\describe{
-  \item{\code{intercept}}{Vector of intercept values}
-  \item{\code{logagbt}}{Vector of the model coefficients associated with the product wood density * diameter^2 * height}
-  \item{\code{sd}}{Vector of model residual standard error (RSE) values}
+\itemize{
+\item \code{intercept}: Vector of intercept values
+\item \code{logagbt}: Vector of the model coefficients associated with the product wood density * diameter^2 * height
+\item \code{sd}: Vector of model residual standard error (RSE) values
 }}
 \usage{
 data("param_4")
@@ -18,7 +18,7 @@ This matrix contains the posterior distribution of the parameters of Equation 4 
 obtained in a Bayesian framework with uninformative priors through a Metropolis algorithm.
 }
 \details{
-This dataset is used in the function \code{\link{AGBmonteCarlo}}.
+This dataset is used in the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}.
 }
 \examples{
 data(param_4)

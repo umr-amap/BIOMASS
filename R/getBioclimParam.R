@@ -13,15 +13,15 @@
 #'
 #' @inheritParams computeE
 #'
-#' @return The function returns a data.frame with \code{tempSeas} (temperature seasonality,
-#'  i.e. bioclimatic variable 4 from the Worldclim dataset; Hijmans et al. 2005), \code{precSeas}
+#' @return The function returns a data.frame with `tempSeas` (temperature seasonality,
+#'  i.e. bioclimatic variable 4 from the Worldclim dataset; Hijmans et al. 2005), `precSeas`
 #'  (precipitation seasonality, i.e. bioclimatic variable 15 from the Worldclim dataset; Hijmans
-#'  et al. 2005) and \code{CWD} (climatic water deficit; Chave et al. 2014).
+#'  et al. 2005) and `CWD` (climatic water deficit; Chave et al. 2014).
 #'
 #' @references
-#' Hijmans et al. (2005) \emph{Very high resolution interpolated climate surfaces for global land areas},
+#' Hijmans et al. (2005) _Very high resolution interpolated climate surfaces for global land areas_,
 #' International journal of climatology, 25(15), 1965-1978.
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the above-ground biomass of tropical trees},
+#' Chave et al. (2014) _Improved allometric models to estimate the above-ground biomass of tropical trees_,
 #' Global Change Biology, 20 (10), 3177-3190
 #'
 #' @author Ariane TANGUY, Arthur PERE

@@ -50,65 +50,6 @@ test_that("getBioclimParam", {
 
 
 
-context("Function retriveH")
-test_that("With the HDmodel", {
-  expect_error(retrieveH(KarnatakaForest$D), "Either")
-
-  HDmodel <- modelHD(
-    D = NouraguesHD$D,
-    H = NouraguesHD$H,
-    method = "log2",
-    useWeight = TRUE
-  )
-
-  H <- retrieveH(KarnatakaForest$D, model = HDmodel)
-  expect_is(H, "list")
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
-  expect_equal(length(H$H), 50)
-
-  expect_equal(H$RSE, 4.22, tolerance = 0.001)
-  RSE <- H$RSE
-
-  H <- retrieveH(c(2, 3), model = HDmodel)
-  expect_equal(H$H, c(3.97, 5.67), tolerance = 0.01)
-  expect_equal(H$RSE, RSE)
-})
-
-
-test_that("With the coordonate", {
-  H <- retrieveH(KarnatakaForest$D, coord = coord)
-
-  expect_is(H, "list")
-  expect_length(H, 2)
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
-  expect_length(H$H, 50)
-  expect_equal(H$RSE, 0.243)
-  RSE <- H$RSE
-
-  expect_error(retrieveH(c(2, 3), coord = coord), "coord")
-  H <- retrieveH(c(2, 3), coord = c(70, 25))
-  expect_equal(H$H, c(0.8351121, 1.1087833), tolerance = 10^-6)
-  expect_equal(H$RSE, RSE)
-})
-
-test_that("With the region", {
-  expect_error(retrieveH(D, region = c("SEAsia", "SEAsia")), "region")
-
-  H <- retrieveH(D, region = "SEAsia")
-
-  expect_is(H, "list")
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
-  expect_length(H$H, 50)
-  expect_equal(H$RSE, 5.691)
-  RSE <- H$RSE
-
-  H <- retrieveH(c(2, 3), region = "SEAsia")
-  expect_equal(H$H, c(3.310947, 4.611247), tolerance = 10^-6)
-  expect_equal(H$RSE, RSE)
-})
 
 
 # extract(Rast, cbind(74.14583, 14.78889), "bilinear")
@@ -207,6 +148,43 @@ for (method in c("log1", "log2", "log3", "weibull", "michaelis")) {
     }
   })
 }
+
+test_that("predictHeigth with plot argument", {
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = "log2",
+    useWeight = TRUE
+  )
+
+  expect_failure(expect_error(predictHeight(D, HDmodel, plot = "Plot1")))
+
+  HDmodel <- modelHD(
+    D = NouraguesHD$D,
+    H = NouraguesHD$H,
+    method = "log2",
+    useWeight = TRUE,
+    plot = NouraguesHD$plotId
+  )
+  
+  expect_error(predictHeight(D, HDmodel), "model")
+  expect_length(predictHeight(D, HDmodel, plot = "Plot1"), length(D))
+  expect_failure(expect_equal(
+    predictHeight(D, HDmodel, plot = "Plot1"),
+    predictHeight(D, HDmodel, plot = "Plot2")
+  ))
+  expect_error(predictHeight(D, HDmodel, plot = "AAA"), "Cannot")
+  expect_error(predictHeight(D, HDmodel, plot = c("Plot1", "Plot2")), "length")
+
+  plot <- rep(c("Plot1", "Plot2"), length.out = length(D))
+
+  Res <- predictHeight(D, HDmodel, plot = plot)
+  expect_failure(expect_equal(Res, predictHeight(D, HDmodel, plot = "Plot1")))
+  expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot1"])
+  expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot2"])
+  expect_failure(expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot1"]))
+  expect_failure(expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot2"]))
+})
 
 
 

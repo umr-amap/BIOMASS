@@ -7,14 +7,14 @@ if (getRversion() >= "2.15.1") {
 
 #' Retrieving the taxonomy
 #'
-#' From a genus, the function \code{getTaxonomy} finds the APG III family, and optionally the
-#' order, from the \code{\link{genusFamily}} database and the \code{\link{apgFamilies}} dataset
+#' From a genus, the function `getTaxonomy` finds the APG III family, and optionally the
+#' order, from the [genusFamily] database and the [apgFamilies] dataset
 #'
 #'
 #' @param genus Vector of genus names
-#' @param findOrder (Boolean) If \code{TRUE}, the output will contain the taxonomical orders of the families.
+#' @param findOrder (Boolean) If `TRUE`, the output will contain the taxonomical orders of the families.
 #'
-#' @return Data frame with the order (if \code{findOrder} is \code{TRUE}), family and genus.
+#' @return Data frame with the order (if `findOrder` is `TRUE`), family and genus.
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
 #' @export
 #'

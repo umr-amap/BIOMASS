@@ -12,49 +12,43 @@ michaelisFunction <- function(data, weight = NULL) {
   maxIter <- 50
   converge <- FALSE
 
-  if (is.null(weight)) {
-    while (converge == FALSE && count <= 10) {
-      tt <- tryCatch(nlsLM(H ~ SSmicmen(D, A, B),
-        control = nls.lm.control(maxiter = maxIter)
-      ),
-      error = function(e) e,
-      warning = function(w) w
-      )
+  if (anyNA(weight)) weight <- NULL
 
-      if (is(tt, "warning")) {
-        count <- count + 1
-        maxIter <- maxIter + 50
+  while (converge == FALSE && count <= 10) {
+    tt <- tryCatch({
+      if (is.null(weight)) {
+        nlsLM(H ~ SSmicmen(D, A, B),
+          control = nls.lm.control(maxiter = maxIter)
+        )
+      } else {
+        nlsLM(H ~ SSmicmen(D, A, B),
+          weights = weight,
+          control = nls.lm.control(maxiter = maxIter)
+        )
       }
-      else {
-        converge <- TRUE
-      }
+    },
+    error = function(e) e,
+    warning = function(w) w
+    )
+
+    if (is(tt, "warning")) {
+      count <- count + 1
+      maxIter <- maxIter + 50
     }
-    model <- nlsLM(H ~ SSmicmen(D, A, B),
+    else {
+      converge <- TRUE
+    }
+  }
+  model <- if (is.null(weight)) {
+    nlsLM(H ~ SSmicmen(D, A, B),
       control = nls.lm.control(maxiter = maxIter)
     )
-  }
-  else {
-    while (converge == FALSE && count <= 10) {
-      tt <- tryCatch(nlsLM(H ~ SSmicmen(D, A, B),
-        weights = weight,
-        control = nls.lm.control(maxiter = maxIter)
-      ),
-      error = function(e) e,
-      warning = function(w) w
-      )
-
-      if (is(tt, "warning")) {
-        count <- count + 1
-        maxIter <- maxIter + 50
-      }
-      else {
-        converge <- TRUE
-      }
-    }
-    model <- nlsLM(H ~ SSmicmen(D, A, B),
+  } else {
+    nlsLM(H ~ SSmicmen(D, A, B),
       weights = weight,
       control = nls.lm.control(maxiter = maxIter)
     )
   }
+
   return(model)
 }

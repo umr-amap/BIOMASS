@@ -11,9 +11,9 @@ getBioclimParam(coord)
 }
 \value{
 The function returns a data.frame with \code{tempSeas} (temperature seasonality,
- i.e. bioclimatic variable 4 from the Worldclim dataset; Hijmans et al. 2005), \code{precSeas}
- (precipitation seasonality, i.e. bioclimatic variable 15 from the Worldclim dataset; Hijmans
- et al. 2005) and \code{CWD} (climatic water deficit; Chave et al. 2014).
+i.e. bioclimatic variable 4 from the Worldclim dataset; Hijmans et al. 2005), \code{precSeas}
+(precipitation seasonality, i.e. bioclimatic variable 15 from the Worldclim dataset; Hijmans
+et al. 2005) and \code{CWD} (climatic water deficit; Chave et al. 2014).
 }
 \description{
 This function extracts three bioclimatic parameters thanks to the coordinates of the data:
@@ -34,7 +34,8 @@ The localisation of the folder is :
 \item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
 \item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
 }
-See this function for more information : \code{\link[rappdirs]{user_data_dir}}
+
+See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
 }
 
 \examples{

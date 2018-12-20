@@ -5,14 +5,14 @@
 \alias{NouraguesHD}
 \title{Height-Diameter data}
 \format{A data frame with 1051 observations on the following variables :
-\describe{
-  \item{\code{plotId}}{Names of the plots}
-  \item{\code{genus}}{Genus}
-  \item{\code{species}}{Species}
-  \item{\code{D}}{Diameter (cm)}
-  \item{\code{H}}{Height (m)}
-  \item{\code{lat}}{Latitude}
-  \item{\code{long}}{Longitude}
+\itemize{
+\item \code{plotId}: Names of the plots
+\item \code{genus}: Genus
+\item \code{species}: Species
+\item \code{D}: Diameter (cm)
+\item \code{H}: Height (m)
+\item \code{lat}: Latitude
+\item \code{long}: Longitude
 }}
 \usage{
 data("NouraguesHD")
@@ -25,7 +25,8 @@ data(NouraguesHD)
 str(NouraguesHD)
 }
 \references{
-Réjou-Méchain, M. et al. (2015). \emph{Using repeated small-footprint LiDAR
-acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest} Remote Sensing of Environment, 169, 93-101.
+Réjou-Méchain, M. et al. (2015).
+\emph{Using repeated small-footprint LiDAR acquisitions to infer spatial and temporal variations of a high-biomass Neotropical forest}
+Remote Sensing of Environment, 169, 93-101.
 }
 \keyword{datasets}

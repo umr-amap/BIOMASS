@@ -4,35 +4,36 @@
 #' estimation of the total tree height.
 #'
 #' @param D Vector of diameters.
-#' @param model A model output by the function \code{\link{modelHD}}.
+#' @param model A model output by the function [modelHD()].
 #' @param coord Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a
 #' matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).
 #' @param region Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific
 #' and pantropical models proposed by Feldpausch et al. (2012). To be chosen between:
-#' \itemize{
-#'   \item \code{Africa}: Africa
-#'   \item \code{CAfrica}: Central Africa
-#'   \item \code{EAfrica}: Eastern Africa
-#'   \item \code{WAfrica}: Western Africa
-#'   \item \code{SAmerica}: Southern America
-#'   \item \code{BrazilianShield}: Brazilian Shield
-#'   \item \code{ECAmazonia}: East-Central Amazonia
-#'   \item \code{GuianaShield}: Guiana Shield
-#'   \item \code{WAmazonia}: Western Amazonia
-#'   \item \code{SEAsia}: South-Eastern Asia
-#'   \item \code{NAustralia}: Northern Australia
-#'   \item \code{Pantropical}: Pantropical
-#' }
+#'   - `Africa`: Africa
+#'   - `CAfrica`: Central Africa
+#'   - `EAfrica`: Eastern Africa
+#'   - `WAfrica`: Western Africa
+#'   - `SAmerica`: Southern America
+#'   - `BrazilianShield`: Brazilian Shield
+#'   - `ECAmazonia`: East-Central Amazonia
+#'   - `GuianaShield`: Guiana Shield
+#'   - `WAmazonia`: Western Amazonia
+#'   - `SEAsia`: South-Eastern Asia
+#'   - `NAustralia`: Northern Australia
+#'   - `Pantropical`: Pantropical
+#'
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @return Returns a list  with:
-#' \item{H}{H predicted by the model}
-#' \item{RSE}{Residual Standard Error of the model}
+#'   - `H`: H predicted by the model
+#'   - `RSE` Residual Standard Error of the model, or a vector of those for each plot
 #' @references
-#' Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates.} Biogeosciences (2012): 3381-3403.
-#' Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees.}
+#' Feldpausch et al. _Tree height integrated into pantropical forest biomass estimates_. Biogeosciences (2012): 3381-3403.
+#' Chave et al. _Improved allometric models to estimate the aboveground biomass of tropical trees_.
 #' Global change biology 20.10 (2014): 3177-3190.
 #' @author Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
-#' @seealso \code{\link{modelHD}}
+#' @seealso [modelHD()]
 #' @export
 #'
 #' @examples
@@ -53,7 +54,7 @@
 #' 
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
-retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
+retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL) {
 
 
   # parameters verification -------------------------------------------------
@@ -80,12 +81,23 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
               - coord")
   }
 
+  # the length of the plot is tested in predictHeight
+  # the names of the plot and the names of the model is tested in predictHeight
+  if (!is.null(plot) && is.null(model)) {
+    stop("The 'plot' vector must be with 'model' argument")
+  }
 
 
   # First case : with a model fitted with HDfunction
   if (!is.null(model)) {
-    H <- predictHeight(D, model)
-    RSE <- model$RSE
+    H <- predictHeight(D, model, plot = plot)
+    RSE <- if (!is.null(plot)) {
+      sapply(model, function(x) x$RSE)
+    } else if (length(model[[1]]) != 2) {
+      model[[1]]$RSE
+    } else {
+      model$RSE
+    }
   }
   else {
     # Second case : with the coordinates of your site, find the E index and estimate the H following Chave et al. 2014 Global Change Biology
@@ -120,6 +132,6 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL) {
       H <- a * (1 - exp(-b * D^c))
     }
   }
-  output <- list(H = as.numeric(H), RSE = as.numeric(RSE))
+  output <- list(H = as.numeric(H), RSE = RSE)
   return(output)
 }

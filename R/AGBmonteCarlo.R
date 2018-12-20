@@ -4,38 +4,39 @@
 #'
 #' @param D Vector of tree diameters (in cm)
 #' @param WD Vector of wood density estimates (in g/cm3)
-#' @param errWD Vector of error associated to the wood density estimates (should be of the same size as \code{WD})
-#' @param H (option 1) Vector of tree heights (in m). If set, \code{errH} must be set too.
-#' @param errH (if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
-#' values (in the latter case the vector should be of the same length as \code{H}).
-#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from \code{\link{modelHD}}, see example).
+#' @param errWD Vector of error associated to the wood density estimates (should be of the same size as `WD`)
+#' @param H (option 1) Vector of tree heights (in m). If set, `errH` must be set too.
+#' @param errH (if `H`) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
+#' values (in the latter case the vector should be of the same length as `H`).
+#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example).
 #' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 #' height-diameter allometry with bioclimatic variables.
 #' @param Dpropag This variable can take three kind of values, indicating how to propagate the errors on diameter measurements:
-#' a single numerical value or a vector of the same size as \code{D}, both representing the standard deviation associated
-#' with the diameter measurements or \code{"chave2004"} (an important error on 5 percent of the measures, a smaller error on
+#' a single numerical value or a vector of the same size as `D`, both representing the standard deviation associated
+#' with the diameter measurements or `"chave2004"` (an important error on 5 percent of the measures, a smaller error on
 #' 95 percent of the trees).
-#' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default \code{n = 1000}
+#' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
-#' \code{Dlim} will have a 0 value in the output).
+#' `Dlim` will have a 0 value in the output).
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
 #' @return Returns a list  with (if Carbon is FALSE):
-#' \describe{
-#' \item{meanAGB}{Mean stand AGB value following the error propagation}
-#' \item{medAGB}{Median stand AGB value following the error propagation}
-#' \item{sdAGB}{Standard deviation of the stand AGB value following the error propagation}
-#' \item{credibilityAGB}{Credibility interval at 95\% of the stand AGB value following the error propagation}
-#' \item{AGB_simu}{Matrix with the AGB of the trees (rows) times the n iterations (columns)}
-#' }
+#'   - `meanAGB`: Mean stand AGB value following the error propagation
+#'   - `medAGB`: Median stand AGB value following the error propagation
+#'   - `sdAGB`: Standard deviation of the stand AGB value following the error propagation
+#'   - `credibilityAGB`: Credibility interval at 95\% of the stand AGB value following the error propagation
+#'   - `AGB_simu`: Matrix with the AGB of the trees (rows) times the n iterations (columns)
 #'
-#' @references Chave, J. et al. (2004). \emph{Error propagation and scaling for tropical forest biomass estimates}.
+#' @references Chave, J. et al. (2004). _Error propagation and scaling for tropical forest biomass estimates_.
 #' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
-#' @references Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its
-#' uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
+#' @references Rejou-Mechain et al. (2017).
+#' _BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests_.
+#' Methods in Ecology and Evolution, 8 (9), 1163-1167.
 #'
 #' @author Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
 #'
@@ -92,7 +93,8 @@
 #' @export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000, Carbon = FALSE, Dlim = NULL) {
+                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
+                          Carbon = FALSE, Dlim = NULL, plot = NULL) {
   len <- length(D)
 
   # parameters verification -------------------------------------------------
@@ -115,7 +117,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   }
 
   if (len != length(WD) || len != length(errWD)) {
-    stop("One of vector WD or errWD doesn't have the same length as D")
+    stop("One of vector WD or errWD does not have the same length as D")
   }
 
   if (is.null(HDmodel) & is.null(coord) & is.null(H)) {
@@ -147,6 +149,12 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              - a vector (e.g. c(longitude, latitude))
              - a matrix with two columns (longitude and latitude) 
              having the same number of rows as the number of trees (length(D))")
+  }
+
+  # the length of the plot is tested in predictHeight
+  # the names of the plot and the names of the model is tested in predictHeight
+  if (!is.null(plot) && is.null(HDmodel)) {
+    stop("The 'plot' vector must be with 'model' argument")
   }
 
 
@@ -208,7 +216,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   if (!is.null(HDmodel) | !is.null(H)) {
     if (!is.null(HDmodel)) {
       # Propagation of the error thanks to the local model of H
-      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE))
+      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE, plot = plot))
     } else {
       # Propagation of the error using the errH value(s)
       upper <- max(H, na.rm = T) + 15
@@ -291,7 +299,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       AGB_simu = AGB_simu
     )
   } else {
-    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical angiosperm stems carbon content)
+    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical 
+    # angiosperm stems carbon content)
     AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
     sum_AGC_simu <- colSums(AGC_simu, na.rm = T)
     res <- list(

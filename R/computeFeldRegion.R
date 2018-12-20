@@ -5,14 +5,12 @@
 #' @inheritParams computeE
 #' @param level a string or a vector of string, the length must match the number of rows of the parameter coord.
 #' This parameter gives the scale at which Feldpausch regions should be assigned. There are tree levels:
-#' \describe{
-#'    \item{region}{Models assign at sub-continent levels, value by default}
-#'    \item{continent}{Models assign at the Africa, South America, Asia and Australia levels}
-#'    \item{world}{Pantropical model}
-#' }
+#'    - `region`: Models assign at sub-continent levels, value by default
+#'    - `continent`: Models assign at the Africa, South America, Asia and Australia levels
+#'    - `world`: Pantropical model
 #'
 #' @return The function returns a vector with the Feldpausch et al. (2012)'s regions that can be
-#' incorporated in the \code{retrieveH} function.
+#' incorporated in the `retrieveH` function.
 #' @export
 #'
 #' @examples
@@ -33,8 +31,8 @@
 #' }
 #' 
 #' @references
-#' Feldpausch, T.R., et al. (2012). \emph{Tree height integrated into pantropical forest
-#' biomass estimates.} Biogeosciences, 9, 3381–3403.
+#' Feldpausch, T.R., et al. (2012). _Tree height integrated into pantropical forest biomass estimates._
+#' Biogeosciences, 9, 3381–3403.
 #'
 #' @author Arthur PERE
 #'

@@ -1,20 +1,24 @@
 #' @rdname HDmethods
+#' @importFrom stats formula as.formula
 
 loglogFunction <- function(data, method) {
   ### Compute the loglog model of the H-D relationship
 
-  logH <- log(data$H)
-  logD <- log(data$D)
+  # take the pow of the method
+  method_pow <- strtoi(substr(method, nchar(method), nchar(method)))
 
-  if (method == "log1") {
-    modSelected <- lm(logH ~ logD)
-  }
-  if (method == "log2") {
-    modSelected <- lm(logH ~ logD + I(logD^2))
-  }
-  if (method == "log3") {
-    modSelected <- lm(logH ~ logD + I(logD^2) + I(logD^3))
-  }
+  # do the rigth part of the formula i.e I(log(D)^1) + I(log(D)^2) + ...
+  formula <- paste(sapply(
+    seq(method_pow),
+    function(x) {
+      sprintf("I(log(D)^%i)", x)
+    }
+  ),
+  collapse = " + "
+  )
 
-  return(modSelected)
+  # for the rest of the formula
+  formula <- as.formula(paste("I(log(H))", formula, sep = " ~ "))
+
+  return(lm(formula, data))
 }

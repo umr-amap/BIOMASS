@@ -6,7 +6,7 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 
 # Retrieving wood density values
 KarnatakaWD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-  stand = KarnatakaForest$plotId
+                                               stand = KarnatakaForest$plotId
 ))
 
 # Propagating errors with a standard error in wood density in one plot
@@ -16,30 +16,44 @@ resultMC <- AGBmonteCarlo(
   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 )
 
-plot <- KarnatakaForest$plotId[ KarnatakaForest$plotId %in% c("BSP20", "BSP14") ]
-
+plot <- KarnatakaForest$plotId[ filt ]
 
 context("summary by plot")
 test_that("summary by plot", {
   sum <- summaryByPlot(resultMC$AGB_simu, plot)
   expect_equal(sum, summaryByPlot(resultMC, plot))
-
+  
   expect_is(sum, "data.frame")
   expect_equal(nrow(sum), length(unique(plot)))
   expect_equal(ncol(sum), 4)
   expect_equal(colnames(sum), c("plot", "AGB", "Cred_2.5", "Cred_97.5"))
-
+  
   plot[ sample(1:length(plot), 100) ] <- NA
-  expect_failure(expect_equal(sum, summaryByPlot(plot, AGB_simu = resultMC$AGB_simu)))
+  expect_failure(expect_equal(sum, summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)))
+  
+})
+
+test_that("summary by plot with the vector", {
+  H = predictHeight(D = KarnatakaForest$D[filt], model = HDmodel)
+  resultAGB = computeAGB(D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
+  
+  sum = summaryByPlot(resultAGB, plot)
+  expect_is(sum, "data.frame")
+  expect_length(unique(plot), nrow(sum))
+  expect_equal(ncol(sum), 2)
+  
+  plot[ sample(1:length(plot), 100) ] <- NA
+  expect_failure(expect_equal(sum, summaryByPlot(AGB_simu = resultAGB, plot)))
 })
 
 test_that("summary by plot error", {
   expect_error(
     summaryByPlot(plot[1:10], AGB_simu = resultMC$AGB_simu),
-    "Your plot vector"
+    "vector"
   )
   expect_error(
     summaryByPlot(plot, AGB_simu = as.data.frame(resultMC$AGB_simu)),
-    "The AGB_simu must be a matrix"
+    "matrix"
   )
+  
 })

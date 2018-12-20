@@ -18,20 +18,20 @@ if (getRversion() >= "2.15.1") {
 #' @inheritSection cacheManager Localisation
 #'
 #' @details
-#' The Chave's environmental index, \code{E}, has been shown to be an important covariable in
+#' The Chave's environmental index, `E`, has been shown to be an important covariable in
 #' the diameter-height relationship for tropical trees. It is calculated as:
 #' \deqn{E = 1.e-3 * (0.178 * TS - 0.938 * CWD - 6.61 * PS)}
-#' where \eqn{TS} is temperature seasonality as defined in the Worldclim dataset (bioclimatic variable 4),
-#' \eqn{CWD} is the climatic water deficit (in mm/yr, see Chave et al. 2014) and \eqn{PS} is the
+#' where `TS` is temperature seasonality as defined in the Worldclim dataset (bioclimatic variable 4),
+#' `CWD` is the climatic water deficit (in mm/yr, see Chave et al. 2014) and `PS` is the
 #' precipitation seasonality as defined in the Worldclim dataset (bioclimatic variable 15).
 #'
 #'
 #' The E index is extracted from a raster file (2.5 arc-second resolution, or ca. 5 km) available
 #' at http://chave.ups-tlse.fr/pantropical_allometry.htm
 #'
-#' @return The function returns \code{E}, the environmental index computed thanks to the Chave et al 2014's formula.
+#' @return The function returns `E`, the environmental index computed thanks to the Chave et al 2014's formula.
 #' @references
-#' Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees},
+#' Chave et al. (2014) _Improved allometric models to estimate the aboveground biomass of tropical trees_,
 #' Global Change Biology, 20 (10), 3177-3190
 #' @author Jerome CHAVE, Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #'

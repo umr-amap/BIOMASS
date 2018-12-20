@@ -59,10 +59,11 @@
 #' )
 #' 
 #' # Compute plot-specific H-D models
-#' HDmodelPerPlot <- by(NouraguesHD, NouraguesHD$plotId,
-#'   function(x) modelHD(D = x$D, H = x$H, method = "weibull", useWeight = T),
-#'   simplify = FALSE
+#' HDmodelPerPlot <- modelHD(NouraguesHD$D, NouraguesHD$H,
+#'   method = "weibull",
+#'   useWeight = T, plot = NouraguesHD$plotId
 #' )
+#' 
 #' RSEmodels <- sapply(HDmodelPerPlot, function(x) x$RSE)
 #' Coeffmodels <- lapply(HDmodelPerPlot, function(x) x$coefficients)
 #' 
@@ -92,25 +93,25 @@
 #' )
 #' 
 #' # Compute AGB(Mg) per plot
-#' AGBPlotList <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) computeAGB(D = x$D, WD = x$WD, H = x$H),
-#'   simplify = F
-#' )
-#' AGBplot <- sapply(AGBPlotList, sum)
+#' AGBplot <- summaryByPlot(AGBtree, KarnatakaForest$plotId)
 #' 
 #' # Compute AGB(Mg) per tree without height information (Eq. 7 from Chave et al. (2014))
-#' AGBPlotListChave <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) computeAGB(D = x$D, WD = x$WD, coord = cbind(x$long, x$lat)),
-#'   simplify = F
+#' AGBplotChave <- summaryByPlot(
+#'   computeAGB(
+#'     D = KarnatakaForest$D, WD = KarnatakaForest$WD,
+#'     coord = KarnatakaForest[, c("long", "lat")]
+#'   ),
+#'   plot = KarnatakaForest$plotId
 #' )
-#' AGBplotChave <- sapply(AGBPlotListChave, sum)
 #' 
 #' # Compute AGB(Mg) per tree with Feldpausch et al. (2012) regional H-D model
-#' AGBPlotListFeld <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) computeAGB(D = x$D, WD = x$WD, H = x$Hfeld),
-#'   simplify = F
+#' AGBplotFeld <- summaryByPlot(
+#'   computeAGB(
+#'     D = KarnatakaForest$D, WD = KarnatakaForest$WD,
+#'     H = KarnatakaForest$Hfeld
+#'   ),
+#'   plot = KarnatakaForest$plotId
 #' )
-#' AGBplotFeld <- sapply(AGBPlotListFeld, sum)
 #' 
 #' #############################################################################
 #' # PROPAGATING ERRORS
@@ -120,28 +121,26 @@
 #' 
 #' # Per plot using the local HD model constructed above (modelHD)
 #' resultMC <- AGBmonteCarlo(
-#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
-#'       HDmodel = HDmodel, Dpropag = "chave2004"
-#'     )
-#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
+#'   HDmodel = HDmodel, Dpropag = "chave2004"
+#' )
+#' resMC <- summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' 
 #' # Per plot using the Feldpaush regional HD averaged model
-#' resultMC <- by(KarnatakaForest, KarnatakaForest$plotId,
-#'   function(x) AGBmonteCarlo(
-#'       D = x$D, WD = x$WD, errWD = x$sdWD, H = x$Hfeld,
-#'       errH = x$HfeldRSE, Dpropag = "chave2004"
-#'     ),
-#'   simplify = F
+#' AGBmonteCarlo(
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, 
+#'   errWD = KarnatakaForest$sdWD, H = KarnatakaForest$Hfeld,
+#'   errH = KarnatakaForest$HfeldRSE, Dpropag = "chave2004"
 #' )
-#' meanAGBperplotFeld <- unlist(sapply(resultMC, "[", 1))
-#' credperplotFeld <- sapply(resultMC, "[", 4)
+#' resMC <- summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' 
 #' # Per plot using Chave et al. (2014) Equation 7
 #' resultMC <- AGBmonteCarlo(
-#'       D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
-#'       coord = KarnatakaForest[, c("long", "lat")],
-#'       Dpropag = "chave2004")
-#' resMC = summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, errWD = KarnatakaForest$sdWD,
+#'   coord = KarnatakaForest[, c("long", "lat")],
+#'   Dpropag = "chave2004"
+#' )
+#' resMC <- summaryByPlot(resultMC$AGB_simu, KarnatakaForest$plotId)
 #' }
 #' @keywords internal
 "_PACKAGE"

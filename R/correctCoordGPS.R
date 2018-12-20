@@ -9,22 +9,20 @@
 #'
 #' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
 #' @param projCoord (optionnal) data frame with the projected coordinate in X Y
-#' @param coordRel data frame with the plot relative coordinates in the same order than the longlat or UTMcoord
+#' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
 #' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
 #' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
 #' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)
 #' @param drawPlot a logical if you want to display a graphical representation
 #' @param rmOutliers a logical if you want to remove the outliers from coordinates calculation
-#' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
 #' @return If you there are no outliers or rmOutliers = TRUE, a list with:
-#' \describe{
-#'    \item{corner}{a matrix with the coordinates of the corners}
-#'    \item{polygon}{a spatial polygon}
-#'    \item{outliers}{Coordinates lines considered as outliers, if any}
-#' }
+#'    - `corner`: a matrix with the coordinates of the corners
+#'    - `polygon`: a spatial polygon
+#'    - `outliers`: Coordinates lines considered as outliers, if any
+#'
 #'
 #'
 #' @export

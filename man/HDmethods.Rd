@@ -22,36 +22,37 @@ weibullFunction(data, weight = NULL)
 \item{weight}{(optional) Vector indicating observation weights in the model.}
 }
 \value{
-All the functions give an output similar to the one given by \code{\link{lm}}, obtained for
-\code{michaelisFunction} and \code{weibullFunction} from \code{\link[minpack.lm]{nlsLM}}).
+All the functions give an output similar to the one given by \code{\link[stats:lm]{stats::lm()}}, obtained for
+\code{michaelisFunction} and \code{weibullFunction} from \link[minpack.lm:nlsLM]{minpack.lm::nlsLM}).
 }
 \description{
 Methods used for modeling height-diameter relationship
 }
 \details{
 These functions model the relationship between tree height (H) and diameter (D).
-\bold{loglogFunction}
+\strong{loglogFunction}
 Compute three types of log model (log, log2 and log3) to predict H from D.
 The model can be:
 \itemize{
-    \item log 1: \eqn{log(H) = a+ b*log(D)} (equivalent to a power model)
-    \item log 2: \eqn{log(H) = a+ b*log(D) + c*log(D)^2}
-    \item log 3: \eqn{log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3}
+\item log 1: \eqn{log(H) = a+ b*log(D)} (equivalent to a power model)
+\item log 2: \eqn{log(H) = a+ b*log(D) + c*log(D)^2}
+\item log 3: \eqn{log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3}
 }
 
-\bold{michaelisFunction}
+\strong{michaelisFunction}
 Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A and B are the model parameters to be estimated)
 
-\bold{weibullFunction}
+\strong{weibullFunction}
 Construct a three parameter Weibull model of the form: \deqn{H = a*(1-exp(-(D/b)^c))} (a, b, c are the model parameters to be estimated)
 }
 \references{
 Michaelis, L., & Menten, M. L. (1913). \emph{Die kinetik der invertinwirkung}. Biochem. z, 49(333-369), 352.
 Weibull, W. (1951). \emph{Wide applicability}. Journal of applied mechanics, 103.
-Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}. Canadian Journal of Forest Research, 2(1), 49-53.
+Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation of plant biomass}.
+Canadian Journal of Forest Research, 2(1), 49-53.
 }
 \seealso{
-\code{\link{modelHD}}, \code{\link[lmfor]{HDmodels}}
+\code{\link[=modelHD]{modelHD()}}, \code{\link[lmfor:HDmodels]{lmfor::HDmodels()}}
 }
 \author{
 Maxime REJOU-MECHAIN, Ariane TANGUY

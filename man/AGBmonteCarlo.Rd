@@ -6,7 +6,7 @@
 \usage{
 AGBmonteCarlo(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-  Carbon = FALSE, Dlim = NULL)
+  Carbon = FALSE, Dlim = NULL, plot = NULL)
 }
 \arguments{
 \item{D}{Vector of tree diameters (in cm)}
@@ -20,7 +20,7 @@ AGBmonteCarlo(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 \item{errH}{(if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 values (in the latter case the vector should be of the same length as \code{H}).}
 
-\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link{modelHD}}, see example).}
+\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example).}
 
 \item{coord}{(option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
@@ -37,15 +37,18 @@ with the diameter measurements or \code{"chave2004"} (an important error on 5 pe
 
 \item{Dlim}{(optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
 \code{Dlim} will have a 0 value in the output).}
+
+\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
+stand-specific HD models.}
 }
 \value{
 Returns a list  with (if Carbon is FALSE):
-\describe{
-\item{meanAGB}{Mean stand AGB value following the error propagation}
-\item{medAGB}{Median stand AGB value following the error propagation}
-\item{sdAGB}{Standard deviation of the stand AGB value following the error propagation}
-\item{credibilityAGB}{Credibility interval at 95\% of the stand AGB value following the error propagation}
-\item{AGB_simu}{Matrix with the AGB of the trees (rows) times the n iterations (columns)}
+\itemize{
+\item \code{meanAGB}: Mean stand AGB value following the error propagation
+\item \code{medAGB}: Median stand AGB value following the error propagation
+\item \code{sdAGB}: Standard deviation of the stand AGB value following the error propagation
+\item \code{credibilityAGB}: Credibility interval at 95\% of the stand AGB value following the error propagation
+\item \code{AGB_simu}: Matrix with the AGB of the trees (rows) times the n iterations (columns)
 }
 }
 \description{
@@ -107,8 +110,9 @@ credperplot <- sapply(resultMC, "[", 4)
 Chave, J. et al. (2004). \emph{Error propagation and scaling for tropical forest biomass estimates}.
 Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
 
-Rejou-Mechain et al. (2017). \emph{BIOMASS: An R Package for estimating above-ground biomass and its
-uncertainty in tropical forests}. Methods in Ecology and Evolution, 8 (9), 1163-1167.
+Rejou-Mechain et al. (2017).
+\emph{BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests}.
+Methods in Ecology and Evolution, 8 (9), 1163-1167.
 }
 \author{
 Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE

@@ -4,53 +4,56 @@
 #'
 #' @param D Vector with diameter measurements (in cm). NA values are accepted but a
 #' minimum of 10 valid entries (i.e. having a corresponding height in H) is required.
-#' @param H Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.
+#' @param H Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries
+#' (i.e. having a corresponding diameter in D) is required.
 #' @param method Method used to fit the relationship.
 #' To be chosen between:
-#'   \itemize{
-#'     \item log1, log2, log3
-#'     \itemize{
-#'       \item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
-#'       \item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
-#'       \item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
-#'     }
-#'     \item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
-#'     \item michaelis: \eqn{H = (A * D)/(B + D)}
-#'   }
-#' If \code{NULL}, all the methods will be compared.
-#' @param useWeight If weight is \code{TRUE}, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree volume, so that larger trees have a stronger influence during the construction of the model).
-#' @param drawGraph If \code{TRUE}, a graphic will illustrate the relationship between H and D.
+#'   - log1, log2, log3
+#'     + log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
+#'     + log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
+#'     + log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
+#'   - weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
+#'   - michaelis: \eqn{H = (A * D)/(B + D)}
 #'
-#' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2}, where RSE is the Residual Standard Error).
+#' If `NULL`, all the methods will be compared.
+#' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
+#' volume, so that larger trees have a stronger influence during the construction of the model).
+#' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D. Only if argument `plot` is null.
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' stand-specific HD models.
+#'
+#' @details All the back transformations for log-log models are done using the Baskerville correction (\eqn{0.5 * RSE^2},
+#' where RSE is the Residual Standard Error).
 #'
 #'
-#' @return Returns a list with if the parameter model is not null:
-#' \describe{
-#' \item{input}{list of the data used to construct the model (list(H, D))}
-#' \item{model}{outputs of the model (same outputs as given by \code{\link{lm}}, \code{\link{nls}})}
-#' \item{RSE}{Residual Standard Error of the model}
-#' \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-#' \item{residuals}{Residuals of the model}
-#' \item{coefficients}{Coefficients of the model}
-#' \item{R.squared}{\eqn{R^2} of the model}
-#' \item{formula}{Formula of the model}
-#' \item{method}{Name of the method used to construct the model}
-#' \item{predicted}{Predicted height values}
-#' }
+#' @return
+#' If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
+#' there will be the list with the names of the plot and inside each item their is those results.
+#' Returns a list with if the parameter model is not null:
+#'   - `input`: list of the data used to construct the model (list(H, D))
+#'   - `model`: outputs of the model (same outputs as given by [stats::lm()], [stats::nls()])
+#'   - `RSE`: Residual Standard Error of the model
+#'   - `RSElog`: Residual Standard Error of the log model (\code{NULL} if other model)
+#'   - `residuals`: Residuals of the model
+#'   - `coefficients`: Coefficients of the model
+#'   - `R.squared`: \eqn{R^2} of the model
+#'   - `formula`: Formula of the model
+#'   - `method`: Name of the method used to construct the model
+#'   - `predicted`: Predicted height values
+#'
 #'
 #' If the parameter model is null, the function return a graph with all the methods for
 #' comparison, the function also return a data.frame with:
-#' \describe{
-#' \item{method}{The method that had been used to construct the graph}
-#' \item{color}{The color of the curve in the graph}
-#' \item{RSE}{Residual Standard Error of the model}
-#' \item{RSElog}{Residual Standard Error of the log model (\code{NULL} if other model)}
-#' \item{Average_bias}{The average bias for the model}
-#' }
+#'   - `method`: The method that had been used to construct the graph
+#'   - `color`: The color of the curve in the graph
+#'   - `RSE`: Residual Standard Error of the model
+#'   - `RSElog`: Residual Standard Error of the log model (`NULL` if other model)
+#'   - `Average_bias`: The average bias for the model
+#'
 #'
 #'
 #' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
-#' @seealso \code{\link{retrieveH}}, \code{\link{predictHeight}}
+#' @seealso [retrieveH()], [predictHeight()]
 #'
 #' @export
 #'
@@ -78,7 +81,7 @@
 #' @importFrom utils data
 #' @importFrom data.table data.table
 
-modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
+modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL) {
 
   # parameters verification -------------------------------------------------
 
@@ -89,7 +92,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   }
 
   if (length(H) != length(D)) {
-    stop("Your vector D and H don't have the same length")
+    stop("Your vector D and H do not have the same length")
   }
 
   if (!is.null(method)) {
@@ -109,7 +112,27 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
     stop("drawGraph argument must be a boolean")
   }
 
+  if (!is.null(plot) && !length(plot) %in% c(1, length(D))) {
+    stop("The length of the 'plot' vector must be either 1 or the length of D")
+  }
 
+  # if there is multiple plots in the plot vector
+  if (!is.null(plot) && length(unique(plot)) != 1) {
+    Hdata <- data.table(H = H, D = D, plot = plot)
+
+    output <- lapply(split(Hdata, by = "plot", keep.by = T), function(subData) {
+      suppressMessages(modelHD(
+        subData$D, subData$H, method, useWeight,
+        drawGraph, unique(subData$plot)
+      ))
+    })
+
+    if (is.null(method)) {
+      message("To build a HD model you must use the parameter 'method' in this function")
+    }
+
+    return(output)
+  }
 
   # functions ----------------------------------------------------------------
 
@@ -128,7 +151,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
       output$Hpredict <- exp(predict(mod) + 0.5 * output$RSElog^2)
 
       if (useGraph) {
-        output$Hpredict_plot <- exp(predict(mod, newdata = data.frame(logD = log(D_Plot))) + 0.5 * output$RSElog^2)
+        output$Hpredict_plot <- exp(predict(mod, newdata = D_Plot) + 0.5 * output$RSElog^2)
       }
     } else {
       mod <- switch(method,
@@ -140,7 +163,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
       output$RSElog <- NA_real_
 
       if (useGraph) {
-        output$Hpredict_plot <- predict(mod, newdata = data.frame(D = D_Plot))
+        output$Hpredict_plot <- predict(mod, newdata = D_Plot)
       }
     }
 
@@ -161,12 +184,17 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
 
 
   # function to draw the beining of the graph
-  drawPlotBegin <- function(givenMethod = FALSE) {
+  drawPlotBegin <- function(givenMethod = FALSE, plotId) {
+    main_title <- ifelse(givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod))
+    main_title <- ifelse(is.null(plotId), main_title,
+      paste(main_title, "for", plotId)
+    )
+
     par(mar = c(5, 5, 3, 3))
     plot(Hdata$D, Hdata$H,
       pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
       xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
-      main = ifelse(givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod)),
+      main = main_title,
       cex.main = 2, axes = F, frame.plot = F
     )
     grid(col = "grey80", lty = 1, equilogs = F)
@@ -182,7 +210,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   weight <- NULL
 
   # Vector of diameter used only for visualisation purpose
-  D_Plot <- seq(from = Hdata[, floor(min(D))], to = Hdata[, ceiling(max(D))], 0.5)
+  D_Plot <- data.frame(D = Hdata[, seq(floor(min(D)), ceiling(max(D)), 0.5)])
 
   # If the measures need to be weighted
   if (useWeight == TRUE) {
@@ -198,9 +226,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
 
     ####### if drawGraph is true
     if (drawGraph) {
-      drawPlotBegin(method)
+      drawPlotBegin(method, plot)
 
-      lines(D_Plot, output$Hpredict_plot, lwd = 2, col = "blue")
+      lines(D_Plot$D, output$Hpredict_plot, lwd = 2, col = "blue")
       legend("bottomright", c("Data", "Model selected"),
         lty = c(3, 1), lwd = c(3, 3),
         col = c("grey", "blue"), cex = 1.5
@@ -231,7 +259,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
   } else {
     # Compare Models ----------------------------------------------------------
 
-    drawPlotBegin()
+    drawPlotBegin(plotId = plot)
     color <- c("blue", "green", "red", "orange", "purple")
 
 
@@ -240,7 +268,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
 
       out <- modSelect(Hdata, method, useGraph = T)
 
-      lines(D_Plot, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
+      lines(D_Plot$D, out$Hpredict_plot, lwd = 2, col = color[i], lty = i)
 
       output <- list(
         method = method, color = color[i],
@@ -257,7 +285,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE) {
       col = color
     )
 
-    message("If you want to use a particular model, use the parameter 'method' in this function.")
+    message("To build a HD model you must use the parameter 'method' in this function")
     return(data.frame(result))
   }
 }

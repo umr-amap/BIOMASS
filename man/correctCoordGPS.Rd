@@ -12,7 +12,7 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 
 \item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
 
-\item{coordRel}{data frame with the plot relative coordinates in the same order than the longlat or UTMcoord}
+\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
 
 \item{rangeX}{a vector of length 2 giving the range for plot relative X coordinates}
 
@@ -23,15 +23,13 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 \item{drawPlot}{a logical if you want to display a graphical representation}
 
 \item{rmOutliers}{a logical if you want to remove the outliers from coordinates calculation}
-
-\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
 }
 \value{
 If you there are no outliers or rmOutliers = TRUE, a list with:
-\describe{
-   \item{corner}{a matrix with the coordinates of the corners}
-   \item{polygon}{a spatial polygon}
-   \item{outliers}{Coordinates lines considered as outliers, if any}
+\itemize{
+\item \code{corner}: a matrix with the coordinates of the corners
+\item \code{polygon}: a spatial polygon
+\item \code{outliers}: Coordinates lines considered as outliers, if any
 }
 }
 \description{
