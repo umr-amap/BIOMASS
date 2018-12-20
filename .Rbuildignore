@@ -2,3 +2,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^vignettes/.*.html$
+^vignettes/.*_cache/.*$
+^tests/test/*$
+^tests/testthat/Rplots.pdf$

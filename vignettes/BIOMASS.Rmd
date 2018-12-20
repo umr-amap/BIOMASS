@@ -1,12 +1,10 @@
 ---
 title: 'Vignette BIOMASS'
 output:
-  html_document: 
+  prettydoc::html_pretty: 
     number_sections: yes
-    theme: united
     toc: yes
-    toc_depth: 5
-    toc_float: yes
+    highlight: vignette
     self_contained: no
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
