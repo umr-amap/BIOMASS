@@ -52,7 +52,7 @@ test_that("NA characters", {
 })
 
 test_that("Without parameters", {
-  Res <- expect_message(modelHD(D, H, useWeight = T), "If you want to use a particular model")
+  Res <- expect_message(modelHD(D, H, useWeight = T), "build a HD model")
 
   expect_is(Res, "data.frame")
   expect_equal(ncol(Res), 5)
@@ -72,7 +72,7 @@ michaelis purple 4.294488        NA  0.014564152
 test_that("With the plot arguments", {
   plot <- NouraguesHD$plotId
 
-  Res <- expect_message(modelHD(D, H, plot = plot), "If you want to use a particular model")
+  Res <- expect_message(modelHD(D, H, plot = plot), "build a HD model")
 
   expect_is(Res, "list")
   expect_length(Res, length(unique(plot)))

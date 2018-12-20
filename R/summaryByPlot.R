@@ -54,6 +54,11 @@ if (getRversion() >= "2.15.1") {
 #' 
 #' # The summary by plot
 #' summaryByPlot(AGB_simu = resultMC$AGB_simu, plot)
+#' 
+#' # The summary by plot for computeAGB
+#' H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
+#' AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
+#' summaryByPlot(AGB, plot)
 summaryByPlot <- function(AGB_simu, plot) {
 
 

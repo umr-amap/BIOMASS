@@ -69,7 +69,4 @@ test_that("With the plot", {
   expect_length(H$H, length(D))
   expect_length(H$RSE, length(unique(NouraguesHD$plotId)))
 
-  H <- retrieveH(D, model)
-  expect_length(H$H, length(D))
-  expect_length(H$RSE, 1)
 })

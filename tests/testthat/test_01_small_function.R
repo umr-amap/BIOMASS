@@ -153,7 +153,7 @@ test_that("predictHeigth with plot argument", {
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,
-    method = method,
+    method = "log2",
     useWeight = TRUE
   )
 
@@ -162,21 +162,19 @@ test_that("predictHeigth with plot argument", {
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,
-    method = method,
+    method = "log2",
     useWeight = TRUE,
     plot = NouraguesHD$plotId
   )
-
-  expect_length(predictHeight(D, HDmodel), length(D))
+  
+  expect_error(predictHeight(D, HDmodel), "model")
   expect_length(predictHeight(D, HDmodel, plot = "Plot1"), length(D))
   expect_failure(expect_equal(
     predictHeight(D, HDmodel, plot = "Plot1"),
     predictHeight(D, HDmodel, plot = "Plot2")
   ))
-  expect_error(predictHeight(D, HDmodel, plot = "AAA"), "name")
+  expect_error(predictHeight(D, HDmodel, plot = "AAA"), "Cannot")
   expect_error(predictHeight(D, HDmodel, plot = c("Plot1", "Plot2")), "length")
-
-  expect_failure(expect_error(predictHeight(D, HDmodel)))
 
   plot <- rep(c("Plot1", "Plot2"), length.out = length(D))
 
