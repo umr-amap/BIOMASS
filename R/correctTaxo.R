@@ -144,8 +144,6 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
         file.remove(cachePath)
         useCache <- TRUE
       } else {
-
-        # TODO display file date
         if (verbose) {
           message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)["mtime"]))
         }
@@ -157,12 +155,17 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
           cachedTaxo <- NULL
         }
       }
+    } else if (is.null(useCache)) {
+      useCache <- TRUE
     }
   }
 
   # init cachedTaxo with empty data
   if (is.null(cachedTaxo)) {
-    cachedTaxo <- data.table(submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0))
+    cachedTaxo <- data.table(
+      submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0),
+      acceptedName = character(0)
+    )
   }
 
   # identify taxo not present in cache
@@ -239,7 +242,10 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       } else {
 
         # nothing found ! Pathological case -> return empty answer
-        result <- data.table(submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0))
+        result <- data.table(
+          submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0),
+          acceptedName = character(0)
+        )
       }
 
       # handle not founds (as taxosaurus does not give answers for them)
