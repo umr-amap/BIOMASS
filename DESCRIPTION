@@ -37,9 +37,10 @@ Suggests:
 	httr, 
 	knitr, 
 	rmarkdown,
-    	testthat,
+	testthat,
 	covr,
 	proj4,
 	MCMCglmm,
-	rvest
+	rvest,
+	prettydoc
 RoxygenNote: 6.1.1
