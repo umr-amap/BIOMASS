@@ -45,8 +45,6 @@ if (getRversion() >= "2.15.1") {
 #' @examples
 #' \dontrun{
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
-#' }
-#' \dontrun{
 #' correctTaxo(genus = "Astrocarium standleanum")
 #' }
 #' 

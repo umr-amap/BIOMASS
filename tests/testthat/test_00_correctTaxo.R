@@ -54,4 +54,29 @@ test_that("CorrectTaxo", {
       nameModified = c("NoMatch(low_score)", "TaxaNotFound"), stringsAsFactors = F
     )
   )
+
+
+  file.rename(path, paste0(path, 0))
+  # test multiple things here :
+  #   1) if the useCache is NULL but there is no Cache to remove
+  #   2) if the genus is nonsense, there is no error message that appear if there is no cache
+  expect_equal(
+    correctTaxo(genus = "bvgaeuigareuiguei", useCache = NULL),
+    data.frame(
+      genusCorrected = "bvgaeuigareuiguei",
+      speciesCorrected = NA_character_,
+      nameModified = "TaxaNotFound", stringsAsFactors = F
+    )
+  )
+  # If there is no cache and the genus is nonsense a second that come on sense
+  expect_equal(
+    correctTaxo(genus = c("bvgaeuigareuiguei", "Astrocarium standleanum"), useCache = NULL),
+    data.frame(
+      genusCorrected = c("bvgaeuigareuiguei", "Astrocaryum"),
+      speciesCorrected = c(NA_character_, "standleyanum"),
+      nameModified = c("TaxaNotFound", TRUE), stringsAsFactors = F
+    )
+  )
+
+  file.rename(paste0(path, 0), path)
 })
