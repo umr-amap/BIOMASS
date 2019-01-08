@@ -165,7 +165,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
 
-  if (length(outliers) != 0 & (nrow(projCoord) - length(outliers)) > 3 & !rmOutliers) {
+  if (length(outliers) != 0 & !rmOutliers) {
     warning(
       "Be carefull, you may have GNSS measurement outliers. \n",
       "Removing them may improve the georeferencing of your plot (see  the rmOutliers argument)."
