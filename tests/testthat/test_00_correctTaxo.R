@@ -60,6 +60,7 @@ test_that("CorrectTaxo", {
   # test multiple things here :
   #   1) if the useCache is NULL but there is no Cache to remove
   #   2) if the genus is nonsense, there is no error message that appear if there is no cache
+  #   3) The connectivity
   expect_equal(
     correctTaxo(genus = "bvgaeuigareuiguei", useCache = NULL),
     data.frame(
@@ -77,6 +78,6 @@ test_that("CorrectTaxo", {
       nameModified = c("TaxaNotFound", TRUE), stringsAsFactors = F
     )
   )
-
+  file.remove(path)
   file.rename(paste0(path, 0), path)
 })

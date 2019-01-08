@@ -4,7 +4,8 @@ projCoord <- data.frame(
   X = c(runif(5, min = 9, max = 11), runif(5, min = 8, max = 12), runif(5, min = 80, max = 120), runif(5, min = 90, max = 110)),
   Y = c(runif(5, min = 9, max = 11), runif(5, min = 80, max = 120), runif(5, min = 8, max = 12), runif(5, min = 90, max = 110))
 )
-projCoord <- projCoord + 1000
+projCoord$X <- projCoord$X + 200000
+projCoord$Y <- projCoord$Y + 9000000
 
 
 coordRel <- data.frame(
