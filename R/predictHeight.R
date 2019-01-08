@@ -15,7 +15,7 @@ if (getRversion() >= "2.15.1") {
 #' zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
 #' for the Monte Carlo approach (see [AGBmonteCarlo()]), otherwise it should be
 #' let as `FALSE`, the default case.
-#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
 #'
 #' @details In the case where the error is `FALSE` and the model is a log-log model, we use the
@@ -50,7 +50,7 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
     if (any(!plot %in% names(model))) {
       stop(
         "Cannot find a HD model corresponding to ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", ")
-        )
+      )
     }
 
 

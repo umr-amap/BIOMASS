@@ -288,7 +288,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       if (!is.null(plot)) {
         output[["color"]] <- NULL
       }
-      
+
       return(output)
     }), fill = T)
 

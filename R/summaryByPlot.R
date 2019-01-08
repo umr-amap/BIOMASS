@@ -82,7 +82,7 @@ summaryByPlot <- function(AGB_val, plot) {
   if (is.vector(AGB_val)) {
     data <- data.table(AGB = AGB_val, plot = plot)
     data <- na.omit(data)
-    
+
     AGB <- data[, .(AGB = sum(AGB)), by = plot]
 
     setDF(AGB)

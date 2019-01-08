@@ -22,7 +22,7 @@
 #'   - `NAustralia`: Northern Australia
 #'   - `Pantropical`: Pantropical
 #'
-#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build 
+#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
 #'
 #' @return Returns a list  with:

@@ -166,7 +166,7 @@ test_that("predictHeigth with plot argument", {
     useWeight = TRUE,
     plot = NouraguesHD$plotId
   )
-  
+
   expect_error(predictHeight(D, HDmodel), "model")
   expect_length(predictHeight(D, HDmodel, plot = "Plot1"), length(D))
   expect_failure(expect_equal(

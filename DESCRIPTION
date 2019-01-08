@@ -42,5 +42,6 @@ Suggests:
 	proj4,
 	MCMCglmm,
 	rvest,
-	prettydoc
+	prettydoc,
+	usethis
 RoxygenNote: 6.1.1

@@ -128,7 +128,7 @@
 #' 
 #' # Per plot using the Feldpaush regional HD averaged model
 #' AGBmonteCarlo(
-#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD, 
+#'   D = KarnatakaForest$D, WD = KarnatakaForest$WD,
 #'   errWD = KarnatakaForest$sdWD, H = KarnatakaForest$Hfeld,
 #'   errH = KarnatakaForest$HfeldRSE, Dpropag = "chave2004"
 #' )
