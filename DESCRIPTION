@@ -43,5 +43,7 @@ Suggests:
 	MCMCglmm,
 	rvest,
 	prettydoc,
-	usethis
+	usethis,
+	taxize,
+	lmfor
 RoxygenNote: 6.1.1
