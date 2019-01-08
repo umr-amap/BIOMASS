@@ -122,11 +122,12 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
   }
 
-  # Create the matrix of ralatif corners  #######????????
+  # Create the matrix of corners to return the projected coordinate of the corner of the plot
   cornerCoord <- as.matrix(expand.grid(X = sort(rangeX), Y = sort(rangeY)))
-  cornerCoord <- cornerCoord[c(1, 2, 4, 3), ] # switch between the lines 3 and 4 #######????????
+  # switch between the lines 3 and 4 because the corner 3 and 4 are invert in the expand.grid
+  cornerCoord <- cornerCoord[c(1, 2, 4, 3), ]
 
-  # Transform the matrix of relatif corners to absolute corner  #######????????
+  # Project the corner matrix in the projected coordinate
   cornerCoord <- as.matrix(cornerCoord) %*% res$rotation
   cornerCoord <- sweep(cornerCoord, 2, res$translation, FUN = "+")
 
@@ -144,7 +145,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     plot(projCoord[-outliers, ],
       col = "grey30", main = "Plot drawing",
       xlim = range(projCoord[, 1], coordAbs[, 1]),
-      ylim = range(projCoord[, 1], coordAbs[, 2]),
+      ylim = range(projCoord[, 2], coordAbs[, 2]),
       asp = 1, xlab = "X", ylab = "Y", axes = F, frame.plot = F
     )
     grid(col = "grey80", lty = 1)
