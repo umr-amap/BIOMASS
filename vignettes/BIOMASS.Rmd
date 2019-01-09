@@ -5,7 +5,7 @@ output:
     number_sections: yes
     toc: yes
     highlight: vignette
-    self_contained: no
+    self_contained: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Vignette BIOMASS}
