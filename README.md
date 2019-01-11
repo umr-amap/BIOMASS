@@ -18,7 +18,7 @@ Contains functions to estimate aboveground biomass/carbon and its uncertainty in
 
 For more informations, this is the [article](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12753) talking about this package.
 
-There is the [vignette](https://cran.r-project.org/web/packages/BIOMASS/vignettes/VignetteBiomass.html) of the package, and the [reference manual](https://cran.r-project.org/web/packages/BIOMASS/BIOMASS.pdf).
+There is the [vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/VignetteBiomass.html) of the package, and the [reference manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
 
 Citation
 --------
