@@ -122,7 +122,10 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     # species can be NA so handle it with care when pasting
     userTaxo[!is.na(genus) & !is.na(species), query := paste(query, species)]
   }
-
+  
+  # If there is empty species
+  userTaxo[species == "", ':='(species = NA_character_, query = gsub(" ", "", query))]
+  
   # get unique values
   qryTaxo <- unique(userTaxo[!is.na(query)])
 
@@ -166,7 +169,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
 
   # identify taxo not present in cache
   missingTaxo <- qryTaxo[!cachedTaxo[, .(submittedName)], on = c(query = "submittedName")]
-
+  
   # query taxosaurus for missing taxo if any
   queriedTaxo <- NULL
   if (nrow(missingTaxo)) {
@@ -310,8 +313,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       , `:=`(submittedName = acceptedName, matchedName = acceptedName, score = 1)
     ]
 
-    fullTaxo <- rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""]
-
+    fullTaxo <- unique(rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""])
+    
     # write cache
     fwrite(fullTaxo[order(submittedName), -"from"], file = cachePath)
     if (verbose) {
