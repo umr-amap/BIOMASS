@@ -8,17 +8,17 @@ BIOMASS
 The package
 -----------
 
-R package for estimating above-ground biomass and its uncertainty in tropical forests.
+R package for estimating aboveground biomass and its uncertainty in tropical forests.
 
-Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to :
-1. retrive and correct the taxonomy,
-2. estimate the wood density and its incertainty,
-3. construct height-diameter models,
-4. estimate the above-ground biomass/carbon at the stand level with asociated uncertainty.
+Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to:
 
-For more informations, this is the [article](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12753) talking about this package.
+1.  retrieve and correct the taxonomy;
+2.  estimate the wood density and its uncertainty;
+3.  construct height-diameter models;
+4.  manage tree and plot coordinates;
+5.  estimate the aboveground biomass/carbon at the stand level with associated uncertainty;
 
-There is the [vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/VignetteBiomass.html) of the package, and the [reference manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
+For more information, see [article](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12753) or the [vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/VignetteBiomass.html) of the package, and the [reference manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
 
 Citation
 --------
@@ -28,10 +28,17 @@ To cite BIOMASS, please use citation("BIOMASS").
 Install BIOMASS
 ---------------
 
-The latest released version from CRAN with
+The latest released version from CRAN:
 
 ``` r
 install.packages("BIOMASS")
+```
+
+The latest version from Github (in development):
+
+``` r
+install.packages("devtools")
+devtools::install_github("AMAP-dev/BIOMASS")
 ```
 
 To use it :
