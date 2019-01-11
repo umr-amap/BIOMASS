@@ -13,7 +13,7 @@ Authors@R: c(
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
   )
-Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) estimate the above-ground biomass/carbon at the stand level with associated uncertainty. To cite BIOMASS, please use citation("BIOMASS").
+Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) estimate the aboveground biomass/carbon at the stand level with associated uncertainty. To cite BIOMASS, please use citation("BIOMASS").
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
