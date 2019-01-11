@@ -71,9 +71,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     if (length(genus) != length(species)) {
       stop("You should provide two vectors of genera and species of the same length")
     }
-    if (any(is.na(genus) & !is.na(species))) {
-      stop("Species must have a genus")
-    }
+    species[is.na(genus)] = NA
   }
 
   # Check if package httr is available
