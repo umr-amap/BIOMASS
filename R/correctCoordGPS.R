@@ -45,22 +45,22 @@
 #'   )
 #' )
 #' projCoord <- projCoord + 1000
-#' CoordRel <- data.frame(
+#' coordRel <- data.frame(
 #'   X = c(rep(0, 10), rep(100, 10)),
 #'   Y = c(rep(c(rep(0, 5), rep(100, 5)), 2))
 #' )
 #' 
 #' aa <- correctCoordGPS(
-#'   projCoord = projCoord, coordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100)
 #' )
 #' bb <- correctCoordGPS(
-#'   projCoord = projCoord, coordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 #' )
 #' \dontrun{
 #' correctCoordGPS(
-#'   projCoord = projCoord, coordRel = CoordRel,
+#'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE
 #' )
 #' }
@@ -90,7 +90,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     between(coordRel[, 2], lower = rangeY[1], upper = rangeY[2]))) {
     stop("coordRel must be inside the X and Y ranges")
   }
-  if ((!is.null(longlat) && dim(longlat) != dim(coordRel)) || (!is.null(projCoord) && dim(projCoord) != dim(coordRel))) {
+  if ((!is.null(longlat) && any(dim(longlat) != dim(coordRel))) || (!is.null(projCoord) && any(dim(projCoord) != dim(coordRel)))) {
     stop("GPS and relative coordinates are not of the same dimension")
   }
 
