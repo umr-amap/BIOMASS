@@ -1,4 +1,4 @@
-#' Angiosperm Phylogeny Group (APG III) dataset UPDATE WITH APG IV?!
+#' Angiosperm Phylogeny Group (APG III) dataset
 #'
 #' APGIII Families taken from the Angiosperm Phylogeny Website (http://www.mobot.org/MOBOT/research/APweb/)
 #'
