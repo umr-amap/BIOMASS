@@ -123,6 +123,9 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     userTaxo[!is.na(genus) & !is.na(species), query := paste(query, species)]
   }
   
+  # If there is an empty genus
+  userTaxo[genus == "", ':='(genus = NA_character_, species = NA_character_, query = NA_character_)]
+  
   # If there is empty species
   userTaxo[species == "", ':='(species = NA_character_, query = gsub(" ", "", query))]
   
