@@ -3,9 +3,6 @@
 #' An R Package for estimating above-ground biomass and its uncertainty in tropical forests.
 #' Methods in Ecology and Evolution, 8(9), 1163-1167.
 #'
-#' @author \packageAuthor{BIOMASS}
-#' @author Maintainer: \packageMaintainer{BIOMASS}
-#'
 #'
 #' @examples
 #' \dontrun{

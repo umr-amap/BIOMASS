@@ -6,7 +6,12 @@
 \alias{BIOMASS-package}
 \title{BIOMASS: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests}
 \description{
-Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) estimate the aboveground biomass/carbon at the stand level with associated uncertainty. To cite BIOMASS, please use citation("BIOMASS").
+Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. 
+	These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, 
+	(3) construct height-diameter models, (4) manage tree and plot coordinates, 
+	(5) estimate the aboveground biomass/carbon at the stand level with associated uncertainty. 
+	To cite BIOMASS, please use citation("BIOMASS"). 
+	See more in the article of Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
 }
 \examples{
 \dontrun{
@@ -158,8 +163,22 @@ Useful links:
 
 }
 \author{
-\packageAuthor{BIOMASS}
+\strong{Maintainer}: Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
 
-Maintainer: \packageMaintainer{BIOMASS}
+Authors:
+\itemize{
+  \item Ariane Tanguy
+  \item Camille Piponiot
+  \item Bruno Herault \email{bruno.herault@cirad.fr}
+  \item Arthur Pere \email{arthur.pere@cirad.fr}
+  \item Guillaume Cornu \email{gcornu@cirad.fr} (0000-0002-7523-5176)
+}
+
+Other contributors:
+\itemize{
+  \item Jerome Chave \email{jerome.chave@univ-tlse3.fr} [data contributor]
+  \item Ted Feldpausch \email{T.R.Feldpausch@exeter.ac.uk} [data contributor]
+}
+
 }
 \keyword{internal}
