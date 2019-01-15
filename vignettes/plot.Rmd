@@ -1,0 +1,61 @@
+---
+title: "Manage tree and plot coordinate with BIOMASS"
+author: "Arthur Pere"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty: 
+    number_sections: yes
+    toc: yes
+    highlight: vignette
+    self_contained: yes
+    theme: cayman
+vignette: >
+  %\VignetteIndexEntry{Manage tree and plot coordinate with BIOMASS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = TRUE,
+  comment = "#>", fig.align = "center"
+)
+devtools::load_all("~/Bureau/document arthur/biomass/")
+require(knitr)
+set.seed(2)
+```
+
+
+# To manage the plots
+## Import the dataset and visualisation
+```{r}
+coord = read.csv( system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T ))
+
+kable(head(coord))
+plot(coord[, c("longitude", "latitude")], asp = 1)
+text(coord[, c("longitude", "latitude")], labels = coord[, "corner"], pos = 2, offset = 0.2 )
+```
+The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue whith the `projCoord` argument instead of `longlat` argument.
+
+
+
+## Correct the GPS coordinate
+I will take the first plot, and I will duplicate the coordinate with a little shake too see the power of the function.
+```{r}
+plot1 = coord[coord$Plot == 1, ]
+
+sapply(1:20, function(i){
+  
+  plot_mod = plot1
+  
+  plot_mod$longitude = plot1$longitude + runif(4, min = 0, max = 0.02)
+  plot_mod$latitude = plot1$latitude + runif(4, min = 0, max = 0.02)
+  
+  plot_mod
+}, simplify = F)
+
+
+
+```
+
+
