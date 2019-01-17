@@ -35,27 +35,51 @@ kable(head(coord))
 plot(coord[, c("longitude", "latitude")], asp = 1)
 text(coord[, c("longitude", "latitude")], labels = coord[, "corner"], pos = 2, offset = 0.2 )
 ```
-The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue whith the `projCoord` argument instead of `longlat` argument.
+You can see on the graph that the corner 1 is the upper-left corner and the corner turn conter clockwise, the orgin of the axis X and Y for relative coordinate is the corner 2. Between each points on one plot there is 200 meters. The X axis is 2 -> 3 and the Y axis is 2 -> 1.
 
 
+
+The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue whith the `projCoord` argument instead of `longlat` argument. 
 
 ## Correct the GPS coordinate
-I will take the first plot, and I will duplicate the coordinate with a little shake too see the power of the function.
+I will take the first plot, and I will duplicate the coordinate with a little shake. 
 ```{r}
 plot1 = coord[coord$Plot == 1, ]
 
-sapply(1:20, function(i){
+list = sapply(1:20, function(i){
   
   plot_mod = plot1
   
-  plot_mod$longitude = plot1$longitude + runif(4, min = 0, max = 0.02)
-  plot_mod$latitude = plot1$latitude + runif(4, min = 0, max = 0.02)
+  if(i < 17){
+    plot_mod$longitude = plot1$longitude + runif(4, min = -0.0001, max = 0.0001)
+    plot_mod$latitude = plot1$latitude + runif(4, min = -0.0001, max = 0.0001)
+  } else {
+    plot_mod$longitude = plot1$longitude + runif(4, min = -0.0005, max = 0.0005)
+    plot_mod$latitude = plot1$latitude + runif(4, min = -0.0005, max = 0.0005)
+  }
+    
+  
   
   plot_mod
 }, simplify = F)
 
+plot1 = do.call("rbind", list)
 
+coordRel = data.frame( X = rep(c(0, 0, 200, 200), 20), Y = rep(c(200, 0, 0, 200), 20) )
+
+
+correctCoordGPS(longlat = plot1[, c("longitude", "latitude")], 
+                coordRel = coordRel, 
+                rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, maxDist = 40, rmOutliers = T)
 
 ```
+You can see the output of this function, and a warning. The warning is here to tell you that there is outliers and if you want to remove the outliers, you can use the parameters `rmOutliers` and sest it `TRUE`. 
+The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon and `outliers` the vector with the line number of the outliers.
+
+
+
+## Numbering the corner
+Even if the corner is already numbered, we must have the origin of the axis at the number 1, and the 
+
 
 
