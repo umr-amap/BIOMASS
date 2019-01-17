@@ -22,13 +22,14 @@ knitr::opts_chunk$set(
 )
 devtools::load_all("~/Bureau/document arthur/biomass/")
 require(knitr)
-set.seed(2)
 ```
 
 
 # To manage the plots
 ## Import the dataset and visualisation
 ```{r}
+set.seed(2)
+
 coord = read.csv( system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T ))
 
 kable(head(coord))
@@ -43,7 +44,7 @@ The plot is referenced in the longitude latitude coordinate so you must have the
 
 ## Correct the GPS coordinate
 I will take the first plot, and I will duplicate the coordinate with a little shake. 
-```{r}
+```{r, cache=FALSE}
 plot1 = coord[coord$Plot == 1, ]
 
 list = sapply(1:20, function(i){
@@ -70,16 +71,32 @@ coordRel = data.frame( X = rep(c(0, 0, 200, 200), 20), Y = rep(c(200, 0, 0, 200)
 
 correctCoordGPS(longlat = plot1[, c("longitude", "latitude")], 
                 coordRel = coordRel, 
-                rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, maxDist = 40, rmOutliers = T)
+                rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, maxDist = 20, rmOutliers = T)
 
 ```
-You can see the output of this function, and a warning. The warning is here to tell you that there is outliers and if you want to remove the outliers, you can use the parameters `rmOutliers` and sest it `TRUE`. 
+You can see the output of this function, and a warning. The warning is here to tell you that there is outliers and if you want to remove the outliers, you can use the parameters `rmOutliers` and set it `TRUE`. 
 The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon and `outliers` the vector with the line number of the outliers.
 
+The outliers are calculated by a measure of distance between the predicted points and the GPS points. If this distance is higher than the value of `maxDist`, the point is considered like outliers.
 
 
 ## Numbering the corner
-Even if the corner is already numbered, we must have the origin of the axis at the number 1, and the 
+Even if the corner is already numbered, we must have the origin of the axis at the number 1, and the function to do that is `numberCorner`. The function is working even if the corner aren't numbered first.
+
+```{r}
+
+coord_num = numberCorner(longlat = coord[, c("longitude", "latitude")], 
+                         plot = coord[, "Plot"], 
+                         origin = coord[, "corner"] == 2, 
+                         clockWise = F)
+
+
+plot(coord_num[, c("X", "Y")], asp = 1)
+text(coord_num[, c("X", "Y")], labels = coord_num[, "corner"], pos = 2, offset = 0.2 )
+
+```
+
+On the graph, you can noted than the corner number 1 is in the orgin of the plot.
 
 
 
