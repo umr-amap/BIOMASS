@@ -79,7 +79,7 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   tab <- as.numeric(table(plot))
   if (any(as.numeric(table(plot)) != 4)) {
     stop(
-      "Lenght of vector plot is not a multiple of 4, the plot(s):\n\t\t",
+      "Lenght of vector plot is not 4, the plot(s):\n\t\t",
       paste(names(table(plot)[ table(plot) != 4 ]), collapse = " "),
       "\nhave:\n\t\t",
       paste(table(plot)[ table(plot) != 4 ], collapse = " "),
