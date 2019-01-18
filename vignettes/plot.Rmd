@@ -25,55 +25,53 @@ require(knitr)
 ```
 
 
+# Requirement
+
+You need the folowing informations to use the folowing function in your analysis :
+  
+  - Dimension of the plots
+  - Coordinate GPS of minimun 3 corners with the corresponding relative coordinates
+  - The origin corner
+  - The X, Y directions
+
+
+
+
 # To manage the plots
 ## Import the dataset and visualisation
 ```{r}
 set.seed(2)
 
-coord = read.csv( system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T ))
+coord <- read.csv(system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T))
 
-kable(head(coord))
 plot(coord[, c("longitude", "latitude")], asp = 1)
-text(coord[, c("longitude", "latitude")], labels = coord[, "corner"], pos = 2, offset = 0.2 )
 ```
-You can see on the graph that the corner 1 is the upper-left corner and the corner turn conter clockwise, the orgin of the axis X and Y for relative coordinate is the corner 2. Between each points on one plot there is 200 meters. The X axis is 2 -> 3 and the Y axis is 2 -> 1.
+
+```{r echo=FALSE}
+kable(head(coord))
+```
+
+You can see that the corner coordinates are spread, and we can correct this.
 
 
 
 The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue whith the `projCoord` argument instead of `longlat` argument. 
 
 ## Correct the GPS coordinate
-I will take the first plot, and I will duplicate the coordinate with a little shake. 
 ```{r, cache=FALSE}
-plot1 = coord[coord$Plot == 1, ]
 
-list = sapply(1:20, function(i){
-  
-  plot_mod = plot1
-  
-  if(i < 17){
-    plot_mod$longitude = plot1$longitude + runif(4, min = -0.0001, max = 0.0001)
-    plot_mod$latitude = plot1$latitude + runif(4, min = -0.0001, max = 0.0001)
-  } else {
-    plot_mod$longitude = plot1$longitude + runif(4, min = -0.0005, max = 0.0005)
-    plot_mod$latitude = plot1$latitude + runif(4, min = -0.0005, max = 0.0005)
-  }
-    
-  
-  
-  plot_mod
-}, simplify = F)
+correct_plot = correctCoordGPS(
+  longlat = coord[, c("longitude", "latitude")],
+  coordRel = coord[, c("Xrel", "Yrel")],
+  rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, 
+  maxDist = 20, rmOutliers = T
+)
 
-plot1 = do.call("rbind", list)
-
-coordRel = data.frame( X = rep(c(0, 0, 200, 200), 20), Y = rep(c(200, 0, 0, 200), 20) )
-
-
-correctCoordGPS(longlat = plot1[, c("longitude", "latitude")], 
-                coordRel = coordRel, 
-                rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, maxDist = 20, rmOutliers = T)
-
+str(correct_plot, max.level = 1)
 ```
+
+
+
 You can see the output of this function, and a warning. The warning is here to tell you that there is outliers and if you want to remove the outliers, you can use the parameters `rmOutliers` and set it `TRUE`. 
 The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon and `outliers` the vector with the line number of the outliers.
 
@@ -84,19 +82,127 @@ The outliers are calculated by a measure of distance between the predicted point
 Even if the corner is already numbered, we must have the origin of the axis at the number 1, and the function to do that is `numberCorner`. The function is working even if the corner aren't numbered first.
 
 ```{r}
+coord = correct_plot$corner
 
-coord_num = numberCorner(longlat = coord[, c("longitude", "latitude")], 
-                         plot = coord[, "Plot"], 
-                         origin = coord[, "corner"] == 2, 
-                         clockWise = F)
+coord_num <- numberCorner(
+  projCoord = coord[, 1:2],
+  plot = rep("plot1", 4),
+  origin = c(F, F, T, F),
+  clockWise = F
+)
 
 
 plot(coord_num[, c("X", "Y")], asp = 1)
-text(coord_num[, c("X", "Y")], labels = coord_num[, "corner"], pos = 2, offset = 0.2 )
-
+text(coord_num[, c("X", "Y")], labels = coord_num[, "corner"], pos = 2, offset = 0.2)
 ```
 
 On the graph, you can noted than the corner number 1 is in the orgin of the plot.
+
+
+## Cut the plot in multiple subplot
+
+```{r}
+subplot <- cutPlot(
+  projCoord = coord_num[, c("X", "Y")],
+  plot = coord_num[, c("plot")],
+  corner = coord_num[, c("corner")],
+  gridsize = 50, dimX = 200, dimY = 200
+)
+```
+
+```{r echo=FALSE}
+kable(head(subplot))
+```
+
+This table is just an extract of the table `subplot`.
+
+If you want, you can personalize the name of the subplot in the table `subplot`.
+
+The name of the subplot is like this : `<name_plot>_<X>_<Y>`, with `X`, `Y`, like the graph below.
+
+```{r echo=FALSE}
+with(subplot, {
+  plot(XRel, YRel, asp = 1, ylim = c(-20, 240))
+  arrows(x0 = -20, y0 = -10, x1 = 220, length = 0.07)
+  arrows(x0 = -10, y0 = -20, y1 = 220, length = 0.07)
+  segments(x0 = unique(XRel), y0 = -15, y1 = -5)
+  segments(x0 = -15, y0 = unique(YRel), x1 = -5)
+
+  text(x = 220, y = -10, "X", pos = 4)
+  text(x = -10, y = 220, "Y", pos = 3)
+
+  text(
+    x = (unique(XRel)[-length(unique(XRel))] + unique(XRel)[-1]) / 2, y = -10,
+    labels = (seq_along(unique(XRel)) - 1)[-length(unique(XRel))],
+    pos = 1
+  )
+  text(
+    x = -10, y = (unique(YRel)[-length(unique(YRel))] + unique(YRel)[-1]) / 2,
+    labels = (seq_along(unique(YRel)) - 1)[-length(unique(YRel))],
+    pos = 2
+  )
+})
+```
+
+
+
+
+# Attribute the trees to the subplot
+Now the plot are corrected and cut. We can attribute the trees to the subplot. The trees must be in the referentiel of the plot like the graph below.
+
+```{r echo=FALSE}
+
+with(coord_num, {
+  plot(X, Y, asp = 1)
+  length <- 0.07
+  cex <- 0.7
+  arrows(x0 = X[corner == 1], y0 = Y[corner == 1], x1 = X[corner == 2], length = length)
+  arrows(x0 = X[corner == 1], y0 = Y[corner == 1], y1 = Y[corner == 4], length = length)
+  text(x = X[corner == 1], y = Y[corner == 1], pos = 2, offset = 0.2, labels = "O", cex = cex)
+  text(x = (X[corner == 2] + X[corner == 1]) / 2, y = Y[corner == 1], pos = 1, cex = cex, labels = "X", offset = 0.2)
+  text(x = X[corner == 1], y = (Y[corner == 4] + Y[corner == 1]) / 2, pos = 2, cex = cex, labels = "Y", offset = 0.2)
+})
+```
+
+Now, we will generate the trees randomly.
+
+```{r}
+# attribute the trees to the
+trees <- data.frame(
+  plot = rep("Plot1", 500),
+  X = runif(500, min = 0, max = 200),
+  Y = runif(500, min = 0, max = 200)
+)
+
+# add some trees with abherente values
+trees <- rbind(trees, data.frame(
+  plot = rep("Plot1", 60),
+  X = runif(60, min = 200, max = 6000),
+  Y = runif(60, min = 200, max = 6000)
+))
+
+# attribute the trees to the to the subplot
+trees$subplot <- attributeTree(trees[, c("X", "Y")], trees[, "plot"], subplot)
+
+```
+
+```{r echo=FALSE}
+kable(rbind(head(trees), tail(trees, 1)), digits = 3)
+```
+
+As you can see, the trees with values in the range of the plot are attributed a subplot. The last line is the last line of the table, and have abherent value of X, Y so it is `NA`.
+
+
+If you change the name of a subplot in the table `subplot`, they will be integrated in the output vector of `attributeTree`.
+
+
+
+
+
+
+
+
+
 
 
 
