@@ -67,14 +67,14 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
     longlat <- as.data.frame(longlat, fix.empty.names = F)
   }
   if (!is.null(projCoord) && !is.data.frame(projCoord)) {
-    projCoord <- as.data.frame(longlat, fix.empty.names = F)
+    projCoord <- as.data.frame(projCoord, fix.empty.names = F)
   }
 
   if (!is.null(longlat) && nrow(longlat) != length(plot)) {
-    stop("The length of vectors plot and origin id different from the number of rows of longlat")
+    stop("The length of vectors plot and origin is different from the number of rows of longlat")
   }
   if (!is.null(projCoord) && nrow(projCoord) != length(plot)) {
-    stop("The length of vectors plot and origin id different from the number of rows of projCoord")
+    stop("The length of vectors plot and origin is different from the number of rows of projCoord")
   }
   tab <- as.numeric(table(plot))
   if (any(as.numeric(table(plot)) != 4)) {
