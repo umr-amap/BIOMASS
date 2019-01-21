@@ -162,11 +162,9 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     points(coordAbs, col = "black", pch = 15, cex = 1.3)
     points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
     
-    text(cornerCoord, adj = c(-0.5, -0.5), col = "blue")
-    
     legend(x = usr[2], y = grid$yaxp[length(grid$yaxp)-1], 
-      c("GPS measurements", ifelse(rmOutliers, "outliers (discarded)", "outliers"), "Corrected coord", "Corner number"),
-      col = c("grey30", "red", "black", "blue"),
+      c("GPS measurements", ifelse(rmOutliers, "outliers (discarded)", "outliers"), "Corrected coord"),
+      col = c("grey30", "red", "black"),
       pch = c(1, 4, 15, 49), bg = "grey90"
     )
     par(xpd = NA, mar=c(5, 4, 4, 2) + 0.1)
