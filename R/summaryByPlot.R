@@ -15,9 +15,13 @@ if (getRversion() >= "2.15.1") {
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from [computeAGB()].
 #'
+#' The drawPlot argument is a logical that if it is set TRUE, a graph will appear with the plot given on absciss and the value
+#' of AGB on ordinate, the red segments are the quantile.
+#'
 #' @param AGB_val Matrix resulting from the function [AGBmonteCarlo()] (AGB_val element of the list),
 #' or just the output of the function [AGBmonteCarlo()]. Or the output of the function [computeAGB()]
 #' @param plot Vector with the code of plot
+#' @param drawPlot a logical to draw the plot (see Details)
 #'
 #' @return a data frame where:
 #'   - `plot`: the code of the plot
@@ -59,7 +63,7 @@ if (getRversion() >= "2.15.1") {
 #' H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
 #' AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
 #' summaryByPlot(AGB, plot)
-summaryByPlot <- function(AGB_val, plot) {
+summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
 
 
   # parameters verification -------------------------------------------------
@@ -150,7 +154,17 @@ summaryByPlot <- function(AGB_val, plot) {
 
   AGB <- Plot[!is.na(plot), mySummary(.I, AGB_val), by = plot]
 
-  setDF(AGB)
+  if (drawPlot) {
+    with(AGB[order(AGB)], {
+      plot(AGB,
+        pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = range(Cred_2.5, Cred_97.5),
+        las = 1, cex.lab = 1.3, xaxt = "n", main = "AGB by plot"
+      )
+      axis(1, at = seq(length(AGB)), labels = plot, las = 2)
+      segments(x0 = seq(length(AGB)), y0 = Cred_2.5, y1 = Cred_97.5, col = "red")
+    })
+  }
 
+  setDF(AGB)
   return(AGB)
 }

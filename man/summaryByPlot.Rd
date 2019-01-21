@@ -4,13 +4,15 @@
 \alias{summaryByPlot}
 \title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_val, plot)
+summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 }
 \arguments{
 \item{AGB_val}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_val element of the list),
 or just the output of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}. Or the output of the function \code{\link[=computeAGB]{computeAGB()}}}
 
 \item{plot}{Vector with the code of plot}
+
+\item{drawPlot}{a logical to draw the plot (see Details)}
 }
 \value{
 a data frame where:
@@ -28,6 +30,9 @@ for each plot of the AGB if the argument \code{AGB_val} is the resulting vector 
 \details{
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from \code{\link[=computeAGB]{computeAGB()}}.
+
+The drawPlot argument is a logical that if it is set TRUE, a graph will appear with the plot given on absciss and the value
+of AGB on ordinate, the red segments are the quantile.
 }
 \examples{
 
