@@ -40,11 +40,9 @@ You need the folowing informations to use the folowing function in your analysis
 # To manage the plots
 ## Import the dataset and visualisation
 ```{r}
-set.seed(2)
-
 coord <- read.csv(system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T))
-
-plot(coord[, c("longitude", "latitude")], asp = 1)
+coord$Plot = "NB1"
+plot(coord[, c("Long", "Lat")], asp = 1)
 ```
 
 ```{r echo=FALSE}
@@ -60,8 +58,13 @@ The plot is referenced in the longitude latitude coordinate so you must have the
 ## Correct the GPS coordinate
 ```{r, cache=FALSE}
 
+Coord[Corners == "NB1_SW", ':='(xRel = 0, yRel = 0)]
+b[Corners == "NB1_SE", ':='(xRel = 0, yRel = 100)]
+b[Corners == "NB1_NW", ':='(xRel = 100, yRel = 0)]
+b[Corners == "NB1_NE", ':='(xRel = 100, yRel = 100)]
+
 correct_plot = correctCoordGPS(
-  longlat = coord[, c("longitude", "latitude")],
+  longlat = coord[, c("Long", "Lat")],
   coordRel = coord[, c("Xrel", "Yrel")],
   rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, 
   maxDist = 20, rmOutliers = T
