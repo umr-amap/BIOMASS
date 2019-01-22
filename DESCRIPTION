@@ -50,5 +50,6 @@ Suggests:
 	prettydoc,
 	usethis,
 	taxize,
-	lmfor
+	lmfor,
+	sf
 RoxygenNote: 6.1.1

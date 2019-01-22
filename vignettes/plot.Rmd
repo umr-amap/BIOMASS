@@ -58,40 +58,39 @@ The plot is referenced in the longitude latitude coordinate so you must have the
 ## Correct the GPS coordinate
 ```{r, cache=FALSE}
 
-Coord[Corners == "NB1_SW", ':='(xRel = 0, yRel = 0)]
-b[Corners == "NB1_SE", ':='(xRel = 0, yRel = 100)]
-b[Corners == "NB1_NW", ':='(xRel = 100, yRel = 0)]
-b[Corners == "NB1_NE", ':='(xRel = 100, yRel = 100)]
+coordRel = data.frame(xRel = rep(0, nrow(coord)), 
+                      yRel = rep(0, nrow(coord)))
+coordRel[ coord$Corners == "NB1_SE", "yRel" ] = 100
+coordRel[ coord$Corners == "NB1_NW", "xRel" ] = 100
+coordRel[ coord$Corners == "NB1_NE", c("xRel", "yRel") ] = 100
 
 correct_plot = correctCoordGPS(
   longlat = coord[, c("Long", "Lat")],
-  coordRel = coord[, c("Xrel", "Yrel")],
-  rangeX = c(0, 200), rangeY = c(0, 200), drawPlot = T, 
-  maxDist = 20, rmOutliers = T
+  coordRel = coordRel,
+  rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = T, 
+  maxDist = 10, rmOutliers = T
 )
 
 str(correct_plot, max.level = 1)
 ```
 
 
-
-You can see the output of this function, and a warning. The warning is here to tell you that there is outliers and if you want to remove the outliers, you can use the parameters `rmOutliers` and set it `TRUE`. 
 The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon and `outliers` the vector with the line number of the outliers.
 
 The outliers are calculated by a measure of distance between the predicted points and the GPS points. If this distance is higher than the value of `maxDist`, the point is considered like outliers.
 
 
 ## Numbering the corner
-Even if the corner is already numbered, we must have the origin of the axis at the number 1, and the function to do that is `numberCorner`. The function is working even if the corner aren't numbered first.
+We have to number the corner of the plot, it is working if we have exactly 4 points for each plot, so we have to do the correctCoordGPS before if we have not the correct number of points.
 
 ```{r}
 coord = correct_plot$corner
 
 coord_num <- numberCorner(
   projCoord = coord[, 1:2],
-  plot = rep("plot1", 4),
-  origin = c(F, F, T, F),
-  clockWise = F
+  plot = rep("NB1", 4),
+  origin = c(F, F, F, T),
+  clockWise = T
 )
 
 
@@ -99,7 +98,7 @@ plot(coord_num[, c("X", "Y")], asp = 1)
 text(coord_num[, c("X", "Y")], labels = coord_num[, "corner"], pos = 2, offset = 0.2)
 ```
 
-On the graph, you can noted than the corner number 1 is in the orgin of the plot.
+On the graph, you can noted than the corner number 1 the orgin of the plot.
 
 
 ## Cut the plot in multiple subplot
@@ -109,7 +108,7 @@ subplot <- cutPlot(
   projCoord = coord_num[, c("X", "Y")],
   plot = coord_num[, c("plot")],
   corner = coord_num[, c("corner")],
-  gridsize = 50, dimX = 200, dimY = 200
+  gridsize = 25, dimX = 100, dimY = 100
 )
 ```
 
@@ -125,14 +124,14 @@ The name of the subplot is like this : `<name_plot>_<X>_<Y>`, with `X`, `Y`, lik
 
 ```{r echo=FALSE}
 with(subplot, {
-  plot(XRel, YRel, asp = 1, ylim = c(-20, 240))
-  arrows(x0 = -20, y0 = -10, x1 = 220, length = 0.07)
-  arrows(x0 = -10, y0 = -20, y1 = 220, length = 0.07)
+  plot(XRel, YRel, asp = 1, ylim = c(-20, 140))
+  arrows(x0 = -20, y0 = -10, x1 = 120, length = 0.07)
+  arrows(x0 = -10, y0 = -20, y1 = 120, length = 0.07)
   segments(x0 = unique(XRel), y0 = -15, y1 = -5)
   segments(x0 = -15, y0 = unique(YRel), x1 = -5)
 
-  text(x = 220, y = -10, "X", pos = 4)
-  text(x = -10, y = 220, "Y", pos = 3)
+  text(x = 120, y = -10, "X", pos = 4)
+  text(x = -10, y = 120, "Y", pos = 3)
 
   text(
     x = (unique(XRel)[-length(unique(XRel))] + unique(XRel)[-1]) / 2, y = -10,
@@ -151,41 +150,12 @@ with(subplot, {
 
 
 # Attribute the trees to the subplot
-Now the plot are corrected and cut. We can attribute the trees to the subplot. The trees must be in the referentiel of the plot like the graph below.
-
-```{r echo=FALSE}
-
-with(coord_num, {
-  plot(X, Y, asp = 1)
-  length <- 0.07
-  cex <- 0.7
-  arrows(x0 = X[corner == 1], y0 = Y[corner == 1], x1 = X[corner == 2], length = length)
-  arrows(x0 = X[corner == 1], y0 = Y[corner == 1], y1 = Y[corner == 4], length = length)
-  text(x = X[corner == 1], y = Y[corner == 1], pos = 2, offset = 0.2, labels = "O", cex = cex)
-  text(x = (X[corner == 2] + X[corner == 1]) / 2, y = Y[corner == 1], pos = 1, cex = cex, labels = "X", offset = 0.2)
-  text(x = X[corner == 1], y = (Y[corner == 4] + Y[corner == 1]) / 2, pos = 2, cex = cex, labels = "Y", offset = 0.2)
-})
-```
-
-Now, we will generate the trees randomly.
-
 ```{r}
-# attribute the trees to the
-trees <- data.frame(
-  plot = rep("Plot1", 500),
-  X = runif(500, min = 0, max = 200),
-  Y = runif(500, min = 0, max = 200)
-)
-
-# add some trees with abherente values
-trees <- rbind(trees, data.frame(
-  plot = rep("Plot1", 60),
-  X = runif(60, min = 200, max = 6000),
-  Y = runif(60, min = 200, max = 6000)
-))
+# read the 
+trees = read.csv(system.file("external", "NouraguesPlot.csv", package = "BIOMASS", mustWork = T))
 
 # attribute the trees to the to the subplot
-trees$subplot <- attributeTree(trees[, c("X", "Y")], trees[, "plot"], subplot)
+trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees)), subplot)
 
 ```
 
@@ -198,6 +168,16 @@ As you can see, the trees with values in the range of the plot are attributed a 
 
 If you change the name of a subplot in the table `subplot`, they will be integrated in the output vector of `attributeTree`.
 
+
+## Calculate the AGB and spatialisation
+```{r}
+trees$AGB = computeAGB(trees$D, trees$WD, H = trees$H)
+
+AGB = summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
+
+print(AGB)
+
+```
 
 
 
