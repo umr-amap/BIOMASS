@@ -1,3 +1,8 @@
+* version 2.1
+- bug correction
+- add a vignette for the managment of the plot
+- add few tricks for the summaryByPlot
+
 * version 2.0
 - code optimization of most functions
 - new functions: computeFeldRegion, attributeTree, correctCoordGPS, cutPlot, latlong2UTM, numberCorner, summaryByPlot, updateCache
