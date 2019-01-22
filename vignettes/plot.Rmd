@@ -27,47 +27,56 @@ require(knitr)
 
 # Requirement
 
-You need the folowing informations to use the folowing function in your analysis :
+You need the following information to use the following function in your analysis :
   
   - Dimension of the plots
-  - Coordinate GPS of minimun 3 corners with the corresponding relative coordinates
+  - Coordinate GPS of minimum 3 corners with the corresponding relative coordinates
   - The origin corner
   - The X, Y directions
+
+```{r}
+trees <- read.csv(system.file("external", "NouraguesPlot.csv",
+  package = "BIOMASS", mustWork = T
+))
+```
+
+```{r echo=FALSE}
+kable(head(trees), digits = 3, row.names = F, caption = "Head of the table trees")
+```
+
+
+
+
+
+
+```{r, fig.cap="Plot the coordinate"}
+coord <- read.csv(system.file("external", "Coord.csv",
+  package = "BIOMASS", mustWork = T
+))
+
+plot(coord[, c("Long", "Lat")], asp = 1)
+```
+```{r echo=FALSE}
+kable(head(coord), digits = 3, row.names = F, caption = "Head of the table coord")
+```
+
 
 
 
 
 # To manage the plots
 ## Import the dataset and visualisation
-```{r}
-coord <- read.csv(system.file("external", "Coord.csv", package = "BIOMASS", mustWork = T))
-coord$Plot = "NB1"
-plot(coord[, c("Long", "Lat")], asp = 1)
-```
-
-```{r echo=FALSE}
-kable(head(coord))
-```
 
 You can see that the corner coordinates are spread, and we can correct this.
 
-
-
-The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue whith the `projCoord` argument instead of `longlat` argument. 
+The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue with the `projCoord` argument instead of `longlat` argument. 
 
 ## Correct the GPS coordinate
 ```{r, cache=FALSE}
-
-coordRel = data.frame(xRel = rep(0, nrow(coord)), 
-                      yRel = rep(0, nrow(coord)))
-coordRel[ coord$Corners == "NB1_SE", "yRel" ] = 100
-coordRel[ coord$Corners == "NB1_NW", "xRel" ] = 100
-coordRel[ coord$Corners == "NB1_NE", c("xRel", "yRel") ] = 100
-
-correct_plot = correctCoordGPS(
+correct_plot <- correctCoordGPS(
   longlat = coord[, c("Long", "Lat")],
-  coordRel = coordRel,
-  rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = T, 
+  coordRel = coord[, c("xRel", "yRel")],
+  rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = T,
   maxDist = 10, rmOutliers = T
 )
 
@@ -84,10 +93,8 @@ The outliers are calculated by a measure of distance between the predicted point
 We have to number the corner of the plot, it is working if we have exactly 4 points for each plot, so we have to do the correctCoordGPS before if we have not the correct number of points.
 
 ```{r}
-coord = correct_plot$corner
-
 coord_num <- numberCorner(
-  projCoord = coord[, 1:2],
+  projCoord = correct_plot$cornerCoords,
   plot = rep("NB1", 4),
   origin = c(F, F, F, T),
   clockWise = T
@@ -98,7 +105,7 @@ plot(coord_num[, c("X", "Y")], asp = 1)
 text(coord_num[, c("X", "Y")], labels = coord_num[, "corner"], pos = 2, offset = 0.2)
 ```
 
-On the graph, you can noted than the corner number 1 the orgin of the plot.
+On the graph, you can noted than the corner number 1 the origin of the plot.
 
 
 ## Cut the plot in multiple subplot
@@ -116,67 +123,24 @@ subplot <- cutPlot(
 kable(head(subplot))
 ```
 
-This table is just an extract of the table `subplot`.
 
-If you want, you can personalize the name of the subplot in the table `subplot`.
+# Trees managements
+## Attribute the trees to the subplot
+attribute the trees to the to the subplot
 
-The name of the subplot is like this : `<name_plot>_<X>_<Y>`, with `X`, `Y`, like the graph below.
-
-```{r echo=FALSE}
-with(subplot, {
-  plot(XRel, YRel, asp = 1, ylim = c(-20, 140))
-  arrows(x0 = -20, y0 = -10, x1 = 120, length = 0.07)
-  arrows(x0 = -10, y0 = -20, y1 = 120, length = 0.07)
-  segments(x0 = unique(XRel), y0 = -15, y1 = -5)
-  segments(x0 = -15, y0 = unique(YRel), x1 = -5)
-
-  text(x = 120, y = -10, "X", pos = 4)
-  text(x = -10, y = 120, "Y", pos = 3)
-
-  text(
-    x = (unique(XRel)[-length(unique(XRel))] + unique(XRel)[-1]) / 2, y = -10,
-    labels = (seq_along(unique(XRel)) - 1)[-length(unique(XRel))],
-    pos = 1
-  )
-  text(
-    x = -10, y = (unique(YRel)[-length(unique(YRel))] + unique(YRel)[-1]) / 2,
-    labels = (seq_along(unique(YRel)) - 1)[-length(unique(YRel))],
-    pos = 2
-  )
-})
-```
-
-
-
-
-# Attribute the trees to the subplot
 ```{r}
-# read the 
-trees = read.csv(system.file("external", "NouraguesPlot.csv", package = "BIOMASS", mustWork = T))
-
-# attribute the trees to the to the subplot
 trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees)), subplot)
-
 ```
 
-```{r echo=FALSE}
-kable(rbind(head(trees), tail(trees, 1)), digits = 3)
-```
-
-As you can see, the trees with values in the range of the plot are attributed a subplot. The last line is the last line of the table, and have abherent value of X, Y so it is `NA`.
-
-
-If you change the name of a subplot in the table `subplot`, they will be integrated in the output vector of `attributeTree`.
 
 
 ## Calculate the AGB and spatialisation
 ```{r}
-trees$AGB = computeAGB(trees$D, trees$WD, H = trees$H)
+trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
 
-AGB = summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
+AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
 
 print(AGB)
-
 ```
 
 
