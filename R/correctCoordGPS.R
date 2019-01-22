@@ -166,7 +166,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
     
     legend(x = usr[2], y = grid$yaxp[length(grid$yaxp)-1], 
-      c("GPS measurements", ifelse(rmOutliers, "outliers (discarded)", "outliers"), "Corrected coord"),
+      c("GPS measurements", ifelse(rmOutliers, "Outliers (discarded)", "Outliers"), "Corrected coord"),
       col = c("grey30", "red", "black"),
       pch = c(1, 4, 15, 49), bg = "grey90"
     )
@@ -185,7 +185,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     )
   }
 
-  output = list(corner = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
+  output = list(cornerCoords = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
                 polygon = sps, outliers = outliers)
   if (!is.null(longlat))
     output$codeUTM = codeUTM

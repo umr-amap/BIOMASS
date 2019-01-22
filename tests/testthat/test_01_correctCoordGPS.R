@@ -26,14 +26,14 @@ test_that("correct coord GPS in UTM", {
   )
   expect_is(corr, "list")
   expect_length(corr, 3)
-  expect_equal(names(corr), c("corner", "polygon", "outliers"))
+  expect_equal(names(corr), c("cornerCoords", "polygon", "outliers"))
 
-  expect_is(corr$corner, "matrix")
+  expect_is(corr$cornerCoords, "data.frame")
   expect_is(corr$polygon, "SpatialPolygons")
   expect_is(corr$outliers, "integer")
 
   expect_length(corr$outliers, 9)
-  expect_equal(dim(corr$corner), c(4, 2))
+  expect_equal(dim(corr$cornerCoords), c(4, 2))
 
 
   # with max dist equal 15
@@ -89,15 +89,16 @@ test_that("correct coord GPS in long lat", {
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100))
   )
   expect_is(corr, "list")
-  expect_length(corr, 3)
-  expect_equal(names(corr), c("corner", "polygon", "outliers"))
+  expect_length(corr, 4)
+  expect_equal(names(corr), c("cornerCoords", "polygon", "outliers", "codeUTM"))
 
-  expect_is(corr$corner, "matrix")
+  expect_is(corr$cornerCoords, "data.frame")
   expect_is(corr$polygon, "SpatialPolygons")
   expect_is(corr$outliers, "integer")
+  expect_is(corr$codeUTM, "character")
 
   expect_length(corr$outliers, 9)
-  expect_equal(dim(corr$corner), c(4, 2))
+  expect_equal(dim(corr$cornerCoords), c(4, 2))
 
 
   # with max dist equal 15
