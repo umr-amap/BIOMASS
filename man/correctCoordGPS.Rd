@@ -30,6 +30,7 @@ If you there are no outliers or rmOutliers = TRUE, a list with:
 \item \code{corner}: a matrix with the coordinates of the corners
 \item \code{polygon}: a spatial polygon
 \item \code{outliers}: Coordinates lines considered as outliers, if any
+\item \code{codeUTM}: the code UTM for the coordinate if the parameter \code{longlat} is set
 }
 }
 \description{

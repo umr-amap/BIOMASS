@@ -22,6 +22,7 @@
 #'    - `corner`: a matrix with the coordinates of the corners
 #'    - `polygon`: a spatial polygon
 #'    - `outliers`: Coordinates lines considered as outliers, if any
+#'    - `codeUTM`: the code UTM for the coordinate if the parameter `longlat` is set
 #'
 #'
 #'
@@ -102,7 +103,9 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   # Transform the geographic coordinate into UTM coordinate
   if (!is.null(longlat)) {
-    projCoord <- latlong2UTM(longlat)[, c("X", "Y")]
+    projCoord <- latlong2UTM(longlat)
+    codeUTM = unique(projCoord[, "codeUTM"])
+    projCoord = projCoord[, c("X", "Y")]
   }
 
   # Transformation CoordRel to CoordAbs
@@ -182,6 +185,9 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     )
   }
 
-
-  return(list(corner = cornerCoord, polygon = sps, outliers = outliers))
+  output = list(corner = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
+                polygon = sps, outliers = outliers)
+  if (!is.null(longlat))
+    output$codeUTM = codeUTM
+  return(output)
 }
