@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-devtools::load_all("~/Bureau/document arthur/biomass/")
+require(BIOMASS)
 require(knitr)
 ```
 

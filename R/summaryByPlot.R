@@ -37,6 +37,8 @@ if (getRversion() >= "2.15.1") {
 #' @export
 #'
 #' @importFrom data.table data.table := first setDT
+#' @importFrom grDevices terrain.colors
+#' @importFrom graphics segments
 #' @importFrom stats quantile
 #' @examples
 #' 

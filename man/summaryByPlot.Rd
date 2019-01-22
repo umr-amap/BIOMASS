@@ -4,7 +4,7 @@
 \alias{summaryByPlot}
 \title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_val, plot, drawPlot = FALSE)
+summaryByPlot(AGB_val, plot, drawPlot = FALSE, subplot = NULL)
 }
 \arguments{
 \item{AGB_val}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_val element of the list),
@@ -13,6 +13,8 @@ or just the output of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}
 \item{plot}{Vector with the code of plot}
 
 \item{drawPlot}{a logical to draw the plot (see Details)}
+
+\item{subplot}{Data frame, output of the function \code{\link[=cutPlot]{cutPlot()}}}
 }
 \value{
 a data frame where:
@@ -22,6 +24,8 @@ a data frame where:
 \item \code{Cred_2.5}: the quantile 2.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 \item \code{Cred_97.5}: the quantile 97.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 }
+
+If the \code{subplot} is set, the output is a list with the previous data frame and an \code{\link[sf:st_sf]{sf::st_sf()}}.
 }
 \description{
 This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums
@@ -31,8 +35,7 @@ for each plot of the AGB if the argument \code{AGB_val} is the resulting vector 
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from \code{\link[=computeAGB]{computeAGB()}}.
 
-The drawPlot argument is a logical that if it is set TRUE, a graph will appear with the plot given on absciss and the value
-of AGB on ordinate, the red segments are the quantile.
+The \code{drawPlot} argument is a logical that if it is set \code{TRUE``, a graph will appear with the plot given on absciss and the value of AGB on ordinate, the red segments are the quantile, if }AGB_val\code{is the result of the function [AGBmonteCarlo()].  If the}subplot\code{arguments is set and the}drawPlot\code{is set}TRUE`, a graph is drawn with the spatialisation of the plots.
 }
 \examples{
 
