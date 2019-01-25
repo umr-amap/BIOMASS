@@ -65,6 +65,10 @@ attributeTree <- function(xy, plot, coordAbs) {
       subplot := x$subplot[1]
     ]
   }))
-
+  
+  if (anyNA(Coord[, subplot])){
+    warning("There is trees which are not assigned in a subplot")
+  }
+  
   return(Coord[, subplot])
 }
