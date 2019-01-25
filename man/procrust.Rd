@@ -18,8 +18,7 @@ A list with the translation vector and the matrix of rotation
 Do a procrust analysis. X is the target matrix, Y is the matrix we want to fit to the target.
 This function returns a translation vector and a rotation matrix
 After the procrust problem you \strong{must} do the rotation before the translation.
-\strong{Warning :} The order of the between the lines of the matrix X and Y must be respected. #####??????
-\strong{The order of the value on both matrix is important}
+\strong{Warning : The order of the value on both matrix is important}
 }
 \author{
 Arthur PERE
