@@ -72,9 +72,9 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
     }
   } else {
     if (logmod) {
-      e <- rnorm(length(D), 0, model$RSElog) # Log-log error
+      e <- rnorm(nrow(D), 0, model$RSElog) # Log-log error
     } else {
-      e <- rnorm(length(D), 0, model$RSE) # Michaelis or Weibull error
+      e <- rnorm(nrow(D), 0, model$RSE) # Michaelis or Weibull error
     }
   }
 
