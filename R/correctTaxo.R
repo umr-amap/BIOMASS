@@ -71,7 +71,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     if (length(genus) != length(species)) {
       stop("You should provide two vectors of genera and species of the same length")
     }
-    species[is.na(genus)] = NA
+    species[is.na(genus)] <- NA
   }
 
   # Check if package httr is available
@@ -122,13 +122,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     # species can be NA so handle it with care when pasting
     userTaxo[!is.na(genus) & !is.na(species), query := paste(query, species)]
   }
-  
+
   # If there is an empty genus
-  userTaxo[genus == "", ':='(genus = NA_character_, species = NA_character_, query = NA_character_)]
-  
+  userTaxo[genus == "", ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
+
   # If there is empty species
-  userTaxo[species == "", ':='(species = NA_character_, query = gsub(" ", "", query))]
-  
+  userTaxo[species == "", ":="(species = NA_character_, query = gsub(" ", "", query))]
+
   # get unique values
   qryTaxo <- unique(userTaxo[!is.na(query)])
 
@@ -172,7 +172,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
 
   # identify taxo not present in cache
   missingTaxo <- qryTaxo[!cachedTaxo[, .(submittedName)], on = c(query = "submittedName")]
-  
+
   # query taxosaurus for missing taxo if any
   queriedTaxo <- NULL
   if (nrow(missingTaxo)) {
@@ -317,7 +317,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     ]
 
     fullTaxo <- unique(rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""])
-    
+
     # write cache
     fwrite(fullTaxo[order(submittedName), -"from"], file = cachePath)
     if (verbose) {

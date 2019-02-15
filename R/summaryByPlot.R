@@ -16,7 +16,7 @@ if (getRversion() >= "2.15.1") {
 #' to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from [computeAGB()].
 #'
 #' The `drawPlot` argument is a logical that if it is set `TRUE``, a graph will appear with the plot given on absciss and the value
-#' of AGB on ordinate, the red segments are the quantile, if `AGB_val` is the result of the function [AGBmonteCarlo()]. 
+#' of AGB on ordinate, the red segments are the quantile, if `AGB_val` is the result of the function [AGBmonteCarlo()].
 #' If the `subplot` arguments is set and the `drawPlot` is set `TRUE`, a graph is drawn with the spatialisation of the plots.
 #'
 #' @param AGB_val Matrix resulting from the function [AGBmonteCarlo()] (AGB_val element of the list),
@@ -30,9 +30,9 @@ if (getRversion() >= "2.15.1") {
 #'   - `AGB`: AGB value at the plot level
 #'   - `Cred_2.5`: the quantile 2.5\% for the plot (when output of [AGBmonteCarlo()] is used)
 #'   - `Cred_97.5`: the quantile 97.5\% for the plot (when output of [AGBmonteCarlo()] is used)
-#' 
+#'
 #' If the `subplot` is set, the output is a list with the previous data frame and an [sf::st_sf()].
-#' 
+#'
 #'
 #' @export
 #'
@@ -94,16 +94,16 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
         'To use this part of the function you must have the "sf" library\n\n',
         '\t\tinstall.packages("sf")'
       )
-      subplot = NULL
+      subplot <- NULL
     }
-    if (!any(subplot$subplot %in% plot)){
+    if (!any(subplot$subplot %in% plot)) {
       warning(
         "The subplot parameter do not correspond to any plot"
       )
-      subplot = NULL
+      subplot <- NULL
     }
   }
-  
+
   # function if it's a vector -----------------------------------------------
   if (is.vector(AGB_val)) {
     data <- data.table(AGB = AGB_val, plot = plot)
@@ -187,23 +187,26 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
 
   if (!is.null(subplot)) {
     setDT(subplot)
-    
-    list_poly = lapply( split(subplot, by = "subplot"), function(data){
-      mat = data[order(corner), .(XAbs, YAbs)]
-      mat = as.matrix(rbind(mat, mat[1,]))
-      
-      output = list()
-      output$poly = sf::st_polygon(list(mat))
-      
-      output$AGB = AGB[ plot == unique(data$subplot), AGB] * data[, 10000 / (diff(range(XRel)) * diff(range(YRel)))]
+
+    list_poly <- lapply(split(subplot, by = "subplot"), function(data) {
+      mat <- data[order(corner), .(XAbs, YAbs)]
+      mat <- as.matrix(rbind(mat, mat[1, ]))
+
+      output <- list()
+      output$poly <- sf::st_polygon(list(mat))
+
+      output$AGB <- AGB[ plot == unique(data$subplot), AGB] * data[, 10000 / (diff(range(XRel)) * diff(range(YRel)))]
       output
     })
-    
-    sf_obj = sf::st_sf(polygon = lapply(list_poly, "[[", 1), plot = names(list_poly), AGB = sapply(list_poly, "[[", 2))
-    
-    if (drawPlot)
-      plot(sf_obj["AGB"], main = "AGB (Mg / ha)", key.pos = 1, pal = function(n){rev(terrain.colors(n))})
-    
+
+    sf_obj <- sf::st_sf(polygon = lapply(list_poly, "[[", 1), plot = names(list_poly), AGB = sapply(list_poly, "[[", 2))
+
+    if (drawPlot) {
+      plot(sf_obj["AGB"], main = "AGB (Mg / ha)", key.pos = 1, pal = function(n) {
+        rev(terrain.colors(n))
+      })
+    }
+
     return(list(AGB = as.data.frame(AGB), polygon = sf_obj))
   }
 

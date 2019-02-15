@@ -26,12 +26,14 @@ test_that("CorrectTaxo", {
   expect_equal(correctTaxo(paste(genus, species)), taxo)
   expect_error(correctTaxo(genus = rep(NA, 20), species = rep(NA, 20)), "Please supply at least one name")
   expect_error(correctTaxo(genus = rep(NA, 20)), "Please supply at least one name")
-  expect_equal(correctTaxo(genus = c(NA, "Astrocarium", "Astrocarium"), species = c("lalal", NA, "standleanum")), 
-               data.frame(
-                 genusCorrected = c(NA, "Astrocaryum", "Astrocaryum"),
-                 speciesCorrected = c(NA, NA, "standleyanum"),
-                 nameModified = c(NA, "TRUE", "TRUE"), stringsAsFactors = F
-               ))
+  expect_equal(
+    correctTaxo(genus = c(NA, "Astrocarium", "Astrocarium"), species = c("lalal", NA, "standleanum")),
+    data.frame(
+      genusCorrected = c(NA, "Astrocaryum", "Astrocaryum"),
+      speciesCorrected = c(NA, NA, "standleyanum"),
+      nameModified = c(NA, "TRUE", "TRUE"), stringsAsFactors = F
+    )
+  )
 
   expect_equal(
     correctTaxo(genus = c("Magnophyton", "?"), species = c("fulvum", "?")),
