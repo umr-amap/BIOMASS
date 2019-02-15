@@ -35,7 +35,9 @@ for each plot of the AGB if the argument \code{AGB_val} is the resulting vector 
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from \code{\link[=computeAGB]{computeAGB()}}.
 
-The \code{drawPlot} argument is a logical that if it is set \code{TRUE``, a graph will appear with the plot given on absciss and the value of AGB on ordinate, the red segments are the quantile, if }AGB_val\code{is the result of the function [AGBmonteCarlo()].  If the}subplot\code{arguments is set and the}drawPlot\code{is set}TRUE`, a graph is drawn with the spatialisation of the plots.
+The \code{drawPlot} argument is a logical that if it is set \code{TRUE}, a graph will appear with the plot given on absciss and the value
+of AGB on ordinate, the red segments are the quantile, if \code{AGB_val} is the result of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}.
+If the \code{subplot} arguments is set and the \code{drawPlot} is set \code{TRUE}, a graph is drawn with the spatialisation of the plots.
 }
 \examples{
 

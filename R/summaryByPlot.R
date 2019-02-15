@@ -15,7 +15,7 @@ if (getRversion() >= "2.15.1") {
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from [computeAGB()].
 #'
-#' The `drawPlot` argument is a logical that if it is set `TRUE``, a graph will appear with the plot given on absciss and the value
+#' The `drawPlot` argument is a logical that if it is set `TRUE`, a graph will appear with the plot given on absciss and the value
 #' of AGB on ordinate, the red segments are the quantile, if `AGB_val` is the result of the function [AGBmonteCarlo()].
 #' If the `subplot` arguments is set and the `drawPlot` is set `TRUE`, a graph is drawn with the spatialisation of the plots.
 #'
