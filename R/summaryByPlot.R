@@ -176,7 +176,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
     if (drawPlot) {
       with(AGB[order(AGB)], {
         plot(AGB,
-          pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = range(Cred_2.5, Cred_97.5),
+          pch = 20, xlab = "", ylab = "AGB (Mg/ha)", ylim = range(Cred_2.5, Cred_97.5),
           las = 1, cex.lab = 1.3, xaxt = "n", main = "AGB by plot"
         )
         axis(1, at = seq(length(AGB)), labels = plot, las = 2)

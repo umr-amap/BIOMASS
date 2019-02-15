@@ -30,7 +30,7 @@ require(knitr)
 You need the following information to use the following function in your analysis :
   
   - Dimension of the plots
-  - Coordinate GPS of minimum 3 corners with the corresponding relative coordinates
+  - Coordinate GPS of minimum 3 points non-aligned and relatily far away with the corresponding relative coordinates
   - The origin corner
   - The X, Y directions
 
@@ -44,30 +44,32 @@ trees <- read.csv(system.file("external", "NouraguesPlot.csv",
 kable(head(trees), digits = 3, row.names = F, caption = "Head of the table trees")
 ```
 
+We can see in the table that we have for each trees the name of the plot we have, the `xRel` and `yRel`, the relative coordinate of the trees inside the plot. The rest of the column is for calculate the AGB at the end.
 
 
 
 
-
-```{r, fig.cap="Plot the coordinate"}
+```{r, fig.cap="Plot the coordinate long lat"}
 coord <- read.csv(system.file("external", "Coord.csv",
   package = "BIOMASS", mustWork = T
 ))
 
 plot(coord[, c("Long", "Lat")], asp = 1)
 ```
+
+We can see on the plot that the corner coordinates are spread.
+
+
 ```{r echo=FALSE}
 kable(head(coord), digits = 3, row.names = F, caption = "Head of the table coord")
 ```
 
-
+In the table, we have the name of the plot, the coordinate `Lat`, `Long` (or another projected coordinates), and `xRel`, `yRel`, the relative coordinate for the points observed.
 
 
 
 # To manage the plots
 ## Import the dataset and visualisation
-
-You can see that the corner coordinates are spread, and we can correct this.
 
 The plot is referenced in the longitude latitude coordinate so you must have the package `proj4` if you are in this situation. If you have projected coordinate, you can continue with the `projCoord` argument instead of `longlat` argument. 
 
@@ -84,7 +86,7 @@ str(correct_plot, max.level = 1)
 ```
 
 
-The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon and `outliers` the vector with the line number of the outliers.
+The output of the function is a list with a data.frame `corner` it's the corner of the plot, `polygon` the spatial polygon, `outliers` the vector with the line number of the outliers and `codeUTM` the UTM code for the polygon.
 
 The outliers are calculated by a measure of distance between the predicted points and the GPS points. If this distance is higher than the value of `maxDist`, the point is considered like outliers.
 
@@ -126,7 +128,6 @@ kable(head(subplot))
 
 # Trees managements
 ## Attribute the trees to the subplot
-attribute the trees to the to the subplot
 
 ```{r}
 trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees)), subplot)
@@ -142,14 +143,3 @@ AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
 
 print(AGB)
 ```
-
-
-
-
-
-
-
-
-
-
-
