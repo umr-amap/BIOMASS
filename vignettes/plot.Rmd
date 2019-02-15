@@ -143,3 +143,41 @@ AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
 
 print(AGB)
 ```
+
+
+
+
+
+## Attribute the trees to GPS coordinates
+
+There is two maners to attribute the trees to GPS coordinates
+
+```{r}
+TreeCoord <- attributeTreeCoord(
+  xy = trees[, c("xRel", "yRel")],
+  plot = trees$plot,
+  coordAbs = subplot
+)
+```
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+```
+
+Or if you want to have the :
+```{r}
+TreeCoord <- attributeTreeCoord(
+  xy = trees[, c("xRel", "yRel")],
+  plot = trees$plot,
+  coordGPS = coord[, c("Long", "Lat")],
+  coordRel = coord[, c("xRel", "yRel")],
+  plotCoord = coord$Plot
+)
+```
+
+
+
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+```
+
+
