@@ -32,8 +32,23 @@ test_that("function", {
   expect_equal(names(out), c("Xproj", "Yproj"))
   expect_true(all(!is.na(out)))
   
+  # for the verification of the good work of this function
+  xy = as.data.frame(expand.grid(X = c(0, 100, 200), Y = c(0, 100, 200)))
+  xy = rbind(xy, xy)
   
-  expand.grid(X = c(0, 200), Y = c(0, 200))
+  plot = rep(rep(c("plot1", "plot2"), each = 9))
+  
+  out = attributeTreeCoord(xy, plot, dim, cut)
+  expect_equal(out, xy + rep(c(5000, 6000), each = 9), check.attributes = F)
+  
+  nCorner = numberCorner(projCoord = coord, 
+               plot = rep(c("plot1", "plot2"), each = 4), 
+               origin = rep(c(T, F, F, F), 2), 
+               clockWise = F)
+  
+  out1 = attributeTreeCoord(xy, plot, dim, nCorner)
+  
+  expect_equal(out1, out)
   
 })
 

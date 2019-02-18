@@ -1,6 +1,6 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "plot", "X", "Y", ".BY", "Xproj", "Yproj"
+    "plot", "X", "Y", ".BY", "Xproj", "Yproj", "XRel", "YRel"
   ))
 }
 
@@ -75,33 +75,42 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
   # function ----------------------------------------------------------------
 
-  setDT(xy)
-  setnames(xy, names(xy), c("X", "Y"))
+  xy <- data.table(plot, xy)
+  setnames(xy, names(xy), c("plot", "X", "Y"))
 
-  if ("subplot" %in% names(coordAbs)) { # if we have subplot then attribute the trees to all subplot
-    xy$plot <- attributeTree(xy, plot, coordAbs)
-    coordAbs[, plot := subplot] # and the subplot became the plot
+  if ("subplot" %in% names(coordAbs)) { # if we have subplot
+    out <- rbindlist(lapply(
+      split(coordAbs, by = "plot", keep.by = T),
+      function(subData) {
+        res <- procrust(subData[, .(X, Y)], subData[, .(XRel, YRel)])
+
+        subDataTree <- as.matrix(xy[ plot == unique(subData$plot), .(X, Y) ])
+
+        subDataTree <- subDataTree %*% res$rotation
+        subDataTree <- sweep(subDataTree, 2, res$translation, FUN = "+")
+
+        return(list(Xproj = subDataTree[, 1], Yproj = subDataTree[, 2]))
+      }
+    ))
   } else {
-    xy$plot <- plot
+    xy[, ":="(X = X / dimX, Y = Y / dimY)] # divide all the coordinate by the dimension
+
+
+    proj <- function(XY, cornCoord) { # project all the coordinate on the projected coordinate
+      setDT(XY)
+      setnames(XY, names(XY), c("X", "Y"))
+
+      lapply(c("X", "Y"), function(col) {
+        XY[, (1 - Y) * (1 - X) * cornCoord[corner == 1, eval(parse(text = col))] +
+          X * (1 - Y) * cornCoord[corner == 2, eval(parse(text = col))] +
+          Y * X * cornCoord[corner == 3, eval(parse(text = col))] +
+          Y * (1 - X) * cornCoord[corner == 4, eval(parse(text = col))]
+          ]
+      })
+    }
+
+    xy[, c("Xproj", "Yproj") := proj(.(X, Y), coordAbs[coordAbs$plot == .BY, c("X", "Y", "corner"), with = F]), by = plot]
+    out <- xy[, .(Xproj, Yproj)]
   }
-
-  xy[, ":="(X = X / dimX, Y = Y / dimY)] # divide all the coordinate by the dimension
-
-
-  proj <- function(XY, cornCoord) { # project all the coordinate on the projected coordinate
-    setDT(XY)
-    setnames(XY, names(XY), c("X", "Y"))
-
-    lapply(c("X", "Y"), function(col) {
-      XY[, (1 - Y) * (1 - X) * cornCoord[corner == 1, eval(parse(text = col))] +
-        X * (1 - Y) * cornCoord[corner == 2, eval(parse(text = col))] +
-        Y * X * cornCoord[corner == 3, eval(parse(text = col))] +
-        Y * (1 - X) * cornCoord[corner == 4, eval(parse(text = col))]
-        ]
-    })
-  }
-
-  xy[, c("Xproj", "Yproj") := proj(.(X, Y), coordAbs[coordAbs$plot == .BY, c("X", "Y", "corner"), with = F]), by = plot]
-
-  return(as.data.frame(xy[, .(Xproj, Yproj)]))
+  return(as.data.frame(out))
 }
