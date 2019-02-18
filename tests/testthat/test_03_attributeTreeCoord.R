@@ -11,54 +11,41 @@ plot <- rep(c("plot1", "plot2"), each = 4)
 
 cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
 
-plot = rep(rep(c("plot1", "plot2"), each = 5))
+plot <- rep(rep(c("plot1", "plot2"), each = 5))
 
-dim = c(200, 200)
+dim <- c(200, 200)
 
 context("Attribute the trees to the GPS coordinate")
 test_that("error", {
-  
   expect_error(attributeTreeCoord(xy, rep("plot1", 5), dim, cut), "length")
   expect_error(attributeTreeCoord(xy, plot, dim, cut[, 2:5]), "compulsory")
   expect_error(attributeTreeCoord(xy, rep("aa", length(plot)), dim, cut), "plot")
   expect_error(attributeTreeCoord(xy, plot, c(5, 10, 15), cut), "dimension")
-  
 })
 
 test_that("function", {
-  
-  out = attributeTreeCoord(xy, plot, dim, cut)
+  out <- attributeTreeCoord(xy, plot, dim, cut)
   expect_is(out, "data.frame")
   expect_equal(names(out), c("Xproj", "Yproj"))
   expect_true(all(!is.na(out)))
-  
+
   # for the verification of the good work of this function
-  xy = as.data.frame(expand.grid(X = c(0, 100, 200), Y = c(0, 100, 200)))
-  xy = rbind(xy, xy)
-  
-  plot = rep(rep(c("plot1", "plot2"), each = 9))
-  
-  out = attributeTreeCoord(xy, plot, dim, cut)
+  xy <- as.data.frame(expand.grid(X = c(0, 100, 200), Y = c(0, 100, 200)))
+  xy <- rbind(xy, xy)
+
+  plot <- rep(rep(c("plot1", "plot2"), each = 9))
+
+  out <- attributeTreeCoord(xy, plot, dim, cut)
   expect_equal(out, xy + rep(c(5000, 6000), each = 9), check.attributes = F)
-  
-  nCorner = numberCorner(projCoord = coord, 
-               plot = rep(c("plot1", "plot2"), each = 4), 
-               origin = rep(c(T, F, F, F), 2), 
-               clockWise = F)
-  
-  out1 = attributeTreeCoord(xy, plot, dim, nCorner)
-  
+
+  nCorner <- numberCorner(
+    projCoord = coord,
+    plot = rep(c("plot1", "plot2"), each = 4),
+    origin = rep(c(T, F, F, F), 2),
+    clockWise = F
+  )
+
+  out1 <- attributeTreeCoord(xy, plot, dim, nCorner)
+
   expect_equal(out1, out)
-  
 })
-
-
-
-
-
-
-
-
-
-
-
