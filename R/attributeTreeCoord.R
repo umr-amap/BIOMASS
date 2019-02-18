@@ -1,25 +1,22 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "plot", "X", "Y",
-    "XRel", "YRel", "XAbs", "YAbs"
+    "plot", "X", "Y", ".BY", "Xproj", "Yproj"
   ))
 }
 
 #' Attribute trees to GPS coordinates
 #'
 #' @param xy The coordinates of the trees for each plot
-#' @param plot The label of the plot (same length as the number of rows of `xy`)
-#' @param coordGPS (optional) The GPS coordinate of the plot
-#' @param coordRel (optional) The relative coordinate for the GPS points of the plot
-#' @param plotCoord (optional) The name of the plot for the differents GPS points
-#' @param coordAbs (optional) The result of the function [cutPlot()]
+#' @param plot The label of the plot (same length as the number of rows of `xy` or length of 1)
+#' @param dim The dimension of the plot (you can make two dimension in a vector)
+#' @param coordAbs (optional) The result of the function [cutPlot()] or [numberCorner()]
 #'
 #' @return A data frame with two columns :
-#'          - `X`: The `X` coordinate in whichever projection you have
-#'          - `Y`: The `X` coordinate in whichever projection you have
+#'          - `Xproj`: The `X` coordinate in whichever projection you have
+#'          - `Yproj`: The `Y` coordinate in whichever projection you have
 #' @export
 #'
-#' @importFrom data.table setDT
+#' @importFrom data.table setDT setnames
 #'
 #' @examples
 #' 
@@ -42,61 +39,69 @@ if (getRversion() >= "2.15.1") {
 #' 
 #' # attribute trees to subplots
 #' attributeTreeCoord(xy, plot, coordAbs = cut)
-attributeTreeCoord <- function(xy, plot, coordGPS = NULL, coordRel = NULL, plotCoord = NULL, coordAbs = NULL) {
-  
-  
+attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
+
+
   # parameters verification -------------------------------------------------
-  
-  if (is.null(coordAbs)) {
-    if (is.null(coordGPS) && is.null(coordRel) && is.null(plotCoord)) {
-      stop("One of those arguments is null : coordGPS, coordRel, plotCoord")
-    }
-    stopifnot(
-      ncol(coordGPS) == 2,
-      ncol(coordRel) == 2,
-      nrow(coordRel) == nrow(coordGPS),
-      is.vector(plotCoord) | is.factor(plotCoord),
-      length(plotCoord) %in% c(1, nrow(coordGPS))
-    )
-    
-    data <- data.table(plotCoord, coordRel, coordGPS)
+  setDT(coordAbs)
+  setnames(coordAbs, c("XAbs", "YAbs"), c("X", "Y"), skip_absent = T)
+
+  if (!length(plot) %in% c(1, nrow(xy))) {
+    stop("The 'plot' vector must have the length equal to 1 or nrow(xy)")
+  }
+
+  if (!all(c("plot", "corner", "X", "Y") %in% names(coordAbs))) {
+    stop("The column 'plot', 'corner', 'X' (or 'XAbs'), 'Y' (or 'YAbs') are compulsory for the data frame 'coordAbs'")
+  }
+
+  if (!all(unique(plot) %in% unique(coordAbs$plot))) {
+    stop("Not all the plot in the vector 'plot' are in the data frame coordAbs")
+  }
+
+
+  if (!length(dim) %in% c(1, 2)) {
+    stop("Incorect dimension vector must be length of 1 or 2")
+  }
+
+  # put the dimension on the X and Y
+  if (length(dim) == 1) {
+    dimX <- dim
+    dimY <- dim
   } else {
-    data <- coordAbs[, c("plot", "XRel", "YRel", "XAbs", "YAbs")]
-    setDT(data)
+    dimX <- dim[1]
+    dimY <- dim[2]
   }
-  
-  stopifnot(
-    ncol(xy) == 2,
-    is.vector(plot) | is.factor(plot),
-    length(plot) %in% c(1, nrow(xy))
-  )
-  
-  
+
+
   # function ----------------------------------------------------------------
-  
-  dataTree <- data.table(plot, xy)
-  setnames(dataTree, names(dataTree), c("plot", "X", "Y"))
-  
-  setnames(data, names(data), c("plot", "XRel", "YRel", "XAbs", "YAbs"))
-  data <- data[plot %in% unique(dataTree$plot)]
-  
-  if (!any(dataTree$plot %in% data$plot)) {
-    stop("The names in 'plot' and 'plotCoord' are not corresponding")
+
+  setDT(xy)
+  setnames(xy, names(xy), c("X", "Y"))
+
+  if ("subplot" %in% names(coordAbs)) { # if we have subplot then attribute the trees to all subplot
+    xy$plot <- attributeTree(xy, plot, coordAbs)
+    coordAbs[, plot := subplot] # and the subplot became the plot
+  } else {
+    xy$plot <- plot
   }
-  
-  output <- rbindlist(lapply(
-    split(data, by = "plot", keep.by = T),
-    function(subData) {
-      res <- procrust(subData[, .(XAbs, YAbs)], subData[, .(XRel, YRel)])
-      
-      subDataTree <- as.matrix(dataTree[ plot == unique(subData$plot), .(X, Y) ])
-      
-      subDataTree <- subDataTree %*% res$rotation
-      subDataTree <- sweep(subDataTree, 2, res$translation, FUN = "+")
-      
-      return(list(X = subDataTree[, 1], Y = subDataTree[, 2]))
-    }
-  ))
-  
-  return(as.data.frame(output))
+
+  xy[, ":="(X = X / dimX, Y = Y / dimY)] # divide all the coordinate by the dimension
+
+
+  proj <- function(XY, cornCoord) { # project all the coordinate on the projected coordinate
+    setDT(XY)
+    setnames(XY, names(XY), c("X", "Y"))
+
+    lapply(c("X", "Y"), function(col) {
+      XY[, (1 - Y) * (1 - X) * cornCoord[corner == 1, eval(parse(text = col))] +
+        X * (1 - Y) * cornCoord[corner == 2, eval(parse(text = col))] +
+        Y * X * cornCoord[corner == 3, eval(parse(text = col))] +
+        Y * (1 - X) * cornCoord[corner == 4, eval(parse(text = col))]
+        ]
+    })
+  }
+
+  xy[, c("Xproj", "Yproj") := proj(.(X, Y), coordAbs[coordAbs$plot == .BY, c("X", "Y", "corner"), with = F]), by = plot]
+
+  return(as.data.frame(xy[, .(Xproj, Yproj)]))
 }

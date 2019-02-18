@@ -156,28 +156,43 @@ There is two maners to attribute the trees to GPS coordinates
 TreeCoord <- attributeTreeCoord(
   xy = trees[, c("xRel", "yRel")],
   plot = trees$plot,
-  coordAbs = subplot
+  coordAbs = subplot,
+  dim = c(100, 100)
 )
 ```
 ```{r echo=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
 ```
 
-Or if you want to have the :
+If you want to have in GPS (longitude/latitude) coordinates :
 ```{r}
+TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = T) )
+```
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+```
+
+If you want to have the GPS (longitude/latitude) coordinates without passing through all this step however you must use the numberCorner function:
+```{r}
+coordAbs = data.frame(X = c(4.066923, 4.067865, 4.067842, 4.066905), Y = c(52.68883, 52.68877, 52.68793, 52.68783))
+
+ncoordAbs = numberCorner(projCoord = coordAbs, 
+                                plot = rep("NB1", 4), 
+                                origin = c(T, F, F, F), 
+                                clockWise = T)
+
 TreeCoord <- attributeTreeCoord(
   xy = trees[, c("xRel", "yRel")],
   plot = trees$plot,
-  coordGPS = coord[, c("Long", "Lat")],
-  coordRel = coord[, c("xRel", "yRel")],
-  plotCoord = coord$Plot
+  coordAbs = ncoordAbs,
+  dim = c(100, 100)
 )
 ```
-
-
-
 ```{r echo=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
 ```
+
+
+
 
 
