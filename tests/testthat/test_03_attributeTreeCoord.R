@@ -48,4 +48,25 @@ test_that("function", {
   out1 <- attributeTreeCoord(xy, plot, dim, nCorner)
 
   expect_equal(out1, out)
+
+
+  # if the corner is in a different order and clockwise
+  nCorner <- numberCorner(
+    projCoord = coord,
+    plot = rep(c("plot1", "plot2"), each = 4),
+    origin = rep(c(F, F, T, F), 2),
+    clockWise = T
+  )
+
+  out1 <- attributeTreeCoord(xy, plot, dim, nCorner)
+  expect_failure(expect_equal(out1, out)) # check to see if the result is different from the begining
+  
+  # Do the table we expect to have for the result out1 (verified)
+  X <- rep(seq(5000, 5200, by = 100), 3)
+  X <- c(X, X + 1000)
+
+  Y <- rep(seq(5200, 5000, by = -100), each = 3)
+  Y <- c(Y, Y + 1000)
+
+  expect_equal(out1, data.frame(X = X, Y = Y), check.attributes = F)
 })
