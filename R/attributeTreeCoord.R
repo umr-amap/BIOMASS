@@ -77,6 +77,7 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
   xy <- data.table(plot, xy)
   setnames(xy, names(xy), c("plot", "X", "Y"))
+  xy[, order := .I]
 
   if ("subplot" %in% names(coordAbs)) { # if we have subplot
     out <- rbindlist(lapply(
@@ -89,28 +90,25 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
         subDataTree <- subDataTree %*% res$rotation
         subDataTree <- sweep(subDataTree, 2, res$translation, FUN = "+")
 
-        return(list(Xproj = subDataTree[, 1], Yproj = subDataTree[, 2]))
+        return(list(Xproj = subDataTree[, 1], Yproj = subDataTree[, 2], order = xy[ plot == unique(subData$plot), order ]))
       }
     ))
   } else {
     xy[, ":="(X = X / dimX, Y = Y / dimY)] # divide all the coordinate by the dimension
 
-
-    proj <- function(XY, cornCoord) { # project all the coordinate on the projected coordinate
-      setDT(XY)
-      setnames(XY, names(XY), c("X", "Y"))
-
-      lapply(c("X", "Y"), function(col) {
-        XY[, (1 - Y) * (1 - X) * cornCoord[corner == 1, eval(parse(text = col))] +
-          X * (1 - Y) * cornCoord[corner == 2, eval(parse(text = col))] +
-          Y * X * cornCoord[corner == 3, eval(parse(text = col))] +
-          Y * (1 - X) * cornCoord[corner == 4, eval(parse(text = col))]
-          ]
+    out <- rbindlist(lapply(split(coordAbs, by = "plot"), function(subData) {
+      XY = xy[ plot == unique(subData$plot), .(X, Y, order) ]
+      
+      out = lapply(c("X", "Y"), function(col) {
+        XY[, (1 - Y) * (1 - X) * subData[corner == 1, eval(parse(text = col))] +
+             X * (1 - Y) * subData[corner == 2, eval(parse(text = col))] +
+             Y * X * subData[corner == 3, eval(parse(text = col))] +
+             Y * (1 - X) * subData[corner == 4, eval(parse(text = col))]
+           ]
       })
-    }
-
-    xy[, c("Xproj", "Yproj") := proj(.(X, Y), coordAbs[coordAbs$plot == .BY, c("X", "Y", "corner"), with = F]), by = plot]
-    out <- xy[, .(Xproj, Yproj)]
+      
+      return(list(Xproj = out[[1]], Yproj = out[[2]], order = XY[, order]))
+    }))
   }
-  return(as.data.frame(out))
+  return(as.data.frame(out[order(order), .(Xproj, Yproj)]))
 }
