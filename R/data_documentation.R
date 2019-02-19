@@ -244,11 +244,10 @@
 #' @details
 #' These functions model the relationship between tree height (H) and diameter (D).
 #' __loglogFunction__
-#' Compute three types of log model (log, log2 and log3) to predict H from D.
+#' Compute two types of log model (log and log2) to predict H from D.
 #' The model can be:
 #'   - log 1: \eqn{log(H) = a+ b*log(D)} (equivalent to a power model)
 #'   - log 2: \eqn{log(H) = a+ b*log(D) + c*log(D)^2}
-#'   - log 3: \eqn{log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3}
 #'
 #' __michaelisFunction__
 #' Construct a Michaelis Menten model of the form: \deqn{H = (A * D) / (B + D)} (A and B are the model parameters to be estimated)

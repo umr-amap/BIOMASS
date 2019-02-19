@@ -8,10 +8,9 @@
 #' (i.e. having a corresponding diameter in D) is required.
 #' @param method Method used to fit the relationship.
 #' To be chosen between:
-#'   - log1, log2, log3
+#'   - log1, log2
 #'     + log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
 #'     + log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
-#'     + log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
 #'   - weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
 #'   - michaelis: \eqn{H = (A * D)/(B + D)}
 #'
@@ -58,19 +57,19 @@
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' # Load a data set
 #' data(NouraguesHD)
-#' 
+#'
 #' # To model the height from a dataset
 #' \dontrun{
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
 #' }
-#' 
+#'
 #' # If the method needed is known
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
-#' 
+#'
 #' # Using weights
 #' HDmodel <- modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
@@ -99,7 +98,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     method <- tolower(method)
   }
 
-  methods <- c("log1", "log2", "log3", "weibull", "michaelis")
+  methods <- c("log1", "log2", "weibull", "michaelis")
   if (!is.null(method) && !(method %in% methods)) {
     stop("Chose your method among those ones : ", paste(methods, collapse = ", "))
   }
@@ -268,7 +267,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     if (is.null(plot)) {
       drawPlotBegin(plotId = plot)
     }
-    color <- c("blue", "green", "red", "orange", "purple")
+    color <- c("blue", "green", "orange", "purple")
 
     result <- rbindlist(lapply(1:length(methods), function(i) {
       method <- methods[i]
