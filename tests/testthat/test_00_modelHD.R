@@ -9,7 +9,7 @@ output <- na.omit(output)
 
 context("Methods of function modelHD")
 
-for (method in c("log1", "log2", "log3", "michaelis", "weibull")) {
+for (method in c("log1", "log2", "michaelis", "weibull")) {
   for (useWeight in c(TRUE, FALSE)) {
     test_that(paste("Method", method, "useWeight", useWeight), {
       HDmodel <- modelHD(D, H, method = method, useWeight = useWeight)
@@ -60,7 +60,6 @@ test_that("Without parameters", {
   res <- "method  color      RSE    RSElog Average_bias
 log1   blue 4.305060 0.2231136  0.004227454
 log2  green 4.222718 0.2215495  0.003121671
-log3    red 4.225362 0.2216716  0.003157274
 weibull orange 4.307951        NA  0.002823978
 michaelis purple 4.294488        NA  0.014564152
 "
