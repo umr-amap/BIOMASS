@@ -50,7 +50,7 @@
 #'   X = c(rep(0, 10), rep(100, 10)),
 #'   Y = c(rep(c(rep(0, 5), rep(100, 5)), 2))
 #' )
-#' 
+#'
 #' aa <- correctCoordGPS(
 #'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100)
@@ -65,7 +65,7 @@
 #'   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE
 #' )
 #' }
-#' 
+#'
 correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
                             maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE) {
 
@@ -119,7 +119,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
   # retransform the coordRel without the outliers
-  if (rmOutliers) {
+  if (rmOutliers & length(outliers)>0) {
     res <- procrust(projCoord[-outliers, ], coordRel[-outliers, ])
     coordAbs <- as.matrix(coordRel) %*% res$rotation
     coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
@@ -146,7 +146,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   if (drawPlot) {
     par(xpd = T, mar = par("mar") + c(0, 0, 0, 7.5))
-    plot(projCoord[-outliers, ],
+    plot(if(length(outliers)==0) projCoord else projCoord[-outliers, ],
       col = "grey30", main = "Plot drawing",
       xlim = range(projCoord[, 1], coordAbs[, 1]),
       ylim = range(projCoord[, 2], coordAbs[, 2]),
@@ -165,7 +165,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
     axis(side = 2, lty = "blank", las = 1)
     plot(sps, add = T, lwd = 3)
     points(coordAbs, col = "black", pch = 15, cex = 1.3)
-    points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
+    if(length(outliers)>0) points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
 
     legend(
       x = usr[2], y = grid$yaxp[length(grid$yaxp) - 1],
