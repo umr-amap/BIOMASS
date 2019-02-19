@@ -114,7 +114,6 @@ test_that("loglog function", {
 
   expect_is(loglogFunction(data, "log1"), "lm")
   expect_is(loglogFunction(data, "log2"), "lm")
-  expect_is(loglogFunction(data, "log3"), "lm")
 })
 
 test_that("Michaelis function", {
@@ -135,7 +134,7 @@ test_that("Weibull function", {
 
 context("Predict Height of the tree")
 
-for (method in c("log1", "log2", "log3", "weibull", "michaelis")) {
+for (method in c("log1", "log2", "weibull", "michaelis")) {
   test_that(paste("predictHeight", method), {
     skip_if_not_function("predictHeight")
     HDmodel <- modelHD(
