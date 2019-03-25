@@ -7,18 +7,18 @@
 attributeTreeCoord(xy, plot, dim, coordAbs)
 }
 \arguments{
-\item{xy}{The coordinates of the trees for each plot}
+\item{xy}{The relative coordinates of the trees within each plot}
 
 \item{plot}{The label of the plot (same length as the number of rows of \code{xy} or length of 1)}
 
-\item{dim}{The dimension of the plot (you can make two dimension in a vector)}
+\item{dim}{The dimension of the plot (either one value if the plot is a square or a vector if a rectangle)}
 
-\item{coordAbs}{(optional) The result of the function \code{\link[=cutPlot]{cutPlot()}} or \code{\link[=numberCorner]{numberCorner()}}}
+\item{coordAbs}{The result of the function \code{\link[=cutPlot]{cutPlot()}} or \code{\link[=numberCorner]{numberCorner()}}}
 }
 \value{
-A data frame with two columns :
-- \code{Xproj}: The \code{X} coordinate in whichever projection you have
-- \code{Yproj}: The \code{Y} coordinate in whichever projection you have
+A data frame with two columns:
+- \code{Xproj}: The \code{X} coordinates in the absolute coordinate system
+- \code{Yproj}: The \code{Y} coordinates in the absolute coordinate system
 }
 \description{
 Attribute trees to GPS coordinates
@@ -34,14 +34,14 @@ coord <- data.frame(X = rep(c(0, 200, 0, 200), 2), Y = rep(c(0, 0, 200, 200), 2)
 coord[1:4, ] <- coord[1:4, ] + 5000
 coord[5:8, ] <- coord[5:8, ] + 6000
 corner <- rep(c(1, 2, 4, 3), 2)
-plot <- rep(c("plot1", "plot2"), each = 4)
+Forestplot <- rep(c("plot1", "plot2"), each = 4)
 
-cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
+Outcut <- cutPlot(coord, Forestplot, corner, gridsize = 100, dimX = 200, dimY = 200)
 
 
 # Assign a plot to 200 trees
-plot <- rep(c("plot1", "plot2"), 100)
+Forestplot <- rep(c("plot1", "plot2"), 100)
 
 # attribute trees to subplots
-attributeTreeCoord(xy, plot, coordAbs = cut)
+attributeTreeCoord(xy, Forestplot, dim =100,coordAbs = Outcut)
 }

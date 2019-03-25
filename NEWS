@@ -2,6 +2,7 @@
 - bugs correction
 - add a vignette for the managment of the plot
 - add few tricks for the summaryByPlot
+- add of a function to convert tree relative to absolute coordinates
 
 * version 2.0
 - code optimization of most functions

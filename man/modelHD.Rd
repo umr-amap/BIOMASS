@@ -17,11 +17,10 @@ minimum of 10 valid entries (i.e. having a corresponding height in H) is require
 \item{method}{Method used to fit the relationship.
 To be chosen between:
 \itemize{
-\item log1, log2, log3
+\item log1, log2
 \itemize{
 \item log 1: \eqn{(log(H) = a+ b*log(D))} (equivalent to a power model)
 \item log 2: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2)}
-\item log 3: \eqn{(log(H) = a+ b*log(D) + c*log(D)^2 + d*log(D)^3)}
 }
 \item weibull: \eqn{H = a*(1-exp(-(D/b)^c))}
 \item michaelis: \eqn{H = (A * D)/(B + D)}
