@@ -18,7 +18,7 @@ Contains functions to estimate aboveground biomass/carbon and its uncertainty in
 4.  manage tree and plot coordinates;
 5.  estimate the aboveground biomass/carbon at the stand level with associated uncertainty;
 
-For more information, see [article](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12753) or the [vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/VignetteBiomass.html) of the package, and the [reference manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
+For more information, see [article](https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12753) or the [vignette](https://cran.r-project.org/package=BIOMASS//vignettes/BIOMASS.html) of the package, and the [reference manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
 
 Citation
 --------
