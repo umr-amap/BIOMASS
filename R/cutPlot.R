@@ -12,7 +12,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @param projCoord A data frame with the projected coordinates with X and Y on the first and second column respectively
 #' @param plot Vector with the code of the plot
-#' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
+#' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be counted clockwise
 #' (see the result of the [numberCorner()])
 #' @param gridsize The size of the grid
 #' @param dimX A vector of the real size for the X axis for the plot (can be given one value it will be replicate for each plot)
