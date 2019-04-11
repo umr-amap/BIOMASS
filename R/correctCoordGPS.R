@@ -7,8 +7,8 @@
 #' You must give one parameter between longlat and projCoord
 #'
 #'
-#' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param projCoord (optionnal) data frame with the projected coordinate in X Y
+#' @param longlat (optional) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
+#' @param projCoord (optional) data frame with the projected coordinate in X Y
 #' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
 #' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
 #' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
