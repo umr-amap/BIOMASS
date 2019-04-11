@@ -16,7 +16,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @details
 #' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
-#' to avoid the replication of time-consuming servor requests.
+#' to avoid the replication of time-consuming server requests.
 #'
 #' By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
 #' `options(BIOMASS.batch_size=50)` for batch size, `options(BIOMASS.wait_delay=0.5)` for delay.
@@ -47,7 +47,7 @@ if (getRversion() >= "2.15.1") {
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium standleanum")
 #' }
-#' 
+#'
 #' @export
 #' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF rbindlist
 #' @importFrom rappdirs user_data_dir
