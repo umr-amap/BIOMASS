@@ -46,7 +46,7 @@ if (getRversion() >= "2.15.1") {
 #'  combined with the global wood density database. The dataframe should be organized
 #'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth
 #'  column "family" is optional.
-#' @param verbose A logical, give some statistic whith the database
+#' @param verbose A logical, give some statistic with the database
 #'
 #' @details
 #' The function assigns to each taxon a species- or genus- level average if at least
@@ -81,20 +81,20 @@ if (getRversion() >= "2.15.1") {
 #' @examples
 #' # Load a data set
 #' data(KarnatakaForest)
-#' 
+#'
 #' # Compute the Wood Density up to the genus level and give the mean wood density of the dataset
 #' WD <- getWoodDensity(
 #'   genus = KarnatakaForest$genus,
 #'   species = KarnatakaForest$species
 #' )
-#' 
+#'
 #' # Compute the Wood Density up to the genus level and then give the mean wood density per stand
 #' WD <- getWoodDensity(
 #'   genus = KarnatakaForest$genus,
 #'   species = KarnatakaForest$species,
 #'   stand = KarnatakaForest$plotId
 #' )
-#' 
+#'
 #' # Compute the Wood Density up to the family level and then give the mean wood density per stand
 #' WD <- getWoodDensity(
 #'   family = KarnatakaForest$family,
@@ -131,7 +131,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
 
   if (!is.null(addWoodDensityData)) {
     if (!(all(names(addWoodDensityData) %in% c("genus", "species", "wd", "family")) && length(names(addWoodDensityData)) %in% c(3, 4))) {
-      stop('The additional wood density database should be organized in a dataframe with three (or four) columns: 
+      stop('The additional wood density database should be organized in a dataframe with three (or four) columns:
            "genus","species","wd", and the column "family" is optional')
     }
   }
@@ -227,7 +227,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
     nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
     nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
-    stop("There is no exact match among the family, genus and species, try with 'addWoodDensity' 
+    stop("There is no exact match among the family, genus and species, try with 'addWoodDensity'
          or inform the 'family' or increase the 'region'")
   }
 
