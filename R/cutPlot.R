@@ -10,7 +10,7 @@ if (getRversion() >= "2.15.1") {
 #' coordinates of the grid in return.
 #' This function uses a procrustes analysis to fit the rectangle you gave to the plot you have.
 #'
-#' @param projCoord A data frame with the projected coordinates with X and Y on the first and second colonne respectively
+#' @param projCoord A data frame with the projected coordinates with X and Y on the first and second column respectively
 #' @param plot Vector with the code of the plot
 #' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
 #' (see the result of the [numberCorner()])
