@@ -6,7 +6,7 @@ if (getRversion() >= "2.15.1") {
 
 #' Attribute trees to subplots
 #'
-#' Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
+#' Function to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 #'
 #' @param xy The coordinates of the trees for each plot
 #' @param plot The label of the plot (same length as the number of rows of `xy`)
@@ -19,24 +19,24 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom data.table data.table setDT %between% setnames
 #'
 #' @examples
-#' 
+#'
 #' # Trees relative coordinates
 #' xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
-#' 
-#' 
+#'
+#'
 #' # cut the plot in multiple part
 #' coord <- data.frame(X = rep(c(0, 200, 0, 200), 2), Y = rep(c(0, 0, 200, 200), 2))
 #' coord[1:4, ] <- coord[1:4, ] + 5000
 #' coord[5:8, ] <- coord[5:8, ] + 6000
 #' corner <- rep(c(1, 2, 4, 3), 2)
 #' plot <- rep(c("plot1", "plot2"), each = 4)
-#' 
+#'
 #' cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
-#' 
-#' 
+#'
+#'
 #' # Assign a plot to 200 trees
 #' plot <- rep(c("plot1", "plot2"), 100)
-#' 
+#'
 #' # attribute trees to subplots
 #' attributeTree(xy, plot, cut)
 attributeTree <- function(xy, plot, coordAbs) {
