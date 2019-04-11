@@ -4,7 +4,7 @@
 #' the Climatic Water Deficit (CWD), the Temperature Seasonality (TS) and the Precipitation Seasonality (PS).
 #'
 #' The function is time-consuming at its first use as it downloads three raster files (one for each of
-#' the parameter) which are then stored in forders named wc2-5 and CWD (see Localisation).
+#' the parameter) which are then stored in folders named wc2-5 and CWD (see Localisation).
 #'
 #' However, as soon as the raster is downloaded once, the function then runs fast.
 #'
@@ -36,7 +36,7 @@
 #' \dontrun{
 #' bioclim <- getBioclimParam(coord)
 #' }
-#' 
+#'
 #' # Several study sites (here three sites)
 #' long <- c(-52.68, -51.12, -53.11)
 #' lat <- c(4.08, 3.98, 4.12)
@@ -44,7 +44,7 @@
 #' \dontrun{
 #' bioclim <- getBioclimParam(coord)
 #' }
-#' 
+#'
 #' @importFrom rappdirs user_data_dir
 #' @importFrom raster raster extract getData
 
