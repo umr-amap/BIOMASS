@@ -219,7 +219,7 @@
 #'   - `family`: a character vector indicating the family
 #'   - `genus`: a character vector indicating the genus
 #'   - `species`: a character vector indicating the species
-#'   - `wd`: a numeric vector of wood densities (g/cm-3)
+#'   - `wd`: a numeric vector of wood densities (g/cm^3)
 #'   - `region`: a character vector of regions (see [getWoodDensity()])
 #'   - `referenceNumber`: a numeric vector of reference numbers (bibliography)
 #'   - `regionId`: a character vector of region ids
