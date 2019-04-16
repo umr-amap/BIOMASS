@@ -186,43 +186,49 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
       baseURL <- "http://taxosaurus.org/submit"
-
-      # send query
-      qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
-        query = paste(slice$query, collapse = "\n"),
-        source = "iPlant_TNRS"
-      ))
-
-      # check for errors
-      if (httr::http_error(qryResult)) {
-        httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
-      }
-
-      # wait for response
-      retrieveURL <- qryResult$headers$location
       repeat {
+        # send query
+        qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
+          query = paste(slice$query, collapse = "\n"),
+          source = "iPlant_TNRS"
+        ))
 
-        # be polite with server
-        Sys.sleep(WAIT_DELAY)
+        # check for errors
+        if (httr::http_error(qryResult)) {
+          httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
+        }
 
-        # fetch answer
-        qryResult <- httr::GET(retrieveURL)
+        # wait for response
+        retrieveURL <- qryResult$headers$location
+        repeat {
 
-        # normal waiting behaviour is redirecting to self with 302 status
-        # if not then break from waiting loop
-        if (httr::status_code(qryResult) != 302) {
+          # be polite with server
+          Sys.sleep(WAIT_DELAY)
+
+          # fetch answer
+          qryResult <- httr::GET(retrieveURL)
+
+          # normal waiting behaviour is redirecting to self with 302 status
+          # if not then break from waiting loop
+          if (httr::status_code(qryResult) != 302) {
+            break
+          }
+        }
+
+        # check for errors
+        if (httr::http_error(qryResult)) {
+          httr::stop_for_status(qryResult, "get answer from taxosaurus service. Retry maybe later")
+        }
+
+        # parse answer from taxosaurus
+        answer <- jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"), FALSE)
+
+        if (all(sapply(answer$metadata$sources, function(x) {
+          x$status
+        }) == "200: OK")) {
           break
         }
       }
-
-      # check for errors
-      if (httr::http_error(qryResult)) {
-        httr::stop_for_status(qryResult, "get answer from taxosaurus service. Retry maybe later")
-      }
-
-      # parse answer from taxosaurus
-      answer <- jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"), FALSE)
-
       # WARNING when no match is found, taxosaurus does not return an answer
 
       # do we have answers ?
@@ -308,13 +314,20 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   if (useCache && !is.null(queriedTaxo)) {
 
     # complete taxo with matched names and accepted names
-    matchedTaxo <- unique(fullTaxo[submittedName != matchedName], by = "matchedName")[
-      , `:=`(submittedName = matchedName, score = 1)
-    ]
+    matchedTaxo <- unique(fullTaxo[submittedName != matchedName],
+      by = "matchedName"
+    )[, `:=`(
+      submittedName = matchedName,
+      score = 1
+    )]
 
-    acceptedTaxo <- unique(fullTaxo[(submittedName != acceptedName) & (acceptedName != matchedName)], by = "acceptedName")[
-      , `:=`(submittedName = acceptedName, matchedName = acceptedName, score = 1)
-    ]
+    acceptedTaxo <- unique(fullTaxo[(submittedName != acceptedName) & (acceptedName != matchedName)],
+      by = "acceptedName"
+    )[, `:=`(
+      submittedName = acceptedName,
+      matchedName = acceptedName,
+      score = 1
+    )]
 
     fullTaxo <- unique(rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""])
 
