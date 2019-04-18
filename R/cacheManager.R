@@ -114,6 +114,13 @@ checkTime <- function() {
 }
 
 
+#' @keywords  Internal
+flushCache <- function() {
+  
+  basePath <- cachePath()
+  
+  if (dir.exists(basePath)) unlink(basePath, recursive = T, force = F)
+}
 
 
 

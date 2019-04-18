@@ -13,6 +13,8 @@ skip_if_not_function <- function(name) {
 context("CorrectTaxo")
 test_that("CorrectTaxo", {
   skip_if_not_installed("httr")
+  
+  flushCache()
 
   expect_is(correctTaxo(genus, species), "data.frame")
 
