@@ -11,7 +11,7 @@ Authors@R: c(
 	person("Bruno", "Herault", email = "bruno.herault@cirad.fr", role = c("aut")),
 	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),
-	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
+	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc")),
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb"))
   )
 Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. 
