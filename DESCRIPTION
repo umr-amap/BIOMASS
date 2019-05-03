@@ -1,8 +1,8 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1
-Date: 2019-04-18
+Version: 2.1.1
+Date: 2019-05-03
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "cre", "dtc")),
 	person("Ariane", "Tanguy", role = c("aut")),
