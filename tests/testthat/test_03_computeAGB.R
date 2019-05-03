@@ -6,8 +6,7 @@ KarnatakaForest <- KarnatakaForest[1:100, ]
 D <- KarnatakaForest$D
 coord <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
 
-taxo <- correctTaxo(KarnatakaForest$genus, KarnatakaForest$species)
-WD <- suppressMessages(getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected))
+WD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species))
 
 H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = T))
 

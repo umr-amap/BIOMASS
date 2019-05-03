@@ -16,9 +16,7 @@ D <- KarnatakaForest$D
 coord <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
 H <- predictHeight(D, HDmodel)
 
-
-taxo <- correctTaxo(KarnatakaForest$genus, KarnatakaForest$species)
-WD <- suppressMessages(getWoodDensity(taxo$genusCorrected, taxo$speciesCorrected))
+WD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species))
 
 context("AGBmonteCarlo")
 test_that("AGBmonteCarlo error", {

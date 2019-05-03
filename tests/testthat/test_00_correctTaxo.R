@@ -12,6 +12,8 @@ skip_if_not_function <- function(name) {
 
 context("CorrectTaxo")
 test_that("CorrectTaxo", {
+  skip_on_cran()
+  
   skip_if_not_installed("httr")
   
   flushCache()
