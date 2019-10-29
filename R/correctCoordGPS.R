@@ -19,7 +19,8 @@
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
 #' @return If you there are no outliers or rmOutliers = TRUE, a list with:
-#'    - `corner`: a matrix with the coordinates of the corners
+#'    - `cornerCoords`: a matrix with the coordinates of the corners
+#'    - `correctedCoord`: a matrix with the ajusted coordinates given as input
 #'    - `polygon`: a spatial polygon
 #'    - `outliers`: Coordinates lines considered as outliers, if any
 #'    - `codeUTM`: the code UTM for the coordinate if the parameter `longlat` is set
