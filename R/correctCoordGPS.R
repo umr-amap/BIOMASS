@@ -190,6 +190,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   output <- list(
     cornerCoords = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
+    correctedCoord=coordAbs,
     polygon = sps, outliers = outliers
   )
   if (!is.null(longlat)) {
