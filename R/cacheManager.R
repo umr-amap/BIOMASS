@@ -197,7 +197,7 @@ updateCache <- function(nameFile = NULL) {
   warning = function(cond) {
     zip_url <- zip_urls[[nameFile]]
     if (is.null(zip_url)) {
-      stop("You demand something we do not understand.")
+      stop("URL is not found")
     }
 
     downloadZip(zip_url, path)
