@@ -1,29 +1,29 @@
 #' Correct the GPS coordinates
 #'
 #' @description
-#' This function build the most probable GPS coordinates of the plot corners from multiple GPS measurements.
+#' This function builds the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 #'
 #' @details
-#' You must give one parameter between longlat and projCoord
+#' GPS coordinates should be either given in longitude latitude (longlat) or in projected coordinates (projCoord)
 #'
 #'
-#' @param longlat (optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param projCoord (optionnal) data frame with the projected coordinate in X Y
-#' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
-#' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
-#' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
+#' @param longlat (optionnal) data frame with the coordinates in longitude latitude (e.g., cbind(longitude, latitude)).
+#' @param projCoord (optionnal) data frame with the projected coordinates (e.g., cbind(X, Y))
+#' @param coordRel data frame with the plot's relative coordinates corresponding to the longlat or projCoord GPS measurements
+#' @param rangeX a vector of length 2 giving the size of the plot along the X coordinates
+#' @param rangeY a vector of length 2 giving the size of the plot along the Y coordinates
 #' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)
-#' @param drawPlot a logical if you want to display a graphical representation
-#' @param rmOutliers a logical if you want to remove the outliers from coordinates calculation
+#' @param drawPlot a logical: if true, a graphical representation will be displayed
+#' @param rmOutliers a logical: if true, outliers will be removed from coordinates calculation
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
-#' @return If you there are no outliers or rmOutliers = TRUE, a list with:
-#'    - `cornerCoords`: a matrix with the coordinates of the corners
-#'    - `correctedCoord`: a matrix with the ajusted coordinates given as input
+#' @return If there are no outliers or rmOutliers = TRUE, a list with:
+#'    - `cornerCoords`: a data.frame with the coordinates of the corners
+#'    - `correctedCoord`: a data.frame with the adjusted coordinates given as input
 #'    - `polygon`: a spatial polygon
-#'    - `outliers`: Coordinates lines considered as outliers, if any
-#'    - `codeUTM`: the code UTM for the coordinate if the parameter `longlat` is set
+#'    - `outliers`: index of coordinates lines considered as outliers, if any
+#'    - `codeUTM`: the UTM code of the coordinates if the parameter `longlat` is set
 #'
 #'
 #'
@@ -191,7 +191,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   output <- list(
     cornerCoords = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
-    correctedCoord=coordAbs,
+    correctedCoord=data.frame(X = coordAbs[, 1], Y = coordAbs[, 2]),
     polygon = sps, outliers = outliers
   )
   if (!is.null(longlat)) {

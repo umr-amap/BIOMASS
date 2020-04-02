@@ -8,36 +8,37 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
   rangeY, maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE)
 }
 \arguments{
-\item{longlat}{(optionnal) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
+\item{longlat}{(optionnal) data frame with the coordinates in longitude latitude (e.g., cbind(longitude, latitude)).}
 
-\item{projCoord}{(optionnal) data frame with the projected coordinate in X Y}
+\item{projCoord}{(optionnal) data frame with the projected coordinates (e.g., cbind(X, Y))}
 
-\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
+\item{coordRel}{data frame with the plot's relative coordinates corresponding to the longlat or projCoord GPS measurements}
 
-\item{rangeX}{a vector of length 2 giving the range for plot relative X coordinates}
+\item{rangeX}{a vector of length 2 giving the size of the plot along the X coordinates}
 
-\item{rangeY}{a vector of length 2 giving the range for plot relative Y coordinates}
+\item{rangeY}{a vector of length 2 giving the size of the plot along the Y coordinates}
 
 \item{maxDist}{a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)}
 
-\item{drawPlot}{a logical if you want to display a graphical representation}
+\item{drawPlot}{a logical: if true, a graphical representation will be displayed}
 
-\item{rmOutliers}{a logical if you want to remove the outliers from coordinates calculation}
+\item{rmOutliers}{a logical: if true, outliers will be removed from coordinates calculation}
 }
 \value{
-If you there are no outliers or rmOutliers = TRUE, a list with:
+If there are no outliers or rmOutliers = TRUE, a list with:
 \itemize{
-\item \code{corner}: a matrix with the coordinates of the corners
+\item \code{cornerCoords}: a data.frame with the coordinates of the corners
+\item \code{correctedCoord}: a data.frame with the adjusted coordinates given as input
 \item \code{polygon}: a spatial polygon
-\item \code{outliers}: Coordinates lines considered as outliers, if any
-\item \code{codeUTM}: the code UTM for the coordinate if the parameter \code{longlat} is set
+\item \code{outliers}: index of coordinates lines considered as outliers, if any
+\item \code{codeUTM}: the UTM code of the coordinates if the parameter \code{longlat} is set
 }
 }
 \description{
-This function build the most probable GPS coordinates of the plot corners from multiple GPS measurements.
+This function builds the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 }
 \details{
-You must give one parameter between longlat and projCoord
+GPS coordinates should be either given in longitude latitude (longlat) or in projected coordinates (projCoord)
 }
 \examples{
 projCoord <- data.frame(
