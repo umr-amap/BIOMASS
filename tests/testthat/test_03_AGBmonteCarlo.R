@@ -100,6 +100,7 @@ test_that("AGBmonteCarlo error", {
 
 
 test_that("AGB monte Carlo on the HDmodel", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
   expect_length(AGB, 5)
 
@@ -122,6 +123,7 @@ test_that("AGB monte Carlo on the HDmodel", {
 
 
 test_that("AGB monte Carlo on the H", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = HDmodel$RSE, n = nIter)
   expect_length(AGB, 5)
 
@@ -144,6 +146,7 @@ test_that("AGB monte Carlo on the H", {
 
 
 test_that("AGB monte Carlo on the coord", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
   expect_length(AGB, 5)
 
@@ -167,6 +170,7 @@ test_that("AGB monte Carlo on the coord", {
 })
 
 test_that("AGB monte Carlo on the Dpropag", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D,
     Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1),
     WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter
@@ -192,6 +196,7 @@ test_that("AGB monte Carlo on the Dpropag", {
 
 
 test_that("AGB monte Carlo on the Carbon", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = T)
   expect_length(AGB, 5)
 
@@ -213,6 +218,7 @@ test_that("AGB monte Carlo on the Carbon", {
 })
 
 test_that("AGB monte Carlo on the Dlim", {
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = T, Dlim = 20)
   expect_length(AGB, 5)
 
@@ -238,6 +244,7 @@ test_that("AGB monte Carlo on the Dlim", {
 
 test_that("AGB with NA", {
   D[1:5] <- NA
+  set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
 
   expect_length(AGB$meanAGB, 1)

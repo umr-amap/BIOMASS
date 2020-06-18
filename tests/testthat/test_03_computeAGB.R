@@ -46,3 +46,4 @@ test_that("ComputeAGB with Dlim", {
   expect_true(any(computeAGB(D, WD$meanWD, H = H$H, Dlim = 5) == 0))
   expect_true(any(computeAGB(D, WD$meanWD, H = H$H, Dlim = 5) > 0))
 })
+

@@ -1,3 +1,6 @@
+* version 2.1.2
+- Modified dataset for compatibility issues with new rgdal package
+
 * version 2.1
 - bugs correction
 - add a vignette for the managment of the plot

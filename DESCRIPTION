@@ -1,16 +1,16 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1.1
-Date: 2019-05-03
+Version: 2.1.2
+Date: 2020-05-20
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "cre", "dtc")),
+	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
+	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
 	person("Ariane", "Tanguy", role = c("aut")),
 	person("Camille", "Piponiot", role = c("aut")),
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
-	person("Bruno", "Herault", email = "bruno.herault@cirad.fr", role = c("aut")),
-	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
-	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),
+	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc")),
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb"))
   )
@@ -46,7 +46,6 @@ Suggests:
 	testthat,
 	covr,
 	proj4,
-	MCMCglmm,
 	rvest,
 	prettydoc,
 	usethis,
