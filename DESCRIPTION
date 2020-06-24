@@ -1,8 +1,8 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1.2
-Date: 2020-05-20
+Version: 2.1.3
+Date: 2020-06-22
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "cre", "dtc")),
 	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
@@ -32,23 +32,24 @@ Imports:
 	raster, 
 	jsonlite, 
 	methods, 
+	proj4,
 	graphics, 
 	stats, 
 	utils, 
 	data.table (>= 1.9.8), 
+	httr,	
 	rappdirs,
 	sp
 VignetteBuilder: knitr
 Suggests:
-	httr, 
 	knitr, 
 	rmarkdown,
 	testthat,
 	covr,
-	proj4,
 	rvest,
 	prettydoc,
 	usethis,
+	MCMCglmm,
 	taxize,
 	lmfor,
 	sf

@@ -236,7 +236,6 @@ coord <- cbind(long, lat)
 
 context("lat long to UTM")
 test_that("lat long to UTM", {
-  skip_if_not_installed("proj4")
 
 
   UTM <- latlong2UTM(coord)

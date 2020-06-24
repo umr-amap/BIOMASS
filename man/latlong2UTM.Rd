@@ -14,7 +14,7 @@ a data frame whith :
 \itemize{
 \item \code{long}: The longitude of the entry
 \item \code{lat}: The latitude of the entry
-\item \code{codeUTM}: The code \code{proj4} for UTM
+\item \code{codeUTM}: The code \code{proj} for UTM
 \item \code{X}: The X UTM coordinate
 \item \code{Y}: The Y UTM coordinate
 }

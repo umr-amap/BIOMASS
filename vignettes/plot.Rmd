@@ -1,5 +1,5 @@
 ---
-title: "Manage tree and plot coordinate with BIOMASS"
+title: "Manage trees and plot coordinates with BIOMASS"
 author: "Arthur Pere"
 date: "`r Sys.Date()`"
 output: 

@@ -11,12 +11,13 @@ if (getRversion() >= "2.15.1") {
 #' @return a data frame whith :
 #'    - `long`: The longitude of the entry
 #'    - `lat`: The latitude of the entry
-#'    - `codeUTM`: The code `proj4` for UTM
+#'    - `codeUTM`: The code `proj` for UTM
 #'    - `X`: The X UTM coordinate
 #'    - `Y`: The Y UTM coordinate
 #'
 #' @export
 #' @importFrom data.table as.data.table :=
+#' @importFrom proj4 project
 #' @examples
 #'
 #' long <- c(-52.68, -51.12, -53.11)
