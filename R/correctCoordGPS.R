@@ -12,9 +12,9 @@
 #' @param coordRel data frame with the plot's relative coordinates corresponding to the longlat or projCoord GPS measurements
 #' @param rangeX a vector of length 2 giving the size of the plot along the X coordinates
 #' @param rangeY a vector of length 2 giving the size of the plot along the Y coordinates
-#' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)
+#' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 15 m)
 #' @param drawPlot a logical: if true, a graphical representation will be displayed
-#' @param rmOutliers a logical: if true, outliers will be removed from coordinates calculation
+#' @param rmOutliers a logical: if true, outliers will be removed from coordinates calculation (default)
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
@@ -68,7 +68,7 @@
 #' }
 #'
 correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
-                            maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE) {
+                            maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE) {
 
 
   # parameters verification -------------------------------------------------
@@ -102,7 +102,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
 
-  # Transform the geographic coordinate into UTM coordinate
+  # Transform the geographic coordinates into UTM coordinates
   if (!is.null(longlat)) {
     projCoord <- latlong2UTM(longlat)
     codeUTM <- unique(projCoord[, "codeUTM"])
@@ -118,12 +118,23 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   dist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
   outliers <- which(dist > maxDist)
 
-
+  if (length(outliers)==nrow(projCoord)){
+    stop("All coordinates points are considered as outliers at the first stage.\n
+         This may be because some coordinates have very large error associated.\n
+         Try to remove these very large error or reconsider the maxDist parameter by increasing the distance")
+  }
+  
   # retransform the coordRel without the outliers
   if (rmOutliers & length(outliers)>0) {
-    res <- procrust(projCoord[-outliers, ], coordRel[-outliers, ])
-    coordAbs <- as.matrix(coordRel) %*% res$rotation
-    coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
+    refineCoord <- TRUE
+    while(refineCoord){
+      res <- procrust(projCoord[-outliers, ], coordRel[-outliers,])
+      coordAbs <- as.matrix(coordRel) %*% res$rotation
+      coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
+      newdist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
+      if(all(which(newdist > maxDist)==outliers)) refineCoord <- FALSE
+      outliers <- which(newdist > maxDist)
+    }
   }
 
   # Create the matrix of corners to return the projected coordinate of the corner of the plot
