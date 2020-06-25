@@ -32,20 +32,20 @@ Imports:
 	raster, 
 	jsonlite, 
 	methods, 
-	proj4,
 	graphics, 
 	stats, 
 	utils, 
 	data.table (>= 1.9.8), 
-	httr,	
 	rappdirs,
 	sp
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
+	proj4,
 	rmarkdown,
 	testthat,
 	covr,
+	httr,
 	rvest,
 	prettydoc,
 	usethis,

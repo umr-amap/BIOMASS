@@ -17,7 +17,6 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @export
 #' @importFrom data.table as.data.table :=
-#' @importFrom proj4 project
 #' @examples
 #'
 #' long <- c(-52.68, -51.12, -53.11)
