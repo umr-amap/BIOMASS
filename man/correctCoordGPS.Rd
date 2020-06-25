@@ -5,7 +5,7 @@
 \title{Correct the GPS coordinates}
 \usage{
 correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
-  rangeY, maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE)
+  rangeY, maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE)
 }
 \arguments{
 \item{longlat}{(optionnal) data frame with the coordinates in longitude latitude (e.g., cbind(longitude, latitude)).}
@@ -18,11 +18,11 @@ correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
 
 \item{rangeY}{a vector of length 2 giving the size of the plot along the Y coordinates}
 
-\item{maxDist}{a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)}
+\item{maxDist}{a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 15 m)}
 
 \item{drawPlot}{a logical: if true, a graphical representation will be displayed}
 
-\item{rmOutliers}{a logical: if true, outliers will be removed from coordinates calculation}
+\item{rmOutliers}{a logical: if true, outliers will be removed from coordinates calculation (default)}
 }
 \value{
 If there are no outliers or rmOutliers = TRUE, a list with:
