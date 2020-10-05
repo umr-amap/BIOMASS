@@ -9,14 +9,12 @@ if (getRversion() >= "2.15.1") {
 
 #' Checking typos in names
 #'
-#' This function corrects typos for a given taxonomic name using the Taxonomic
-#' Name Resolution Service (TNRS) via the Taxosaurus interface.
-#' This function has been adapted from the `tnrs` function from the taxize package ([taxize::tnrs()]).
+#' This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
 #'
 #'
 #' @details
 #' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
-#' to avoid the replication of time-consuming servor requests.
+#' to avoid the replication of time-consuming server requests.
 #'
 #' By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
 #' `options(BIOMASS.batch_size=50)` for batch size, `options(BIOMASS.wait_delay=0.5)` for delay.
@@ -35,10 +33,7 @@ if (getRversion() >= "2.15.1") {
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
 #' @references Boyle, B. et al. (2013).
-#' _The taxonomic name resolution service: An online tool for automated standardization of plant names_.
-#' BMC bioinformatics, 14, 1.
-#' @references Chamberlain, S. A. and Szocs, E. (2013). _taxize: taxonomic search and retrieval in R_.
-#' F1000Research, 2.
+#' _The taxonomic name resolution service: An online tool for automated standardization of plant names_. BMC bioinformatics, 14, 1. doi:10.1186/1471-2105-14-16
 #'
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'
@@ -49,14 +44,14 @@ if (getRversion() >= "2.15.1") {
 #' }
 #' 
 #' @export
-#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF rbindlist
+#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF setDT rbindlist
 #' @importFrom rappdirs user_data_dir
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
 correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE) {
-  WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to taxosaurus (to reduce load on server)
-  BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to taxosaurus
+  WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
+  BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to tnrs
 
   # check parameters -------------------------------------------------
 
@@ -95,7 +90,14 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
     }
     split
   }
-
+  
+  # build an http query string from parameters
+  build_qry <- function(...) {
+    dots <- list(...)
+    dots <- sapply(dots, function(p) paste0(curl::curl_escape(p), collapse = ","))
+    paste(names(dots), dots, sep="=", collapse="&")
+  }
+  
   # Data preparation --------------------------------------------------------
 
   genus <- as.character(genus)
@@ -173,7 +175,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   # identify taxo not present in cache
   missingTaxo <- qryTaxo[!cachedTaxo[, .(submittedName)], on = c(query = "submittedName")]
 
-  # query taxosaurus for missing taxo if any
+  # query tnrs for missing taxo if any
   queriedTaxo <- NULL
   if (nrow(missingTaxo)) {
 
@@ -185,90 +187,37 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       pb <- utils::txtProgressBar(style = 3)
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-      baseURL <- "http://taxosaurus.org/submit"
-      repeat {
-        # send query
-        qryResult <- httr::POST(baseURL, httr::config(followlocation = 0), body = list(
-          query = paste(slice$query, collapse = "\n"),
-          source = "iPlant_TNRS"
-        ))
-
-        # check for errors
-        if (httr::http_error(qryResult)) {
-          httr::stop_for_status(qryResult, "connect to taxosaurus service. Retry maybe later")
-        }
-
-        # wait for response
-        retrieveURL <- qryResult$headers$location
-        repeat {
-
-          # be polite with server
-          Sys.sleep(WAIT_DELAY)
-
-          # fetch answer
-          qryResult <- httr::GET(retrieveURL)
-
-          # normal waiting behaviour is redirecting to self with 302 status
-          # if not then break from waiting loop
-          if (httr::status_code(qryResult) != 302) {
-            break
-          }
-        }
-
-        # check for errors
-        if (httr::http_error(qryResult)) {
-          httr::stop_for_status(qryResult, "get answer from taxosaurus service. Retry maybe later")
-        }
-
-        # parse answer from taxosaurus
-        answer <- jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"), FALSE)
-
-        if (all(sapply(answer$metadata$sources, function(x) {
-          x$status
-        }) == "200: OK")) {
-          break
-        }
+      baseURL <- "http://tnrs.iplantc.org/tnrsm-svc/matchNames"
+      qryResult <- httr::GET(paste0(baseURL,"?", build_qry(retrieve="best", names=slice$query)))
+      
+      # check for errors
+      if (httr::http_error(qryResult)) {
+        httr::stop_for_status(qryResult, "connect to tnrs service. Retry maybe later")
       }
-      # WARNING when no match is found, taxosaurus does not return an answer
-
-      # do we have answers ?
-      if (length(answer$names)) {
-
-        # function to preprocess match
-        flatten <- function(match) {
-          match$annotations <- paste(sprintf("%s(%s)", names(match$annotations), match$annotations), collapse = ", ")
-          match$score <- as.numeric(match$score)
-          match
-        }
-
-        # get first match (highest score) for each submitted name
-        result <- rbindlist(lapply(answer$names, function(name) c(
-            submittedName = name$submittedName,
-            flatten(name$matches[[1]]),
-            from = "taxosaurus"
-          )))
-      } else {
-
-        # nothing found ! Pathological case -> return empty answer
-        result <- data.table(
-          submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0),
-          acceptedName = character(0)
-        )
-      }
-
-      # handle not founds (as taxosaurus does not give answers for them)
-      result <- result[slice[, .(query)], on = c(submittedName = "query"), nomatch = NA]
-      result[is.na(from), `:=`(
-        score = 1, # I'm positive. It does not exist !
-        matchedName = NA_character_,
-        from = "taxosaurus(not_found)"
+      
+      # parse answer from tnrs
+      answer <- setDT(jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"))$items)
+      
+      # recode empty strings as NA
+      answer[, names(answer) := lapply(.SD, function(x) {
+        x[x==""]<-NA
+        x
+      })]
+      
+      # format result
+      answer <- answer[, .(
+        submittedName = nameSubmitted, 
+        score = as.numeric(scientificScore), 
+        matchedName = nameScientific,
+        from = "iplant_tnrs",
+        acceptedName = acceptedName
       )]
 
       if (verbose) {
         utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
       }
 
-      result
+      answer
     }))
     if (verbose) {
       close(pb)
