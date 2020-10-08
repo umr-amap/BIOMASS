@@ -1,10 +1,10 @@
 #' Correct the GPS coordinates
 #'
 #' @description
-#' This function build the most probable GPS coordinates of the plot corners from multiple GPS measurements.
+#' This function builds the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 #'
 #' @details
-#' You must give one parameter between longlat and projCoord
+#' GPS coordinates should be either given in longitude latitude (longlat) or in projected coordinates (projCoord)
 #'
 #'
 #' @param longlat (optional) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
@@ -12,17 +12,18 @@
 #' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
 #' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
 #' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
-#' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 10 m)
+#' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 15 m)
 #' @param drawPlot a logical if you want to display a graphical representation
 #' @param rmOutliers a logical if you want to remove the outliers from coordinates calculation
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'
-#' @return If you there are no outliers or rmOutliers = TRUE, a list with:
-#'    - `corner`: a matrix with the coordinates of the corners
+#' @return If there are no outliers or rmOutliers = TRUE, a list with:
+#'    - `cornerCoords`: a data.frame with the coordinates of the corners
+#'    - `correctedCoord`: a data.frame with the adjusted coordinates given as input
 #'    - `polygon`: a spatial polygon
-#'    - `outliers`: Coordinates lines considered as outliers, if any
-#'    - `codeUTM`: the code UTM for the coordinate if the parameter `longlat` is set
+#'    - `outliers`: index of coordinates lines considered as outliers, if any
+#'    - `codeUTM`: the UTM code of the coordinates if the parameter `longlat` is set
 #'
 #'
 #'
@@ -67,7 +68,7 @@
 #' }
 #'
 correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
-                            maxDist = 10, drawPlot = FALSE, rmOutliers = FALSE) {
+                            maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE) {
 
 
   # parameters verification -------------------------------------------------
@@ -101,7 +102,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
 
-  # Transform the geographic coordinate into UTM coordinate
+  # Transform the geographic coordinates into UTM coordinates
   if (!is.null(longlat)) {
     projCoord <- latlong2UTM(longlat)
     codeUTM <- unique(projCoord[, "codeUTM"])
@@ -117,12 +118,23 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   dist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
   outliers <- which(dist > maxDist)
 
-
+  if (length(outliers)==nrow(projCoord)){
+    stop("All coordinates points are considered as outliers at the first stage.\n
+         This may be because some coordinates have very large error associated.\n
+         Try to remove these very large error or reconsider the maxDist parameter by increasing the distance")
+  }
+  
   # retransform the coordRel without the outliers
   if (rmOutliers & length(outliers)>0) {
-    res <- procrust(projCoord[-outliers, ], coordRel[-outliers, ])
-    coordAbs <- as.matrix(coordRel) %*% res$rotation
-    coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
+    refineCoord <- TRUE
+    while(refineCoord){
+      res <- procrust(projCoord[-outliers, ], coordRel[-outliers,])
+      coordAbs <- as.matrix(coordRel) %*% res$rotation
+      coordAbs <- sweep(coordAbs, 2, res$translation, FUN = "+")
+      newdist <- sqrt((coordAbs[, 1] - projCoord[, 1])^2 + (coordAbs[, 2] - projCoord[, 2])^2)
+      if(all(which(newdist > maxDist)==outliers)) refineCoord <- FALSE
+      outliers <- which(newdist > maxDist)
+    }
   }
 
   # Create the matrix of corners to return the projected coordinate of the corner of the plot
@@ -190,6 +202,7 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
   output <- list(
     cornerCoords = data.frame(X = cornerCoord[, 1], Y = cornerCoord[, 2]),
+    correctedCoord=data.frame(X = coordAbs[, 1], Y = coordAbs[, 2]),
     polygon = sps, outliers = outliers
   )
   if (!is.null(longlat)) {

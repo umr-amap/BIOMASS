@@ -54,8 +54,8 @@ Returns a dataframe containing the following information:
 \item \code{family}: (if set) Family
 \item \code{genus}: Genus
 \item \code{species}: Species
-\item \code{meanWD}: Mean wood density
-\item \code{sdWD}: Standard deviation of the wood density that can be used in error propagation
+\item \code{meanWD} (g/cm^3): Mean wood density
+\item \code{sdWD} (g/cm^3): Standard deviation of the wood density that can be used in error propagation
 (see \link{sd_10} and \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}})
 \item \code{levelWD}: Level at which wood density has been calculated. Can be species, genus, family,
 dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)

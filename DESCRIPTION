@@ -1,17 +1,18 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1
-Date: 2019-03-25
+Version: 2.1.4
+Date: 2020-06-22
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "cre", "dtc")),
+	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
+	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
 	person("Ariane", "Tanguy", role = c("aut")),
 	person("Camille", "Piponiot", role = c("aut")),
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
-	person("Bruno", "Herault", email = "bruno.herault@cirad.fr", role = c("aut")),
-	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
-	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),
-	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
+	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut")),
+	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc")),
+	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb"))
   )
 Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. 
 	These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, 
@@ -31,6 +32,7 @@ Imports:
 	raster, 
 	jsonlite, 
 	methods, 
+	proj4,	
 	graphics, 
 	stats, 
 	utils, 
@@ -39,17 +41,16 @@ Imports:
 	sp
 VignetteBuilder: knitr
 Suggests:
-	httr, 
 	knitr, 
 	rmarkdown,
 	testthat,
 	covr,
-	proj4,
-	MCMCglmm,
+	httr,
 	rvest,
 	prettydoc,
 	usethis,
+	MCMCglmm,
 	taxize,
 	lmfor,
 	sf
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

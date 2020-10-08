@@ -62,8 +62,11 @@ computeE <- function(coord) {
   # find the raster
   RAST <- raster(cacheManager("E"))
 
-  if (is.null(dim(coord))) {
-    return(extract(RAST, matrix(coord, ncol = 2)))
+  # GCO pourquoi cas particulier ?
+  # GCO pourquoi ne pas reformater en matrix ou data.frame et continuer
+
+  if (is.vector(coord)) {
+    return(extract(RAST, matrix(coord, ncol = 2),"bilinear"))
   }
 
   # set the coord in a data.table

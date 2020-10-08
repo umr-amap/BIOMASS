@@ -4,8 +4,13 @@
 \alias{correctTaxo}
 \title{Checking typos in names}
 \usage{
-correctTaxo(genus, species = NULL, score = 0.5, useCache = TRUE,
-  verbose = TRUE)
+correctTaxo(
+  genus,
+  species = NULL,
+  score = 0.5,
+  useCache = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)
@@ -23,13 +28,11 @@ or (genus + species + author) may be given (see example).}
 The function returns a dataframe with the corrected (or not) genera and species.
 }
 \description{
-This function corrects typos for a given taxonomic name using the Taxonomic
-Name Resolution Service (TNRS) via the Taxosaurus interface.
-This function has been adapted from the \code{tnrs} function from the taxize package (\code{\link[taxize:tnrs]{taxize::tnrs()}}).
+This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
 }
 \details{
 This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
-to avoid the replication of time-consuming servor requests.
+to avoid the replication of time-consuming server requests.
 
 By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
 \code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
@@ -38,10 +41,10 @@ By default, names are queried in batches of 50, with a 0.5s delay between each q
 
 The localisation of the folder is :
 \itemize{
-\item On Linux : \code{~/.local/share/BIOMASS}
-\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
-\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
-\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
+\item On Linux : \verb{~/.local/share/R/BIOMASS}
+\item On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
+\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
+\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
 }
 
 See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
@@ -56,11 +59,7 @@ correctTaxo(genus = "Astrocarium standleanum")
 }
 \references{
 Boyle, B. et al. (2013).
-\emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}.
-BMC bioinformatics, 14, 1.
-
-Chamberlain, S. A. and Szocs, E. (2013). \emph{taxize: taxonomic search and retrieval in R}.
-F1000Research, 2.
+\emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}. BMC bioinformatics, 14, 1. doi:10.1186/1471-2105-14-16
 }
 \author{
 Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU

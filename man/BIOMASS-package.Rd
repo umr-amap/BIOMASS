@@ -167,17 +167,18 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Ariane Tanguy
-  \item Camille Piponiot
-  \item Bruno Herault \email{bruno.herault@cirad.fr}
   \item Arthur Pere \email{arthur.pere@cirad.fr}
   \item Guillaume Cornu \email{gcornu@cirad.fr} (0000-0002-7523-5176)
+  \item Ariane Tanguy
+  \item Camille Piponiot
+  \item Bruno Hérault \email{bruno.herault@cirad.fr}
 }
 
 Other contributors:
 \itemize{
   \item Jerome Chave \email{jerome.chave@univ-tlse3.fr} [data contributor]
   \item Ted Feldpausch \email{T.R.Feldpausch@exeter.ac.uk} [data contributor]
+  \item Philippe Verley \email{philippe.verley@ird.fr } [contributor]
 }
 
 }

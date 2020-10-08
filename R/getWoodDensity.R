@@ -62,8 +62,8 @@ if (getRversion() >= "2.15.1") {
 #'   - `family`: (if set) Family
 #'   - `genus`: Genus
 #'   - `species`: Species
-#'   - `meanWD`: Mean wood density
-#'   - `sdWD`: Standard deviation of the wood density that can be used in error propagation
+#'   - `meanWD` (g/cm^3): Mean wood density
+#'   - `sdWD` (g/cm^3): Standard deviation of the wood density that can be used in error propagation
 #' (see [sd_10] and [AGBmonteCarlo()])
 #'   - `levelWD`: Level at which wood density has been calculated. Can be species, genus, family,
 #' dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)

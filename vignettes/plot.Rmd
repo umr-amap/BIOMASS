@@ -1,5 +1,5 @@
 ---
-title: "Manage tree and plot coordinate with BIOMASS"
+title: "Manage trees and plot coordinates with BIOMASS"
 author: "Arthur Pere"
 date: "`r Sys.Date()`"
 output: 
@@ -164,9 +164,9 @@ TreeCoord <- attributeTreeCoord(
 kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
 ```
 
-If you want to have in GPS (longitude/latitude) coordinates :
+If you want to have in GPS (longitude/latitude) coordinates (need to install proj4 first) :
 ```{r}
-TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = T) )
+#TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = T) )
 ```
 ```{r echo=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")

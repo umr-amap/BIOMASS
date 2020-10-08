@@ -5,10 +5,10 @@
 #'
 #' @section Localisation:
 #' The localisation of the folder is :
-#'   - On Linux : `~/.local/share/BIOMASS`
-#'   - On Mac OS X : `~/Library/Application Support/BIOMASS`
-#'   - On Windows 7 up to 10 : `C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS`
-#'   - On Windows XP : `C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS`
+#'   - On Linux : `~/.local/share/R/BIOMASS`
+#'   - On Mac OS X : `~/Library/Application Support/R/BIOMASS`
+#'   - On Windows 7 up to 10 : `C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS\\R\\BIOMASS`
+#'   - On Windows XP : `C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS\\R\\BIOMASS`
 #'
 #' See this function for more information : [rappdirs::user_data_dir()]
 #'
@@ -79,7 +79,7 @@ cacheManager <- function(nameFile) {
 #' @keywords Internal
 cachePath <- function(path = NULL) {
   # give the path of the cache
-  basePath <- user_data_dir("BIOMASS")
+  basePath <- user_data_dir("R/BIOMASS")
   if (!is.null(path)) {
     basePath <- file.path(basePath, path)
   }
@@ -114,6 +114,13 @@ checkTime <- function() {
 }
 
 
+#' @keywords  Internal
+flushCache <- function() {
+  
+  basePath <- cachePath()
+  
+  if (dir.exists(basePath)) unlink(basePath, recursive = T, force = F)
+}
 
 
 
@@ -190,7 +197,7 @@ updateCache <- function(nameFile = NULL) {
   warning = function(cond) {
     zip_url <- zip_urls[[nameFile]]
     if (is.null(zip_url)) {
-      stop("You demand something we do not understand.")
+      stop("URL is not found")
     }
 
     downloadZip(zip_url, path)

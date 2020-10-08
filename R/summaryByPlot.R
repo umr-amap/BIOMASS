@@ -31,7 +31,7 @@ if (getRversion() >= "2.15.1") {
 #'   - `Cred_2.5`: the quantile 2.5\% for the plot (when output of [AGBmonteCarlo()] is used)
 #'   - `Cred_97.5`: the quantile 97.5\% for the plot (when output of [AGBmonteCarlo()] is used)
 #'
-#' If the `subplot` is set, the output is a list with the previous data frame and an [sf::st_sf()].
+#' If the `subplot` is set, the output is a list with the previous data frame and a simple features (sf) geometry object.
 #'
 #'
 #' @export

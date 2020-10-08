@@ -20,10 +20,10 @@ placed in this folder.
 
 The localisation of the folder is :
 \itemize{
-\item On Linux : \code{~/.local/share/BIOMASS}
-\item On Mac OS X : \code{~/Library/Application Support/BIOMASS}
-\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\BIOMASS\\BIOMASS}
-\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\BIOMASS\\BIOMASS}
+\item On Linux : \code{~/.local/share/R/BIOMASS}
+\item On Mac OS X : \code{~/Library/Application Support/R/BIOMASS}
+\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS\\R\\BIOMASS}
+\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS\\R\\BIOMASS}
 }
 
 See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}

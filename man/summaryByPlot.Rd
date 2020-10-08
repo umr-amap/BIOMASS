@@ -25,7 +25,7 @@ a data frame where:
 \item \code{Cred_97.5}: the quantile 97.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 }
 
-If the \code{subplot} is set, the output is a list with the previous data frame and an \code{\link[sf:st_sf]{sf::st_sf()}}.
+If the \code{subplot} is set, the output is a list with the previous data frame and a simple features (sf) geometry object.
 }
 \description{
 This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums

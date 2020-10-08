@@ -144,7 +144,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
 
-  ########### sending and retrive the data from taxosaurus
+  ########### sending and retrieve the data from taxosaurus
 
   tc <- function(l) Filter(Negate(is.null), l)
   con_utf8 <- function(x) httr::content(x, "text", encoding = "UTF-8")
