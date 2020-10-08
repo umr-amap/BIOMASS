@@ -7,14 +7,14 @@
 #' GPS coordinates should be either given in longitude latitude (longlat) or in projected coordinates (projCoord)
 #'
 #'
-#' @param longlat (optionnal) data frame with the coordinates in longitude latitude (e.g., cbind(longitude, latitude)).
-#' @param projCoord (optionnal) data frame with the projected coordinates (e.g., cbind(X, Y))
-#' @param coordRel data frame with the plot's relative coordinates corresponding to the longlat or projCoord GPS measurements
-#' @param rangeX a vector of length 2 giving the size of the plot along the X coordinates
-#' @param rangeY a vector of length 2 giving the size of the plot along the Y coordinates
+#' @param longlat (optional) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).
+#' @param projCoord (optional) data frame with the projected coordinate in X Y
+#' @param coordRel data frame with the relative coordinate in the same order than the longlat or projCoord
+#' @param rangeX a vector of length 2 giving the range for plot relative X coordinates
+#' @param rangeY a vector of length 2 giving the range for plot relative Y coordinates
 #' @param maxDist a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 15 m)
-#' @param drawPlot a logical: if true, a graphical representation will be displayed
-#' @param rmOutliers a logical: if true, outliers will be removed from coordinates calculation (default)
+#' @param drawPlot a logical if you want to display a graphical representation
+#' @param rmOutliers a logical if you want to remove the outliers from coordinates calculation
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
 #'

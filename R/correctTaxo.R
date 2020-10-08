@@ -42,7 +42,7 @@ if (getRversion() >= "2.15.1") {
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium standleanum")
 #' }
-#' 
+#'
 #' @export
 #' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF setDT rbindlist
 #' @importFrom rappdirs user_data_dir

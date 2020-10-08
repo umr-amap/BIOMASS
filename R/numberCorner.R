@@ -14,8 +14,8 @@ if (getRversion() >= "2.15.1") {
 #'   - axis Y: the corner 1 to the corner 4
 #'
 #'
-#' @param longlat (optionnal) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).
-#' @param projCoord (optionnal) data frame with the projected coordinates in X Y
+#' @param longlat (optional) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).
+#' @param projCoord (optional) data frame with the projected coordinates in X Y
 #' @param plot A vector of codes (names) of the plots
 #' @param origin A logical vector with TRUE corresponding of the origin of the axis of each plot.
 #' @param clockWise A logical, whether the numbering should be done in a clockwise (TRUE) or counterclockwise (FALSE) way.
@@ -33,18 +33,18 @@ if (getRversion() >= "2.15.1") {
 #' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
 #' plot <- rep("plot1", 4)
 #' origin <- c(FALSE, FALSE, TRUE, FALSE)
-#' 
+#'
 #' # if you turn clock wise
 #' corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = TRUE)
-#' 
+#'
 #' # Plot the plot
 #' plot(coord, asp = 1)
 #' text(coord, labels = corner$corner, pos = 1)
-#' 
-#' 
+#'
+#'
 #' # Using a counterclockwise way
 #' corner <- numberCorner(projCoord = coord, plot = plot, origin = origin, clockWise = FALSE)
-#' 
+#'
 #' # Plot the plot
 #' plot(coord, asp = 1)
 #' text(coord, labels = corner$corner, pos = 1)

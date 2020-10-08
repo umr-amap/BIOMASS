@@ -16,7 +16,7 @@ coordRel <- data.frame(
 context("correct coord GPS")
 test_that("correct coord GPS in UTM", {
 
-  # whith max dist equal 10
+  # with max dist equal 10
   expect_warning(
     correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100),rmOutliers = FALSE),
     "Be carefull, you may have GNSS measurement outliers"
@@ -102,7 +102,7 @@ test_that("correct coord GPS in long lat", {
     inverse = T
   ))
 
-  # whith max dist equal 10
+  # with max dist equal 10
   expect_warning(
     correctCoordGPS(longlat = longlat, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100),rmOutliers = FALSE),
     "Be carefull, you may have GNSS measurement outliers"

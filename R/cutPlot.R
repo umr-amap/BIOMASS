@@ -10,9 +10,9 @@ if (getRversion() >= "2.15.1") {
 #' coordinates of the grid in return.
 #' This function uses a procrustes analysis to fit the rectangle you gave to the plot you have.
 #'
-#' @param projCoord A data frame with the projected coordinates with X and Y on the first and second colonne respectively
+#' @param projCoord A data frame with the projected coordinates with X and Y on the first and second column respectively
 #' @param plot Vector with the code of the plot
-#' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
+#' @param corner Vector with the corner numbered from 1 to 4 for each plot, the numbered must be counted clockwise
 #' (see the result of the [numberCorner()])
 #' @param gridsize The size of the grid
 #' @param dimX A vector of the real size for the X axis for the plot (can be given one value it will be replicate for each plot)
@@ -20,7 +20,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @return This function return a data frame with :
 #'   - `plot`:  The code of the plot you use
-#'   - `subplot`:  The code of the subplot automaticaly generated
+#'   - `subplot`:  The code of the subplot automatically generated
 #'   - `XRel`:  The relative coordinate for the axis X (following the corner 1->2) for the plot
 #'   - `YRel`:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
 #'   - `XAbs`:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
@@ -30,13 +30,13 @@ if (getRversion() >= "2.15.1") {
 #' @author Arthur PERE
 #' @importFrom data.table data.table :=
 #' @examples
-#' 
+#'
 #' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
 #' corner <- c(1, 2, 4, 3)
 #' plot <- rep("plot1", 4)
-#' 
+#'
 #' cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
-#' 
+#'
 #' # plot the result
 #' plot(coord, main = "example", xlim = c(4900, 5300), ylim = c(4900, 5300), asp = 1)
 #' text(coord, labels = corner, pos = 1)

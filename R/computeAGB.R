@@ -22,7 +22,7 @@
 #' 2) If no tree height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014 (see Réjou-Méchain et al. 2017):
 #'  \deqn{AGB = exp(-2.024- 0.896*E + 0.920*log(WD) + 2.795*log(D) - 0.0461*(log(D)^2))} where `E` is a measure of environmental stress estimated from the site coordinates (`coord`).
 #'
-#' @return The function returns the ABG in Mg (or ton).
+#' @return The function returns the AGB in Mg (or ton).
 #' @export
 #' @references
 #' Chave et al. (2014) _Improved allometric models to estimate the aboveground biomass of tropical trees_,
@@ -34,10 +34,10 @@
 #' D <- 10:99
 #' WD <- runif(length(D), min = 0.1, max = 1)
 #' H <- D^(2 / 3)
-#' 
+#'
 #' # If you have height data
 #' AGB <- computeAGB(D, WD, H)
-#' 
+#'
 #' # If you do not have height data and a single site
 #' lat <- 4.08
 #' long <- -52.68
@@ -45,7 +45,7 @@
 #' \dontrun{
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
-#' 
+#'
 #' # If you do not have height data and several sites (here three)
 #' lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 #' long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
@@ -53,7 +53,7 @@
 #' \dontrun{
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
-#' 
+#'
 #' @keywords AGB above-ground biomass forest carbon allometry
 
 computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
@@ -72,7 +72,7 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
       warning("NA values in D")
     }
     if (anyNA(H) & !anyNA(D)) {
-      warning("There is some NA values in given heights. For those trees the function will return NA AGB, 
+      warning("There is some NA values in given heights. For those trees the function will return NA AGB,
                you may construct a height-diameter model to overcome that issue (see ?HDFunction and ?retrieveH)")
     }
   }
@@ -80,7 +80,7 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
   if (!is.null(coord) && ((is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != length(D)))) {
     stop("coord should be either
              - a vector (e.g. c(longitude, latitude))
-             - a matrix with two columns (longitude and latitude) 
+             - a matrix with two columns (longitude and latitude)
              having the same number of rows as the number of trees (length(D))")
   }
 

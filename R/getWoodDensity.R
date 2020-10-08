@@ -46,7 +46,7 @@ if (getRversion() >= "2.15.1") {
 #'  combined with the global wood density database. The dataframe should be organized
 #'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth
 #'  column "family" is optional.
-#' @param verbose A logical, give some statistic whith the database
+#' @param verbose A logical, give some statistic with the database
 #'
 #' @details
 #' The function assigns to each taxon a species- or genus- level average if at least

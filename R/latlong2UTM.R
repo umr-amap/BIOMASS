@@ -8,7 +8,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @inheritParams computeE
 #'
-#' @return a data frame whith :
+#' @return a data frame with :
 #'    - `long`: The longitude of the entry
 #'    - `lat`: The latitude of the entry
 #'    - `codeUTM`: The code `proj` for UTM

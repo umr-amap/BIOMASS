@@ -1,6 +1,6 @@
 #' Propagating above-ground biomass (AGB) or carbon (AGC) errors to the stand level
 #'
-#' Propagation of the errors throughought the steps needed to compute AGB or AGC.
+#' Propagation of the errors throughout the steps needed to compute AGB or AGC.
 #'
 #' @param D Vector of tree diameters (in cm)
 #' @param WD Vector of wood density estimates (in g/cm3)
@@ -44,15 +44,15 @@
 #' # Load a database
 #' data(NouraguesHD)
 #' data(KarnatakaForest)
-#' 
+#'
 #' # Modelling height-diameter relationship
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
-#' 
+#'
 #' # Retrieving wood density values
 #' KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
 #'   stand = KarnatakaForest$plotId
 #' )
-#' 
+#'
 #' # Propagating errors with a standard error in wood density in one plot
 #' filt <- KarnatakaForest$plotId == "BSP20"
 #' set.seed(10)
@@ -61,7 +61,7 @@
 #'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 #' )
 #' str(resultMC)
-#' 
+#'
 #' # If only the coordinates are available
 #' lat <- KarnatakaForest$lat[filt]
 #' long <- KarnatakaForest$long[filt]
@@ -73,7 +73,7 @@
 #' )
 #' str(resultMC)
 #' }
-#' 
+#'
 #' # Propagating errors with a standard error in wood density in all plots at once
 #' KarnatakaForest$meanWD <- KarnatakaWD$meanWD
 #' KarnatakaForest$sdWD <- KarnatakaWD$sdWD
@@ -88,7 +88,7 @@
 #' meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
 #' credperplot <- sapply(resultMC, "[", 4)
 #' }
-#' 
+#'
 #' @keywords monte carlo
 #' @importFrom stats pnorm qnorm runif
 #' @export
@@ -137,7 +137,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 
   if (!is.null(H)) {
     if (is.null(errH)) {
-      stop("Cannot propagate height errors without information on associated errors (errH is null), 
+      stop("Cannot propagate height errors without information on associated errors (errH is null),
          if you do not want to propagate H errors please set errH to 0")
     }
     if (length(H) != len || !(length(errH) %in% c(1, len))) {
@@ -148,7 +148,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   if (!is.null(coord) && ((is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != len))) {
     stop("coord should be either
              - a vector (e.g. c(longitude, latitude))
-             - a matrix with two columns (longitude and latitude) 
+             - a matrix with two columns (longitude and latitude)
              having the same number of rows as the number of trees (length(D))")
   }
 
