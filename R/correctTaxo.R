@@ -29,6 +29,7 @@ if (getRversion() >= "2.15.1") {
 #' @param score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
 #' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
 #' @param verbose logical. If TRUE various messages are displayed during process
+#' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy change over time.
 #'
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
@@ -49,7 +50,7 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE, accepted=FALSE) {
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
   BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to tnrs
 
@@ -67,6 +68,11 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       stop("You should provide two vectors of genera and species of the same length")
     }
     species[is.na(genus)] <- NA
+  }
+  
+  if(accepted && !is.null(useCache) && useCache) {
+    warning("Cache cannot be used if accepted names are required! I will ignore it")
+    useCache <- FALSE
   }
 
   # Check if package httr is available
@@ -228,12 +234,21 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
 
   # inject taxo names in original (user provided) taxonomy
-  userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
-    outName = ifelse(score >= ..score, matchedName, query),
-    nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
-    from = from
-  )]
-
+  if(accepted) {
+    userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
+      outName = ifelse(score >= ..score, acceptedName, query),
+      nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
+      from = from
+    )]
+    
+  } else {
+    userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
+      outName = ifelse(score >= ..score, matchedName, query),
+      nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
+      from = from
+    )]
+  }
+  
   # if nothing changed tell it
   userTaxo[
     !is.na(outName) & (outName == query) & (nameModified != "NoMatch(low_score)"),
