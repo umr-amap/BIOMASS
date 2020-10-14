@@ -29,7 +29,7 @@ if (getRversion() >= "2.15.1") {
 #' @param score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
 #' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
 #' @param verbose logical. If TRUE various messages are displayed during process
-#' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy change over time.
+#' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.
 #'
 #' @return The function returns a dataframe with the corrected (or not) genera and species.
 #'
