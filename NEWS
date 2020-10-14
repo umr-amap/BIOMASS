@@ -1,6 +1,7 @@
 * version 2.1.3.9000
 - replaced taxosaurus with TNRS for name resolution
 - spell check documentation (thank you Mauro)
+- fix an issue with summaryByPlot when a plot contains a single tree
 
 * version 2.1.3
 - 
