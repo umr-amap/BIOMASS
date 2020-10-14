@@ -149,8 +149,14 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
     # function summary --------------------------------------------------------
 
     mySummary <- function(x, matrix) {
+      
+      # deal with plots with only one tree individual
+      if(!is.null(nrow(matrix[x, ]))){
       resAGB <- colSums(matrix[x, ], na.rm = T)
-
+      }else{
+        resAGB <-matrix[x, ]
+      }
+      
       # if there is trees without label
       if (nrow(indice_tree) != 0) {
         subsample <- samples[x[1] == indice_line, ]
