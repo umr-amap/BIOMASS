@@ -42,8 +42,8 @@ install.packages("BIOMASS")
 The latest version from Github (in development):
 
 ``` r
-install.packages("devtools")
-devtools::install_github("umr-amap/BIOMASS")
+install.packages("remotes")
+remotes::install_github('umr-amap/BIOMASS')
 ```
 
 To use it :
