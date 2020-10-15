@@ -121,7 +121,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     stop("Your family vector and your genus/species vectors do not have the same length")
 
     if (any(colSums(table(family, genus) > 0, na.rm = T) >= 2)) {
-      stop("One or more of your genus are in two or more family")
+      stop("Some genera are in two or more families")
     }
   }
 
@@ -147,6 +147,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   # Load the mean standard deviation observed at the species, Genus or Family level
   # in the Dryad dataset when at least 10 individuals are considered
   sd_10 <- setDT(copy(BIOMASS::sd_10))
+  sd_tot <- sd(wdData$wd)
 
   Region <- tolower(region)
   if ((Region != "world") && any(is.na(chmatch(Region, tolower(wdData$regionId))))) {
@@ -335,7 +336,12 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     )
   ]
 
+  # Deal with NA or zero values in sdWD (adopt the most conservative approach assigning the sd over the full wdData dataset)
+  #(very specific cases where no or only one species co-occur with unidentified individuals in the plot)
+  inputData[is.na(sdWD) | sdWD==0, sdWD:=sd_tot]
+  
+  # Convert to a dataframe
   result <- setDF(inputData[, .(family, genus, species, meanWD, sdWD, levelWD, nInd)])
-
+  
   return(result)
 }
