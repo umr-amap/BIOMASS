@@ -179,7 +179,7 @@ AGBtree <- computeAGB(
   H = KarnatakaForestsub$H
 )
 ```
-**Compute AGB(Mg) per plot**
+**Compute AGB(Mg) per plot (need to be divided by plot area to get Mg/ha)**
 ```{r warning=F, cache=CACHE}
 AGBplot <- summaryByPlot(AGBtree, KarnatakaForestsub$plotId)
 ```
@@ -216,7 +216,7 @@ KarnatakaForestsub$HfeldRSE <- dataHfeld$RSE
 resultMC <- AGBmonteCarlo(D = KarnatakaForestsub$D, WD = KarnatakaForestsub$WD, errWD = KarnatakaForestsub$sdWD, HDmodel = HDmodel, Dpropag = "chave2004")
 Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
 Res <- Res[order(Res$AGB), ]
-plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
+plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
 
@@ -236,7 +236,7 @@ resultMC <- AGBmonteCarlo(
 
 Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
 Res <- Res[order(Res$AGB), ]
-plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
+plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
 
@@ -251,7 +251,7 @@ resultMC <- AGBmonteCarlo(
 )
 Res <- summaryByPlot(resultMC$AGB_simu, KarnatakaForestsub$plotId)
 Res <- Res[order(Res$AGB), ]
-plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
+plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
 
@@ -270,7 +270,7 @@ filt <- is.na(NouraguesHD$Hmix)
 NouraguesHD$Hmix[filt] <- retrieveH(NouraguesHD$D, model = HDmodel)$H[filt]
 NouraguesHD$RSEmix[filt] <- HDmodel$RSE
 ```
-(@) Apply the AGBmonteCarlo by setting the height values and their errors (which depend on wether the tree was directly measured or estimated)
+(@) Apply the AGBmonteCarlo by setting the height values and their errors (which depend on whether the tree was directly measured or estimated)
 ```{r eval=F, cache=CACHE}
 wd <- getWoodDensity(NouraguesHD$genus, NouraguesHD$species)
 resultMC <- AGBmonteCarlo(
