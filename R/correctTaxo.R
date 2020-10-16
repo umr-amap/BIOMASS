@@ -1,8 +1,8 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
-    "query", "from", "submittedName", "slice", ".I",
-    "..score", "matchedName", "outName", "nameModified",
-    "genusCorrected", "speciesCorrected", "acceptedName",
+    "query", "from", "submittedName", "nameSubmitted","slice", ".I",
+    "..score", "matchedName", "outName", "nameModified", "scientificScore",
+    "genusCorrected", "speciesCorrected", "acceptedName", "nameScientific",
     ".N", "."
   ))
 }
