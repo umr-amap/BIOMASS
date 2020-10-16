@@ -4,11 +4,13 @@
 \name{apgFamilies}
 \alias{apgFamilies}
 \title{Angiosperm Phylogeny Group (APG III) dataset}
-\format{A data frame with 502 observations on the following 2 variables:
+\format{
+A data frame with 502 observations on the following 2 variables:
 \itemize{
 \item \code{order}: Vector of order
 \item \code{famAPG}: Vector of APGIII families
-}}
+}
+}
 \source{
 Stevens, P. F. (2001 onwards). \emph{Angiosperm Phylogeny Website}.
 Version 12, July 2012. Retrieved on 2016-07-25 http://www.mobot.org/MOBOT/research/APweb/

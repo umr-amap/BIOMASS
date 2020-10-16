@@ -7,9 +7,9 @@
 numberCorner(longlat = NULL, projCoord = NULL, plot, origin, clockWise)
 }
 \arguments{
-\item{longlat}{(optionnal) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).}
+\item{longlat}{(optional) data frame with the coordinates in longitude latitude (eg. cbind(longitude, latitude)).}
 
-\item{projCoord}{(optionnal) data frame with the projected coordinates in X Y}
+\item{projCoord}{(optional) data frame with the projected coordinates in X Y}
 
 \item{plot}{A vector of codes (names) of the plots}
 

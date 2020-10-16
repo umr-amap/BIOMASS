@@ -9,7 +9,8 @@ correctTaxo(
   species = NULL,
   score = 0.5,
   useCache = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  accepted = FALSE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ or (genus + species + author) may be given (see example).}
 \item{useCache}{logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)}
 
 \item{verbose}{logical. If TRUE various messages are displayed during process}
+
+\item{accepted}{logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.}
 }
 \value{
 The function returns a dataframe with the corrected (or not) genera and species.

@@ -4,7 +4,8 @@
 \name{NouraguesHD}
 \alias{NouraguesHD}
 \title{Height-Diameter data}
-\format{A data frame with 1051 observations on the following variables :
+\format{
+A data frame with 1051 observations on the following variables :
 \itemize{
 \item \code{plotId}: Names of the plots
 \item \code{genus}: Genus
@@ -13,7 +14,8 @@
 \item \code{H}: Height (m)
 \item \code{lat}: Latitude
 \item \code{long}: Longitude
-}}
+}
+}
 \usage{
 data("NouraguesHD")
 }

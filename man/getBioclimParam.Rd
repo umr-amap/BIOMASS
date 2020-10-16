@@ -21,7 +21,7 @@ the Climatic Water Deficit (CWD), the Temperature Seasonality (TS) and the Preci
 }
 \details{
 The function is time-consuming at its first use as it downloads three raster files (one for each of
-the parameter) which are then stored in forders named wc2-5 and CWD (see Localisation).
+the parameter) which are then stored in folders named wc2-5 and CWD (see Localisation).
 
 However, as soon as the raster is downloaded once, the function then runs fast.
 }
@@ -29,10 +29,10 @@ However, as soon as the raster is downloaded once, the function then runs fast.
 
 The localisation of the folder is :
 \itemize{
-\item On Linux : \code{~/.local/share/R/BIOMASS}
-\item On Mac OS X : \code{~/Library/Application Support/R/BIOMASS}
-\item On Windows 7 up to 10 : \code{C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS\\R\\BIOMASS}
-\item On Windows XP : \code{C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS\\R\\BIOMASS}
+\item On Linux : \verb{~/.local/share/R/BIOMASS}
+\item On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
+\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
+\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
 }
 
 See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}

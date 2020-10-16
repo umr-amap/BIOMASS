@@ -4,15 +4,14 @@
 \alias{cutPlot}
 \title{Divides a plot in subplots}
 \usage{
-cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
-  dimY = 200)
+cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
 }
 \arguments{
-\item{projCoord}{A data frame with the projected coordinates with X and Y on the first and second colonne respectively}
+\item{projCoord}{A data frame with the projected coordinates with X and Y on the first and second column respectively}
 
 \item{plot}{Vector with the code of the plot}
 
-\item{corner}{Vector with the corner numbered from 1 to 4 for each plot, the numbered must be conter clockwise
+\item{corner}{Vector with the corner numbered from 1 to 4 for each plot, the numbered must be counted clockwise
 (see the result of the \code{\link[=numberCorner]{numberCorner()}})}
 
 \item{gridsize}{The size of the grid}
@@ -25,7 +24,7 @@ cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200,
 This function return a data frame with :
 \itemize{
 \item \code{plot}:  The code of the plot you use
-\item \code{subplot}:  The code of the subplot automaticaly generated
+\item \code{subplot}:  The code of the subplot automatically generated
 \item \code{XRel}:  The relative coordinate for the axis X (following the corner 1->2) for the plot
 \item \code{YRel}:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
 \item \code{XAbs}:  The absolute coordinate (projected) for the axis X (following the corner 1->2)

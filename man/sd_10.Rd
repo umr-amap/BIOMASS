@@ -4,11 +4,13 @@
 \name{sd_10}
 \alias{sd_10}
 \title{Mean standard deviation of wood density estimates at different taxonomic levels}
-\format{A data frame with 3 observations on the following 2 variables:
+\format{
+A data frame with 3 observations on the following 2 variables:
 \itemize{
 \item \code{taxo}: Character vector with the different taxonomical levels (family, genus, species)
 \item \code{sd}: Numeric vector giving the mean standard deviation of wood density values
-}}
+}
+}
 \usage{
 data("sd_10")
 }

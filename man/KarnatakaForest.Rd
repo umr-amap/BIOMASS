@@ -4,7 +4,8 @@
 \name{KarnatakaForest}
 \alias{KarnatakaForest}
 \title{Karnataka forest dataset}
-\format{A data frame with 65889 observations on the following 8 variables :
+\format{
+A data frame with 65889 observations on the following 8 variables :
 \itemize{
 \item \code{plotId}: Names of the plots
 \item \code{treeId}: Tree Id, contains a letter (A, B, C...) when an individual has multiple stems
@@ -14,7 +15,8 @@
 \item \code{D}: Diameter (cm)
 \item \code{lat}: Latitude
 \item \code{long}: Longitude
-}}
+}
+}
 \usage{
 data("KarnatakaForest")
 }

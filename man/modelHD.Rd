@@ -4,8 +4,7 @@
 \alias{modelHD}
 \title{Fitting height-diameter models}
 \usage{
-modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE,
-  plot = NULL)
+modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL)
 }
 \arguments{
 \item{D}{Vector with diameter measurements (in cm). NA values are accepted but a

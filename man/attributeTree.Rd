@@ -18,7 +18,7 @@ A vector with the code of the subplot for each trees, the code will be \code{plo
 where the tree is inside the plot in regards to the corresponding subplot.
 }
 \description{
-Fonction to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
+Function to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 }
 \examples{
 

@@ -23,7 +23,7 @@ proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} ar
 (all diameter below \code{Dlim} will have a 0 value in the output).}
 }
 \value{
-The function returns the ABG in Mg (or ton).
+The function returns the AGB in Mg (or ton).
 }
 \description{
 This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.

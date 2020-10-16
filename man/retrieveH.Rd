@@ -4,8 +4,7 @@
 \alias{retrieveH}
 \title{Retrieving tree height from models}
 \usage{
-retrieveH(D, model = NULL, coord = NULL, region = NULL,
-  plot = NULL)
+retrieveH(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
 }
 \arguments{
 \item{D}{Vector of diameters.}
@@ -55,9 +54,8 @@ model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 H <- retrieveH(D = NouraguesHD$D, model = model)
 
 # If the only data available are the coordinates of your spot
-lat <- 4.08
-long <- -52.68
-coord <- cbind(long, lat)
+n <- length(NouraguesHD$D)
+coord <- cbind(long = rep(-52.68, n), lat = rep(4.08, n))
 \dontrun{
 H <- retrieveH(D = NouraguesHD$D, coord = coord)
 }

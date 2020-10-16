@@ -4,7 +4,8 @@
 \name{param_7}
 \alias{param_7}
 \title{Posterior distribution of parameters associated with the equation 7 by Chave et al. 2014.}
-\format{A data frame with 1001 observations on the following 9 variables.
+\format{
+A data frame with 1001 observations on the following 9 variables.
 \itemize{
 \item \code{intercept}: Vector of intercept values
 \item \code{logwsg}: Vector of the model coefficients associated with log(wood density)
@@ -15,7 +16,8 @@
 \item \code{temp}: Vector of the model coefficients associated with temperature seasonality
 \item \code{cwd}: Vector of the model coefficients associated with climatic water deficit
 \item \code{prec}: Vector of the model coefficients associated with precipitation seasonality
-}}
+}
+}
 \usage{
 data("param_7")
 }

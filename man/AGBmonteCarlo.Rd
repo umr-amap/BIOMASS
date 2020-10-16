@@ -4,9 +4,20 @@
 \alias{AGBmonteCarlo}
 \title{Propagating above-ground biomass (AGB) or carbon (AGC) errors to the stand level}
 \usage{
-AGBmonteCarlo(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-  HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-  Carbon = FALSE, Dlim = NULL, plot = NULL)
+AGBmonteCarlo(
+  D,
+  WD = NULL,
+  errWD = NULL,
+  H = NULL,
+  errH = NULL,
+  HDmodel = NULL,
+  coord = NULL,
+  Dpropag = NULL,
+  n = 1000,
+  Carbon = FALSE,
+  Dlim = NULL,
+  plot = NULL
+)
 }
 \arguments{
 \item{D}{Vector of tree diameters (in cm)}
@@ -47,12 +58,12 @@ Returns a list  with (if Carbon is FALSE):
 \item \code{meanAGB}: Mean stand AGB value following the error propagation
 \item \code{medAGB}: Median stand AGB value following the error propagation
 \item \code{sdAGB}: Standard deviation of the stand AGB value following the error propagation
-\item \code{credibilityAGB}: Credibility interval at 95\% of the stand AGB value following the error propagation
+\item \code{credibilityAGB}: Credibility interval at 95\\% of the stand AGB value following the error propagation
 \item \code{AGB_simu}: Matrix with the AGB of the trees (rows) times the n iterations (columns)
 }
 }
 \description{
-Propagation of the errors throughought the steps needed to compute AGB or AGC.
+Propagation of the errors throughout the steps needed to compute AGB or AGC.
 }
 \details{
 See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.

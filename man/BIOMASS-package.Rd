@@ -157,8 +157,8 @@ Methods in Ecology and Evolution, 8(9), 1163-1167.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/AMAP-dev/BIOMASS}
-  \item Report bugs at \url{https://github.com/AMAP-dev/BIOMASS/issues}
+  \item \url{https://github.com/umr-amap/BIOMASS}
+  \item Report bugs at \url{https://github.com/umr-amap/BIOMASS/issues}
 }
 
 }
@@ -168,7 +168,7 @@ Useful links:
 Authors:
 \itemize{
   \item Arthur Pere \email{arthur.pere@cirad.fr}
-  \item Guillaume Cornu \email{gcornu@cirad.fr} (0000-0002-7523-5176)
+  \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
   \item Ariane Tanguy
   \item Camille Piponiot
   \item Bruno Hérault \email{bruno.herault@cirad.fr}

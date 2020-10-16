@@ -4,13 +4,15 @@
 \name{feldCoef}
 \alias{feldCoef}
 \title{Feldpausch et al. 2012 coefficients for generalized height-diameter models}
-\format{A data frame with 12 observations on the following 4 variables:
+\format{
+A data frame with 12 observations on the following 4 variables:
 \itemize{
 \item \code{a}: Coefficient a
 \item \code{b}: Coefficient b
 \item \code{c}: Coefficient c
 \item \code{RSE}: Vector of RSE
-}}
+}
+}
 \usage{
 data("feldCoef")
 }

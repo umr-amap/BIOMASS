@@ -4,25 +4,33 @@
 \alias{correctCoordGPS}
 \title{Correct the GPS coordinates}
 \usage{
-correctCoordGPS(longlat = NULL, projCoord = NULL, coordRel, rangeX,
-  rangeY, maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE)
+correctCoordGPS(
+  longlat = NULL,
+  projCoord = NULL,
+  coordRel,
+  rangeX,
+  rangeY,
+  maxDist = 15,
+  drawPlot = FALSE,
+  rmOutliers = TRUE
+)
 }
 \arguments{
-\item{longlat}{(optionnal) data frame with the coordinates in longitude latitude (e.g., cbind(longitude, latitude)).}
+\item{longlat}{(optional) data frame with the coordinate in longitude latitude (eg. cbind(longitude, latitude)).}
 
-\item{projCoord}{(optionnal) data frame with the projected coordinates (e.g., cbind(X, Y))}
+\item{projCoord}{(optional) data frame with the projected coordinate in X Y}
 
-\item{coordRel}{data frame with the plot's relative coordinates corresponding to the longlat or projCoord GPS measurements}
+\item{coordRel}{data frame with the relative coordinate in the same order than the longlat or projCoord}
 
-\item{rangeX}{a vector of length 2 giving the size of the plot along the X coordinates}
+\item{rangeX}{a vector of length 2 giving the range for plot relative X coordinates}
 
-\item{rangeY}{a vector of length 2 giving the size of the plot along the Y coordinates}
+\item{rangeY}{a vector of length 2 giving the range for plot relative Y coordinates}
 
 \item{maxDist}{a numeric giving the maximum distance above which GPS measurements should be considered as outliers (by default 15 m)}
 
-\item{drawPlot}{a logical: if true, a graphical representation will be displayed}
+\item{drawPlot}{a logical if you want to display a graphical representation}
 
-\item{rmOutliers}{a logical: if true, outliers will be removed from coordinates calculation (default)}
+\item{rmOutliers}{a logical if you want to remove the outliers from coordinates calculation}
 }
 \value{
 If there are no outliers or rmOutliers = TRUE, a list with:

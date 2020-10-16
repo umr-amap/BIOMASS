@@ -4,8 +4,15 @@
 \alias{getWoodDensity}
 \title{Estimating wood density}
 \usage{
-getWoodDensity(genus, species, stand = NULL, family = NULL,
-  region = "World", addWoodDensityData = NULL, verbose = TRUE)
+getWoodDensity(
+  genus,
+  species,
+  stand = NULL,
+  family = NULL,
+  region = "World",
+  addWoodDensityData = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{genus}{Vector of genus names}
@@ -46,7 +53,7 @@ combined with the global wood density database. The dataframe should be organize
 in a dataframe with three (or four) columns: "genus","species","wd", the fourth
 column "family" is optional.}
 
-\item{verbose}{A logical, give some statistic whith the database}
+\item{verbose}{A logical, give some statistic with the database}
 }
 \value{
 Returns a dataframe containing the following information:

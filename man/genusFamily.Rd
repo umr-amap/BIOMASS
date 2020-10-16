@@ -4,11 +4,13 @@
 \name{genusFamily}
 \alias{genusFamily}
 \title{Genus Family database}
-\format{A data frame with 28107 observations on the following 2 variables:
+\format{
+A data frame with 28107 observations on the following 2 variables:
 \itemize{
 \item \code{family}: Vector of families APGIII corrected
 \item \code{genus}: Vector of genus
-}}
+}
+}
 \source{
 WCSP (2015). \emph{World Checklist of Selected Plant Families}.
 Facilitated by the Royal Botanic Gardens, Kew. Published on the Internet; http://apps.kew.org/wcsp/ Retrieved 2015-12-17.

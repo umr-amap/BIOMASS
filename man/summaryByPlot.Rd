@@ -21,8 +21,8 @@ a data frame where:
 \itemize{
 \item \code{plot}: the code of the plot
 \item \code{AGB}: AGB value at the plot level
-\item \code{Cred_2.5}: the quantile 2.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
-\item \code{Cred_97.5}: the quantile 97.5\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
+\item \code{Cred_2.5}: the quantile 2.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
+\item \code{Cred_97.5}: the quantile 97.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 }
 
 If the \code{subplot} is set, the output is a list with the previous data frame and a simple features (sf) geometry object.

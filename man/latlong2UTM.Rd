@@ -10,7 +10,7 @@ latlong2UTM(coord)
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
 }
 \value{
-a data frame whith :
+a data frame with :
 \itemize{
 \item \code{long}: The longitude of the entry
 \item \code{lat}: The latitude of the entry

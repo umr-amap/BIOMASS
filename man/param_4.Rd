@@ -4,12 +4,14 @@
 \name{param_4}
 \alias{param_4}
 \title{Posterior distribution of Chave et al.'s 2014 equation 4 parameters}
-\format{A data frame with 1001 observations on the following 3 variables.
+\format{
+A data frame with 1001 observations on the following 3 variables.
 \itemize{
 \item \code{intercept}: Vector of intercept values
 \item \code{logagbt}: Vector of the model coefficients associated with the product wood density * diameter^2 * height
 \item \code{sd}: Vector of model residual standard error (RSE) values
-}}
+}
+}
 \usage{
 data("param_4")
 }
