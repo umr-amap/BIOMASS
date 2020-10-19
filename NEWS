@@ -3,7 +3,7 @@
 - spell check documentation (thank you Mauro)
 - fix an issue with summaryByPlot when a plot contains a single tree
 - added fetching accepted names in correctTaxo
-- removed unneeded dependency on usethis
+- removed unneeded dependencies on usethis, taxize, covr, rvest, MCMCglmm and lmfor
 
 * version 2.1.3
 - 

@@ -43,13 +43,9 @@ VignetteBuilder: knitr
 Suggests:
 	knitr, 
 	rmarkdown,
-	testthat,
-	covr,
-	httr,
-	rvest,
 	prettydoc,
-	MCMCglmm,
-	taxize,
-	lmfor,
+	testthat,
+	httr,
+	curl,
 	sf
 RoxygenNote: 7.1.1
