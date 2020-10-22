@@ -1,5 +1,8 @@
-* version 2.1.3.9000
-- replaced taxosaurus with TNRS for name resolution o, correctTaxo
+* version 2.1.4.9000
+-
+
+* version 2.1.4
+- replaced taxosaurus with TNRS for name resolution in correctTaxo
 - spell check documentation (thank you Mauro)
 - fix an issue with summaryByPlot when a plot contains a single tree
 - added fetching accepted names in correctTaxo
