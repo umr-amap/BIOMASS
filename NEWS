@@ -1,5 +1,5 @@
 * version 2.1.4.9000
--
+- updated TNRS API request code in correctTaxo (issue #25)
 
 * version 2.1.4
 - replaced taxosaurus with TNRS for name resolution in correctTaxo
