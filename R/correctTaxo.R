@@ -3,11 +3,17 @@ if (getRversion() >= "2.15.1") {
     "query", "from", "submittedName", "nameSubmitted","slice", ".I",
     "..score", "matchedName", "outName", "nameModified", "scientificScore",
     "genusCorrected", "speciesCorrected", "acceptedName", "nameScientific",
+    "Name_submitted", "Overall_score", "Name_matched", "Accepted_name",
     ".N", "."
   ))
 }
 
-#' Checking typos in names
+##%######################################################%##
+#                                                          #
+####             ' Checking typos in names              ####
+#                                                          #
+##%######################################################%##
+
 #'
 #' This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
 #'
@@ -16,8 +22,8 @@ if (getRversion() >= "2.15.1") {
 #' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
 #' to avoid the replication of time-consuming server requests.
 #'
-#' By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
-#' `options(BIOMASS.batch_size=50)` for batch size, `options(BIOMASS.wait_delay=0.5)` for delay.
+#' By default, names are queried in batches of 500, with a 0.5s delay between each query. These values can be modified using options:
+#' `options(BIOMASS.batch_size=500)` for batch size (max 1000), `options(BIOMASS.wait_delay=0.5)` for delay (in seconds).
 #'
 #'
 #' @inheritSection cacheManager Localisation
@@ -26,7 +32,7 @@ if (getRversion() >= "2.15.1") {
 #' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
 #'  or (genus + species + author) may be given (see example).
 #' @param species (optional) Vector of species to be checked (same size as the genus vector).
-#' @param score Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.
+#' @param score Score of the matching (see https://tnrs.biendata.org/instructions/) below which corrections are discarded.
 #' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
 #' @param verbose logical. If TRUE various messages are displayed during process
 #' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.
@@ -47,12 +53,12 @@ if (getRversion() >= "2.15.1") {
 #' @export
 #' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF setDT rbindlist
 #' @importFrom rappdirs user_data_dir
-#' @importFrom jsonlite fromJSON
+#' @importFrom jsonlite fromJSON toJSON
 #' @importFrom utils head
 #'
 correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE, accepted=FALSE) {
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
-  BATCH_SIZE <- getOption("BIOMASS.batch_size", 50) # number of taxa sought per request to tnrs
+  BATCH_SIZE <- min(getOption("BIOMASS.batch_size", 500), 1000) # number of taxa sought per request to tnrs (max 1000)
 
   # check parameters -------------------------------------------------
 
@@ -95,13 +101,6 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       split <- c(split, rep(NA_character_, count - length(split)))
     }
     split
-  }
-  
-  # build an http query string from parameters
-  build_qry <- function(...) {
-    dots <- list(...)
-    dots <- sapply(dots, function(p) paste0(curl::curl_escape(p), collapse = ","))
-    paste(names(dots), dots, sep="=", collapse="&")
   }
   
   # Data preparation --------------------------------------------------------
@@ -193,35 +192,57 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
       pb <- utils::txtProgressBar(style = 3)
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-      baseURL <- "http://tnrs.iplantc.org/tnrsm-svc/matchNames"
-      qryResult <- httr::GET(paste0(baseURL,"?", build_qry(retrieve="best", names=slice$query)))
+      input_json <- list(
+        opts = list(
+          # sources = jsonlite::unbox("tpl,tropicos,usda"),
+          class = jsonlite::unbox("tropicos"), 
+          mode = jsonlite::unbox("resolve"), 
+          matches = jsonlite::unbox("best")
+        ),
+        data = unname(data.frame(seq_along(slice$query),slice$query))
+      )
       
+      headers <- c(
+        'Accept' = 'application/json',
+        'Content-Type' = "application/json",
+        'charset' = "UTF-8"
+      )
+      
+      qryResult <- httr::POST(
+        "https://tnrsapi.xyz/tnrs_api.php", 
+        body = input_json,
+        httr::add_headers(.headers = headers),
+        encode="json"
+      )
+
       # check for errors
       if (httr::http_error(qryResult)) {
         httr::stop_for_status(qryResult, "connect to tnrs service. Retry maybe later")
       }
       
       # parse answer from tnrs
-      answer <- setDT(jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8"))$items)
-      
+      answer <- setDT(jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8")))
+
       # recode empty strings as NA
       answer[, names(answer) := lapply(.SD, function(x) {
         x[x==""]<-NA
         x
       })]
-      
+
       # format result
       answer <- answer[, .(
-        submittedName = nameSubmitted, 
-        score = as.numeric(scientificScore), 
-        matchedName = nameScientific,
+        submittedName = Name_submitted, 
+        score = as.numeric(Overall_score), 
+        matchedName = Name_matched,
         from = "iplant_tnrs",
-        acceptedName = acceptedName
+        acceptedName = Accepted_name
       )]
 
       if (verbose) {
         utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
       }
+      
+      Sys.sleep(WAIT_DELAY)
 
       answer
     }))
