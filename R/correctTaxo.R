@@ -282,13 +282,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   # If genera or species not found by TNRS
   # Genera
   userTaxo[
-    (nameModified == "TRUE") & is.na(genusCorrected) & !is.na(genus),
+    ((nameModified == "TRUE") | is.na(nameModified)) & is.na(genusCorrected) & !is.na(genus),
     c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")
   ]
 
   # Species
   userTaxo[
-    (nameModified %in% c("TRUE", "TaxaNotFound")) & is.na(speciesCorrected) & !is.na(species),
+    (nameModified %in% c("TRUE", "TaxaNotFound")| is.na(nameModified)) & is.na(speciesCorrected) & !is.na(species),
     `:=`(
       speciesCorrected = species,
       nameModified = ifelse(nameModified == "TRUE", "SpNotFound", nameModified)
