@@ -2,7 +2,7 @@
 % Please edit documentation in R/correctTaxo.R
 \name{correctTaxo}
 \alias{correctTaxo}
-\title{Checking typos in names}
+\title{This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).}
 \usage{
 correctTaxo(
   genus,
@@ -19,7 +19,7 @@ or (genus + species + author) may be given (see example).}
 
 \item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
 
-\item{score}{Score of the matching (see http://tnrs.iplantcollaborative.org/instructions.html#match) below which corrections are discarded.}
+\item{score}{Score of the matching (see https://tnrs.biendata.org/instructions/) below which corrections are discarded.}
 
 \item{useCache}{logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)}
 
@@ -37,8 +37,8 @@ This function corrects typos for a given taxonomic name using the Taxonomic Name
 This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
 to avoid the replication of time-consuming server requests.
 
-By default, names are queried in batches of 50, with a 0.5s delay between each query. These values can be modified using options:
-\code{options(BIOMASS.batch_size=50)} for batch size, \code{options(BIOMASS.wait_delay=0.5)} for delay.
+By default, names are queried in batches of 500, with a 0.5s delay between each query. These values can be modified using options:
+\code{options(BIOMASS.batch_size=500)} for batch size (max 1000), \code{options(BIOMASS.wait_delay=0.5)} for delay (in seconds).
 }
 \section{Localisation}{
 

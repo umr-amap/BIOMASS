@@ -29,7 +29,7 @@ For more information, see [article](https://besjournals.onlinelibrary.wiley.com/
 
 ## Citation
 
-To cite BIOMASS, please use citation("BIOMASS").
+To cite 'BIOMASS', please use citation("BIOMASS").
 
 
 ## Install BIOMASS

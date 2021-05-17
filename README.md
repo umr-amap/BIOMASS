@@ -29,7 +29,7 @@ manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
 
 ## Citation
 
-To cite BIOMASS, please use citation(“BIOMASS”).
+To cite 'BIOMASS', please use citation(“BIOMASS”).
 
 ## Install BIOMASS
 
