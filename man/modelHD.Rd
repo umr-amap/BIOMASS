@@ -36,9 +36,9 @@ volume, so that larger trees have a stronger influence during the construction o
 stand-specific HD models.}
 }
 \value{
-If you have just one plot or NULL, there will be just the one of those result. However, if there is multiple plot,
-there will be the list with the names of the plot and inside each item their is those results.
-Returns a list with if the parameter model is not null:
+If plot is NULL or has a single value, a single list is returned. If there is more than one plot,
+multiple embedded lists are returned with plots as the list names.
+Returns a list if the parameter model is not null:
 \itemize{
 \item \code{input}: list of the data used to construct the model (list(H, D))
 \item \code{model}: outputs of the model (same outputs as given by \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:nls]{stats::nls()}})
@@ -53,7 +53,7 @@ Returns a list with if the parameter model is not null:
 }
 
 If the parameter model is null, the function return a graph with all the methods for
-comparison, the function also return a data.frame with:
+comparison, the function also returns a data.frame with:
 \itemize{
 \item \code{method}: The method that had been used to construct the graph
 \item \code{color}: The color of the curve in the graph
@@ -75,7 +75,7 @@ where RSE is the Residual Standard Error).
 data(NouraguesHD)
 
 # To model the height from a dataset
-\dontrun{
+\donttest{
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
 }
 

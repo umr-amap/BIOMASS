@@ -37,7 +37,7 @@ stand-specific HD models.}
 \value{
 Returns a list  with:
 \itemize{
-\item \code{H}: H predicted by the model
+\item \code{H}: Height predicted by the model
 \item \code{RSE} Residual Standard Error of the model, or a vector of those for each plot
 }
 }
@@ -56,7 +56,7 @@ H <- retrieveH(D = NouraguesHD$D, model = model)
 # If the only data available are the coordinates of your spot
 n <- length(NouraguesHD$D)
 coord <- cbind(long = rep(-52.68, n), lat = rep(4.08, n))
-\dontrun{
+\donttestntrun[m{
 H <- retrieveH(D = NouraguesHD$D, coord = coord)
 }
 

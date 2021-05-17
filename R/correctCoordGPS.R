@@ -60,7 +60,7 @@
 #'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 #' )
-#' \dontrun{
+#' \donttest{
 #' correctCoordGPS(
 #'   projCoord = projCoord, coordRel = coordRel,
 #'   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE
@@ -69,8 +69,11 @@
 #'
 correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
                             maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE) {
-
-
+  
+  # To maintain user's original options
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+  
   # parameters verification -------------------------------------------------
 
 

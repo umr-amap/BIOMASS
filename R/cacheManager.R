@@ -14,7 +14,7 @@
 #'
 #' @param nameFile the name of the file or folder
 #'
-#' @return the path to the file we need
+#' @return the path to the file of interest (character)
 #'
 #' @author Arthur PERE
 #' @seealso [rappdirs::user_data_dir()]
@@ -133,14 +133,14 @@ flushCache <- function() {
 #'
 #' @param nameFile The name of the file you want to update. If it's `NULL` the function will update all the files.
 #'
-#' @return NULL
+#' @return No return value, called for side effects
 #' @export
 #'
 #' @author Arthur PERE
 #'
 #' @importFrom utils download.file unzip
 #' @examples
-#' \dontrun{
+#' \donttestntrun[m{
 #' updateCache()
 #' }
 updateCache <- function(nameFile = NULL) {

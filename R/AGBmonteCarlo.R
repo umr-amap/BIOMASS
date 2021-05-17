@@ -66,7 +66,7 @@
 #' lat <- KarnatakaForest$lat[filt]
 #' long <- KarnatakaForest$long[filt]
 #' coord <- cbind(long, lat)
-#' \dontrun{
+#' \donttestntrun[m{
 #' resultMC <- AGBmonteCarlo(
 #'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
 #'   errWD = KarnatakaWD$sdWD[filt], coord = coord
@@ -77,7 +77,7 @@
 #' # Propagating errors with a standard error in wood density in all plots at once
 #' KarnatakaForest$meanWD <- KarnatakaWD$meanWD
 #' KarnatakaForest$sdWD <- KarnatakaWD$sdWD
-#' \dontrun{
+#' \donttestntrun[m{
 #' resultMC <- by(
 #'   KarnatakaForest, KarnatakaForest$plotId,
 #'   function(x) AGBmonteCarlo(

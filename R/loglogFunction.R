@@ -1,4 +1,5 @@
 #' @rdname HDmethods
+#' @return Result of a model (lm object)
 #' @importFrom stats formula as.formula
 
 loglogFunction <- function(data, method) {

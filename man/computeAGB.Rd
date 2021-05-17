@@ -23,7 +23,7 @@ proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} ar
 (all diameter below \code{Dlim} will have a 0 value in the output).}
 }
 \value{
-The function returns the AGB in Mg (or ton).
+The function returns the AGB in Mg (or ton) as a single value or a vector.
 }
 \description{
 This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
@@ -50,7 +50,7 @@ AGB <- computeAGB(D, WD, H)
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{
+\donttestntrun[m{
 AGB <- computeAGB(D, WD, coord = coord)
 }
 
@@ -58,7 +58,7 @@ AGB <- computeAGB(D, WD, coord = coord)
 lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 coord <- cbind(long, lat)
-\dontrun{
+\donttestntrun[m{
 AGB <- computeAGB(D, WD, coord = coord)
 }
 

@@ -9,6 +9,9 @@ updateCache(nameFile = NULL)
 \arguments{
 \item{nameFile}{The name of the file you want to update. If it's \code{NULL} the function will update all the files.}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 This function update the cache for the environmental variables:
 \itemize{
@@ -18,7 +21,7 @@ This function update the cache for the environmental variables:
 }
 }
 \examples{
-\dontrun{
+\donttestntrun[m{
 updateCache()
 }
 }

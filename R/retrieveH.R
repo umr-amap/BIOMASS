@@ -26,7 +26,7 @@
 #' stand-specific HD models.
 #'
 #' @return Returns a list  with:
-#'   - `H`: H predicted by the model
+#'   - `H`: Height predicted by the model
 #'   - `RSE` Residual Standard Error of the model, or a vector of those for each plot
 #' @references
 #' Feldpausch et al. _Tree height integrated into pantropical forest biomass estimates_. Biogeosciences (2012): 3381-3403.
@@ -47,7 +47,7 @@
 #' # If the only data available are the coordinates of your spot
 #' n <- length(NouraguesHD$D)
 #' coord <- cbind(long = rep(-52.68, n), lat = rep(4.08, n))
-#' \dontrun{
+#' \donttestntrun[m{
 #' H <- retrieveH(D = NouraguesHD$D, coord = coord)
 #' }
 #'

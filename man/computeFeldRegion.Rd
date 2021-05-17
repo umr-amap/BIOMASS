@@ -29,7 +29,7 @@ Extract the Feldpausch et al. (2012)'s regions using local coordinates.
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\dontrun{
+\donttest{
 FeldRegion <- computeFeldRegion(coord)
 }
 
@@ -37,7 +37,7 @@ FeldRegion <- computeFeldRegion(coord)
 long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
-\dontrun{
+\donttest{
 FeldRegion <- computeFeldRegion(coord)
 }
 

@@ -22,7 +22,7 @@
 #' 2) If no tree height data is available, the AGB is computed thanks to the site coordinates with the following equation, slightly modified from Eq. 7 in Chave et al., 2014 (see Réjou-Méchain et al. 2017):
 #'  \deqn{AGB = exp(-2.024- 0.896*E + 0.920*log(WD) + 2.795*log(D) - 0.0461*(log(D)^2))} where `E` is a measure of environmental stress estimated from the site coordinates (`coord`).
 #'
-#' @return The function returns the AGB in Mg (or ton).
+#' @return The function returns the AGB in Mg (or ton) as a single value or a vector.
 #' @export
 #' @references
 #' Chave et al. (2014) _Improved allometric models to estimate the aboveground biomass of tropical trees_,
@@ -42,7 +42,7 @@
 #' lat <- 4.08
 #' long <- -52.68
 #' coord <- cbind(long, lat)
-#' \dontrun{
+#' \donttestntrun[m{
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
 #'
@@ -50,7 +50,7 @@
 #' lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 #' long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 #' coord <- cbind(long, lat)
-#' \dontrun{
+#' \donttestntrun[m{
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
 #'

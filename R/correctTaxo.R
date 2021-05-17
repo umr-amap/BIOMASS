@@ -45,7 +45,7 @@ if (getRversion() >= "2.15.1") {
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'
 #' @examples
-#' \dontrun{
+#' \donttestntrun[m{
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium standleanum")
 #' }

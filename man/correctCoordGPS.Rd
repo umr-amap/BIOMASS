@@ -73,7 +73,7 @@ bb <- correctCoordGPS(
   projCoord = projCoord, coordRel = coordRel,
   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
 )
-\dontrun{
+\donttestntrun[m{
 correctCoordGPS(
   projCoord = projCoord, coordRel = coordRel,
   rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE

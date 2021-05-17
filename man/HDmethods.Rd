@@ -24,6 +24,12 @@ weibullFunction(data, weight = NULL)
 \value{
 All the functions give an output similar to the one given by \code{\link[stats:lm]{stats::lm()}}, obtained for
 \code{michaelisFunction} and \code{weibullFunction} from \link[minpack.lm:nlsLM]{minpack.lm::nlsLM}).
+
+Result of a model (lm object)
+
+Result of a model (nlsM object)
+
+Result of a model (nlsM object)
 }
 \description{
 Methods used for modeling height-diameter relationship

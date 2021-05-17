@@ -5,7 +5,7 @@
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttestntrun[m{
 #' library(BIOMASS)
 #' 
 #' # Dataset containing plot inventory data from Karnataka, India (Ramesh et al. 2010)

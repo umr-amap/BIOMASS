@@ -1,5 +1,5 @@
 #' @rdname HDmethods
-#'
+#' @return Result of a model (nlsM object)
 #' @importFrom minpack.lm nlsLM nls.lm.control
 
 weibullFunction <- function(data, weight = NULL) {
