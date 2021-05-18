@@ -20,7 +20,7 @@ if (!file.exists("data-raw/wdData.csv")) {
 
 # data preparation --------------------------------------------------------
 
-wdData <- fread("data-raw/wdData.csv", stringsAsFactors = F)
+wdData <- fread("data-raw/wdData.csv", stringsAsFactors = FALSE)
 
 # change the names of the column
 setnames(
@@ -58,7 +58,7 @@ wdData <- wdData[!is.na(wd), ]
 # build the data ----------------------------------------------------------
 
 setDF(wdData)
-usethis::use_data(wdData, overwrite = F)
+usethis::use_data(wdData, overwrite = FALSE)
 
 
 

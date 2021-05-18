@@ -4,7 +4,7 @@
 \alias{computeAGB}
 \title{Computing tree above-ground biomass (AGB)}
 \usage{
-computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL)
+computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL, useCache = FALSE)
 }
 \arguments{
 \item{D}{Tree diameter (in cm), either a vector or a single value.}
@@ -21,6 +21,9 @@ proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} ar
 
 \item{Dlim}{(optional) Minimum diameter (in cm) for which aboveground biomass should be calculated
 (all diameter below \code{Dlim} will have a 0 value in the output).}
+
+\item{useCache}{logical. Whether or not use a cache to avoid downloading multiple time the same files.
+Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).}
 }
 \value{
 The function returns the AGB in Mg (or ton) as a single value or a vector.
@@ -49,8 +52,8 @@ AGB <- computeAGB(D, WD, H)
 # If you do not have height data and a single site
 lat <- 4.08
 long <- -52.68
-coord <- cbind(long, lat)
-\donttestntrun[m{
+coord <- c(long, lat)
+\donttest{
 AGB <- computeAGB(D, WD, coord = coord)
 }
 
@@ -58,7 +61,7 @@ AGB <- computeAGB(D, WD, coord = coord)
 lat <- c(rep(4.08, 30), rep(3.98, 30), rep(4.12, 30))
 long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 coord <- cbind(long, lat)
-\donttestntrun[m{
+\donttest{
 AGB <- computeAGB(D, WD, coord = coord)
 }
 

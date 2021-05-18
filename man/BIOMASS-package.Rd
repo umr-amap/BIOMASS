@@ -14,7 +14,7 @@ Contains functions to estimate aboveground biomass/carbon and its uncertainty in
 	See more in the article of Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
 }
 \examples{
-\donttestntrun[m{
+\donttest{
 library(BIOMASS)
 
 # Dataset containing plot inventory data from Karnataka, India (Ramesh et al. 2010)
@@ -38,7 +38,7 @@ KarnatakaForest$genusCorr <- Taxo$genusCorrected
 KarnatakaForest$speciesCorr <- Taxo$speciesCorrected
 
 # Retrieving APG III Families and Orders from Genus names
-APG <- getTaxonomy(KarnatakaForest$genusCorr, findOrder = T)
+APG <- getTaxonomy(KarnatakaForest$genusCorr, findOrder = TRUE)
 KarnatakaForest$familyAPG <- APG$family
 KarnatakaForest$orderAPG <- APG$order
 
@@ -67,7 +67,7 @@ HDmodel <- modelHD(
 # Compute plot-specific H-D models
 HDmodelPerPlot <- modelHD(NouraguesHD$D, NouraguesHD$H,
   method = "weibull",
-  useWeight = T, plot = NouraguesHD$plotId
+  useWeight = TRUE, plot = NouraguesHD$plotId
 )
 
 RSEmodels <- sapply(HDmodelPerPlot, function(x) x$RSE)

@@ -62,7 +62,7 @@
 #' data(NouraguesHD)
 #'
 #' # To model the height from a dataset
-#' \donttestntrun[m{
+#' \donttest{
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
 #' }
 #'
@@ -82,7 +82,7 @@
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL) {
 
-  # To maintain user's original options
+  # # To maintain user's original options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
   
@@ -132,7 +132,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   if (!is.null(plot) && length(unique(plot)) != 1) {
     Hdata <- data.table(H = H, D = D, plot = plot)
 
-    output <- lapply(split(Hdata, by = "plot", keep.by = T), function(subData) {
+    output <- lapply(split(Hdata, by = "plot", keep.by = TRUE), function(subData) {
       suppressMessages(modelHD(
         subData$D, subData$H, method, useWeight,
         drawGraph, unique(subData$plot)
@@ -204,9 +204,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       pch = 20, cex = 0.5, col = "grey50", log = "xy", las = 1,
       xlab = "D (cm)", ylab = "H (m)", cex.lab = 1.8, cex.axis = 1.5,
       main = main_title,
-      cex.main = 2, axes = F, frame.plot = F
+      cex.main = 2, axes = FALSE, frame.plot = FALSE
     )
-    grid(col = "grey80", lty = 1, equilogs = F)
+    grid(col = "grey80", lty = 1, equilogs = FALSE)
     axis(side = 1, lty = "blank", las = 1)
     axis(side = 2, lty = "blank", las = 1)
   }
@@ -293,7 +293,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       }
 
       return(output)
-    }), fill = T)
+    }), fill = TRUE)
 
     if (is.null(plot)) {
       legend("bottomright", methods,

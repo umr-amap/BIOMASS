@@ -22,6 +22,8 @@
 #' `Dlim` will have a 0 value in the output).
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
+#' @param useCache logical. Whether or not use a cache to avoid downloading multiple time the same files. 
+#' Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
@@ -66,7 +68,7 @@
 #' lat <- KarnatakaForest$lat[filt]
 #' long <- KarnatakaForest$long[filt]
 #' coord <- cbind(long, lat)
-#' \donttestntrun[m{
+#' \donttest{
 #' resultMC <- AGBmonteCarlo(
 #'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
 #'   errWD = KarnatakaWD$sdWD[filt], coord = coord
@@ -77,7 +79,7 @@
 #' # Propagating errors with a standard error in wood density in all plots at once
 #' KarnatakaForest$meanWD <- KarnatakaWD$meanWD
 #' KarnatakaForest$sdWD <- KarnatakaWD$sdWD
-#' \donttestntrun[m{
+#' \donttest{
 #' resultMC <- by(
 #'   KarnatakaForest, KarnatakaForest$plotId,
 #'   function(x) AGBmonteCarlo(
@@ -95,7 +97,7 @@
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL, plot = NULL) {
+                          Carbon = FALSE, Dlim = NULL, plot = NULL, useCache= FALSE) {
   len <- length(D)
 
   # parameters verification -------------------------------------------------
@@ -220,7 +222,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE, plot = plot))
     } else {
       # Propagation of the error using the errH value(s)
-      upper <- max(H, na.rm = T) + 15
+      upper <- max(H, na.rm = TRUE) + 15
       H_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)))
     }
 
@@ -255,7 +257,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       coord <- as.matrix(t(coord))
     }
 
-    bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
+    bioclimParams <- getBioclimParam(coord,useCache) # get bioclim variables corresponding to the coordinates
 
     if (nrow(bioclimParams) == 1) {
       bioclimParams <- bioclimParams[rep(1, len), ]
@@ -291,7 +293,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA
 
   if (Carbon == FALSE) {
-    sum_AGB_simu <- colSums(AGB_simu, na.rm = T)
+    sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE)
     res <- list(
       meanAGB = mean(sum_AGB_simu),
       medAGB = median(sum_AGB_simu),
@@ -303,7 +305,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical
     # angiosperm stems carbon content)
     AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
-    sum_AGC_simu <- colSums(AGC_simu, na.rm = T)
+    sum_AGC_simu <- colSums(AGC_simu, na.rm = TRUE)
     res <- list(
       meanAGC = mean(sum_AGC_simu),
       medAGC = median(sum_AGC_simu),

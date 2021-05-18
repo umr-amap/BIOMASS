@@ -20,14 +20,14 @@ context("Function computeE")
 test_that("Compute E", {
   skip_if_not_function("computeE")
 
-  E <- computeE(coord)
+  E <- computeE(coord,useCache=F)
 
   expect_is(E, "numeric")
   expect_length(E, 50)
 
-  expect_equal(computeE(cbind(12, 50)), 1.129928, tolerance = 0.1)
+  expect_equal(computeE(cbind(12, 50),useCache=F), 1.129928, tolerance = 0.1)
 
-  expect_error(computeE(cbind(long = -20, lat = 4)), "coordinate")
+  expect_error(computeE(cbind(long = -20, lat = 4),useCache=F), "coordinate")
 })
 
 
@@ -37,12 +37,12 @@ test_that("Compute E", {
 context("Function getBioclimParam")
 test_that("getBioclimParam", {
   skip_if_not_function("getBioclimParam")
-  B <- getBioclimParam(coord)
+  B <- getBioclimParam(coord,useCache=F)
 
   expect_is(B, "data.frame")
   expect_equal(dim(B), c(50, 3))
 
-  expect_equal(getBioclimParam(cbind(12, 50)),
+  expect_equal(getBioclimParam(cbind(12, 50),useCache=F),
     data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
     tolerance = 0.1
   )
@@ -79,11 +79,11 @@ test_that("Without finding the order", {
   Allophylus Sapindaceae
   Alseodaphne   Lauraceae"
 
-  expect_equivalent(unique(Taxo), fread(res, data.table = F))
+  expect_equivalent(unique(Taxo), fread(res, data.table = FALSE))
 })
 
 test_that("With finding the order", {
-  Taxo <- getTaxonomy(KarnatakaForest$genus, findOrder = T)
+  Taxo <- getTaxonomy(KarnatakaForest$genus, findOrder = TRUE)
   expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus))
 
   expect_is(Taxo, "data.frame")
@@ -102,7 +102,7 @@ test_that("With finding the order", {
   Alseodaphne   Lauraceae   Laurales"
 
 
-  expect_equivalent(unique(Taxo), fread(res, data.table = F))
+  expect_equivalent(unique(Taxo), fread(res, data.table = FALSE))
 })
 
 
@@ -143,11 +143,11 @@ for (method in c("log1", "log2", "weibull", "michaelis")) {
       method = method,
       useWeight = TRUE
     )
-    for (err in c(T, F)) {
+    for (err in c(TRUE, FALSE)) {
       expect_length(predictHeight(D, HDmodel, err = err), length(D))
       expect_is(predictHeight(D, HDmodel, err = err), "numeric")
 
-      if (err == T) {
+      if (err == TRUE) {
         H <- predictHeight(rep(10, 10), HDmodel, err = err)
         expect_false(all(H == H[1]))
       }

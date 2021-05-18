@@ -44,7 +44,7 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
   # parameters verification -------------------------------------------------
   setDT(coordAbs)
-  setnames(coordAbs, c("XAbs", "YAbs"), c("X", "Y"), skip_absent = T)
+  setnames(coordAbs, c("XAbs", "YAbs"), c("X", "Y"), skip_absent = TRUE)
 
   if (!length(plot) %in% c(1, nrow(xy))) {
     stop("The 'plot' vector must have a length equal to 1 or nrow(xy)")
@@ -81,7 +81,7 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
   if ("subplot" %in% names(coordAbs)) { # if we have subplot
     out <- rbindlist(lapply(
-      split(coordAbs, by = "plot", keep.by = T),
+      split(coordAbs, by = "plot", keep.by = TRUE),
       function(subData) {
         res <- procrust(subData[, .(X, Y)], subData[, .(XRel, YRel)])
 

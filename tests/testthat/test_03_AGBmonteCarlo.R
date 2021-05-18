@@ -197,7 +197,7 @@ test_that("AGB monte Carlo on the Dpropag", {
 
 test_that("AGB monte Carlo on the Carbon", {
   set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = T)
+  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = TRUE)
   expect_length(AGB, 5)
 
   expect_length(AGB$meanAGC, 1)
@@ -219,7 +219,7 @@ test_that("AGB monte Carlo on the Carbon", {
 
 test_that("AGB monte Carlo on the Dlim", {
   set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = T, Dlim = 20)
+  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = TRUE, Dlim = 20)
   expect_length(AGB, 5)
 
   expect_length(AGB$meanAGC, 1)
@@ -238,7 +238,7 @@ test_that("AGB monte Carlo on the Dlim", {
   expect_is(AGB$AGC_simu, "matrix")
   expect_is(AGB$AGC_simu[1, 1], "numeric")
 
-  expect_equal(unique(which(AGB$AGC_simu == 0, arr.ind = T)[, 1]), which(D < 20))
+  expect_equal(unique(which(AGB$AGC_simu == 0, arr.ind = TRUE)[, 1]), which(D < 20))
 })
 
 

@@ -8,7 +8,7 @@ correctTaxo(
   genus,
   species = NULL,
   score = 0.5,
-  useCache = TRUE,
+  useCache = FALSE,
   verbose = TRUE,
   accepted = FALSE
 )
@@ -54,7 +54,7 @@ See this function for more information : \code{\link[rappdirs:user_data_dir]{rap
 }
 
 \examples{
-\donttestntrun[m{
+\donttest{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
 correctTaxo(genus = "Astrocarium standleanum")
 }

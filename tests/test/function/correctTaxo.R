@@ -17,7 +17,7 @@ score <- 0.5
 
 
 correctTaxo <- function(genus, species = NULL, score = 0.5) {
-  require(data.table, quietly = T)
+  require(data.table, quietly = TRUE)
 
   ######## sub-function definition
 
@@ -46,9 +46,9 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
   ########### preparation of log file
 
-  sep <- ifelse(length(grep("win", Sys.info()["sysname"], ignore.case = T)) != 0, "\\", "/")
+  sep <- ifelse(length(grep("win", Sys.info()["sysname"], ignore.case = TRUE)) != 0, "\\", "/")
   path <- paste(rappdirs::user_data_dir("BIOMASS"), "correctTaxo.log", sep = sep)
-  file_exist <- T
+  file_exist <- TRUE
 
   if (!dir.exists(rappdirs::user_data_dir("BIOMASS"))) {
     file_exist <- F
@@ -74,7 +74,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
   ########### Data preparation
 
-  options(stringsAsFactors = F)
+  options(stringsAsFactors = FALSE)
 
   genus <- as.character(genus)
 
@@ -123,7 +123,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
   if (nrow(query) == 0) {
     out <- merge(oriData,
       taxo_already_have[, .(query, nameModified, genusCorrected, speciesCorrected)],
-      all.x = T, by = "query"
+      all.x = TRUE, by = "query"
     )
 
     just_genus(out, taxo_already_have)
@@ -159,7 +159,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
     x <- query[slicedQu == s, query]
 
     if (getpost == "get") {
-      query2 <- paste(gsub(" ", "+", x, fixed = T), collapse = "%0A")
+      query2 <- paste(gsub(" ", "+", x, fixed = TRUE), collapse = "%0A")
       args <- tc(list(query = query2))
       out <- httr::GET(url, query = args)
       retrieve <- out$url
@@ -237,7 +237,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5) {
 
 
   ########## merge the data for the return
-  out <- merge(oriData, query, all.x = T)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected)]
+  out <- merge(oriData, query, all.x = TRUE)[ order(id), .(id, genus, nameModified, query, genusCorrected, speciesCorrected)]
 
   if (exists("taxo_already_have")) {
     setkey(out, query)

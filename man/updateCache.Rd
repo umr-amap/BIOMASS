@@ -21,7 +21,7 @@ This function update the cache for the environmental variables:
 }
 }
 \examples{
-\donttestntrun[m{
+\donttest{
 updateCache()
 }
 }

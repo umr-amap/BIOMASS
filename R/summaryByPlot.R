@@ -89,7 +89,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
   }
 
   if (!is.null(subplot)) {
-    if (!requireNamespace("sf", quietly = T)) {
+    if (!requireNamespace("sf", quietly = TRUE)) {
       warning(
         'To use this part of the function you must have the "sf" library\n\n',
         '\t\tinstall.packages("sf")'
@@ -135,7 +135,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
       # indice_line : a random sample of matrix line inside the plot without the trees to distribute
       # indice_col : the column index of the matrix by I
       mySample <- function(plot1, n) {
-        return(samples = indice_first[, sample(indice_line, n, replace = T)])
+        return(samples = indice_first[, sample(indice_line, n, replace = TRUE)])
       }
       n <- ncol(AGB_val)
       samples <- indice_tree[, .(indice_line = mySample(plot, n), indice_col = 1:n), by = I]
@@ -152,7 +152,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
       
       # deal with plots with only one tree individual
       if(!is.null(nrow(matrix[x, ]))){
-      resAGB <- colSums(matrix[x, ], na.rm = T)
+      resAGB <- colSums(matrix[x, ], na.rm = TRUE)
       }else{
         resAGB <-matrix[x, ]
       }
@@ -164,7 +164,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
         # if the tree belong among the subplot
         if (nrow(subsample) != 0) {
           # sum for the trees I whose are not in the subplot, by column
-          sums <- subsample[, sum(matrix[I, unique(indice_col)], na.rm = T), by = indice_col]
+          sums <- subsample[, sum(matrix[I, unique(indice_col)], na.rm = TRUE), by = indice_col]
           sums[is.na(V1), V1 := 0] # if there is any NA update the table
           resAGB[sums$indice_col] <- resAGB[sums$indice_col] + sums$V1 # sum the result of the table
         }

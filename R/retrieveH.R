@@ -24,6 +24,9 @@
 #'
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
+#' 
+#' @param useCache logical. Whether or not use a cache to avoid downloading multiple time the same files. 
+#' Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).
 #'
 #' @return Returns a list  with:
 #'   - `H`: Height predicted by the model
@@ -47,13 +50,13 @@
 #' # If the only data available are the coordinates of your spot
 #' n <- length(NouraguesHD$D)
 #' coord <- cbind(long = rep(-52.68, n), lat = rep(4.08, n))
-#' \donttestntrun[m{
+#' \donttest{
 #' H <- retrieveH(D = NouraguesHD$D, coord = coord)
 #' }
 #'
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
-retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL) {
+retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL, useCache=FALSE) {
 
 
   # parameters verification -------------------------------------------------
@@ -105,7 +108,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
         coord <- as.matrix(t(coord))
       }
 
-      E <- computeE(coord) # E = environmental index in Chave et al. 2014
+      E <- computeE(coord,useCache) # E = environmental index in Chave et al. 2014
 
       if (length(E) == 1) {
         E <- rep(E, length(D))

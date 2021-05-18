@@ -51,14 +51,14 @@ KarnatakaForestsub <- droplevels(KarnatakaForest[selecPlot, ])
 ##Check and retrieve taxonomy
 **First, check for any typo in the taxonomy**
 ```{r eval=test, cache=CACHE}
-Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = T, verbose = F)
+Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
 KarnatakaForestsub$genusCorr <- Taxo$genusCorrected
 KarnatakaForestsub$speciesCorr <- Taxo$speciesCorrected
 ```
 
 **If needed, retrieve APG III families and orders from genus names**
 ```{r eval=test, cache=CACHE}
-APG <- getTaxonomy(KarnatakaForestsub$genusCorr, findOrder = T)
+APG <- getTaxonomy(KarnatakaForestsub$genusCorr, findOrder = TRUE)
 KarnatakaForestsub$familyAPG <- APG$family
 KarnatakaForestsub$orderAPG <- APG$order
 ```
@@ -132,10 +132,10 @@ HDmodel <- modelHD(
 ```{r, cache=CACHE}
 HDmodelPerPlot <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull",
-  useWeight = T, plot = NouraguesHD$plotId
+  useWeight = TRUE, plot = NouraguesHD$plotId
 )
 ResHD <- t(sapply(HDmodelPerPlot, function(x) c(coef(x$model), RSE = x$RSE)))
-kable(ResHD, row.names = T, digits = 3)
+kable(ResHD, row.names = TRUE, digits = 3)
 ```
 
 

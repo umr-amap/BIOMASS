@@ -36,12 +36,12 @@ You need the following information to use the following function in your analysi
 
 ```{r}
 trees <- read.csv(system.file("external", "NouraguesPlot.csv",
-  package = "BIOMASS", mustWork = T
+  package = "BIOMASS", mustWork = TRUE
 ))
 ```
 
 ```{r echo=FALSE}
-kable(head(trees), digits = 3, row.names = F, caption = "Head of the table trees")
+kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
 ```
 
 We can see in the table that we have for each trees the name of the plot we have, the `xRel` and `yRel`, the relative coordinate of the trees inside the plot. The rest of the column is for calculate the AGB at the end.
@@ -51,7 +51,7 @@ We can see in the table that we have for each trees the name of the plot we have
 
 ```{r, fig.cap="Plot the coordinate long lat"}
 coord <- read.csv(system.file("external", "Coord.csv",
-  package = "BIOMASS", mustWork = T
+  package = "BIOMASS", mustWork = TRUE
 ))
 
 plot(coord[, c("Long", "Lat")], asp = 1)
@@ -61,7 +61,7 @@ We can see on the plot that the corner coordinates are spread.
 
 
 ```{r echo=FALSE}
-kable(head(coord), digits = 3, row.names = F, caption = "Head of the table coord")
+kable(head(coord), digits = 3, row.names = FALSE, caption = "Head of the table coord")
 ```
 
 In the table, we have the name of the plot, the coordinate `Lat`, `Long` (or another projected coordinates), and `xRel`, `yRel`, the relative coordinate for the points observed.
@@ -78,8 +78,8 @@ The plot is referenced in the longitude latitude coordinate so you must have the
 correct_plot <- correctCoordGPS(
   longlat = coord[, c("Long", "Lat")],
   coordRel = coord[, c("xRel", "yRel")],
-  rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = T,
-  maxDist = 10, rmOutliers = T
+  rangeX = c(0, 100), rangeY = c(0, 100), drawPlot = TRUE,
+  maxDist = 10, rmOutliers = TRUE
 )
 
 str(correct_plot, max.level = 1)
@@ -99,7 +99,7 @@ coord_num <- numberCorner(
   projCoord = correct_plot$cornerCoords,
   plot = rep("NB1", 4),
   origin = c(F, F, F, T),
-  clockWise = T
+  clockWise = TRUE
 )
 
 
@@ -139,7 +139,7 @@ trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees
 ```{r}
 trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
 
-AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = T, subplot = subplot)
+AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = TRUE, subplot = subplot)
 
 print(AGB)
 ```
@@ -161,15 +161,15 @@ TreeCoord <- attributeTreeCoord(
 )
 ```
 ```{r echo=FALSE}
-kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 
 If you want to have in GPS (longitude/latitude) coordinates (need to install proj4 first) :
 ```{r}
-#TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = T) )
+#TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = TRUE) )
 ```
 ```{r echo=FALSE}
-kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 
 If you want to have the GPS (longitude/latitude) coordinates without passing through all this step however you must use the numberCorner function:
@@ -178,8 +178,8 @@ coordAbs = data.frame(X = c(4.066923, 4.067865, 4.067842, 4.066905), Y = c(52.68
 
 ncoordAbs = numberCorner(projCoord = coordAbs, 
                                 plot = rep("NB1", 4), 
-                                origin = c(T, F, F, F), 
-                                clockWise = T)
+                                origin = c(TRUE, FALSE, FALSE, FALSE), 
+                                clockWise = TRUE)
 
 TreeCoord <- attributeTreeCoord(
   xy = trees[, c("xRel", "yRel")],
@@ -189,7 +189,7 @@ TreeCoord <- attributeTreeCoord(
 )
 ```
 ```{r echo=FALSE}
-kable(head(TreeCoord), digits = 3, row.names = F, caption = "Head of the table TreeCoord")
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 
 

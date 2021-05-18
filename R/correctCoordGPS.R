@@ -160,25 +160,25 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
 
 
   if (drawPlot) {
-    par(xpd = T, mar = par("mar") + c(0, 0, 0, 7.5))
+    par(xpd = TRUE, mar = par("mar") + c(0, 0, 0, 7.5))
     plot(if(length(outliers)==0) projCoord else projCoord[-outliers, ],
       col = "grey30", main = "Plot drawing",
       xlim = range(projCoord[, 1], coordAbs[, 1]),
       ylim = range(projCoord[, 2], coordAbs[, 2]),
-      asp = 1, xlab = "X", ylab = "Y", axes = F, frame.plot = F
+      asp = 1, xlab = "X", ylab = "Y", axes = FALSE, frame.plot = FALSE
     )
 
     usr <- par("usr")
     grid <- sapply(par(c("xaxp", "yaxp")), function(x) {
       seq(x[1], x[2], length.out = x[3] + 1)
-    }, simplify = F)
+    }, simplify = FALSE)
     # draw the grid
     segments(x0 = grid$xaxp, y0 = usr[3], y1 = usr[4], col = "grey80", lty = 1)
     segments(y0 = grid$yaxp, x0 = usr[1], x1 = usr[2], col = "grey80", lty = 1)
     # draw the axis
     axis(side = 1, lty = "blank", las = 1)
     axis(side = 2, lty = "blank", las = 1)
-    plot(sps, add = T, lwd = 3)
+    plot(sps, add = TRUE, lwd = 3)
     points(coordAbs, col = "black", pch = 15, cex = 1.3)
     if(length(outliers)>0) points(projCoord[outliers, ], col = "red", pch = 4, cex = 1)
 

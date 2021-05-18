@@ -76,7 +76,7 @@ if (!file.exists("data-raw/vascularKew.csv")) {
   file <- rbindlist(lapply(listFam, function(x) {
     file <- NULL
     while (!is.data.frame(file)) {
-      file <- try(read.csv(paste("http://data.kew.org/vpfg1992/", x, ".TXT", sep = ""), header = F, stringsAsFactors = F), silent = T)
+      file <- try(read.csv(paste("http://data.kew.org/vpfg1992/", x, ".TXT", sep = ""), header = FALSE, stringsAsFactors = FALSE), silent = TRUE)
       Sys.sleep(0.5)
     }
     print(x)
@@ -85,7 +85,7 @@ if (!file.exists("data-raw/vascularKew.csv")) {
 
     return(file)
   }))
-  write.csv(file, "data-raw/vascularKew.csv", row.names = F)
+  write.csv(file, "data-raw/vascularKew.csv", row.names = FALSE)
 }
 
 
@@ -123,7 +123,7 @@ genusFamily <- unique(genusFamily[base::order(genus)])
 
 # Do something for the duplicated genus
 dup <- unique(genusFamily[duplicated(genus), genus])
-write.csv(dup, "data-raw/dupGenusToSub.csv", quote = F)
+write.csv(dup, "data-raw/dupGenusToSub.csv", quote = FALSE)
 
 if (!file.exists("data-raw/dupGenus_TNRS.txt")) {
   stop(

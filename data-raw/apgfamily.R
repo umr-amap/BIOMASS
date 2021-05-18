@@ -19,7 +19,7 @@ apgFamilies[, famSyn := NULL]
 apgFamilies <- unique(apgFamilies)
 
 setDF(apgFamilies)
-usethis::use_data(apgFamilies, compress = "xz", overwrite = F)
+usethis::use_data(apgFamilies, compress = "xz", overwrite = FALSE)
 
 
 apgFamiliesOrg <- setDT(copy(BIOMASS::apgFamilies))

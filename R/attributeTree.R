@@ -60,7 +60,7 @@ attributeTree <- function(xy, plot, coordAbs) {
   setDT(coordAbs)
 
   # Attribute the trees to the subplot
-  invisible(lapply(split(coordAbs, by = "subplot", keep.by = T), function(x) {
+  invisible(lapply(split(coordAbs, by = "subplot", keep.by = TRUE), function(x) {
     Coord[
       plot == x$plot[1] & X %between% range(x$XRel) & Y %between% range(x$YRel),
       subplot := x$subplot[1]

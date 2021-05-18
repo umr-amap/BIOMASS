@@ -8,7 +8,7 @@ coord <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
 
 WD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species))
 
-H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = T))
+H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE))
 
 context("Function to compute the AGB")
 test_that("ComputeAGB with H", {

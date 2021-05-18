@@ -99,7 +99,7 @@ test_that("correct coord GPS in long lat", {
   skip_if_not_installed("proj4") 
   longlat <- as.data.frame(proj4::project(projCoord,
     proj = "+proj=utm +zone=50 +south +ellps=WGS84 +datum=WGS84 +units=m +no_defs",
-    inverse = T
+    inverse = TRUE
   ))
 
   # with max dist equal 10

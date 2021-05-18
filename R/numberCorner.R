@@ -64,10 +64,10 @@ numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWi
   }
 
   if (!is.null(longlat) && !is.data.frame(longlat)) {
-    longlat <- as.data.frame(longlat, fix.empty.names = F)
+    longlat <- as.data.frame(longlat, fix.empty.names = FALSE)
   }
   if (!is.null(projCoord) && !is.data.frame(projCoord)) {
-    projCoord <- as.data.frame(projCoord, fix.empty.names = F)
+    projCoord <- as.data.frame(projCoord, fix.empty.names = FALSE)
   }
 
   if (!is.null(longlat) && nrow(longlat) != length(plot)) {

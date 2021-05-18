@@ -1,6 +1,6 @@
 require(data.table)
 
-# data_wd <- fread("data-raw/wdData.csv", stringsAsFactors = F)
+# data_wd <- fread("data-raw/wdData.csv", stringsAsFactors = FALSE)
 # setnames(
 #   data_wd, c("Wood density (g/cm^3), oven dry mass/fresh volume", "Reference Number", "Family", "Region"),
 #   c("wd", "referenceNumber", "family", "region")
@@ -17,4 +17,4 @@ genus <- data_wd[, .(family, wd, .N), by = genus][N >= 10][, .(sd = sd(wd)), by 
 family <- data_wd[, .(family, wd, .N), by = family][N >= 10][, .(sd = sd(wd)), by = family][, mean(sd)]
 
 sd_10 <- data.frame(taxo = c("species", "genus", "family"), sd = c(species, genus, family))
-usethis::use_data(sd_10, overwrite = F)
+usethis::use_data(sd_10, overwrite = FALSE)

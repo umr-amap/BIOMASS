@@ -22,7 +22,7 @@
 # 
 #   taxo <- correctTaxo(genus, species)
 #   taxoFalse <- taxo[taxo$nameModified == FALSE, ]
-#   taxoBegin <- data.frame(as.character(genus), as.character(species), stringsAsFactors = F)
+#   taxoBegin <- data.frame(as.character(genus), as.character(species), stringsAsFactors = FALSE)
 # 
 #   expect_equivalent(taxoFalse[, 1:2], taxoBegin[taxo$nameModified == FALSE, ])
 #   expect_error(correctTaxo(genus, species[1:9]), "You should provide two vectors of genera and species of the same length")
@@ -35,7 +35,7 @@
 #     data.frame(
 #       genusCorrected = c(NA, "Astrocaryum", "Astrocaryum"),
 #       speciesCorrected = c(NA, NA, "standleyanum"),
-#       nameModified = c(NA, "TRUE", "TRUE"), stringsAsFactors = F
+#       nameModified = c(NA, "TRUE", "TRUE"), stringsAsFactors = FALSE
 #     )
 #   )
 # 
@@ -44,7 +44,7 @@
 #     data.frame(
 #       genusCorrected = c("Manniophyton", "?"),
 #       speciesCorrected = c("fulvum", "?"),
-#       nameModified = c("TRUE", "TaxaNotFound"), stringsAsFactors = F
+#       nameModified = c("TRUE", "TaxaNotFound"), stringsAsFactors = FALSE
 #     )
 #   )
 # 
@@ -54,7 +54,7 @@
 #   expect_true(dir.exists(rappdirs::user_data_dir("BIOMASS")))
 #   expect_true(file.exists(path))
 # 
-#   a <- setDF(fread(path, header = T, sep = ","))
+#   a <- setDF(fread(path, header = TRUE, sep = ","))
 #   expect_equal(names(a), c("submittedName", "acceptedName", "sourceId", "score", "matchedName", "annotations", "uri"))
 #   expect_gt(nrow(a), 0)
 # 
@@ -63,7 +63,7 @@
 #     data.frame(
 #       genusCorrected = c("Magnophyton", "?"),
 #       speciesCorrected = c("fulvum", "?"),
-#       nameModified = c("NoMatch(low_score)", "TaxaNotFound"), stringsAsFactors = F
+#       nameModified = c("NoMatch(low_score)", "TaxaNotFound"), stringsAsFactors = FALSE
 #     )
 #   )
 # 
@@ -78,7 +78,7 @@
 #     data.frame(
 #       genusCorrected = "bvgaeuigareuiguei",
 #       speciesCorrected = NA_character_,
-#       nameModified = "TaxaNotFound", stringsAsFactors = F
+#       nameModified = "TaxaNotFound", stringsAsFactors = FALSE
 #     )
 #   )
 #   # If there is no cache and the genus is nonsense a second that come on sense
@@ -87,7 +87,7 @@
 #     data.frame(
 #       genusCorrected = c("bvgaeuigareuiguei", "Astrocaryum"),
 #       speciesCorrected = c(NA_character_, "standleyanum"),
-#       nameModified = c("TaxaNotFound", TRUE), stringsAsFactors = F
+#       nameModified = c("TaxaNotFound", TRUE), stringsAsFactors = FALSE
 #     )
 #   )
 #   file.remove(path)

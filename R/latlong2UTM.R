@@ -27,7 +27,7 @@ if (getRversion() >= "2.15.1") {
 #' }
 #'
 latlong2UTM <- function(coord) {
-  coord <- data.table(coord, check.names = T)
+  coord <- data.table(coord, check.names = TRUE)
   setnames(coord, colnames(coord), c("long", "lat"))
 
   if (!requireNamespace("proj4")) {

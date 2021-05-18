@@ -4,10 +4,12 @@
 \alias{cacheManager}
 \title{Manage the cache}
 \usage{
-cacheManager(nameFile)
+cacheManager(nameFile, useCache = FALSE)
 }
 \arguments{
 \item{nameFile}{the name of the file or folder}
+
+\item{useCache}{logical. Whether or not use a cache.}
 }
 \value{
 the path to the file of interest (character)

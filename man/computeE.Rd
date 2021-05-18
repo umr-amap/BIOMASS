@@ -4,7 +4,7 @@
 \alias{computeE}
 \title{Retrieving Chave's environmental index}
 \usage{
-computeE(coord)
+computeE(coord, useCache)
 }
 \arguments{
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
@@ -46,16 +46,16 @@ See this function for more information : \code{\link[rappdirs:user_data_dir]{rap
 lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
-\donttestntrun[m{
-E <- computeE(coord)
+\donttest{
+E <- computeE(coord, useCache=FALSE)
 }
 
 # Several study sites (here three sites)
 long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
-\donttestntrun[m{
-E <- computeE(coord)
+\donttest{
+E <- computeE(coord, useCache=FALSE)
 }
 
 }

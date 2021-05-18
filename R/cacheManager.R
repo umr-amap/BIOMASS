@@ -13,24 +13,25 @@
 #' See this function for more information : [rappdirs::user_data_dir()]
 #'
 #' @param nameFile the name of the file or folder
-#'
+#' @param useCache logical. Whether or not use a cache.
 #' @return the path to the file of interest (character)
 #'
 #' @author Arthur PERE
 #' @seealso [rappdirs::user_data_dir()]
 #'
 #' @keywords Internal
-cacheManager <- function(nameFile) {
+cacheManager <- function(nameFile, useCache = FALSE) {
+
   basePath <- cachePath()
 
-  if (!dir.exists(basePath)) dir.create(basePath, recursive = T, showWarnings = F)
+  if (!dir.exists(basePath)) dir.create(basePath, recursive = TRUE, showWarnings = FALSE)
 
   if (nameFile == "correctTaxo") {
     return(cachePath("correctTaxo.log"))
   }
 
   if (nameFile == "FELD") {
-    return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = T))
+    return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }
 
   path <- cachePath(nameFile)
@@ -40,11 +41,11 @@ cacheManager <- function(nameFile) {
 
   ############# if the folder exists in the working directory
   if (file.exists(nameFile) && !file_exists) {
-    file.copy(nameFile, basePath, recursive = T)
-    file.remove(dir(nameFile, recursive = T, full.names = T), nameFile)
+    file.copy(nameFile, basePath, recursive = TRUE)
+    file.remove(dir(nameFile, recursive = TRUE, full.names = TRUE), nameFile)
     message("Your folder '", nameFile, "' has been moved in this folder : ", basePath)
 
-    file_exists <- T
+    file_exists <- TRUE
   }
 
   # if the file is empty
@@ -86,6 +87,16 @@ cachePath <- function(path = NULL) {
   basePath
 }
 
+#' @keywords Internal
+tempPath <- function(path = NULL) {
+  # give the path of the cache
+  basePath <- tempdir()
+  if (!is.null(path)) {
+    basePath <- file.path(basePath, path)
+  }
+  basePath
+}
+
 
 #' @keywords Internal
 checkTime <- function() {
@@ -119,7 +130,7 @@ flushCache <- function() {
   
   basePath <- cachePath()
   
-  if (dir.exists(basePath)) unlink(basePath, recursive = T, force = F)
+  if (dir.exists(basePath)) unlink(basePath, recursive = TRUE, force = FALSE)
 }
 
 
@@ -140,7 +151,7 @@ flushCache <- function() {
 #'
 #' @importFrom utils download.file unzip
 #' @examples
-#' \donttestntrun[m{
+#' \donttest{
 #' updateCache()
 #' }
 updateCache <- function(nameFile = NULL) {

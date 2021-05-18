@@ -42,29 +42,34 @@ if (getRversion() >= "2.15.1") {
 #' lat <- 4.08
 #' long <- -52.68
 #' coord <- cbind(long, lat)
-#' \donttestntrun[m{
-#' E <- computeE(coord)
+#' \donttest{
+#' E <- computeE(coord, useCache=FALSE)
 #' }
 #' 
 #' # Several study sites (here three sites)
 #' long <- c(-52.68, -51.12, -53.11)
 #' lat <- c(4.08, 3.98, 4.12)
 #' coord <- cbind(long, lat)
-#' \donttestntrun[m{
-#' E <- computeE(coord)
+#' \donttest{
+#' E <- computeE(coord, useCache=FALSE)
 #' }
 #' 
 #' @importFrom raster raster extract
 #' @importFrom data.table as.data.table
 
-computeE <- function(coord) {
+computeE <- function(coord,useCache) {
 
-  # find the raster
-  RAST <- raster(cacheManager("E"))
-
-  # GCO pourquoi cas particulier ?
-  # GCO pourquoi ne pas reformater en matrix ou data.frame et continuer
-
+  if(is.logical(useCache) && !useCache){
+    tmp <- tempfile(fileext = ".zip")
+    DEMzip <- download.file("https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/E.zip", destfile = tmp)
+    unzip(tmp, exdir = tempdir())
+    RAST <- raster(file.path(tempdir(),"E.bil"))
+    message("The E raster file has been downloaded in a temporary file. Using useCache=TRUE is recommended to avoid download time for the next research")
+  }else{
+    # find the raster
+    RAST <- raster(cacheManager("E"))
+  }
+  
   if (is.vector(coord)) {
     return(extract(RAST, matrix(coord, ncol = 2),"bilinear"))
   }
@@ -85,7 +90,7 @@ computeE <- function(coord) {
   i <- 1
   while (anyNA(coord_unique$RASTval)) {
     r <- r + 5000
-    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(long, lat), buffer = r), mean, na.rm = T)]
+    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(long, lat), buffer = r), mean, na.rm = TRUE)]
 
     if (i > 8) {
       coord[coord_unique, on = c("long", "lat"), RASTval := i.RASTval]

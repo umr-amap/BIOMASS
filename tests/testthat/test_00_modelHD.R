@@ -52,7 +52,7 @@ test_that("NA characters", {
 })
 
 test_that("Without parameters", {
-  Res <- expect_message(modelHD(D, H, useWeight = T), "build a HD model")
+  Res <- expect_message(modelHD(D, H, useWeight = TRUE), "build a HD model")
 
   expect_is(Res, "data.frame")
   expect_equal(ncol(Res), 5)
@@ -65,7 +65,7 @@ michaelis purple 4.294488        NA  0.014564152
 "
 
 
-  expect_equal(Res, fread(res, data.table = F), tolerance = 10^-6)
+  expect_equal(Res, fread(res, data.table = FALSE), tolerance = 10^-6)
 })
 
 test_that("With the plot arguments", {
@@ -100,3 +100,4 @@ test_that("With the plot arguments", {
 
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
 })
+

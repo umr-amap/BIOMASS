@@ -36,13 +36,13 @@ test_that("function", {
   plot <- rep(rep(c("plot1", "plot2"), each = 9))
 
   out <- attributeTreeCoord(xy, plot, dim, cut)
-  expect_equal(out, xy + rep(c(5000, 6000), each = 9), check.attributes = F)
+  expect_equal(out, xy + rep(c(5000, 6000), each = 9), check.attributes = FALSE)
 
   nCorner <- numberCorner(
     projCoord = coord,
     plot = rep(c("plot1", "plot2"), each = 4),
-    origin = rep(c(T, F, F, F), 2),
-    clockWise = F
+    origin = rep(c(TRUE, FALSE, FALSE, FALSE), 2),
+    clockWise = FALSE
   )
 
   out1 <- attributeTreeCoord(xy, plot, dim, nCorner)
@@ -55,7 +55,7 @@ test_that("function", {
     projCoord = coord,
     plot = rep(c("plot1", "plot2"), each = 4),
     origin = rep(c(F, F, T, F), 2),
-    clockWise = T
+    clockWise = TRUE
   )
 
   out1 <- attributeTreeCoord(xy, plot, dim, nCorner)
@@ -68,5 +68,5 @@ test_that("function", {
   Y <- rep(seq(5200, 5000, by = -100), each = 3)
   Y <- c(Y, Y + 1000)
 
-  expect_equal(out1, data.frame(X = X, Y = Y), check.attributes = F)
+  expect_equal(out1, data.frame(X = X, Y = Y), check.attributes = FALSE)
 })

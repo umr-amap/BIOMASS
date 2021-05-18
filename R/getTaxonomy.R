@@ -48,7 +48,7 @@ getTaxonomy <- function(genus, findOrder = FALSE) {
   if (findOrder == TRUE) {
     apgFamilies <- setDT(copy(BIOMASS::apgFamilies))
 
-    genusFam <- merge(genusFam, apgFamilies, by.x = "family", by.y = "famAPG", all.x = T)
+    genusFam <- merge(genusFam, apgFamilies, by.x = "family", by.y = "famAPG", all.x = TRUE)
     genusFam <- genusFam[, .(id, inputGenus, family, order)]
   }
 

@@ -45,7 +45,7 @@ if (getRversion() >= "2.15.1") {
 #' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
 #'
 #' @examples
-#' \donttestntrun[m{
+#' \donttest{
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium standleanum")
 #' }
@@ -56,12 +56,15 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom jsonlite fromJSON toJSON
 #' @importFrom utils head
 #'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, verbose = TRUE, accepted=FALSE) {
+correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = TRUE, accepted=FALSE) {
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
   BATCH_SIZE <- min(getOption("BIOMASS.batch_size", 500), 1000) # number of taxa sought per request to tnrs (max 1000)
 
   # check parameters -------------------------------------------------
-
+  if (is.logical(useCache) && !useCache) {
+    message("Using useCache=TRUE is recommended to reduce online search time for the next research")
+  }
+  
   if (all(is.na(genus))) {
     stop("Please supply at least one name for genus")
   }
@@ -82,7 +85,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = TRUE, ver
   }
 
   # Check if package httr is available
-  if (!requireNamespace("httr", quietly = T)) {
+  if (!requireNamespace("httr", quietly = TRUE)) {
     stop(
       'To use this function, you must install the "httr" library \n\n',
       '\t\tinstall.packages("httr")'

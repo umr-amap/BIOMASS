@@ -44,7 +44,7 @@ computeE1 <- function(coord) {
   i <- 1
   while (anyNA(coord_unique$RASTval)) {
     r <- r + 5000
-    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = T)]
+    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(V1, V2), buffer = r), mean, na.rm = TRUE)]
 
     if (i > 8) {
       coord[coord_unique, on = c("V1", "V2"), RASTval := i.RASTval]
@@ -99,7 +99,7 @@ r <- 1
 tic()
 resultat <- NA
 while (anyNA(resultat)) {
-  resultat <- sapply(extract(RAST, coord_unique[is.na(RASTval), .(long, lat)], buffer = r), mean, na.rm = T)
+  resultat <- sapply(extract(RAST, coord_unique[is.na(RASTval), .(long, lat)], buffer = r), mean, na.rm = TRUE)
 
   test <- if (anyNA(resultat)) TRUE else FALSE
 

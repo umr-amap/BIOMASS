@@ -5,7 +5,7 @@
 #'
 #'
 #' @examples
-#' \donttestntrun[m{
+#' \donttest{
 #' library(BIOMASS)
 #' 
 #' # Dataset containing plot inventory data from Karnataka, India (Ramesh et al. 2010)
@@ -29,7 +29,7 @@
 #' KarnatakaForest$speciesCorr <- Taxo$speciesCorrected
 #' 
 #' # Retrieving APG III Families and Orders from Genus names
-#' APG <- getTaxonomy(KarnatakaForest$genusCorr, findOrder = T)
+#' APG <- getTaxonomy(KarnatakaForest$genusCorr, findOrder = TRUE)
 #' KarnatakaForest$familyAPG <- APG$family
 #' KarnatakaForest$orderAPG <- APG$order
 #' 
@@ -58,7 +58,7 @@
 #' # Compute plot-specific H-D models
 #' HDmodelPerPlot <- modelHD(NouraguesHD$D, NouraguesHD$H,
 #'   method = "weibull",
-#'   useWeight = T, plot = NouraguesHD$plotId
+#'   useWeight = TRUE, plot = NouraguesHD$plotId
 #' )
 #' 
 #' RSEmodels <- sapply(HDmodelPerPlot, function(x) x$RSE)
