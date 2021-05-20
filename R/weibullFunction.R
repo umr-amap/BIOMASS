@@ -1,6 +1,7 @@
 #' @rdname HDmethods
 #' @return Result of a model (nlsM object)
 #' @importFrom minpack.lm nlsLM nls.lm.control
+#' @importFrom methods is
 
 weibullFunction <- function(data, weight = NULL) {
   ### Compute the weibull model of the H-D relationship
