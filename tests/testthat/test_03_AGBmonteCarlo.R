@@ -145,35 +145,35 @@ test_that("AGB monte Carlo on the H", {
 })
 
 
-test_that("AGB monte Carlo on the coord", {
-  set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
-  expect_length(AGB, 5)
-
-  expect_length(AGB$meanAGB, 1)
-  expect_is(AGB$meanAGB, "numeric")
-
-  expect_length(AGB$medAGB, 1)
-  expect_is(AGB$medAGB, "numeric")
-
-  expect_length(AGB$sdAGB, 1)
-  expect_is(AGB$sdAGB, "numeric")
-
-  expect_length(AGB$credibilityAGB, 2)
-  expect_is(AGB$credibilityAGB, "numeric")
-
-  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
-  expect_is(AGB$AGB_simu, "matrix")
-  expect_is(AGB$AGB_simu[1, 1], "numeric")
-
-  expect_is(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1, ], n = nIter), "list")
-})
+# test_that("AGB monte Carlo on the coord", {
+#   set.seed(10)
+#   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
+#   expect_length(AGB, 5)
+# 
+#   expect_length(AGB$meanAGB, 1)
+#   expect_is(AGB$meanAGB, "numeric")
+# 
+#   expect_length(AGB$medAGB, 1)
+#   expect_is(AGB$medAGB, "numeric")
+# 
+#   expect_length(AGB$sdAGB, 1)
+#   expect_is(AGB$sdAGB, "numeric")
+# 
+#   expect_length(AGB$credibilityAGB, 2)
+#   expect_is(AGB$credibilityAGB, "numeric")
+# 
+#   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
+#   expect_is(AGB$AGB_simu, "matrix")
+#   expect_is(AGB$AGB_simu[1, 1], "numeric")
+# 
+#   expect_is(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1, ], n = nIter), "list")
+# })
 
 test_that("AGB monte Carlo on the Dpropag", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D,
     Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1),
-    WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter
+    WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter
   )
   expect_length(AGB, 5)
 
@@ -197,7 +197,7 @@ test_that("AGB monte Carlo on the Dpropag", {
 
 test_that("AGB monte Carlo on the Carbon", {
   set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = TRUE)
+  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE)
   expect_length(AGB, 5)
 
   expect_length(AGB$meanAGC, 1)
@@ -219,7 +219,7 @@ test_that("AGB monte Carlo on the Carbon", {
 
 test_that("AGB monte Carlo on the Dlim", {
   set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter, Carbon = TRUE, Dlim = 20)
+  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE, Dlim = 20)
   expect_length(AGB, 5)
 
   expect_length(AGB$meanAGC, 1)

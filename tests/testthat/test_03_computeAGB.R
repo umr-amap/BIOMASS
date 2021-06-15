@@ -35,12 +35,12 @@ test_that("ComputeAGB with H", {
   )
 })
 
-test_that("ComputeAGB with coord", {
-  expect_length(computeAGB(D, WD$meanWD, coord = coord), 100)
-
-  # expect_silent(computeAGB(D, WD$meanWD, coord = c(74.91944, 14.36806)))
-  expect_error(computeAGB(D, WD$meanWD, coord = coord[1:50, ]), "coord should be either")
-})
+# test_that("ComputeAGB with coord", {
+#   expect_length(computeAGB(D, WD$meanWD, coord = coord), 100)
+# 
+#   # expect_silent(computeAGB(D, WD$meanWD, coord = c(74.91944, 14.36806)))
+#   expect_error(computeAGB(D, WD$meanWD, coord = coord[1:50, ]), "coord should be either")
+# })
 
 test_that("ComputeAGB with Dlim", {
   expect_true(any(computeAGB(D, WD$meanWD, H = H$H, Dlim = 5) == 0))

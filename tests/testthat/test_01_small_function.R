@@ -16,37 +16,33 @@ skip_if_not_function <- function(name) {
   }
 }
 
-context("Function computeE")
-test_that("Compute E", {
-  skip_if_not_function("computeE")
+# context("Function computeE")
+# test_that("Compute E", {
+#   skip_if_not_function("computeE")
+# 
+#   E <- computeE(coord,useCache=F)
+# 
+#   expect_is(E, "numeric")
+#   expect_length(E, 50)
+# 
+#   expect_equal(computeE(cbind(12, 50),useCache=F), 1.129928, tolerance = 0.1)
+# 
+#   expect_error(computeE(cbind(long = -20, lat = 4),useCache=F), "coordinate")
+# })
 
-  E <- computeE(coord,useCache=F)
-
-  expect_is(E, "numeric")
-  expect_length(E, 50)
-
-  expect_equal(computeE(cbind(12, 50),useCache=F), 1.129928, tolerance = 0.1)
-
-  expect_error(computeE(cbind(long = -20, lat = 4),useCache=F), "coordinate")
-})
-
-
-
-
-
-context("Function getBioclimParam")
-test_that("getBioclimParam", {
-  skip_if_not_function("getBioclimParam")
-  B <- getBioclimParam(coord,useCache=F)
-
-  expect_is(B, "data.frame")
-  expect_equal(dim(B), c(50, 3))
-
-  expect_equal(getBioclimParam(cbind(12, 50),useCache=F),
-    data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
-    tolerance = 0.1
-  )
-})
+# context("Function getBioclimParam")
+# test_that("getBioclimParam", {
+#   skip_if_not_function("getBioclimParam")
+#   B <- getBioclimParam(coord,useCache=F)
+# 
+#   expect_is(B, "data.frame")
+#   expect_equal(dim(B), c(50, 3))
+# 
+#   expect_equal(getBioclimParam(cbind(12, 50),useCache=F),
+#     data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
+#     tolerance = 0.1
+#   )
+# })
 
 
 

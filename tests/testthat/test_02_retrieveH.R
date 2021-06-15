@@ -25,20 +25,20 @@ test_that("With the HDmodel", {
 })
 
 
-test_that("With the coordonate", {
-  H <- retrieveH(D, coord = coord)
-
-  expect_is(H, "list")
-  expect_length(H, 2)
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
-  expect_length(H$H, length(D))
-  expect_length(H$RSE, 1)
-
-  D[2] <- NA
-  H <- retrieveH(D, coord = coord)
-  expect_false(all(is.na(H$H)))
-})
+# test_that("With the coordinates", {
+#   H <- retrieveH(D, coord = coord)
+# 
+#   expect_is(H, "list")
+#   expect_length(H, 2)
+#   expect_is(H$H, "numeric")
+#   expect_is(H$RSE, "numeric")
+#   expect_length(H$H, length(D))
+#   expect_length(H$RSE, 1)
+# 
+#   D[2] <- NA
+#   H <- retrieveH(D, coord = coord)
+#   expect_false(all(is.na(H$H)))
+# })
 
 test_that("With the region", {
   expect_error(retrieveH(D, region = rep("SEAsia", 2)), "region")
