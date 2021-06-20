@@ -22,8 +22,6 @@
 #' `Dlim` will have a 0 value in the output).
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
-#' @param useCache logical. Whether or not use a cache to avoid downloading multiple time the same files. 
-#' Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
@@ -97,7 +95,7 @@
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL, plot = NULL, useCache= FALSE) {
+                          Carbon = FALSE, Dlim = NULL, plot = NULL) {
   len <- length(D)
 
   # parameters verification -------------------------------------------------
@@ -257,7 +255,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       coord <- as.matrix(t(coord))
     }
 
-    bioclimParams <- getBioclimParam(coord,useCache) # get bioclim variables corresponding to the coordinates
+    bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
 
     if (nrow(bioclimParams) == 1) {
       bioclimParams <- bioclimParams[rep(1, len), ]

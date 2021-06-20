@@ -147,7 +147,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   cachedTaxo <- NULL
 
   if (is.null(useCache) || useCache) {
-    cachePath <- cacheManager("correctTaxo")
+    cachePath <- cacheManager("correctTaxo.log")
 
     if (file.exists(cachePath)) {
 

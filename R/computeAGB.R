@@ -12,8 +12,6 @@
 #' proxy (parameter E in Chave et al. 2014). Compulsory if tree heights `H` are not given.
 #' @param Dlim (optional) Minimum diameter (in cm) for which aboveground biomass should be calculated
 #' (all diameter below `Dlim` will have a 0 value in the output).
-#' @param useCache logical. Whether or not use a cache to avoid downloading multiple time the same files.
-#' Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).
 #'
 #' @details
 #' This function uses two different ways of computing the above-ground biomass of a tree:
@@ -58,7 +56,7 @@
 #'
 #' @keywords AGB above-ground biomass forest carbon allometry
 
-computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL, useCache=FALSE) {
+computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
 
   # Parameters verification -------------------------------------------------
 
@@ -104,7 +102,7 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL, useCache=FALS
       coord <- as.matrix(t(coord))
     }
 
-    E <- computeE(coord, useCache) # environmental index in Chave et al. 2014
+    E <- computeE(coord) # environmental index in Chave et al. 2014
 
     # Modified Eq 7 from Chave et al. 2014 Global change biology
     AGB <- exp(-2.023977 - 0.89563505 * E + 0.92023559 * log(WD) + 2.79495823 * log(D) - 0.04606298 * (log(D)^2)) / 1000

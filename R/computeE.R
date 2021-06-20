@@ -43,7 +43,7 @@ if (getRversion() >= "2.15.1") {
 #' long <- -52.68
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' E <- computeE(coord, useCache=FALSE)
+#' E <- computeE(coord)
 #' }
 #' 
 #' # Several study sites (here three sites)
@@ -51,25 +51,16 @@ if (getRversion() >= "2.15.1") {
 #' lat <- c(4.08, 3.98, 4.12)
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' E <- computeE(coord, useCache=FALSE)
+#' E <- computeE(coord)
 #' }
 #' 
 #' @importFrom raster raster extract
 #' @importFrom data.table as.data.table
 
-computeE <- function(coord,useCache) {
+computeE <- function(coord) {
 
-  if(is.logical(useCache) && !useCache){
-    tmp <- tempfile(fileext = ".zip")
-    DEMzip <- download.file("https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/E.zip", destfile = tmp)
-    unzip(tmp, exdir = tempdir())
-    RAST <- raster(file.path(tempdir(),"E.bil"))
-    message("The E raster file has been downloaded in a temporary file. Using useCache=TRUE is recommended to avoid download time for the next research")
-  }else{
-    # find the raster
-    RAST <- raster(cacheManager("E"))
-  }
-  
+  RAST <- raster(cacheManager("E.bil"))
+
   if (is.vector(coord)) {
     return(extract(RAST, matrix(coord, ncol = 2),"bilinear"))
   }

@@ -59,7 +59,7 @@ computeFeldRegion <- function(coord, level = "region") {
 
   # raster ------------------------------------------------------------------
 
-  RAST <- raster(cacheManager("FELD"))
+  RAST <- raster(cacheManager("feldRegion.grd"))
   # Extract the raster value
   RASTval <- extract(RAST, coord)
   FeldRegion <- as.vector(factorValues(RAST, RASTval, att = "Region"))[, 1]

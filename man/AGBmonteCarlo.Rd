@@ -16,8 +16,7 @@ AGBmonteCarlo(
   n = 1000,
   Carbon = FALSE,
   Dlim = NULL,
-  plot = NULL,
-  useCache = FALSE
+  plot = NULL
 )
 }
 \arguments{
@@ -52,9 +51,6 @@ with the diameter measurements or \code{"chave2004"} (an important error on 5 pe
 
 \item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 stand-specific HD models.}
-
-\item{useCache}{logical. Whether or not use a cache to avoid downloading multiple time the same files.
-Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).}
 }
 \value{
 Returns a list  with (if Carbon is FALSE):
