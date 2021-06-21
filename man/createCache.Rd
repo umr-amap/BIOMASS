@@ -11,6 +11,8 @@ createCache(path = NULL)
 }
 \description{
 Permanent cache is located by default in user data dir.
+}
+\details{
 You can provide a custom path (that will be defined as a BIOMASS.cache option)
 but clearCache function will refuse to operate on it for security reasons.
 }

@@ -2,13 +2,13 @@
 #' 
 #' @section Localisation:
 #' Cache path discovery protocol
-#'   1. BIOMASS.cache option set to an existing folder
-#'   2. existing user data folder [rappdirs::user_data_dir()]
+#' 1. BIOMASS.cache option set to an **existing** folder
+#' 2. **existing** user data folder [rappdirs::user_data_dir()]
 #'     - On Linux : `~/.local/share/R/BIOMASS`
 #'     - On Mac OS X : `~/Library/Application Support/R/BIOMASS`
 #'     - On Windows 7 up to 10 : `C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS`
 #'     - On Windows XP : `C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS`
-#'   3. fallback to R session tempdir
+#' 3. fallback to R session tempdir
 #'   
 #' @param nameFile character. file to resolve cached path.
 #' @return file path of the resolved cached file.

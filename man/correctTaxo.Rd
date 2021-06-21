@@ -44,12 +44,14 @@ By default, names are queried in batches of 500, with a 0.5s delay between each 
 
 Cache path discovery protocol
 \enumerate{
-\item BIOMASS.cache option set to an existing folder
-\item existing user data folder \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
-- On Linux : \verb{~/.local/share/R/BIOMASS}
-- On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
-- On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS}
-- On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS}
+\item BIOMASS.cache option set to an \strong{existing} folder
+\item \strong{existing} user data folder \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
+\itemize{
+\item On Linux : \verb{~/.local/share/R/BIOMASS}
+\item On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
+\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS}
+\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS}
+}
 \item fallback to R session tempdir
 }
 }
