@@ -125,6 +125,7 @@ createCache <- function(path=NULL) {
 #' 
 #' @param remove logical. If TRUE cache folder will be removed too (not only content)
 #' resulting in deactivating cache as a side effect
+#' @importFrom utils askYesNo
 clearCache <- function(remove=FALSE) {
   basePath <- cachePath()
   
