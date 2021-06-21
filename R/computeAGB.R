@@ -75,6 +75,9 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
       warning("There is some NA values in given heights. For those trees the function will return NA AGB,
                you may construct a height-diameter model to overcome that issue (see ?HDFunction and ?retrieveH)")
     }
+    if (!is.null(coord)) {
+      stop("Both height and coordinates are providen.")
+    }
   }
 
   if (!is.null(coord) && ((is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != length(D)))) {
