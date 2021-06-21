@@ -4,14 +4,7 @@
 \alias{retrieveH}
 \title{Retrieving tree height from models}
 \usage{
-retrieveH(
-  D,
-  model = NULL,
-  coord = NULL,
-  region = NULL,
-  plot = NULL,
-  useCache = FALSE
-)
+retrieveH(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
 }
 \arguments{
 \item{D}{Vector of diameters.}
@@ -40,9 +33,6 @@ and pantropical models proposed by Feldpausch et al. (2012). To be chosen betwee
 
 \item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 stand-specific HD models.}
-
-\item{useCache}{logical. Whether or not use a cache to avoid downloading multiple time the same files.
-Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).}
 }
 \value{
 Returns a list  with:

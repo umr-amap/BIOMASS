@@ -4,7 +4,7 @@
 \alias{computeAGB}
 \title{Computing tree above-ground biomass (AGB)}
 \usage{
-computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL, useCache = FALSE)
+computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL)
 }
 \arguments{
 \item{D}{Tree diameter (in cm), either a vector or a single value.}
@@ -21,9 +21,6 @@ proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} ar
 
 \item{Dlim}{(optional) Minimum diameter (in cm) for which aboveground biomass should be calculated
 (all diameter below \code{Dlim} will have a 0 value in the output).}
-
-\item{useCache}{logical. Whether or not use a cache to avoid downloading multiple time the same files.
-Strongly recommended to reduce computing time (but FALSE by default due to CRAN policy).}
 }
 \value{
 The function returns the AGB in Mg (or ton) as a single value or a vector.

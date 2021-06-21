@@ -34,7 +34,7 @@
 #' long <- -52.68
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' bioclim <- getBioclimParam(coord, useCache = FALSE)
+#' bioclim <- getBioclimParam(coord)
 #' }
 #'
 #' # Several study sites (here three sites)
@@ -42,38 +42,17 @@
 #' lat <- c(4.08, 3.98, 4.12)
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' bioclim <- getBioclimParam(coord, useCache = FALSE)
+#' bioclim <- getBioclimParam(coord)
 #' }
 #'
-#' @importFrom rappdirs user_data_dir
 #' @importFrom raster raster extract getData
 
-getBioclimParam <- function(coord,useCache) {
+getBioclimParam <- function(coord) {
   coord <- apply(coord, 1:2, as.numeric)
-
-  if(is.logical(useCache) && !useCache){
-    #tempSeas and precSeas
-    tmp <- tempfile(fileext = ".zip")
-    DEMzip <- download.file("https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip", destfile = tmp)
-    unzip(tmp, exdir = tempdir())
-    tempSeas_rast <- raster(file.path(tempdir(),"bio4.bil"))
-    precSeas_rast <- raster(file.path(tempdir(),"bio15.bil"))
-    #CWD
-    tmp <- tempfile(fileext = ".zip")
-    DEMzip <- download.file("https://github.com/AMAP-dev/BIOMASS/raw/master/data-raw/climate_variable/CWD.zip", destfile = tmp)
-    unzip(tmp, exdir = tempdir())
-    CWD_rast <- raster(file.path(tempdir(),"CWD.bil"))
-    
-    message("The Bioclim raster files have been downloaded in a temporary file. Using useCache=TRUE is recommended to avoid download time for the next research")
-  }else{
   
-  pathwc <- cacheManager("wc2-5")
-
-  ### Load rasters
-  tempSeas_rast <- raster(pathwc[1])
-  precSeas_rast <- raster(pathwc[2])
-  CWD_rast <- raster(cacheManager("CWD"))
-  }
+  tempSeas_rast <- raster(cacheManager("bio4.bil"))
+  precSeas_rast <- raster(cacheManager("bio15.bil"))
+  CWD_rast <- raster(cacheManager("CWD.bil"))
   
   ### Extract the raster value
   tempSeas <- extract(tempSeas_rast, coord, "bilinear") * 10^-3

@@ -4,7 +4,7 @@
 \alias{getBioclimParam}
 \title{Retrieving bioclimatic parameters}
 \usage{
-getBioclimParam(coord, useCache)
+getBioclimParam(coord)
 }
 \arguments{
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}
@@ -27,15 +27,18 @@ However, as soon as the raster is downloaded once, the function then runs fast.
 }
 \section{Localisation}{
 
-The localisation of the folder is :
+Cache path discovery protocol
+\enumerate{
+\item BIOMASS.cache option set to an \strong{existing} folder
+\item \strong{existing} user data folder \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
 \itemize{
 \item On Linux : \verb{~/.local/share/R/BIOMASS}
 \item On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
-\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
-\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS\\\\R\\\\BIOMASS}
+\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS}
+\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS}
 }
-
-See this function for more information : \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
+\item fallback to R session tempdir
+}
 }
 
 \examples{
@@ -44,7 +47,7 @@ lat <- 4.08
 long <- -52.68
 coord <- cbind(long, lat)
 \donttest{
-bioclim <- getBioclimParam(coord, useCache = FALSE)
+bioclim <- getBioclimParam(coord)
 }
 
 # Several study sites (here three sites)
@@ -52,7 +55,7 @@ long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
 \donttest{
-bioclim <- getBioclimParam(coord, useCache = FALSE)
+bioclim <- getBioclimParam(coord)
 }
 
 }
