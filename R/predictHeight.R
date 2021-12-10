@@ -89,5 +89,5 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   # If H predicted values are negative due to random error assignment
   Hpredict[Hpredict <= 0] <- 0.1
 
-  return(as.vector(Hpredict))
+  return(Hpredict)
 }

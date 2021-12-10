@@ -1,3 +1,6 @@
+* version 2.1.7
+- Remove the as.vector to match the latest development versions of R
+
 * version 2.1.6
 - Fit the CRAN policies regarding the cache management by defaulting location to
 R session temp folder (issue #30)
