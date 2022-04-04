@@ -271,7 +271,7 @@
 #'
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY
 #'
-#' @seealso [modelHD()], [lmfor::HDmodels()]
+#' @seealso [modelHD()]
 #'
 #'
 #' @keywords Internal
