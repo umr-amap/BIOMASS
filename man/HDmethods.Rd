@@ -57,7 +57,7 @@ Baskerville, G. L. (1972). \emph{Use of logarithmic regression in the estimation
 Canadian Journal of Forest Research, 2(1), 49-53.
 }
 \seealso{
-\code{\link[=modelHD]{modelHD()}}, \code{\link[lmfor:HDmodels]{lmfor::HDmodels()}}
+\code{\link[=modelHD]{modelHD()}}
 }
 \author{
 Maxime REJOU-MECHAIN, Ariane TANGUY
