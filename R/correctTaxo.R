@@ -91,6 +91,23 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       '\t\tinstall.packages("httr")'
     )
   }
+  
+  checkURL <- function(url) {
+    tryCatch(
+      {
+        httr::HEAD(url)
+        TRUE
+      },
+      error = function(e) {
+        FALSE
+      }
+    )
+  }
+  
+  if(!checkURL("https://tnrsapi.xyz")) {
+    warning("Sorry there is no internet connexion or the tnrs site is unreachable!", call. = FALSE, immediate. = TRUE)
+    return(invisible(NULL))
+  }
 
   # sub-function definition -------------------------------------------------
 
@@ -198,7 +215,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       input_json <- list(
         opts = list(
           # sources = jsonlite::unbox("tpl,tropicos,usda"),
-          class = jsonlite::unbox("tropicos"), 
+          class = jsonlite::unbox("wfo"), 
           mode = jsonlite::unbox("resolve"), 
           matches = jsonlite::unbox("best")
         ),
@@ -220,7 +237,9 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
       # check for errors
       if (httr::http_error(qryResult)) {
-        httr::stop_for_status(qryResult, "connect to tnrs service. Retry maybe later")
+       # httr::stop_for_status(qryResult, "connect to tnrs service. Retry maybe later")
+        message("There appears to be a problem reaching the API.")
+        return(invisible(NULL))
       }
       
       # parse answer from tnrs
