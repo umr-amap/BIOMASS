@@ -1,3 +1,7 @@
+* version 2.1.9
+- Change of the reference dataset in correctTaxo function to avoid a bug (tropicos was no longer maintained)
+- Add a graceful failure message in case of API or connection failure to match the CRAN policy
+
 * version 2.1.7
 - Remove the as.vector to match the latest development versions of R
 

@@ -1,12 +1,13 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1.8
-Date: 2022-04-04
+Version: 2.1.9
+Date: 2023-06-23
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "cre", "dtc")),
-	person("Arthur", "Pere", email = "arthur.pere@cirad.fr", role = c("aut")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
+	person("Dominique", "Lamonica", email = "dominique.lamonica@ird.fr", role = c("aut")),
+	person("Arthur", "Pere", role = c("aut")),
 	person("Ariane", "Tanguy", role = c("aut")),
 	person("Camille", "Piponiot", role = c("aut")),
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
@@ -48,4 +49,4 @@ Suggests:
 	httr,
 	curl,
 	sf
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3

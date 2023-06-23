@@ -83,6 +83,4 @@ correctCoordGPS(
 }
 \author{
 Arthur PERE, Maxime REJOU-MECHAIN
-
-Arthur PERE, Maxime REJOU-MECHAIN
 }

@@ -23,7 +23,7 @@ uncertainty in tropical forests. These functions allow to:
 For more information, see
 [article](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
 or the
-[vignette](https://cran.r-project.org/web/packages/BIOMASS/vignettes/BIOMASS.html)
+[vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/BIOMASS.html)
 of the package, and the [reference
 manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).
 
