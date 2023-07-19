@@ -6,7 +6,7 @@
 \alias{BIOMASS-package}
 \title{BIOMASS: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests}
 \description{
-Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) manage tree and plot coordinates, (5) estimate the aboveground biomass/carbon at the stand level with associated uncertainty. To cite 'BIOMASS', please use citation("BIOMASS"). See more in the article of Réjou-Méchain et al. (2017) \url{https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753}.
+Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, (3) construct height-diameter models, (4) manage tree and plot coordinates, (5) estimate the aboveground biomass/carbon at the stand level with associated uncertainty. To cite 'BIOMASS', please use citation("BIOMASS"). See more in the article of Réjou-Méchain et al. (2017) \doi{10.1111/2041-210X.12753}.
 }
 \examples{
 \donttest{
