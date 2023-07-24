@@ -79,6 +79,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #'
 #' @examples
+#' \dontrun{
 #' # Load a data set
 #' data(KarnatakaForest)
 #'
@@ -103,6 +104,7 @@ if (getRversion() >= "2.15.1") {
 #'   stand = KarnatakaForest$plotId
 #' )
 #' str(WD)
+#' }
 #' @seealso [wdData], [sd_10]
 #' @keywords Wood density
 #' @importFrom data.table data.table := setDF setDT setkey copy chmatch %chin%

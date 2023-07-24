@@ -158,12 +158,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
+\strong{Maintainer}: Dominique Lamonica \email{dominique.lamonica@ird.fr}
 
 Authors:
 \itemize{
+  \item Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
   \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
-  \item Dominique Lamonica \email{dominique.lamonica@ird.fr}
   \item Arthur Pere
   \item Ariane Tanguy
   \item Camille Piponiot

@@ -85,6 +85,7 @@ The function also provides an estimate of the error associated with the wood den
 appropriate taxonomic level using the \link{sd_10} dataset.
 }
 \examples{
+\dontrun{
 # Load a data set
 data(KarnatakaForest)
 
@@ -109,6 +110,7 @@ WD <- getWoodDensity(
   stand = KarnatakaForest$plotId
 )
 str(WD)
+}
 }
 \references{
 Chave, J., et al. \emph{Towards a worldwide wood economics spectrum}. Ecology letters 12.4 (2009): 351-366.
