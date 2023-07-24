@@ -85,7 +85,6 @@ The function also provides an estimate of the error associated with the wood den
 appropriate taxonomic level using the \link{sd_10} dataset.
 }
 \examples{
-\dontrun{
 # Load a data set
 data(KarnatakaForest)
 
@@ -103,6 +102,7 @@ WD <- getWoodDensity(
 )
 
 # Compute the Wood Density up to the family level and then give the mean wood density per stand
+\dontrun{
 WD <- getWoodDensity(
   family = KarnatakaForest$family,
   genus = KarnatakaForest$genus,

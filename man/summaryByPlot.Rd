@@ -54,11 +54,13 @@ KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
 )
 
 # Propagating errors
+\dontrun{
 filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
 resultMC <- AGBmonteCarlo(
   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 )
+}
 
 plot <- KarnatakaForest$plotId[ filt ]
 

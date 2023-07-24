@@ -56,11 +56,13 @@
 #' # Propagating errors with a standard error in wood density in one plot
 #' filt <- KarnatakaForest$plotId == "BSP20"
 #' set.seed(10)
+#' \dontrun{
 #' resultMC <- AGBmonteCarlo(
 #'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
 #'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 #' )
 #' str(resultMC)
+#' }
 #'
 #' # If only the coordinates are available
 #' lat <- KarnatakaForest$lat[filt]

@@ -79,7 +79,6 @@ if (getRversion() >= "2.15.1") {
 #'
 #'
 #' @examples
-#' \dontrun{
 #' # Load a data set
 #' data(KarnatakaForest)
 #'
@@ -97,6 +96,7 @@ if (getRversion() >= "2.15.1") {
 #' )
 #'
 #' # Compute the Wood Density up to the family level and then give the mean wood density per stand
+#' \dontrun{
 #' WD <- getWoodDensity(
 #'   family = KarnatakaForest$family,
 #'   genus = KarnatakaForest$genus,
