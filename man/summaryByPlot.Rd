@@ -60,7 +60,6 @@ resultMC <- AGBmonteCarlo(
   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 )
-}
 
 plot <- KarnatakaForest$plotId[ filt ]
 
@@ -71,4 +70,5 @@ summaryByPlot(AGB_val = resultMC$AGB_simu, plot)
 H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
 AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
 summaryByPlot(AGB, plot)
+}
 }

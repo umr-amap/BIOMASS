@@ -61,7 +61,6 @@ if (getRversion() >= "2.15.1") {
 #'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
 #'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
 #' )
-#' }
 #' 
 #' plot <- KarnatakaForest$plotId[ filt ]
 #'
@@ -72,6 +71,7 @@ if (getRversion() >= "2.15.1") {
 #' H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
 #' AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
 #' summaryByPlot(AGB, plot)
+#' }
 summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
 
 
