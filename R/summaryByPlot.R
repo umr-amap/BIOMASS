@@ -50,9 +50,11 @@ if (getRversion() >= "2.15.1") {
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 #'
 #' # Retrieving wood density values
+#' \dontrun{
 #' KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
 #'   stand = KarnatakaForest$plotId
 #' )
+#' }
 #'
 #' # Propagating errors
 #' \dontrun{
