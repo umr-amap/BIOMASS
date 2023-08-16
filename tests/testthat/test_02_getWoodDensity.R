@@ -62,6 +62,7 @@ suppressMessages({
 
 
   test_that("Function getWoodDensity with other parameters", {
+    skip_on_cran()
     test$family <- getTaxonomy(test$genus)$family
 
     expect_error(

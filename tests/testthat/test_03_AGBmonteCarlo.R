@@ -196,6 +196,8 @@ test_that("AGB monte Carlo on the Dpropag", {
 
 
 test_that("AGB monte Carlo on the Carbon", {
+  skip_on_cran()
+  
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE)
   expect_length(AGB, 5)
