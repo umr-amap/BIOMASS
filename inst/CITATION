@@ -6,7 +6,6 @@ bibentry(
   doi = "10.1111/2041-210X.12753",
   language = "en",
   number = "9",
-  urldate = "2018-12-13",
   journal = "Methods in Ecology and Evolution",
   author = c(
     person("Maxime", "Rejou-Mechain"),
