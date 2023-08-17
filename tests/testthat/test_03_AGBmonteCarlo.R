@@ -20,6 +20,7 @@ WD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$spe
 
 context("AGBmonteCarlo")
 test_that("AGBmonteCarlo error", {
+  skip_on_cran()
   expect_error(AGBmonteCarlo(D), "The WD and errWD arguments must be not NULL")
 
   expect_error(
@@ -100,6 +101,7 @@ test_that("AGBmonteCarlo error", {
 
 
 test_that("AGB monte Carlo on the HDmodel", {
+  skip_on_cran()
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
   expect_length(AGB, 5)
@@ -123,6 +125,7 @@ test_that("AGB monte Carlo on the HDmodel", {
 
 
 test_that("AGB monte Carlo on the H", {
+  skip_on_cran()
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = HDmodel$RSE, n = nIter)
   expect_length(AGB, 5)
@@ -170,6 +173,7 @@ test_that("AGB monte Carlo on the H", {
 # })
 
 test_that("AGB monte Carlo on the Dpropag", {
+  skip_on_cran()
   set.seed(10)
   AGB <- AGBmonteCarlo(D,
     Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1),
@@ -220,6 +224,7 @@ test_that("AGB monte Carlo on the Carbon", {
 })
 
 test_that("AGB monte Carlo on the Dlim", {
+  skip_on_cran()
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE, Dlim = 20)
   expect_length(AGB, 5)
@@ -245,6 +250,7 @@ test_that("AGB monte Carlo on the Dlim", {
 
 
 test_that("AGB with NA", {
+  skip_on_cran()
   D[1:5] <- NA
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
@@ -271,6 +277,7 @@ test_that("AGB with NA", {
 
 
 test_that("With the plot value", {
+  skip_on_cran()
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,

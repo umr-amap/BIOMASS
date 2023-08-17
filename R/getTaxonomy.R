@@ -22,7 +22,9 @@ if (getRversion() >= "2.15.1") {
 #' # Find the Family of the Aphelandra genus
 #' getTaxonomy("Aphelandra")
 #' # ... and the order
+#' \dontrun{
 #' getTaxonomy("Aphelandra", findOrder = TRUE)
+#' }
 #' @importFrom data.table setDF setDT data.table
 getTaxonomy <- function(genus, findOrder = FALSE) {
   ### Find the family (and the order) of a vector of genus

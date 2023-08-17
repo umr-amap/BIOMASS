@@ -10,8 +10,9 @@ output <- na.omit(output)
 context("Methods of function modelHD")
 
 for (method in c("log1", "log2", "michaelis", "weibull")) {
-  for (useWeight in c(TRUE, FALSE)) {
+    for (useWeight in c(TRUE, FALSE)) {
     test_that(paste("Method", method, "useWeight", useWeight), {
+      skip_on_cran()
       HDmodel <- modelHD(D, H, method = method, useWeight = useWeight)
 
       logMethod <- grepl("log", method)
@@ -45,6 +46,7 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 }
 
 test_that("NA characters", {
+  skip_on_cran()
   H1 <- H
   H1[ seq(length(H) - 5) ] <- NA
 
@@ -52,6 +54,7 @@ test_that("NA characters", {
 })
 
 test_that("Without parameters", {
+  skip_on_cran()
   Res <- expect_message(modelHD(D, H, useWeight = TRUE), "build a HD model")
 
   expect_is(Res, "data.frame")
@@ -69,6 +72,7 @@ michaelis purple 4.294488        NA  0.014564152
 })
 
 test_that("With the plot arguments", {
+  skip_on_cran()
   plot <- NouraguesHD$plotId
 
   Res <- expect_message(modelHD(D, H, plot = plot), "build a HD model")
