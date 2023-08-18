@@ -10,6 +10,9 @@ clearCache(remove = FALSE)
 \item{remove}{logical. If TRUE cache folder will be removed too (not only content)
 resulting in deactivating cache as a side effect}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 It will refuse to clear or remove a custom cache folder set using BIOMASS.cache
 option as we don't know whether this folder contains other possibly valuable

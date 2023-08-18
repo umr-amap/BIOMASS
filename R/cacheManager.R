@@ -103,8 +103,8 @@ cachePath <- function(...) {
 #' 
 #' You can provide a custom path (that will be defined as a BIOMASS.cache option)
 #' but clearCache function will refuse to operate on it for security reasons.
-#' 
 #' @param path Use a custom path to host cache
+#' @return No return value, called for side effects
 #' @export
 createCache <- function(path=NULL) {
   if(is.null(path)) {
@@ -125,6 +125,7 @@ createCache <- function(path=NULL) {
 #' 
 #' @param remove logical. If TRUE cache folder will be removed too (not only content)
 #' resulting in deactivating cache as a side effect
+#' @return No return value, called for side effects
 #' @importFrom utils askYesNo
 clearCache <- function(remove=FALSE) {
   basePath <- cachePath()

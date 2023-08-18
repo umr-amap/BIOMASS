@@ -25,7 +25,7 @@
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
 #' 
-#' @return Returns a list  with:
+#' @return Returns a list with:
 #'   - `H`: Height predicted by the model
 #'   - `RSE` Residual Standard Error of the model, or a vector of those for each plot
 #' @references

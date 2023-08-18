@@ -9,6 +9,9 @@ createCache(path = NULL)
 \arguments{
 \item{path}{Use a custom path to host cache}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 Permanent cache is located by default in user data dir.
 }

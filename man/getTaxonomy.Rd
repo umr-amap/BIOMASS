@@ -22,7 +22,7 @@ order, from the \link{genusFamily} database and the \link{apgFamilies} dataset
 # Find the Family of the Aphelandra genus
 getTaxonomy("Aphelandra")
 # ... and the order
-\dontrun{
+\donttest{
 getTaxonomy("Aphelandra", findOrder = TRUE)
 }
 }

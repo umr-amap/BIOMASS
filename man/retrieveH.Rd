@@ -35,7 +35,7 @@ and pantropical models proposed by Feldpausch et al. (2012). To be chosen betwee
 stand-specific HD models.}
 }
 \value{
-Returns a list  with:
+Returns a list with:
 \itemize{
 \item \code{H}: Height predicted by the model
 \item \code{RSE} Residual Standard Error of the model, or a vector of those for each plot
