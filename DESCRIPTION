@@ -39,7 +39,7 @@ Imports:
 	utils, 
 	data.table (>= 1.9.8), 
 	rappdirs,
-	sp
+	sf
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
@@ -47,6 +47,5 @@ Suggests:
 	prettydoc,
 	testthat,
 	httr,
-	curl,
-	sf
+	curl
 RoxygenNote: 7.2.3

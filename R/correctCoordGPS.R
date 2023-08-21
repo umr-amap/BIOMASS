@@ -30,7 +30,7 @@
 #' @export
 #'
 #' @importFrom data.table between
-#' @importFrom sp Polygon Polygons SpatialPolygons plot
+#' @importFrom sf st_multipoint st_polygon st_sfc
 #' @importFrom graphics points
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
