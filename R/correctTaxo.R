@@ -32,7 +32,7 @@ if (getRversion() >= "2.15.1") {
 #' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
 #'  or (genus + species + author) may be given (see example).
 #' @param species (optional) Vector of species to be checked (same size as the genus vector).
-#' @param score Score of the matching (see https://tnrs.biendata.org/instructions/) below which corrections are discarded.
+#' @param score Score of the matching ( see https://tnrs.biendata.org/instructions ) below which corrections are discarded.
 #' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
 #' @param verbose logical. If TRUE various messages are displayed during process
 #' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.
@@ -57,14 +57,25 @@ if (getRversion() >= "2.15.1") {
 #' @importFrom utils head
 #'
 correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = TRUE, accepted=FALSE) {
+
+  # Check if package httr2 is available
+  if (!requireNamespace("httr2", quietly = TRUE)) {
+    warning(
+      'To use this function, you must install the "httr2" library \n\n',
+      '\t\tinstall.packages("httr2")'
+    )
+    return(invisible(NULL))
+  }
+
+  # check parameters -------------------------------------------------
+
   WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
   BATCH_SIZE <- min(getOption("BIOMASS.batch_size", 500), 1000) # number of taxa sought per request to tnrs (max 1000)
 
-  # check parameters -------------------------------------------------
   if (is.logical(useCache) && !useCache) {
-    message("Using useCache=TRUE is recommended to reduce online search time for the next research")
+    message("Using useCache=TRUE is recommended to reduce online search time for the next query")
   }
-  
+
   if (all(is.na(genus))) {
     stop("Please supply at least one name for genus")
   }
@@ -78,24 +89,18 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     }
     species[is.na(genus)] <- NA
   }
-  
+
   if(accepted && !is.null(useCache) && useCache) {
     warning("Cache cannot be used if accepted names are required! I will ignore it")
     useCache <- FALSE
   }
 
-  # Check if package httr is available
-  if (!requireNamespace("httr", quietly = TRUE)) {
-    stop(
-      'To use this function, you must install the "httr" library \n\n',
-      '\t\tinstall.packages("httr")'
-    )
-  }
-  
   checkURL <- function(url) {
     tryCatch(
       {
-        httr::HEAD(url)
+        req <- httr2::request(url)
+        req <- httr2::req_method(req, "HEAD")
+        httr2::req_perform(req)
         TRUE
       },
       error = function(e) {
@@ -103,7 +108,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       }
     )
   }
-  
+
   if(!checkURL("https://tnrsapi.xyz")) {
     warning("Sorry there is no internet connexion or the tnrs site is unreachable!", call. = FALSE, immediate. = TRUE)
     return(invisible(NULL))
@@ -122,7 +127,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     }
     split
   }
-  
+
   # Data preparation --------------------------------------------------------
 
   genus <- as.character(genus)
@@ -212,38 +217,32 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       pb <- utils::txtProgressBar(style = 3)
     }
     queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-      input_json <- list(
-        opts = list(
-          # sources = jsonlite::unbox("tpl,tropicos,usda"),
-          class = jsonlite::unbox("wfo"), 
-          mode = jsonlite::unbox("resolve"), 
-          matches = jsonlite::unbox("best")
-        ),
-        data = unname(data.frame(seq_along(slice$query),slice$query))
-      )
-      
-      headers <- c(
+
+      req <- httr2::request("https://tnrsapi.xyz/tnrs_api.php")
+      req <- httr2::req_headers(req,
         'Accept' = 'application/json',
         'Content-Type' = "application/json",
         'charset' = "UTF-8"
       )
-      
-      qryResult <- httr::POST(
-        "https://tnrsapi.xyz/tnrs_api.php", 
-        body = input_json,
-        httr::add_headers(.headers = headers),
-        encode="json"
-      )
+      req <- httr2::req_body_json(req, list(
+        opts = list(
+          class = jsonlite::unbox("wfo"),
+          mode = jsonlite::unbox("resolve"),
+          matches = jsonlite::unbox("best")
+        ),
+        data = unname(data.frame(seq_along(slice$query),slice$query))
+      ))
 
-      # check for errors
-      if (httr::http_error(qryResult)) {
-       # httr::stop_for_status(qryResult, "connect to tnrs service. Retry maybe later")
-        message("There appears to be a problem reaching the API.")
+      req <- httr2::req_error(req, function(response) FALSE)
+      qryResult <- httr2::req_perform(req)
+
+      if (httr2::resp_is_error(qryResult)) {
+        message("There appears to be a problem reaching the tnrs API.")
         return(invisible(NULL))
       }
-      
+
       # parse answer from tnrs
-      answer <- setDT(jsonlite::fromJSON(httr::content(qryResult, "text", encoding = "UTF-8")))
+      answer <- setDT(httr2::resp_body_json(qryResult, simplifyVector = TRUE))
 
       # recode empty strings as NA
       answer[, names(answer) := lapply(.SD, function(x) {
@@ -253,8 +252,8 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
       # format result
       answer <- answer[, .(
-        submittedName = Name_submitted, 
-        score = as.numeric(Overall_score), 
+        submittedName = Name_submitted,
+        score = as.numeric(Overall_score),
         matchedName = Name_matched,
         from = "iplant_tnrs",
         acceptedName = Accepted_name
@@ -263,7 +262,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       if (verbose) {
         utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
       }
-      
+
       Sys.sleep(WAIT_DELAY)
 
       answer
@@ -283,7 +282,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
       from = from
     )]
-    
+
   } else {
     userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
       outName = ifelse(score >= ..score, matchedName, query),
@@ -291,7 +290,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
       from = from
     )]
   }
-  
+
   # if nothing changed tell it
   userTaxo[
     !is.na(outName) & (outName == query) & (nameModified != "NoMatch(low_score)"),

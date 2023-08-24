@@ -19,7 +19,7 @@ or (genus + species + author) may be given (see example).}
 
 \item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
 
-\item{score}{Score of the matching (see https://tnrs.biendata.org/instructions/) below which corrections are discarded.}
+\item{score}{Score of the matching ( see https://tnrs.biendata.org/instructions ) below which corrections are discarded.}
 
 \item{useCache}{logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)}
 
