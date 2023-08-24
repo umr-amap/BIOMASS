@@ -54,7 +54,7 @@ if (getRversion() >= "2.15.1") {
 #' E <- computeE(coord)
 #' }
 #' 
-#' @importFrom terra rast extract
+#' @importFrom terra rast extract buffer vect
 #' @importFrom data.table as.data.table
 
 computeE <- function(coord) {

@@ -36,7 +36,7 @@
 #'
 #' @author Arthur PERE
 #'
-#' @importFrom raster raster extract factorValues
+#' @importFrom terra rast extract
 computeFeldRegion <- function(coord, level = "region") {
 
 
@@ -59,10 +59,10 @@ computeFeldRegion <- function(coord, level = "region") {
 
   # raster ------------------------------------------------------------------
 
-  RAST <- raster(cacheManager("feldRegion.grd"))
+  RAST <- rast(cacheManager("feldRegion.grd"))
   # Extract the raster value
   RASTval <- extract(RAST, coord)
-  FeldRegion <- factorValues(RAST, RASTval, att = "Region")[, 1]
+  FeldRegion <- as.character(RASTval$Region)
 
   level <- tolower(level)
 

@@ -1,8 +1,8 @@
-require(raster)
+require(geodata)
 
 ##### wc2-5
 # get the data from world climate
-getData("worldclim", var = "bio", res = 2.5, path = "data-raw/climate_variable")
+worldclim_global(var = "bio", res = 2.5, path = "data-raw/climate_variable")
 
 paste0("data-raw/climate_variable/wc2-5/", c("bio4\\.*", "bio15\\.*"))
 
