@@ -4,7 +4,7 @@
 \alias{computeFeldRegion}
 \title{Retrieving Feldpausch regions}
 \usage{
-computeFeldRegion(coord, level = "region")
+computeFeldRegion(coord, level = c("region"))
 }
 \arguments{
 \item{coord}{Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).}

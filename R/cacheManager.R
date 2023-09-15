@@ -43,6 +43,11 @@ cacheManager <- function(nameFile) {
     )
   }
   
+  if(httr::http_error(url)) {
+    message("There appears to be a problem reaching the directory.")
+    return(invisible(NULL))
+  }
+  
   if(!file.exists(cachePath(nameFile))) {
     dest <- tempfile(fileext = ".zip")
     on.exit(unlink(dest))

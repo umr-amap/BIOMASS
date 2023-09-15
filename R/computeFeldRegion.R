@@ -37,12 +37,12 @@
 #' @author Arthur PERE
 #'
 #' @importFrom raster raster extract factorValues
-computeFeldRegion <- function(coord, level = c("region", "continent", "world")) {
+computeFeldRegion <- function(coord, level = c("region")) {
 
 
   # Parameter verification --------------------------------------------------
 
-  level <- match.arg(level)
+  #level <- match.arg(level)
   
   if (!(length(level) %in% c(1, nrow(coord)))) {
     stop("The vector region must be a length of 1 or the number of rows of your coord parameter")
