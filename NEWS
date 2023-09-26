@@ -1,3 +1,6 @@
+* version 2.1.10
+- move from httr to httr2 package for correctTaxo
+
 * version 2.1.9
 - Change of the reference dataset in correctTaxo function to avoid a bug (tropicos was no longer maintained)
 - Add a graceful failure message in case of API or connection failure to match the CRAN policy
@@ -23,7 +26,7 @@ R session temp folder (issue #30)
 - removed unneeded dependencies on usethis, taxize, covr, rvest, MCMCglmm and lmfor
 
 * version 2.1.3
-- 
+-
 
 * version 2.1.2
 - Modified dataset for compatibility issues with new rgdal package
