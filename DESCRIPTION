@@ -30,7 +30,6 @@ URL: https://github.com/umr-amap/BIOMASS
 BugReports: https://github.com/umr-amap/BIOMASS/issues
 Imports:
 	minpack.lm, 
-	raster, 
 	jsonlite, 
 	methods, 
 	proj4,	
@@ -39,7 +38,8 @@ Imports:
 	utils, 
 	data.table (>= 1.9.8), 
 	rappdirs,
-	sp
+	sf,
+	terra
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
@@ -48,5 +48,5 @@ Suggests:
 	testthat,
 	httr,
 	curl,
-	sf
+	geodata
 RoxygenNote: 7.2.3

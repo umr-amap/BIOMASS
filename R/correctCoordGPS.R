@@ -30,7 +30,7 @@
 #' @export
 #'
 #' @importFrom data.table between
-#' @importFrom sp Polygon Polygons SpatialPolygons plot
+#' @importFrom sf st_multipoint st_polygon st_sfc
 #' @importFrom graphics points
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN
@@ -150,11 +150,10 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   cornerCoord <- sweep(cornerCoord, 2, res$translation, FUN = "+")
 
   # Create a polygon
-  p <- Polygon(rbind(cornerCoord, cornerCoord[1, ]))
-  ps <- Polygons(list(p), 1)
-  sps <- SpatialPolygons(list(ps))
-
-
+  p <- st_multipoint(rbind(cornerCoord, cornerCoord[1, ]))
+  ps <- st_polygon(list(p), 1)
+  sps <- st_sfc(list(ps))
+  
 
   # draw plot ---------------------------------------------------------------
 

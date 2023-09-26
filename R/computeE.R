@@ -54,15 +54,15 @@ if (getRversion() >= "2.15.1") {
 #' E <- computeE(coord)
 #' }
 #' 
-#' @importFrom raster raster extract
+#' @importFrom terra rast extract buffer vect
 #' @importFrom data.table as.data.table
 
 computeE <- function(coord) {
 
-  RAST <- raster(cacheManager("E.bil"))
+  RAST <- rast(cacheManager("E.bil"))
 
   if (is.vector(coord)) {
-    return(extract(RAST, matrix(coord, ncol = 2),"bilinear"))
+    return(extract(RAST, matrix(coord, ncol = 2), method = "bilinear")$E)
   }
 
   # set the coord in a data.table
@@ -74,14 +74,15 @@ computeE <- function(coord) {
   coord_unique <- na.omit(coord_unique)
 
   # Extract the raster value
-  coord_unique[, RASTval := extract(RAST, coord_unique, "bilinear")]
+  coord_unique[, RASTval := extract(RAST, coord_unique, method = "bilinear")$E]
 
   # search around the point if there is an NA in the RASTval
   r <- 0
   i <- 1
   while (anyNA(coord_unique$RASTval)) {
     r <- r + 5000
-    coord_unique[is.na(RASTval), RASTval := sapply(extract(RAST, cbind(long, lat), buffer = r), mean, na.rm = TRUE)]
+    poly_buffer <- buffer(x = vect(coord_unique[is.na(RASTval), cbind(long, lat)], crs = "+proj=longlat"), width = r)
+    coord_unique[is.na(RASTval), RASTval := extract(RAST, poly_buffer, fun = mean, method = "bilinear", na.rm = TRUE)$E]
 
     if (i > 8) {
       coord[coord_unique, on = c("long", "lat"), RASTval := i.RASTval]

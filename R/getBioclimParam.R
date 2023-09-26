@@ -45,19 +45,19 @@
 #' bioclim <- getBioclimParam(coord)
 #' }
 #'
-#' @importFrom raster raster extract getData
+#' @importFrom terra rast extract
 
 getBioclimParam <- function(coord) {
   coord <- apply(coord, 1:2, as.numeric)
   
-  tempSeas_rast <- raster(cacheManager("bio4.bil"))
-  precSeas_rast <- raster(cacheManager("bio15.bil"))
-  CWD_rast <- raster(cacheManager("CWD.bil"))
+  tempSeas_rast <- rast(cacheManager("bio4.bil"))
+  precSeas_rast <- rast(cacheManager("bio15.bil"))
+  CWD_rast <- rast(cacheManager("CWD.bil"))
   
   ### Extract the raster value
-  tempSeas <- extract(tempSeas_rast, coord, "bilinear") * 10^-3
-  precSeas <- extract(precSeas_rast, coord, "bilinear") * 10^-3
-  CWD <- extract(CWD_rast, coord, "bilinear") * 10^-3
+  tempSeas <- extract(tempSeas_rast, coord, method = "bilinear")$bio4 * 10^-3
+  precSeas <- extract(precSeas_rast, coord, method = "bilinear")$bio15 * 10^-3
+  CWD <- extract(CWD_rast, coord, method = "bilinear")$CWD * 10^-3
 
   out <- data.frame(tempSeas = tempSeas, precSeas = precSeas, CWD = CWD)
   return(out)

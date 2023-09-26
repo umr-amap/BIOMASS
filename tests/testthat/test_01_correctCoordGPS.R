@@ -30,7 +30,7 @@ test_that("correct coord GPS in UTM", {
 
   expect_is(corr$cornerCoords, "data.frame")
   expect_is(corr$correctedCoord, "data.frame")
-  expect_is(corr$polygon, "SpatialPolygons")
+  expect_is(corr$polygon, "sfc_POLYGON")
   expect_is(corr$outliers, "integer")
 
   expect_length(corr$outliers, 6)
@@ -116,7 +116,7 @@ test_that("correct coord GPS in long lat", {
 
   expect_is(corr$cornerCoords, "data.frame")
   expect_is(corr$correctedCoord, "data.frame")
-  expect_is(corr$polygon, "SpatialPolygons")
+  expect_is(corr$polygon, "sfc_POLYGON")
   expect_is(corr$outliers, "integer")
   expect_is(corr$codeUTM, "character")
 
