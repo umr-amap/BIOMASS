@@ -43,7 +43,11 @@ cacheManager <- function(nameFile) {
     )
   }
   
-  if(httr::http_error(url)) {
+  req <- httr2::request(url)
+  req <- httr2::req_error(req, function(response) FALSE)
+  qryResult <- httr2::req_perform(req)
+  
+  if (httr2::resp_is_error(qryResult)) {
     message("There appears to be a problem reaching the directory.")
     return(invisible(NULL))
   }

@@ -46,7 +46,7 @@ Suggests:
 	rmarkdown,
 	prettydoc,
 	testthat,
-	httr2,
 	curl,
-	geodata
+	geodata,
+	httr2
 RoxygenNote: 7.2.3
