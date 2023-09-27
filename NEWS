@@ -1,5 +1,9 @@
+* version 2.1.11
+- Move from httr to httr2 package for correctTaxo
+- Replace sp & raster dependencies by sf & terra
+
 * version 2.1.10
-- move from httr to httr2 package for correctTaxo
+- Add a graceful failure message in case of API or connection failure to match the CRAN policy
 
 * version 2.1.9
 - Change of the reference dataset in correctTaxo function to avoid a bug (tropicos was no longer maintained)
