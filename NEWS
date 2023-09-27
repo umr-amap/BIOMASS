@@ -1,6 +1,6 @@
 * version 2.1.11
 - Move from httr to httr2 package for correctTaxo
-- Replace sp & raster dependencies by sf & terra
+- Replace sp and raster dependencies by sf and terra
 
 * version 2.1.10
 - Add a graceful failure message in case of API or connection failure to match the CRAN policy
