@@ -25,7 +25,7 @@ if (getRversion() >= "2.15.1") {
 #' @author Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 #' @seealso [minpack.lm::nlsLM()]
 #'
-#'
+#' @export
 #' @importFrom data.table data.table
 #' @keywords Internal
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
