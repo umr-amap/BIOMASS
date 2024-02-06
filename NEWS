@@ -1,3 +1,6 @@
+* version 2.1.xx
+- fix missing export of function predictHeight
+
 * version 2.1.11
 - Move from httr to httr2 package for correctTaxo
 - Replace sp and raster dependencies by sf and terra
