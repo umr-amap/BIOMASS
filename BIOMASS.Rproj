@@ -16,3 +16,4 @@ BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
 PackageCheckArgs: _R_CHECK_SUGGESTS_ONLY_=false
+PackageRoxygenize: rd,collate,namespace
