@@ -6,3 +6,6 @@
 ^vignettes/.*_cache/.*$
 ^tests/test/*$
 ^tests/testthat/Rplots.pdf$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
