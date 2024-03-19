@@ -33,3 +33,5 @@ vignettes/BIOMASS_cache/html/
 
 \.~*\#
 .Rproj.user
+# Web site
+docs
