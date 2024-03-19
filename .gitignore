@@ -21,6 +21,8 @@ inst/doc
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+
+# Package specific
 biomass\.Rproj
 vignettes/VignetteBiomass_cache/*
 tests/testthat/Rplots\.pdf
@@ -32,6 +34,6 @@ data-raw/climate_variable/wc2-5/
 vignettes/BIOMASS_cache/html/
 
 \.~*\#
-.Rproj.user
+
 # Web site
 docs
