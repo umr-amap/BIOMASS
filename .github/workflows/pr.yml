@@ -1,0 +1,32 @@
+on:
+  pull_request:
+    branches:
+      - master
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    runs-on: macOS-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GH_PAT }}
+    steps:
+      - uses: actions/checkout@master
+      - uses: r-lib/actions/setup-r@v2
+      - name: Install pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+      - name: Install dependencies
+        run: |
+          options(pkgType = "binary")
+          options(install.packages.check.source = "no")
+          install.packages(c("remotes", "rcmdcheck", "covr", "pkgdown"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+      - name: Check
+        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "warning", check_dir = "check")
+        shell: Rscript {0}
+      - name: Install package
+        run: R CMD INSTALL .
+      - name: Pkgdown
+        # Build the package site locally
+        run: Rscript -e 'pkgdown::build_site()'

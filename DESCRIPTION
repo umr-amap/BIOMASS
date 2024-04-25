@@ -1,8 +1,8 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1.12
-Date: 2024-02-09
+Version: 2.1.13
+Date: 2024-03-19
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
@@ -26,7 +26,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R(>= 3.6)
 Roxygen: list(markdown = TRUE)
-URL: https://github.com/umr-amap/BIOMASS
+URL: https://umr-amap.github.io/BIOMASS, https://github.com/umr-amap/BIOMASS
 BugReports: https://github.com/umr-amap/BIOMASS/issues
 Imports:
 	minpack.lm, 
@@ -48,5 +48,6 @@ Suggests:
 	testthat,
 	curl,
 	geodata,
-	httr2
+	httr2,
+	pkgdown
 RoxygenNote: 7.3.1

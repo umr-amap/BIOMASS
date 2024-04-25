@@ -1,0 +1,7 @@
+url: https://umr-amap.github.io/BIOMASS/
+
+template:
+  bootstrap: 5
+
+development:
+  mode: auto
