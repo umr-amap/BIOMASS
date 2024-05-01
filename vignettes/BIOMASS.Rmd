@@ -19,17 +19,18 @@ require(knitr)
 require(BIOMASS)
 ```
 
-#Load BIOMASS and datasets
+# Load BIOMASS and datasets
+
 **Install BIOMASS (to be done once)**
 ```{r, eval=F}
 install.packages("BIOMASS")
 ```
+
 **Load the package**
 ```{r, eval=F}
 require(BIOMASS)
 require(knitr) # To build tables in this document
 ```
-
 
 **Load the two datasets stored in the package**
 ```{r, cache=CACHE}
@@ -40,15 +41,16 @@ data(NouraguesHD)
 str(NouraguesHD)
 ```
 
-
 **Select 10 plots for illustrative purpose**
 ```{r, cache=CACHE}
 selecPlot <- KarnatakaForest$plotId %in% c("BSP2", "BSP12", "BSP14", "BSP26", "BSP28", "BSP30", "BSP34", "BSP44", "BSP63", "BSP65")
 KarnatakaForestsub <- droplevels(KarnatakaForest[selecPlot, ])
 ```
 
-#Retrieve wood density
-##Check and retrieve taxonomy
+# Retrieve wood density
+
+## Check and retrieve taxonomy
+
 **First, check for any typo in the taxonomy**
 ```{r eval=test, cache=CACHE}
 Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
@@ -65,6 +67,7 @@ KarnatakaForestsub$orderAPG <- APG$order
 
 
 ## Wood density
+
 **Retrieve wood density using the plot level average if no genus level information is available**
 ```{r eval=test, cache=CACHE}
 dataWD <- getWoodDensity(
@@ -73,6 +76,7 @@ dataWD <- getWoodDensity(
   stand = KarnatakaForestsub$plotId
 )
 ```
+
 **The same but using the family average and adding other wood density values as references (here invented for the example)**
 ```{r eval=test, cache=CACHE}
 LocalWoodDensity <- data.frame(
@@ -89,6 +93,7 @@ dataWD <- getWoodDensity(
   addWoodDensityData = LocalWoodDensity
 )
 ```
+
 **Below the number of wood density value estimated at the species, genus and plot level:**
 ```{r eval=test, cache=CACHE}
 # At species level
@@ -101,7 +106,7 @@ sum(!dataWD$levelWD %in% c("genus", "species"))
 
 
 
-#Build height-diameter models
+# Build height-diameter models
 
 **You may compare different models at once**
 ```{r echo=TRUE, cache=CACHE}
@@ -113,8 +118,6 @@ result <- modelHD(
 kable(result)
 ```
 
-
-
 **Compute the local H-D model with the lowest RSE**
 ```{r, cache=CACHE}
 HDmodel <- modelHD(
@@ -125,10 +128,7 @@ HDmodel <- modelHD(
 )
 ```
 
-
-
 **Compute models specific to given stands**
-
 ```{r, cache=CACHE}
 HDmodelPerPlot <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull",
@@ -149,6 +149,7 @@ dataHlocal <- retrieveH(
   model = HDmodel
 )
 ```
+
 **Retrieve height data from a Feldpaush et al. (2012) averaged model**
 ```{r, cache=CACHE}
 dataHfeld <- retrieveH(
@@ -156,6 +157,7 @@ dataHfeld <- retrieveH(
   region = "SEAsia"
 )
 ```
+
 **Retrieve height data from  Chave et al. (2012) equation 6**
 ```{r, eval=F, cache=CACHE}
 dataHchave <- retrieveH(
@@ -165,12 +167,14 @@ dataHchave <- retrieveH(
 ```
 
 # Estimate AGB
+
 **Organize data**
 ```{r, cache=CACHE}
 KarnatakaForestsub$WD <- dataWD$meanWD
 KarnatakaForestsub$H <- dataHlocal$H
 KarnatakaForestsub$Hfeld <- dataHfeld$H
 ```
+
 **Compute AGB(Mg) per tree**
 ```{r warning=F, cache=CACHE}
 AGBtree <- computeAGB(
@@ -179,6 +183,7 @@ AGBtree <- computeAGB(
   H = KarnatakaForestsub$H
 )
 ```
+
 **Compute AGB(Mg) per plot (need to be divided by plot area to get Mg/ha)**
 ```{r warning=F, cache=CACHE}
 AGBplot <- summaryByPlot(AGBtree, KarnatakaForestsub$plotId)
@@ -194,6 +199,7 @@ AGBplotChave <- summaryByPlot(
   KarnatakaForestsub$plotId
 )
 ```
+
 **Compute AGB(Mg) per tree with Feldpausch et al. (2012) regional H-D model**
 ```{r warning=F, cache=CACHE}
 AGBplotFeld <- summaryByPlot(
@@ -206,11 +212,13 @@ AGBplotFeld <- summaryByPlot(
 ```
 
 # Propagate AGB errors
+
 **Organize data**
 ```{r, cache=CACHE }
 KarnatakaForestsub$sdWD <- dataWD$sdWD
 KarnatakaForestsub$HfeldRSE <- dataHfeld$RSE
 ```
+
 **Propagate error for all tree at once using the local HD model constructed above (modelHD), i.e. non-independent allometric errors will be assigned to all trees at each iteration, independently of plots.**
 ```{r, cache=CACHE}
 resultMC <- AGBmonteCarlo(D = KarnatakaForestsub$D, WD = KarnatakaForestsub$WD, errWD = KarnatakaForestsub$sdWD, HDmodel = HDmodel, Dpropag = "chave2004")
@@ -219,9 +227,6 @@ Res <- Res[order(Res$AGB), ]
 plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB", ylim = c(0, max(Res$Cred_97.5)), las = 1, cex.lab = 1.3)
 segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red")
 ```
-
-
-
 
 **Using the Feldpaush regional HD averaged model (code only given)**
 ```{r, eval=F, cache=CACHE}
@@ -259,7 +264,8 @@ segments(seq(nrow(Res)), Res$Cred_2.5, seq(nrow(Res)), Res$Cred_97.5, col = "red
 
 # Some tricks
 
-##Mixing measured and estimated height values
+## Mixing measured and estimated height values
+
 If you want to use a mix of directly-measured height and of estimated ones, you may do the following steps.
 
 (@) Build a vector of H and RSE where we assume an error of 0.5 m on directly measured trees
@@ -270,6 +276,7 @@ filt <- is.na(NouraguesHD$Hmix)
 NouraguesHD$Hmix[filt] <- retrieveH(NouraguesHD$D, model = HDmodel)$H[filt]
 NouraguesHD$RSEmix[filt] <- HDmodel$RSE
 ```
+
 (@) Apply the AGBmonteCarlo by setting the height values and their errors (which depend on whether the tree was directly measured or estimated)
 ```{r eval=F, cache=CACHE}
 wd <- getWoodDensity(NouraguesHD$genus, NouraguesHD$species)
@@ -284,13 +291,5 @@ plot(Res$AGB, pch = 20, xlab = "Plots", ylab = "AGB (Mg/ha)", ylim = c(0, max(Re
 segments(1:nrow(Res), Res$Cred_2.5, 1:nrow(Res), Res$Cred_97.5, col = "red")
 ```
 
-##Add your tricks
+## Add your tricks
 Please contact Maxime (maxime.rejou@gmail.com) if you would like to add here a code that may be useful for users (code authorship will be respected) 
-
-
-
-
-
-
-
-
