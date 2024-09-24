@@ -95,6 +95,7 @@ cachePath <- function(...) {
   # fallback to R session temporary folder
   if(!dir.exists(basePath)) {
     basePath <- file.path(tempdir(check=TRUE), "BIOMASS")
+    dir.create(basePath, showWarnings = FALSE, recursive = TRUE)
     src <- "temp"
   }
   
