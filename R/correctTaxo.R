@@ -179,7 +179,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
         useCache <- TRUE
       } else {
         if (verbose) {
-          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)["mtime"]))
+          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)$mtime))
         }
         cachedTaxo <- fread(file = cachePath)
         cachedTaxo[, from := "cache"]
