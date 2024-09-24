@@ -1,11 +1,10 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   BIOMASS: BIOMASS.html
   plot: plot.html
-last_built: 2024-04-25T08:23Z
+last_built: 2024-09-24T08:18Z
 urls:
   reference: https://umr-amap.github.io/BIOMASS/reference
   article: https://umr-amap.github.io/BIOMASS/articles
-
