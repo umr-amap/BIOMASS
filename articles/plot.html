@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Pere</h4>
             
-            <h4 data-toc-skip class="date">2024-09-24</h4>
+            <h4 data-toc-skip class="date">2024-09-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/plot.Rmd" class="external-link"><code>vignettes/plot.Rmd</code></a></small>
       <div class="d-none name"><code>plot.Rmd</code></div>
@@ -75,8 +75,8 @@ Pere</h4>
 your analysis :</p>
 <ul>
 <li>Dimension of the plots</li>
-<li>Coordinate GPS of minimum 3 points non-aligned and relatily far away
-with the corresponding relative coordinates</li>
+<li>Coordinate GPS of minimum 3 points non-aligned and relatively far
+away with the corresponding relative coordinates</li>
 <li>The origin corner</li>
 <li>The X, Y directions</li>
 </ul>
@@ -372,7 +372,7 @@ the plot.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="trees-managements">Trees managements<a class="anchor" aria-label="anchor" href="#trees-managements"></a>
+<h2 id="tree-management">Tree management<a class="anchor" aria-label="anchor" href="#tree-management"></a>
 </h2>
 <div class="section level3">
 <h3 id="attribute-the-trees-to-the-subplot">Attribute the trees to the subplot<a class="anchor" aria-label="anchor" href="#attribute-the-trees-to-the-subplot"></a>
@@ -385,12 +385,10 @@ the plot.</p>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">trees</span><span class="op">$</span><span class="va">AGB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/computeAGB.html">computeAGB</a></span><span class="op">(</span><span class="va">trees</span><span class="op">$</span><span class="va">D</span>, <span class="va">trees</span><span class="op">$</span><span class="va">WD</span>, H <span class="op">=</span> <span class="va">trees</span><span class="op">$</span><span class="va">H</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">AGB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span><span class="va">trees</span><span class="op">$</span><span class="va">AGB</span>, <span class="va">trees</span><span class="op">$</span><span class="va">subplot</span>, drawPlot <span class="op">=</span> <span class="cn">TRUE</span>, subplot <span class="op">=</span> <span class="va">subplot</span><span class="op">)</span></span></code></pre></div>
 <p><img src="plot_files/figure-html/unnamed-chunk-10-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">AGB</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">AGB</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $AGB</span></span>
 <span><span class="co">#&gt;       plot      AGB</span></span>
 <span><span class="co">#&gt; 1  NB1_0_0 19.38352</span></span>
@@ -432,7 +430,7 @@ the plot.</p>
 <div class="section level3">
 <h3 id="attribute-the-trees-to-gps-coordinates">Attribute the trees to GPS coordinates<a class="anchor" aria-label="anchor" href="#attribute-the-trees-to-gps-coordinates"></a>
 </h3>
-<p>There is two maners to attribute the trees to GPS coordinates</p>
+<p>There are two manners to attribute the trees to GPS coordinates</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">TreeCoord</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/attributeTreeCoord.html">attributeTreeCoord</a></span><span class="op">(</span></span>
 <span>  xy <span class="op">=</span> <span class="va">trees</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xRel"</span>, <span class="st">"yRel"</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -474,7 +472,7 @@ the plot.</p>
 </tbody>
 </table>
 <p>If you want to have in GPS (longitude/latitude) coordinates (need to
-install proj4 first) :</p>
+install <code>proj4</code> first) :</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#TreeCoord &lt;- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = TRUE) )</span></span></code></pre></div>
 <table class="table">
@@ -511,8 +509,8 @@ install proj4 first) :</p>
 </tbody>
 </table>
 <p>If you want to have the GPS (longitude/latitude) coordinates without
-passing through all this step however you must use the numberCorner
-function:</p>
+passing through all this step however you must use the
+<code>numberCorner</code> function:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">coordAbs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.066923</span>, <span class="fl">4.067865</span>, <span class="fl">4.067842</span>, <span class="fl">4.066905</span><span class="op">)</span>, Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">52.68883</span>, <span class="fl">52.68877</span>, <span class="fl">52.68793</span>, <span class="fl">52.68783</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
