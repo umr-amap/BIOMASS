@@ -20,10 +20,10 @@ if (getRversion() >= "2.15.1") {
 #' @return Returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `plot`: The plot code
 #'   - `subplot`: The automatically generated subplot code
-#'   - `XRel`:  The relative coordinate for the axis X (following the corner 1->2) for the plot
-#'   - `YRel`:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
-#'   - `XAbs`:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
-#'   - `YAbs`:  The absolute coordinate (projected) for the axis Y (following the corner 1->4)
+#'   - `XRel`:  The relative coordinates on the X axis (defined by corners 1->4)
+#'   - `YRel`:  The relative coordinates on the Y axis (defined by corners 1->2)
+#'   - `XAbs`:  The absolute (projected) X coordinates  
+#'   - `YAbs`:  The absolute (projected) Y coordinates
 #'
 #' @export
 #' @author Arthur PERE
@@ -41,6 +41,7 @@ if (getRversion() >= "2.15.1") {
 #' text(coord, labels = corner, pos = 1)
 #' points(cut$XAbs, cut$YAbs, pch = "+")
 #' legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
+#' 
 cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200) {
 
   # parameter verification --------------------------------------------------
@@ -81,12 +82,19 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
     absCoordMat <- as.matrix(data[, .(X, Y)])
     
     # Relative coordinates matrix of the corners
-    relCoordMat <- matrix(c(0,0,0,dimY,dimX,dimY,dimX,0) , byrow = T, ncol=2)
+    plotDimX <- as.numeric(unique(data[,"dimX"]))
+    plotDimY <- as.numeric(unique(data[,"dimY"]))
+    relCoordMat <- matrix(
+      c(0,0,
+        0,plotDimY,
+        plotDimX,plotDimY,
+        plotDimX,0) ,
+      byrow = T, ncol=2)
     
     # Grid matrix for the subplots
     gridMat <- as.matrix(expand.grid(
-      X = seq(0, max(b[, 1]), by = gridsize),
-      Y = seq(0, max(b[, 2]), by = gridsize)
+      X = seq(0, max(relCoordMat[, 1]), by = gridsize),
+      Y = seq(0, max(relCoordMat[, 2]), by = gridsize)
     ))
     
     # Transformation of relative grid coordinates into absolute coordinates
