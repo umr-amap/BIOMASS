@@ -14,8 +14,8 @@ if (getRversion() >= "2.15.1") {
 #' @param corner A vector with corners numbered from 1 to 4 for each plot, numbering must be in clockwise direction
 #' (see the result of the [numberCorner()] function)
 #' @param gridsize The size of the subplots
-#' @param dimX A vector indicating the plot size in meters for the X axis (if a single value is supplied, it will be replicated for all plots)
-#' @param dimY A vector indicating the plot size in meters for the Y axis (if a single value is supplied, it will be replicated for all plots)
+#' @param dimX A vector indicating the size of the plot on the X axis, in meters and in the relative coordinates system (if a single value is supplied, it will be replicated for all plots)
+#' @param dimY A vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system (if a single value is supplied, it will be replicated for all plots)
 #'
 #' @return Returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `plot`: The plot code
@@ -98,11 +98,9 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
     ))
     
     # Transformation of relative grid coordinates into absolute coordinates
-    procrustRes <- procrust(absCoordMat, relCoordMat)
-    absCoord <- gridMat %*% procrustRes$rotation
-    absCoord <- sweep(absCoord, 2, procrustRes$translation, FUN = "+")
+    absCoord <- bilinearInterpolation(relCoord = gridMat , cornersCoord = data[,.(X,Y,corner)] ,dimX = plotDimX, dimY = plotDimY )
 
-    return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], XAbs = absCoord[, 1], YAbs = absCoord[, 2]))
+    return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], absCoord[, 1], absCoord[, 2]))
   }
 
   # Apply gridFunction to all plots
@@ -122,7 +120,6 @@ cutPlot <- function(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 
   }
 
   cornersCoord <- cornersCoord[, cornerCoordinate(.SD), by = plot, .SDcols = colnames(cornersCoord)]
-
 
   return(as.data.frame(cornersCoord))
 }
