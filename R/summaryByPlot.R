@@ -204,8 +204,12 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
 
       output <- list()
       output$poly <- sf::st_polygon(list(mat))
-
-      output$AGB <- AGB[ plot == unique(data$subplot), AGB] * data[, 10000 / (diff(range(XRel)) * diff(range(YRel)))]
+      
+      if(identical(AGB[ plot == unique(data$subplot), AGB],numeric(0))) {
+        output$AGB <- 0
+      } else {
+        output$AGB <- AGB[ plot == unique(data$subplot), AGB] * data[, 10000 / (diff(range(XRel)) * diff(range(YRel)))]
+      }
       output
     })
 
