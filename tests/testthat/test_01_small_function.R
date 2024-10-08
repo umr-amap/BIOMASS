@@ -19,14 +19,14 @@ skip_if_not_function <- function(name) {
 # context("Function computeE")
 # test_that("Compute E", {
 #   skip_if_not_function("computeE")
-# 
+#
 #   E <- computeE(coord,useCache=F)
-# 
+#
 #   expect_is(E, "numeric")
 #   expect_length(E, 50)
-# 
+#
 #   expect_equal(computeE(cbind(12, 50),useCache=F), 1.129928, tolerance = 0.1)
-# 
+#
 #   expect_error(computeE(cbind(long = -20, lat = 4),useCache=F), "coordinate")
 # })
 
@@ -34,25 +34,15 @@ skip_if_not_function <- function(name) {
 # test_that("getBioclimParam", {
 #   skip_if_not_function("getBioclimParam")
 #   B <- getBioclimParam(coord,useCache=F)
-# 
+#
 #   expect_is(B, "data.frame")
 #   expect_equal(dim(B), c(50, 3))
-# 
+#
 #   expect_equal(getBioclimParam(cbind(12, 50),useCache=F),
 #     data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
 #     tolerance = 0.1
 #   )
 # })
-
-
-
-
-
-
-
-# extract(Rast, cbind(74.14583, 14.78889), "bilinear")
-
-
 
 
 context("Function getTaxonomy")
@@ -223,6 +213,21 @@ test_that("Analysis of Procrust", {
 })
 
 
+context("Bilinear interpolation")
+test_that("Bilinear interpolation", {
+  relCoord <- matrix(c(0,0 , 5,5 , 10,10) , ncol = 2 , byrow = T)
+  cornersCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,4,2,3))
+  res <- bilinearInterpolation(relCoord, cornersCoord, dimX = 20, dimY=10)
+  expect_is(res, "data.table")
+  expect_equal(nrow(res), nrow(relCoord))
+  expect_equal(names(res), c("XAbs","YAbs"))
+  expect_equivalent(res, data.table(c(0,25,50), c(0,25,50)))
+  
+  # Test if corners are numbered in counter-clockwise direction (only when relative plot is not a square, otherwise it always works)
+  cornersCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,2,4,3))
+  resCounterClockwise <- bilinearInterpolation(relCoord, cornersCoord = cornersCoord, dimX = 20, dimY=10)
+  expect_error(expect_equal(res,resCounterClockwise))
+})
 
 
 long <- c(-52.68, -51.12, -53.11)
