@@ -1,3 +1,8 @@
+* version 2.1.14
+- Fix an issue about the inversion of subplot locations in cutPlot
+- Change the automatic corner numbering from counter-clockwise to clockise direction in cutPlot
+- Fix an issue with summaryByPlot when a plot do not contains any tree
+
 * version 2.1.13
 - Activate pkgdown
 

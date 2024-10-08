@@ -7,7 +7,7 @@ if (getRversion() >= "2.15.1") {
 #' Divides a plot in subplots
 #'
 #' This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
-#' This function uses a procrust analysis to fit the rectangle you gave to the plot you have.
+#' These coordinates are calculated by a bilinear interpolation with the projected corner coordinates as references.  
 #'
 #' @param projCoord A data frame containing the projected coordinates of plot corners, with X and Y on the first and second column respectively
 #' @param plot A vector indicating the plot codes
