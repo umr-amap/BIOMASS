@@ -4,8 +4,8 @@
 #'
 #' @param relCoord a matrix : the relative coordinates to transform
 #' @param cornersCoord a data.table : the absolute corners coordinates and its numbering following a clockwise direction (names resp. "X","Y","corner")
-#' @param dimX a vector indicating the plot size in meters for the X axis
-#' @param dimY a vector indicating the plot size in meters for the X axis
+#' @param dimX a vector indicating the size of the plot on the X axis, in meters and in the relative coordinates system
+#' @param dimY a vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system
 #'
 #' @return a data.table containing the absolute coordinates of desired points
 #' @keywords Internal bilinear interpolation
