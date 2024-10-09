@@ -130,7 +130,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
   # Data preparation --------------------------------------------------------
 
-  genus <- stringr::str_squish(as.character(genus))
+  # remove spaces at beginning and end, and remove extra spacing
+  squish <- function(x) {
+    x <- gsub("(^\\s+)|(\\s+$)", "", x)
+    gsub("\\s+", " ", x)
+  }
+  
+  genus <- squish(as.character(genus))
 
   if (is.null(species)) {
 
@@ -143,7 +149,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     # split genus (query)
     userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
   } else {
-    species <- stringr::str_squish(as.character(species))
+    species <- squish(as.character(species))
 
     # Create a dataframe with the original values
     userTaxo <- data.table(
