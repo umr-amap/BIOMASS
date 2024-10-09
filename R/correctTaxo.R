@@ -130,7 +130,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
   # Data preparation --------------------------------------------------------
 
-  genus <- as.character(genus)
+  genus <- stringr::str_squish(as.character(genus))
 
   if (is.null(species)) {
 
@@ -143,7 +143,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     # split genus (query)
     userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
   } else {
-    species <- as.character(species)
+    species <- stringr::str_squish(as.character(species))
 
     # Create a dataframe with the original values
     userTaxo <- data.table(
@@ -156,10 +156,10 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   }
 
   # If there is an empty genus
-  userTaxo[genus == "", ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
+  userTaxo[is.na(genus) | (genus == ""), ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
 
   # If there is empty species
-  userTaxo[species == "", ":="(species = NA_character_, query = gsub(" ", "", query))]
+  userTaxo[is.na(species) | (species == ""), ":="(species = NA_character_, query = gsub(" ", "", query))]
 
   # get unique values
   qryTaxo <- unique(userTaxo[!is.na(query)])
