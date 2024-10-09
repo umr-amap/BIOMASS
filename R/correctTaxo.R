@@ -117,7 +117,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   # sub-function definition -------------------------------------------------
 
   # split x always returning count columns (padding with NA)
-  tstrsplit_NA <- function(x, pattern = " ", count = 2) {
+  tstrsplit_NA <- function(x, pattern = "\\s+", count = 2) {
     # NOTE extraneous columns ignored maybe better paste them together
     split <- utils::head(tstrsplit(x, pattern), count)
 
