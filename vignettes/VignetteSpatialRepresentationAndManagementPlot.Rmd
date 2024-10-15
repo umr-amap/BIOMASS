@@ -1,0 +1,285 @@
+---
+title: "Manage plots and trees coordinates with BIOMASS"
+author: "Arthur Bailly"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty: 
+    number_sections: yes
+    toc: yes
+    highlight: vignette
+    self_contained: yes
+    theme: cayman
+vignette: >
+  %\VignetteIndexEntry{Manage plots and trees coordinates with BIOMASS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = TRUE,
+  comment = "#>", fig.align = "center"
+)
+require(BIOMASS)
+require(knitr)
+require(ggplot2)
+require(data.table)
+require(tidyverse)
+```
+
+```{r}
+devtools::load_all() # Temporary, for developing the package and the vignette simultaneously
+```
+
+
+# Overview
+
+BIOMASS enables users to manage their plots by :
+
+* calculating the projected/geographic coordinates of the plot's corners and trees from the relative coordinates (those of the field) 
+
+* validating plot's corners and trees with LiDAR data
+
+* visualizing the plots
+
+* dividing plots into subplots and summarizing the desired information at subplot level
+
+
+# Data
+
+As with the Nouragues case study we're going to follow, the user will need to start by formatting the following two data.frames : 
+
+* a data frame of corner coordinates, containing at least :
+  - the coordinates of the plot's corners in the projected/geographic system (the GPS coordinates or another projected coordinates)
+  - the coordinates of the plot's corners in the relative system (the field coordinates)
+
+```{r}
+cornerCoord <- read.csv(system.file("external", "Coord.csv",package = "BIOMASS", mustWork = TRUE))
+
+kable(head(cornerCoord), digits = 3, row.names = FALSE, caption = "Head of the table cornerCoord")
+```
+
+* a data frame of trees coordinates, containing at least :
+  - the name of the plots
+  - the tree coordinates in the relative system (the field coordinates)
+  - the desired information about trees, such as diameter, wood density, height, etc. (see BIOMASS vignette)
+
+
+```{r}
+trees <- read.csv(system.file("external", "NouraguesPlot.csv",package = "BIOMASS", mustWork = TRUE))
+
+kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
+```
+
+# Checking plot's coordinates
+
+The user is faced with two situations : 
+
+* The GPS coordinates of the plot corners are considered very accurate or enough measurements have been made to be confident in the accuracy of their mean. In this case, when the relative coordinates of subplots and trees will be projected in the projected/geographic system, these coordinates will follow the relationship between the plot corners coordinates in both systems.
+
+* Too few measurements of the GPS coordinates of plot corners have been taken and/or are not reliable. In this case, the relative coordinates (the plot shape measured on the field) are considered to be accurate and the GPS corner coordinates will be recalculated to fit the relative coordinates.
+
+In both case, the use of the checkPlotCoord() function is recommended as a first step.
+
+## checkPlotCoord function 
+
+The checkPlotCoord function handles both situations using the `trustGPScorners` argument (= TRUE or FALSE).
+
+You can give either GPS coordinates (with the longlat argument) or another projected coordinates (with the projCoord argument) for the corner coordinates. 
+
+### When relying on GPS corner measurements
+
+If enough coordinates have been recorded for each corner (as in the example below), you will need to provide the corner names via the cornerID argument. In this case, each coordinates will be averaging by corner, resulting in 4 'final' coordinates. The function can also detect and remove GPS outliers using the rmOutliers and maxDist arguments. 
+
+Note that if you only have 4 GPS measurements, but these were acquired with high accuracy (by a geometer, for example), or if you have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
+
+```{r dpi=200}
+check_plot <- checkPlotCoord(
+  longlat = cornerCoord[c("Long", "Lat")],
+  relCoord = cornerCoord[c("xRel", "yRel")],
+  trustGPScorners = T, cornerID = cornerCoord$Corners,
+  drawPlot = TRUE,
+  maxDist = 10, rmOutliers = TRUE
+)
+```
+
+A few comments on the graph and outputs
+
+### When relying on field measurements
+
+```{r dpi=200}
+correct_plot <- checkPlotCoord(
+  longlat = cornerCoord[, c("Long", "Lat")],
+  relCoord = cornerCoord[, c("xRel", "yRel")],
+  trustGPScorners = F, cornerID = cornerCoord$Corners,
+  drawPlot = TRUE,
+  maxDist = 30, rmOutliers = TRUE
+)
+
+```
+
+
+THE REST OF THE VIGNETTE HAS NOT BEEN DONE YET. IT IS JUST A FEW TESTS TO REMEMBER AND THAT WILL BE INCORPORATED INTO TESTHAT
+
+
+# Trees managements
+## Attribute the trees to the subplot
+
+```{r}
+trees$subplot_clockwise <- attributeTree(xy = trees[, c("xRel", "yRel")],
+                               plot = rep("NB1", nrow(trees)), #trees$plot seems more logical
+                               coordAbs =  subplot_clockwise)
+
+missing_trees = trees[trees$subplot_clockwise!="NB1_0_0",]
+missing_trees$AGB <- computeAGB(missing_trees$D, missing_trees$WD, H = missing_trees$H)
+AGB_missing_trees <- summaryByPlot(AGB_val = missing_trees$AGB, plot = missing_trees$subplot_clockwise, drawPlot = TRUE, subplot = subplot_clockwise)
+
+
+trees$subplot_counterclockwise <- attributeTree(xy = trees[, c("xRel", "yRel")],
+                               plot = rep("NB1", nrow(trees)), #trees$plot seems more logical
+                               coordAbs =  subplot_counterclockwise)
+
+identical(trees$subplot_clockwise,trees$subplot_counterclockwise)
+
+trees$subplot_clockwise_rectangle <- attributeTree(xy = trees[, c("xRel", "yRel")],
+                               plot = rep("NB1", nrow(trees)), #trees$plot seems more logical
+                               coordAbs =  subplot_clockwise_rectangle)
+
+trees$subplot_counterclockwise_rectangle <- attributeTree(xy = trees[, c("xRel", "yRel")],
+                               plot = rep("NB1", nrow(trees)), #trees$plot seems more logical
+                               coordAbs =  subplot_counterclockwise_rectangle)
+identical(trees$subplot_clockwise_rectangle,trees$subplot_counterclockwise_rectangle)
+
+# trees_multiple_plots = copy(trees)trees_multiple_plots = copy(trees)trees_multiple_plots = copy(trees)
+# trees_multiple_plots$plot = "NB2"
+# trees_multiple_plots$subplot = gsub("NB1","NB2",trees_multiple_plots$subplot)
+# trees_multiple_plots = rbind(trees,trees_multiple_plots)
+# 
+# trees_multiple_plots$subplot <- attributeTree(xy = trees_multiple_plots[, c("xRel", "yRel")],
+#                                plot = trees_multiple_plots$plot,
+#                                coordAbs =  multiple_subplots)
+```
+
+
+
+## Calculate the AGB and spatialisation
+```{r}
+trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
+#trees_multiple_plots$AGB <- computeAGB(trees_multiple_plots$D, trees_multiple_plots$WD, H = trees_multiple_plots$H)
+
+AGB_clockwise <- summaryByPlot(AGB_val = trees$AGB, plot = trees$subplot_clockwise, drawPlot = TRUE, subplot = subplot_clockwise)
+AGB_counterclockwise <- summaryByPlot(AGB_val = trees$AGB, plot = trees$subplot_counterclockwise, drawPlot = TRUE, subplot = subplot_counterclockwise)
+
+AGB_clockwise_rectangle <- summaryByPlot(AGB_val = trees$AGB, plot = trees$subplot_clockwise_rectangle, drawPlot = TRUE, subplot = subplot_clockwise_rectangle)
+AGB_counterclockwise_rectangle <- summaryByPlot(AGB_val = trees$AGB, plot = trees$subplot_counterclockwise_rectangle, drawPlot = TRUE, subplot = subplot_counterclockwise_rectangle)
+
+
+#AGB_multiple_plots <- summaryByPlot(trees_multiple_plots$AGB, trees_multiple_plots$subplot, drawPlot = TRUE, subplot = multiple_subplots)
+
+```
+
+
+
+
+
+## Attribute the trees to GPS coordinates
+
+There is two maners to attribute the trees to GPS coordinates
+
+```{r}
+TreeCoord <- attributeTreeCoord(
+  xy = trees[, c("xRel", "yRel")],
+  plot = trees$plot,
+  coordAbs = subplot_clockwise,
+  dim = c(100, 100)
+)
+
+trees_segments = data.frame(
+  x = correct_plot$cornerCoords$X[c(4,3,2,1)],
+  xend = correct_plot$cornerCoords$X[c(3,2,1,4)],
+  y = correct_plot$cornerCoords$Y[c(4,3,2,1)],
+  yend = correct_plot$cornerCoords$Y[c(3,2,1,4)]
+)
+
+TreeCoord %>% 
+  ggplot(aes(x=Xproj,y=Yproj)) +
+  geom_point() +
+  theme_bw() + 
+  coord_fixed(ratio = 1) + 
+  geom_segment(data = trees_segments, mapping=aes(x=x,y=y,xend=xend,yend=yend))
+
+# Avec l'interpolation bilineaire
+corner_coords = as.data.frame(cornerCoord)
+corner_coords[c("X","Y")] = as.data.frame(latlong2UTM(cornerCoord[, c("Long", "Lat")]))[c("X","Y")]
+corner_coords=corner_coords[-c(10,20,30,40),]
+corner_coords = corner_coords %>% group_by(Corners) %>% summarise(X=mean(X),Y=mean(Y))
+corner_coords = corner_coords %>% mutate(plot = "NB1", corner = c(2,3,1,4))
+corner_coords = as.data.frame(corner_coords)
+
+TreeCoord_interp <- attributeTreeCoord(
+  xy = trees[, c("xRel", "yRel")],
+  plot = trees$plot,
+  coordAbs = corner_coords,
+  dim = c(100, 100)
+)
+trees_segments_interp = data.frame(
+  x = corner_coords$X[c(3,1,2,4)],
+  xend = corner_coords$X[c(1,2,4,3)],
+  y = corner_coords$Y[c(3,1,2,4)],
+  yend = corner_coords$Y[c(1,2,4,3)]
+)
+TreeCoord_interp %>% 
+  ggplot(aes(x=Xproj,y=Yproj)) +
+  geom_point() +
+  theme_bw() + 
+  coord_fixed(ratio = 1) + 
+  geom_segment(data = trees_segments_interp, mapping=aes(x=x,y=y,xend=xend,yend=yend))
+
+TreeCoord %>% mutate(method = "procrust") %>% 
+  ggplot(aes(x=Xproj,y=Yproj)) +
+  geom_point(aes(col=method)) +
+  theme_bw() + 
+  coord_fixed(ratio = 1) + 
+  geom_segment(data = trees_segments %>% mutate(method="procrust"), mapping=aes(x=x,y=y,xend=xend,yend=yend,col=method)) + 
+  geom_point(data = TreeCoord_interp %>% mutate(method = "interpolation")) +
+  geom_segment(data = trees_segments_interp %>% mutate(method="interpolation"), mapping=aes(x=x,y=y,xend=xend,yend=yend))
+
+```
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
+```
+
+If you want to have in GPS (longitude/latitude) coordinates (need to install proj4 first) :
+```{r}
+#TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = TRUE) )
+```
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
+```
+
+If you want to have the GPS (longitude/latitude) coordinates without passing through all this step however you must use the numberCorner function:
+```{r}
+coordAbs = data.frame(X = c(4.066923, 4.067865, 4.067842, 4.066905), Y = c(52.68883, 52.68877, 52.68793, 52.68783))
+
+ncoordAbs = numberCorner(projCoord = coordAbs, 
+                                plot = rep("NB1", 4), 
+                                origin = c(TRUE, FALSE, FALSE, FALSE), 
+                                clockWise = TRUE)
+
+ggplot(data = ncoordAbs, mapping = aes(x=X,y=Y,label=corner)) + geom_point() + geom_text() 
+
+TreeCoord <- attributeTreeCoord(
+  xy = trees[, c("xRel", "yRel")],
+  plot = trees$plot,
+  coordAbs = ncoordAbs,
+  dim = c(100, 100)
+)
+```
+```{r echo=FALSE}
+kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
+```
+
+
+
+
+

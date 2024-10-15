@@ -8,6 +8,9 @@
 #' @param dimY a vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system
 #'
 #' @return a data.table containing the absolute coordinates of desired points
+#' 
+#' @importFrom data.table data.table :=
+#' 
 #' @keywords Internal bilinear interpolation
 #'
 #' @author Arthur Bailly
