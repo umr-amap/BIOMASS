@@ -14,6 +14,7 @@
 #' @param maxDist a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)
 #' @param rmOutliers a logical indicating if detected outliers are removed from the coordinate calculation
 #' @param drawPlot a logical indicating if the plot design should be displayed and returned
+#' @param treeCoord (optional) a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -23,6 +24,7 @@
 #'    - `outliers`: a data frame containing the projected coordinates, the ID (if cornerID is supplied) and the row number of GPS points considered outliers 
 #'    - `plotDesign`: if `drawPlot` is TRUE, a ggplot object corresponding to the design of the plot
 #'    - `codeUTM`: if `longlat` is supplied, a character containing the UTM code of the GPS coordinates
+#'    - `treeProjCoord`: if `treeCoord` is supplied, a data frame containing the coordinates of the trees in the projected coordinate system
 #'
 #' @export
 #'
@@ -70,7 +72,7 @@
 #' )
 #' }
 #'
-checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE) {
+checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
   # parameters verification -------------------------------------------------
   
@@ -88,6 +90,9 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   }
   if(!is.null(projCoord) && (!is.matrix(projCoord) & !is.data.frame(projCoord))){
     stop("projCoord must be a matrix or a data frame")
+  }
+  if(!is.null(treeCoord) && (!is.matrix(treeCoord) & !is.data.frame(treeCoord))){
+    stop("treeCoord must be a matrix or a data frame")
   }
   if (is.null(trustGPScorners) | !is.logical(trustGPScorners)) {
     stop("The trustGPScorners argument must be TRUE or FALSE")
@@ -121,7 +126,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   }
   
   
-  # function ----------------------------------------------------------------
+  # function -------------------------------------------------------------------
   
   # Transform the geographic coordinates into UTM coordinates
   if (!is.null(longlat)) {
@@ -239,12 +244,28 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   
   cornerCoord <- cornerCoord[ order(cornerNum), ]
   
-  # Create a polygon
+  # Create a polygon -----------------------------------------------------------
   cornerPolygon <- st_multipoint(as.matrix(rbind(cornerCoord[,c("X","Y")], cornerCoord[1,c("X","Y")])))
   cornerPolygon <- st_polygon(x = list(cornerPolygon), dim = "XY")
   cornerPolygon <- st_sfc(list(cornerPolygon))
   
-  # draw plot ---------------------------------------------------------------
+  # Calculate projected tree coordinates from relative tree coordinates --------
+  if(!is.null(treeCoord)) {
+    if(trustGPScorners) {
+      treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
+                                             cornersCoord = cornerCoord[,c("X","Y","cornerNum")],
+                                             dimX = diff(range(cornerCoord$Xrel)),
+                                             dimY = diff(range(cornerCoord$Yrel))
+                                             )
+      colnames(treeProjCoord) <- c("X","Y")
+    } else {
+      treeProjCoord <- as.matrix(treeCoord[,1:2]) %*% procrustRes$rotation
+      treeProjCoord <- data.table(sweep(treeProjCoord, 2, procrustRes$translation, FUN = "+"))
+      colnames(treeProjCoord) <- c("X","Y")
+    }
+  }
+  
+  # draw plot ------------------------------------------------------------------
   
   if (drawPlot) {
     projCoordPlot <- projCoord
@@ -252,7 +273,11 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     cornerCoordPlot <- cornerCoord[,c("X","Y")]
     cornerCoordPlot$whatpoint <- "Reference corners"
     projCoordPlot <- rbind(projCoordPlot,cornerCoordPlot)
-    projCoordPlot$whatpoint <- factor(projCoordPlot$whatpoint, levels = c("GPS measurements","Outliers (discarded)","Reference corners"))
+    if(!is.null(treeCoord)) {
+      treeProjCoord$whatpoint <- "Trees"
+      projCoordPlot <- rbind(projCoordPlot,treeProjCoord)
+    }
+    projCoordPlot$whatpoint <- factor(projCoordPlot$whatpoint, levels = c("GPS measurements","Outliers (discarded)","Reference corners","Trees"))
     arrowPlot <- data.frame(X = rep(cornerCoord$X[1]), Y =rep(cornerCoord$Y[1]),
                             Xend = c(cornerCoord$X[1]+(cornerCoord$X[4]-cornerCoord$X[1])/4,cornerCoord$X[1]+(cornerCoord$X[2]-cornerCoord$X[1])/4),
                             Yend = c(cornerCoord$Y[1]+(cornerCoord$Y[4]-cornerCoord$Y[1])/4,cornerCoord$Y[1]+(cornerCoord$Y[2]-cornerCoord$Y[1])/4))
@@ -262,10 +287,10 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     }
     plotDesign <- ggplot2::ggplot(data = projCoordPlot) +
       geom_point(aes(x=X,y=Y,col=whatpoint,shape = whatpoint),size=2,show.legend = TRUE) + 
-      scale_shape_manual(values=c(1,4,15), drop=FALSE) +
-      scale_color_manual(values=c('black','red',"black"), drop = FALSE) +
+      scale_shape_manual(values=c(2,4,15,1), drop=FALSE) +
+      scale_color_manual(values=c('black','red',"black","darkgreen"), drop = FALSE) +
       geom_polygon(data = cornerPolygon[[1]][[1]][,] , mapping = aes(x=X,y=Y), colour="black",fill=NA,linewidth=1.2)+
-      geom_segment(data=arrowPlot, mapping=aes(x=X,y=Y,xend=Xend,yend=Yend), arrow=arrow(length=unit(0.4,"cm")),size=1, col="blue") +
+      geom_segment(data=arrowPlot, mapping=aes(x=X,y=Y,xend=Xend,yend=Yend), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
       geom_text(data = arrowPlot, mapping = aes(x=Xend,y=Yend,label=c("Xrel","Yrel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
       ggtitle("Plot display") +
       theme_minimal() + 
@@ -274,7 +299,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     print(plotDesign)
   }
   
-  # return ------------------------------------------------------------------
+  # return ---------------------------------------------------------------------
   
   if (nrow(outliers) != 0 & !rmOutliers) {
     warning(
@@ -292,6 +317,9 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   }
   if (!is.null(longlat)) {
     output$codeUTM <- codeUTM
+  }
+  if (!is.null(treeCoord)) {
+    output$treeProjCoord <- data.frame(treeProjCoord[,c("X","Y")])
   }
   return(output)
 }

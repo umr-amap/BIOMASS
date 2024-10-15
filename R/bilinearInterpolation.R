@@ -3,7 +3,7 @@
 #' Apply a bilinear interpolation to convert relative coordinates into absolute coordinates, using the 4 corners absolute coordinates of the plot.
 #'
 #' @param relCoord a matrix : the relative coordinates to transform
-#' @param cornersCoord a data.table : the absolute corners coordinates and its numbering following a clockwise direction (names resp. "X","Y","corner")
+#' @param cornersCoord a data.table : the absolute corners coordinates and its numbering following a clockwise direction (names resp. "X","Y","cornerNum")
 #' @param dimX a vector indicating the size of the plot on the X axis, in meters and in the relative coordinates system
 #' @param dimY a vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system
 #'
@@ -28,7 +28,7 @@ bilinearInterpolation = function(relCoord, cornersCoord, dimX, dimY) {
   
   # Apply the bilinear interpolation formula to a single coordinate point (x;y)
   bilinearInterpolationFunction = function(x,y) {
-    apply(cornersCoord[order(corner),.(X,Y)][c(1,2,4,3),] , 2 , function(i) 1/denominator * i %*% multMat %*% matrix(c(1,x,y,x*y)) )
+    apply(cornersCoord[order(cornerNum),.(X,Y)][c(1,2,4,3),] , 2 , function(i) 1/denominator * i %*% multMat %*% matrix(c(1,x,y,x*y)) )
   }
   # Apply the bilinearInterpolationFunction to all points of relCoord
   absCoord = apply(relCoord , 1 , function(dat) {

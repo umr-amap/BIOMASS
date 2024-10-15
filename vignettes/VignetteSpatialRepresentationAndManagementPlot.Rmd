@@ -27,7 +27,7 @@ require(data.table)
 require(tidyverse)
 ```
 
-```{r}
+```{r echo=FALSE, message=FALSE}
 devtools::load_all() # Temporary, for developing the package and the vignette simultaneously
 ```
 
@@ -36,11 +36,11 @@ devtools::load_all() # Temporary, for developing the package and the vignette si
 
 BIOMASS enables users to manage their plots by :
 
-* calculating the projected/geographic coordinates of the plot's corners and trees from the relative coordinates (those of the field) 
-
-* validating plot's corners and trees with LiDAR data
+* calculating the projected/geographic coordinates of the plot's corners and trees from the relative coordinates (or local coordinates, ie, those of the field) 
 
 * visualizing the plots
+
+* validating plot's corner and tree coordinates with LiDAR data
 
 * dividing plots into subplots and summarizing the desired information at subplot level
 
@@ -61,7 +61,7 @@ kable(head(cornerCoord), digits = 3, row.names = FALSE, caption = "Head of the t
 
 * a data frame of trees coordinates, containing at least :
   - the name of the plots
-  - the tree coordinates in the relative system (the field coordinates)
+  - the tree coordinates in the relative system (the field or local coordinates)
   - the desired information about trees, such as diameter, wood density, height, etc. (see BIOMASS vignette)
 
 
@@ -75,11 +75,11 @@ kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table t
 
 The user is faced with two situations : 
 
-* The GPS coordinates of the plot corners are considered very accurate or enough measurements have been made to be confident in the accuracy of their mean. In this case, when the relative coordinates of subplots and trees will be projected in the projected/geographic system, these coordinates will follow the relationship between the plot corners coordinates in both systems.
+* The GPS coordinates of the plot corners are considered very accurate or enough measurements have been made to be confident in the accuracy of their mean. In this case, the shape of the plot measured on the field will follow the GPS coordinates of the plot corners when projected into the projected/geographic coordinate system.
 
-* Too few measurements of the GPS coordinates of plot corners have been taken and/or are not reliable. In this case, the relative coordinates (the plot shape measured on the field) are considered to be accurate and the GPS corner coordinates will be recalculated to fit the relative coordinates.
+* Too few measurements of the GPS coordinates of plot corners have been taken and/or are not reliable. In this case, the shape of the plot measured on the field is considered to be accurate and the GPS corner coordinates will be recalculated to fit the shape of the plot (the projected coordinates fit the relative coordinates).
 
-In both case, the use of the checkPlotCoord() function is recommended as a first step.
+In both case, the use of the `checkPlotCoord()` function is recommended as a first step.
 
 ## checkPlotCoord function 
 
@@ -87,11 +87,11 @@ The checkPlotCoord function handles both situations using the `trustGPScorners` 
 
 You can give either GPS coordinates (with the longlat argument) or another projected coordinates (with the projCoord argument) for the corner coordinates. 
 
-### When relying on GPS corner measurements
+### If we rely on the GPS coordinates of the corners
 
 If enough coordinates have been recorded for each corner (as in the example below), you will need to provide the corner names via the cornerID argument. In this case, each coordinates will be averaging by corner, resulting in 4 'final' coordinates. The function can also detect and remove GPS outliers using the rmOutliers and maxDist arguments. 
 
-Note that if you only have 4 GPS measurements, but these were acquired with high accuracy (by a geometer, for example), or if you have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
+Note that if only 4 GPS measurements have been taken with a high degree of accuracy (by a geometer, for example), or if you have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
 ```{r dpi=200}
 check_plot <- checkPlotCoord(
@@ -99,33 +99,65 @@ check_plot <- checkPlotCoord(
   relCoord = cornerCoord[c("xRel", "yRel")],
   trustGPScorners = T, cornerID = cornerCoord$Corners,
   drawPlot = TRUE,
-  maxDist = 10, rmOutliers = TRUE
-)
+  maxDist = 10, rmOutliers = TRUE)
 ```
 
-A few comments on the graph and outputs
+Est-ce que l'on détaille les returns alors que c'est explicite dans l'aide de la fonction ? 
 
-### When relying on field measurements
+
+### If we rely on the shape of the plot measured on the field
 
 ```{r dpi=200}
 correct_plot <- checkPlotCoord(
   longlat = cornerCoord[, c("Long", "Lat")],
   relCoord = cornerCoord[, c("xRel", "yRel")],
-  trustGPScorners = F, cornerID = cornerCoord$Corners,
+  trustGPScorners = F,
   drawPlot = TRUE,
-  maxDist = 30, rmOutliers = TRUE
+  maxDist = 10, rmOutliers = TRUE
 )
 
 ```
 
+Idem, quel niveau de détail des outputs et du plot ?
 
-THE REST OF THE VIGNETTE HAS NOT BEEN DONE YET. IT IS JUST A FEW TESTS TO REMEMBER AND THAT WILL BE INCORPORATED INTO TESTHAT
+### Tree coordinates in the projected/geographic coordinate system
+
+Tree coordinates are almost always measured in the relative (or local) coordinate system. To retrieve the coordinates of trees in the projected system, you can supply their relative coordinates using the `treeCoord` argument.
+
+```{r}
+check_plot <- checkPlotCoord(
+  longlat = cornerCoord[c("Long", "Lat")],
+  relCoord = cornerCoord[c("xRel", "yRel")],
+  trustGPScorners = T, cornerID = cornerCoord$Corners,
+  drawPlot = TRUE,
+  maxDist = 10, rmOutliers = TRUE,
+  treeCoord = trees[c("xRel","yRel")])
+
+check_plot <- checkPlotCoord(
+  longlat = cornerCoord[c("Long", "Lat")],
+  relCoord = cornerCoord[c("xRel", "yRel")],
+  trustGPScorners = F,
+  drawPlot = TRUE,
+  maxDist = 10, rmOutliers = TRUE,
+  treeCoord = trees[c("xRel","yRel")])
+```
+
+Note the difference in corner and tree positions between the two situations.
+
+If you want to retrieve the GPS coordinates of the trees in longitude/latitude format, follow this line of code:
+
+```{r}
+treeGPSCoord <- as.data.frame( proj4::project(check_plot$treeProjCoord, proj = check_plot$codeUTM, inverse = TRUE) )
+```
+
+
+THE REST OF THE VIGNETTE IS JUST A RELIC OF THE PREVIOUS ONE WITH SOME TESTS THAT WILL BE INCORPORATED INTO THE TESTTHAT FUNCTIONS.
 
 
 # Trees managements
 ## Attribute the trees to the subplot
 
-```{r}
+```{r eval=FALSE}
 trees$subplot_clockwise <- attributeTree(xy = trees[, c("xRel", "yRel")],
                                plot = rep("NB1", nrow(trees)), #trees$plot seems more logical
                                coordAbs =  subplot_clockwise)
@@ -163,7 +195,7 @@ identical(trees$subplot_clockwise_rectangle,trees$subplot_counterclockwise_recta
 
 
 ## Calculate the AGB and spatialisation
-```{r}
+```{r eval=FALSE}
 trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
 #trees_multiple_plots$AGB <- computeAGB(trees_multiple_plots$D, trees_multiple_plots$WD, H = trees_multiple_plots$H)
 
@@ -186,7 +218,7 @@ AGB_counterclockwise_rectangle <- summaryByPlot(AGB_val = trees$AGB, plot = tree
 
 There is two maners to attribute the trees to GPS coordinates
 
-```{r}
+```{r eval=FALSE}
 TreeCoord <- attributeTreeCoord(
   xy = trees[, c("xRel", "yRel")],
   plot = trees$plot,
@@ -245,7 +277,7 @@ TreeCoord %>% mutate(method = "procrust") %>%
   geom_segment(data = trees_segments_interp %>% mutate(method="interpolation"), mapping=aes(x=x,y=y,xend=xend,yend=yend))
 
 ```
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 
@@ -253,12 +285,12 @@ If you want to have in GPS (longitude/latitude) coordinates (need to install pro
 ```{r}
 #TreeCoord <- as.data.frame( proj4::project(TreeCoord, proj = correct_plot$codeUTM, inverse = TRUE) )
 ```
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 
 If you want to have the GPS (longitude/latitude) coordinates without passing through all this step however you must use the numberCorner function:
-```{r}
+```{r eval=FALSE}
 coordAbs = data.frame(X = c(4.066923, 4.067865, 4.067842, 4.066905), Y = c(52.68883, 52.68877, 52.68793, 52.68783))
 
 ncoordAbs = numberCorner(projCoord = coordAbs, 
@@ -275,7 +307,7 @@ TreeCoord <- attributeTreeCoord(
   dim = c(100, 100)
 )
 ```
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 kable(head(TreeCoord), digits = 3, row.names = FALSE, caption = "Head of the table TreeCoord")
 ```
 

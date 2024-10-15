@@ -13,13 +13,14 @@ relCoord <- data.frame(
 )
 cornerID <- rep(c("SW","NW","SE","NE"),e=5)
 
-context("correct coord GPS")
+context("Check plot coordinates")
 test_that("checkCoordPlot error", {
   expect_error(checkPlotCoord(), "Give at least one set of coordinates")
   expect_error(checkPlotCoord(longlat=projCoord, projCoord=projCoord),"Give only one set of coordinates")
   expect_error(checkPlotCoord(projCoord=projCoord, relCoord=c(0,0)),"relCoord must be a matrix or a data frame")
   expect_error(checkPlotCoord(longlat=c(0,0), relCoord=relCoord),"longlat must be a matrix or a data frame")
   expect_error(checkPlotCoord(projCoord=c(0,0), relCoord=relCoord),"projCoord must be a matrix or a data frame")
+  expect_error(checkPlotCoord(projCoord=projCoord, relCoord=relCoord, trustGPScorners=F, treeCoord = c(1,1)),"treeCoord must be a matrix or a data frame")
   expect_error(checkPlotCoord(projCoord=projCoord, relCoord=relCoord, trustGPScorners=NULL),"The trustGPScorners argument must be TRUE or FALSE")
   expect_error(checkPlotCoord(projCoord=projCoord, relCoord=relCoord, trustGPScorners=T, maxDist=c(10,20) ),"The maxDist argument must be of length 1")
   expect_error(checkPlotCoord(projCoord=projCoord, relCoord=rbind(relCoord, c(40, 40)),trustGPScorners=T),"same dimension")
@@ -88,6 +89,7 @@ test_that("checkPlotCoord, trustGPScorners", {
     X = rep(c(10,10,100,100), e=7) + 200000,
     Y = rep(c(10,100,100,10), e=7) + 9000000
   )
+  projCoord <- projCoord0
   projCoord$X <- projCoord0$X  + rep(sample(-3:3),4)
   projCoord$Y <- projCoord0$Y + rep(sample(-3:3),4)
   relCoord <- data.frame(
@@ -111,13 +113,10 @@ test_that("checkPlotCoord, trustGPScorners", {
 })
 
 test_that("checkPlotCoord, origin corner", {
-  projCoord0 <- data.frame(
-    X = rep(c(0,0,100,100), e=7) + 200000,
-    Y = rep(c(0,100,100,0), e=7) + 9000000
+  projCoord <- data.frame(
+    X = rep(c(0,0,100,100), e=7) + 200000 + rep(sample(-3:3),4),
+    Y = rep(c(0,100,100,0), e=7) + 9000000 + rep(sample(-3:3),4)
   )
-  projCoord$X <- projCoord0$X  + rep(sample(-3:3),4)
-  projCoord$Y <- projCoord0$Y + rep(sample(-3:3),4)
-  
   cornerID <- rep(c("SW","NW","SE","NE"),e=7)
   
   # Test when the origin is not the South-East corner
@@ -141,4 +140,27 @@ test_that("checkPlotCoord, origin corner", {
   expect_equal(res_SW$cornerCoord[c("X","Y","cornerID","cornerNum")] , res_SW_200$cornerCoord[c("X","Y","cornerID","cornerNum")])
   expect_equal(res_SW$cornerCoord[c("Xrel","Yrel")]+200 , res_SW_200$cornerCoord[c("Xrel","Yrel")])
 })
+
+
+test_that("checkPlotCoord, tree coordinates", {
+  projCoord <- data.frame(
+    X = rep(c(0,0,100,100), e=7) + 200000 + rep(sample(-3:3),4),
+    Y = rep(c(0,100,100,0), e=7) + 9000000 + rep(sample(-3:3),4)
+  )
+  relCoord <- data.frame(
+    X = rep(c(0,0,100,100),e=7),
+    Y = rep(c(0,100,100,0),e=7)
+  )
+  cornerID <- rep(c("SW","NW","SE","NE"),e=7)
+  treeCoord <- data.frame(
+    X = c(10,20,30),
+    Y = c(10,20,30)
+  )
+  res <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F, treeCoord = treeCoord)
+  expect_is(res$treeProjCoord, "data.frame")
+  expect_equal(dim(res$treeProjCoord), c(nrow(treeCoord),2))
+  expect_equal(res$treeProjCoord , sweep(treeCoord, 2, c(200000,9000000), FUN = "+"))
+})
+
+
 
