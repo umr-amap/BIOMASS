@@ -216,16 +216,16 @@ test_that("Analysis of Procrust", {
 context("Bilinear interpolation")
 test_that("Bilinear interpolation", {
   relCoord <- matrix(c(0,0 , 5,5 , 10,10) , ncol = 2 , byrow = T)
-  cornersCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,4,2,3))
-  res <- bilinearInterpolation(relCoord, cornersCoord, dimX = 20, dimY=10)
+  cornerCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,4,2,3))
+  res <- bilinearInterpolation(relCoord, cornerCoord, dimX = 20, dimY=10)
   expect_is(res, "data.table")
   expect_equal(nrow(res), nrow(relCoord))
   expect_equal(names(res), c("XAbs","YAbs"))
   expect_equivalent(res, data.table(c(0,25,50), c(0,25,50)))
   
   # Test if corners are numbered in counter-clockwise direction (only when relative plot is not a square, otherwise it always works)
-  cornersCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,2,4,3))
-  resCounterClockwise <- bilinearInterpolation(relCoord, cornersCoord = cornersCoord, dimX = 20, dimY=10)
+  cornerCoord <- data.table(expand.grid(X = c(0, 100), Y = c(0, 50)) , corner = c(1,2,4,3))
+  resCounterClockwise <- bilinearInterpolation(relCoord, cornerCoord = cornerCoord, dimX = 20, dimY=10)
   expect_error(expect_equal(res,resCounterClockwise))
 })
 

@@ -26,7 +26,7 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @export
 #' @author Arthur PERE
-#' @importFrom data.table data.table :=
+#' @importFrom data.table data.table := setnames
 #' @examples
 #'
 #' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
@@ -70,8 +70,9 @@ cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY
 
   # Function ----------------------------------------------------------------
 
-  cornersCoord <- data.table(plot = plot, X = projCoord[, 1], Y = projCoord[, 2], cornerNum = cornerNum)
-  cornersCoord <- cornersCoord[order(cornerNum), .SD, by = plot]
+  cornerCoord <- data.table(plot = plot, X = projCoord[, 1], Y = projCoord[, 2], cornerNum = cornerNum)
+  setnames(cornerCoord, colnames(cornerCoord), c("plot","X","Y","cornerNum")) #in case the user gives a data.table which preserved column
+  cornerCoord <- cornerCoord[order(cornerNum), .SD, by = plot]
   dimRel <- data.table(plot = unique(plot), dimX = dimX, dimY = dimY)
 
   # Grids the plot in the relative coordinates system and calculates the absolute coordinates of the grid points.
@@ -97,16 +98,16 @@ cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY
     ))
     
     # Transformation of relative grid coordinates into absolute coordinates
-    absCoord <- bilinearInterpolation(relCoord = gridMat , cornersCoord = data[,.(X,Y,cornerNum)] ,dimX = plotDimX, dimY = plotDimY )
+    absCoord <- bilinearInterpolation(relCoord = gridMat , cornerCoord = data[,.(X,Y,cornerNum)] ,dimX = plotDimX, dimY = plotDimY )
 
     return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], absCoord[, 1], absCoord[, 2]))
   }
 
   # Apply gridFunction to all plots
-  cornersCoord <- cornersCoord[dimRel, on = "plot"][, gridFunction(.SD, gridsize), by = plot]
+  cornerCoord <- cornerCoord[dimRel, on = "plot"][, gridFunction(.SD, gridsize), by = plot]
 
   # Number the corners in clockwise direction
-  cornerCoordinate <- function(data) {
+  numberingCorner <- function(data) {
     rbindlist(apply(data[XRel < max(XRel) & YRel < max(YRel), -"plot"], 1, function(x) {
       X <- x["XRel"]
       Y <- x["YRel"]
@@ -118,8 +119,8 @@ cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY
     }))
   }
 
-  cornersCoord <- cornersCoord[, cornerCoordinate(.SD), by = plot, .SDcols = colnames(cornersCoord)]
+  cornerCoord <- cornerCoord[, numberingCorner(.SD), by = plot, .SDcols = colnames(cornerCoord)]
 
-  return(as.data.frame(cornersCoord))
+  return(as.data.frame(cornerCoord))
 }
 

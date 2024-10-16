@@ -108,7 +108,7 @@ Est-ce que l'on détaille les returns alors que c'est explicite dans l'aide de l
 ### If we rely on the shape of the plot measured on the field
 
 ```{r dpi=200}
-correct_plot <- checkPlotCoord(
+check_plot <- checkPlotCoord(
   longlat = cornerCoord[, c("Long", "Lat")],
   relCoord = cornerCoord[, c("xRel", "yRel")],
   trustGPScorners = F,

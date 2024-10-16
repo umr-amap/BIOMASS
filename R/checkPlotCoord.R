@@ -256,7 +256,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   if(!is.null(treeCoord)) {
     if(trustGPScorners) {
       treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
-                                             cornersCoord = cornerCoord[,c("X","Y","cornerNum")],
+                                             cornerCoord = cornerCoord[,c("X","Y","cornerNum")],
                                              dimX = diff(range(cornerCoord$Xrel)),
                                              dimY = diff(range(cornerCoord$Yrel))
                                              )
