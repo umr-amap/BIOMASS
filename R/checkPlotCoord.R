@@ -172,6 +172,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
       
     } else { # if exactly 1 measures for each corner
       cornerCoord <- data.table(X=projCoord[,1],Y=projCoord[,2],Xrel=relCoord[,1],Yrel=relCoord[,2])
+      setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
       if(!is.null(cornerID)) cornerCoord$cornerID = cornerID
     }
     
@@ -225,7 +226,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     
     cornerCoord <- data.table(X=cornerProjCoord[,1], Y=cornerProjCoord[,2], Xrel=cornerRelCoord[,1], Yrel=cornerRelCoord[,2])
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
-  }
+  } # End trustGPScorners = "FALSE"
   
   # Assign corner numbers in a clockwise direction
   m1 <- cornerCoord[ rank(Xrel) <= 2, ]
@@ -268,7 +269,8 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   # draw plot ------------------------------------------------------------------
   
   if (drawPlot) {
-    projCoordPlot <- projCoord
+    projCoordPlot <- projCoord[,c(1,2)]
+    setnames(projCoordPlot , c("X","Y"))
     projCoordPlot$whatpoint <- "GPS measurements"
     cornerCoordPlot <- cornerCoord[,c("X","Y")]
     cornerCoordPlot$whatpoint <- "Reference corners"
@@ -282,7 +284,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
                             Xend = c(cornerCoord$X[1]+(cornerCoord$X[4]-cornerCoord$X[1])/4,cornerCoord$X[1]+(cornerCoord$X[2]-cornerCoord$X[1])/4),
                             Yend = c(cornerCoord$Y[1]+(cornerCoord$Y[4]-cornerCoord$Y[1])/4,cornerCoord$Y[1]+(cornerCoord$Y[2]-cornerCoord$Y[1])/4))
     
-    if(nrow(outliers)!=0) {
+    if(exists("outliers") && nrow(outliers)!=0) {
       projCoordPlot$whatpoint[outliers$nRow] <- "Outliers (discarded)"
     }
     plotDesign <- ggplot2::ggplot(data = projCoordPlot) +
