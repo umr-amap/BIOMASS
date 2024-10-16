@@ -173,6 +173,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     } else { # if exactly 1 measures for each corner
       cornerCoord <- data.table(X=projCoord[,1],Y=projCoord[,2],Xrel=relCoord[,1],Yrel=relCoord[,2])
       setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
+      outliers <- data.frame()
       if(!is.null(cornerID)) cornerCoord$cornerID = cornerID
     }
     
@@ -225,6 +226,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     cornerProjCoord <- sweep(cornerProjCoord, 2, procrustRes$translation, FUN = "+")
     
     cornerCoord <- data.table(X=cornerProjCoord[,1], Y=cornerProjCoord[,2], Xrel=cornerRelCoord[,1], Yrel=cornerRelCoord[,2])
+    setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   
