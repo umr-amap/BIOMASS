@@ -160,7 +160,30 @@ test_that("checkPlotCoord, tree coordinates", {
   expect_is(res$treeProjCoord, "data.frame")
   expect_equal(dim(res$treeProjCoord), c(nrow(treeCoord),2))
   expect_equal(res$treeProjCoord , sweep(treeCoord, 2, c(200000,9000000), FUN = "+"))
+  treeCoord$AGB <- c(20,25,30)  
+  expect_equal(res, checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F, treeCoord = treeCoord))
+  
 })
+
+
+test_that("checkPlotCoord, splashed corners", {
+  projCoord <- data.frame(
+    X = rep(c(0,0,100,100), e=4),
+    Y = rep(c(0,100,100,0), e=4)
+  )
+  projCoord[1:4,] <- matrix(c(25,0,-25,0,0,25,0,-25), ncol=2, byrow = F)
+  projCoord$X = projCoord$X + 200000
+  projCoord$Y = projCoord$Y + 9000000
+  
+  relCoord <- data.frame(
+    X = rep(c(0,0,100,100),e=4),
+    Y = rep(c(0,100,100,0),e=4)
+  )
+  cornerID <- rep(c("SW","NW","SE","NE"),e=4)
+  expect_error(suppressWarnings(checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = T, cornerID = cornerID, rmOutliers = T, drawPlot = F, maxDist = 5)))
+})
+
+
 
 
 

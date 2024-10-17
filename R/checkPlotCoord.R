@@ -1,20 +1,22 @@
-#' Check coordinates of plot corners
+#' Check coordinates of plot corners and trees
 #'
 #' @description
-#' TO DO
+#' Quality check of plot corner and tree coordinates.
 #'
 #' @details
-#' TO DO
+#' If trustGPScorners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the maxDist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems.
+#' 
+#' If trustGPScorners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 #'
 #' @param longlat (optional) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively
 #' @param projCoord (optional) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively
 #' @param relCoord a data frame containing the plot corner coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively, and with the same row order than longlat or projCoord
 #' @param trustGPScorners a logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.
-#' @param cornerID (optional) a vector indicating the ID of the corners (e.g c("SE","SE",...)) in the case you have multiple measurements for each corner
+#' @param cornerID a vector indicating the ID of the corners (e.g c("SE","SE",...)) in the case you have multiple measurements for each corner
 #' @param maxDist a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)
 #' @param rmOutliers a logical indicating if detected outliers are removed from the coordinate calculation
 #' @param drawPlot a logical indicating if the plot design should be displayed and returned
-#' @param treeCoord (optional) a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively
+#' @param treeCoord a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -230,7 +232,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   
-  # Assign corner numbers in a clockwise direction
+  # Assign corner numbers in a clockwise direction -----------------------------
   m1 <- cornerCoord[ rank(Xrel) <= 2, ]
   tmp1 <- m1[rank(Yrel),]
   m2 <- cornerCoord[ rank(Xrel) > 2, ]
@@ -290,7 +292,7 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
       projCoordPlot$whatpoint[outliers$nRow] <- "Outliers (discarded)"
     }
     plotDesign <- ggplot2::ggplot(data = projCoordPlot) +
-      geom_point(aes(x=X,y=Y,col=whatpoint,shape = whatpoint),size=2,show.legend = TRUE) + 
+      geom_point(aes(x=X,y=Y,col=whatpoint,shape = whatpoint),size=2) + 
       scale_shape_manual(values=c(2,4,15,1), drop=FALSE) +
       scale_color_manual(values=c('black','red',"black","darkgreen"), drop = FALSE) +
       geom_polygon(data = cornerPolygon[[1]][[1]][,] , mapping = aes(x=X,y=Y), colour="black",fill=NA,linewidth=1.2)+
