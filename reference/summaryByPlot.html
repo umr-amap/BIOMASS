@@ -22,6 +22,7 @@ for each plot of the AGB if the argument AGB_val is the resulting vector from th
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/plot.html">Manage trees and plot coordinates with BIOMASS</a></li>
+    <li><a class="dropdown-item" href="../articles/VignetteSpatialRepresentationAndManagementPlot.html">Manage plot and tree coordinates with BIOMASS</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -119,8 +120,8 @@ If the <code>subplot</code> arguments is set and the <code>drawPlot</code> is se
 <span class="r-in"><span><span class="co"># The summary by plot</span></span></span>
 <span class="r-in"><span><span class="fu">summaryByPlot</span><span class="op">(</span>AGB_val <span class="op">=</span> <span class="va">resultMC</span><span class="op">$</span><span class="va">AGB_simu</span>, <span class="va">plot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    plot      AGB Cred_2.5 Cred_97.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 BSP14 155.1730 139.7417  172.3216</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 BSP20 292.9429 270.3306  317.4170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 BSP14 155.1568 140.7447  172.8760</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 BSP20 293.3935 271.5784  316.0902</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The summary by plot for computeAGB</span></span></span>
 <span class="r-in"><span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="retrieveH.html">retrieveH</a></span><span class="op">(</span><span class="va">KarnatakaForest</span><span class="op">$</span><span class="va">D</span><span class="op">[</span><span class="va">filt</span><span class="op">]</span>, model <span class="op">=</span> <span class="va">HDmodel</span><span class="op">)</span><span class="op">$</span><span class="va">H</span></span></span>
