@@ -5,8 +5,8 @@
 \title{Check coordinates of plot corners and trees}
 \usage{
 checkPlotCoord(
-  longlat = NULL,
   projCoord = NULL,
+  longlat = NULL,
   relCoord,
   trustGPScorners,
   cornerID = NULL,
@@ -17,9 +17,9 @@ checkPlotCoord(
 )
 }
 \arguments{
-\item{longlat}{(optional) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively}
+\item{projCoord}{(optional, if longlat is not supplied) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively.}
 
-\item{projCoord}{(optional) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively}
+\item{longlat}{(optional, if projCoord is not supplied) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively}
 
 \item{relCoord}{a data frame containing the plot corner coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively, and with the same row order than longlat or projCoord}
 
@@ -53,6 +53,8 @@ Quality check of plot corner and tree coordinates.
 If trustGPScorners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the maxDist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems.
 
 If trustGPScorners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
+
+If longlat is supplied instead of projCoord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
 }
 \examples{
 projCoord <- data.frame(
