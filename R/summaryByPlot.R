@@ -197,8 +197,10 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE, subplot = NULL) {
 
   if (!is.null(subplot)) {
     setDT(subplot)
+    setnames(subplot,"cornerNum","corner")
 
     list_poly <- lapply(split(subplot, by = "subplot"), function(data) {
+      
       mat <- data[order(corner), .(XAbs, YAbs)]
       mat <- as.matrix(rbind(mat, mat[1, ]))
 

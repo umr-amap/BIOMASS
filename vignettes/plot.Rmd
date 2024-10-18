@@ -112,7 +112,7 @@ On the graph, you can noted than the corner number 1 the origin of the plot.
 subplot <- cutPlot(
   projCoord = coord_num[, c("X", "Y")],
   plot = coord_num[, c("plot")],
-  corner = coord_num[, c("corner")],
+  cornerNum = coord_num[, c("corner")],
   gridsize = 25, dimX = 100, dimY = 100
 )
 ```
@@ -134,7 +134,7 @@ trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees
 
 ```{r}
 trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
-AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = TRUE, subplot = subplot)
+AGB <- summaryByPlot(AGB_val = trees$AGB,plot =  trees$subplot, drawPlot = TRUE, subplot = subplot)
 print(AGB)
 ```
 

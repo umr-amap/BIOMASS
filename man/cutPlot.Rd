@@ -2,53 +2,52 @@
 % Please edit documentation in R/cutPlot.R
 \name{cutPlot}
 \alias{cutPlot}
-\title{Divides a plot in subplots}
+\title{Divides one ore more plots in subplots}
 \usage{
-cutPlot(projCoord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
+cutPlot(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY = 200)
 }
 \arguments{
-\item{projCoord}{A data frame with the projected coordinates with X and Y on the first and second column respectively}
+\item{projCoord}{A data frame containing the projected coordinates of plot corners, with X and Y on the first and second column respectively}
 
-\item{plot}{Vector with the code of the plot}
+\item{plot}{A vector indicating the plot codes}
 
-\item{corner}{Vector with the corner numbered from 1 to 4 for each plot, the numbered must be counted clockwise
-(see the result of the \code{\link[=numberCorner]{numberCorner()}})}
+\item{cornerNum}{A vector with corners numbered from 1 to 4 for each plot, numbering must be in clockwise direction}
 
-\item{gridsize}{The size of the grid}
+\item{gridsize}{The size of the subplots}
 
-\item{dimX}{A vector of the real size for the X axis for the plot (can be given one value it will be replicate for each plot)}
+\item{dimX}{A vector indicating the size of the plot on the X axis, in meters and in the relative coordinates system (if a single value is supplied, it will be replicated for all plots)}
 
-\item{dimY}{A vector of the real size for the Y axis for the plot (can be given one value it will be replicate for each plot)}
+\item{dimY}{A vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system (if a single value is supplied, it will be replicated for all plots)}
 }
 \value{
-This function return a data frame with :
+Returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
-\item \code{plot}:  The code of the plot you use
-\item \code{subplot}:  The code of the subplot automatically generated
-\item \code{XRel}:  The relative coordinate for the axis X (following the corner 1->2) for the plot
-\item \code{YRel}:  The relative coordinate for the axis Y (following the corner 1->4) for the plot
-\item \code{XAbs}:  The absolute coordinate (projected) for the axis X (following the corner 1->2)
-\item \code{YAbs}:  The absolute coordinate (projected) for the axis Y (following the corner 1->4)
+\item \code{plot}: The plot code
+\item \code{subplot}: The automatically generated subplot code
+\item \code{XRel}:  The relative coordinates on the X axis (defined by corners 1->4)
+\item \code{YRel}:  The relative coordinates on the Y axis (defined by corners 1->2)
+\item \code{XAbs}:  The absolute (projected) X coordinates
+\item \code{YAbs}:  The absolute (projected) Y coordinates
 }
 }
 \description{
-This function divides a plot in subplots (with dimX and dimY) and gives the
-coordinates of the grid in return.
-This function uses a procrustes analysis to fit the rectangle you gave to the plot you have.
+This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
+This function uses a procrust analysis to fit the rectangle you gave to the plot you have.
 }
 \examples{
 
 coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
-corner <- c(1, 2, 4, 3)
+cornerNum <- c(1, 2, 4, 3)
 plot <- rep("plot1", 4)
 
-cut <- cutPlot(coord, plot, corner, gridsize = 100, dimX = 200, dimY = 200)
+cut <- cutPlot(coord, plot, cornerNum, gridsize = 100, dimX = 200, dimY = 200)
 
 # plot the result
 plot(coord, main = "example", xlim = c(4900, 5300), ylim = c(4900, 5300), asp = 1)
-text(coord, labels = corner, pos = 1)
+text(coord, labels = cornerNum, pos = 1)
 points(cut$XAbs, cut$YAbs, pch = "+")
 legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
+
 }
 \author{
 Arthur PERE

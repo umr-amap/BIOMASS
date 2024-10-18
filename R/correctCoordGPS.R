@@ -70,6 +70,8 @@
 correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, rangeY,
                             maxDist = 15, drawPlot = FALSE, rmOutliers = TRUE) {
   
+  warning("This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette")
+  
   # To maintain user's original options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
