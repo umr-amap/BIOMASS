@@ -7,9 +7,11 @@
 #' If trustGPScorners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the maxDist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems.
 #' 
 #' If trustGPScorners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
+#' 
+#' If longlat is supplied instead of projCoord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
 #'
-#' @param longlat (optional) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively
-#' @param projCoord (optional) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively
+#' @param projCoord (optional, if longlat is not supplied) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively.
+#' @param longlat (optional, if projCoord is not supplied) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively
 #' @param relCoord a data frame containing the plot corner coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively, and with the same row order than longlat or projCoord
 #' @param trustGPScorners a logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.
 #' @param cornerID a vector indicating the ID of the corners (e.g c("SE","SE",...)) in the case you have multiple measurements for each corner
@@ -74,7 +76,7 @@
 #' )
 #' }
 #'
-checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
+checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
   # parameters verification -------------------------------------------------
   
@@ -134,6 +136,9 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   if (!is.null(longlat)) {
     projCoord <- latlong2UTM(longlat)
     codeUTM <- unique(projCoord[, "codeUTM"])
+    if(length(codeUTM)>1) {
+      stop("More than one UTM zone are detected. This may be due to an error in the long/lat coordinates, or if the parcel is located right between two UTM zones. In this case, please convert yourself your long/lat coordinates into any projected coordinates which have the same dimension than your local coordinates")
+    }
     projCoord <- projCoord[, c("X", "Y")]
   }
   
@@ -141,8 +146,8 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
   
     if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and look for outliers
       
-      cornerCoord <- data.table(X=projCoord[,1],Y=projCoord[,2],Xrel=relCoord[,1],Yrel=relCoord[,2], cornerID=cornerID)
-      setnames(cornerCoord, colnames(cornerCoord), c("X","Y","Xrel","Yrel","cornerID")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
+      cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2],cornerID=cornerID))
+      setnames(cornerCoord, c("X","Y","Xrel","Yrel","cornerID"))
       if (any(table(cornerCoord$cornerID) < 5)) {
         warning("At least one corner has less than 5 measurements. We suggest using the argument trustGPScorners = FALSE")
       }
@@ -173,16 +178,17 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
       setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel","cornerID")) 
       
     } else { # if exactly 1 measures for each corner
-      cornerCoord <- data.table(X=projCoord[,1],Y=projCoord[,2],Xrel=relCoord[,1],Yrel=relCoord[,2])
-      setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
+      
+      cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
+      setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
       outliers <- data.frame()
       if(!is.null(cornerID)) cornerCoord$cornerID = cornerID
     }
     
   } else { # trustGPScorners = "FALSE"
     
-    cornerCoord <- data.table(X=projCoord[,1],Y=projCoord[,2],Xrel=relCoord[,1],Yrel=relCoord[,2])
-    setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
+    cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
+    setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
     cornerCoord[, nRow := .I]
     
     # Transformation of relCoord to projected coordinates by a procrust analyses
@@ -227,8 +233,9 @@ checkPlotCoord <- function(longlat = NULL, projCoord = NULL, relCoord, trustGPSc
     cornerProjCoord <- as.matrix(cornerRelCoord[,1:2]) %*% procrustRes$rotation
     cornerProjCoord <- sweep(cornerProjCoord, 2, procrustRes$translation, FUN = "+")
     
-    cornerCoord <- data.table(X=cornerProjCoord[,1], Y=cornerProjCoord[,2], Xrel=cornerRelCoord[,1], Yrel=cornerRelCoord[,2])
-    setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel")) #in case the user gives a data.table which preserved column names (resulting in X.X colname)
+    cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
+    setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
+
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   
