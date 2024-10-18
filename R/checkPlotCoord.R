@@ -233,7 +233,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     cornerProjCoord <- as.matrix(cornerRelCoord[,1:2]) %*% procrustRes$rotation
     cornerProjCoord <- sweep(cornerProjCoord, 2, procrustRes$translation, FUN = "+")
     
-    cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
+    cornerCoord <- data.table(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
     setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
 
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
