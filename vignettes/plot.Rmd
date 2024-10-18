@@ -112,7 +112,7 @@ On the graph, you can noted than the corner number 1 the origin of the plot.
 subplot <- cutPlot(
   projCoord = coord_num[, c("X", "Y")],
   plot = coord_num[, c("plot")],
-  corner = coord_num[, c("corner")],
+  cornerNum = coord_num[, c("corner")],
   gridsize = 25, dimX = 100, dimY = 100
 )
 ```

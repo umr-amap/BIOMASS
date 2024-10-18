@@ -27,11 +27,6 @@ require(data.table)
 require(tidyverse)
 ```
 
-```{r echo=FALSE, message=FALSE}
-devtools::load_all() # Temporary, for developing the package and the vignette simultaneously
-```
-
-
 # Overview
 
 BIOMASS enables users to manage their plots by :
