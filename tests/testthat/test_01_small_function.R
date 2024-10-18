@@ -230,13 +230,13 @@ test_that("Bilinear interpolation", {
 })
 
 
-long <- c(-52.68, -51.12, -53.11)
-lat <- c(4.08, 3.98, 4.12)
-coord <- cbind(long, lat)
-
 
 context("lat long to UTM")
 test_that("lat long to UTM", {
+  long <- c(-52.68, -51.12, -53.11)
+  lat <- c(4.08, 3.98, 4.12)
+  coord <- cbind(long, lat)
+  
   skip_if_not_installed("proj4") 
   UTM <- latlong2UTM(coord)
   expect_is(UTM, "data.frame")

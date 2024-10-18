@@ -134,7 +134,7 @@ trees$subplot <- attributeTree(trees[, c("xRel", "yRel")], rep("NB1", nrow(trees
 
 ```{r}
 trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
-AGB <- summaryByPlot(trees$AGB, trees$subplot, drawPlot = TRUE, subplot = subplot)
+AGB <- summaryByPlot(AGB_val = trees$AGB,plot =  trees$subplot, drawPlot = TRUE, subplot = subplot)
 print(AGB)
 ```
 

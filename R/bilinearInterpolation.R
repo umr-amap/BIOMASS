@@ -19,6 +19,8 @@ bilinearInterpolation = function(relCoord, cornerCoord, dimX, dimY) {
   
   # See https://en.wikipedia.org/wiki/Bilinear_interpolation#Alternative_matrix_form for details
   
+  setnames(cornerCoord,c("X","Y","cornerNum"))
+  
   denominator <- (dimX-0)*(dimY-0)
   
   multMat <- matrix(c(dimX*dimY , -dimX*0 , -0*dimY , 0*0,
