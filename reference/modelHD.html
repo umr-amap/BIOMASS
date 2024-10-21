@@ -52,13 +52,11 @@
 
 
 <dl><dt id="arg-d">D<a class="anchor" aria-label="anchor" href="#arg-d"></a></dt>
-<dd><p>Vector with diameter measurements (in cm). NA values are accepted but a
-minimum of 10 valid entries (i.e. having a corresponding height in H) is required.</p></dd>
+<dd><p>Vector with diameter measurements (in cm). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding height in H) is required.</p></dd>
 
 
 <dt id="arg-h">H<a class="anchor" aria-label="anchor" href="#arg-h"></a></dt>
-<dd><p>Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries
-(i.e. having a corresponding diameter in D) is required.</p></dd>
+<dd><p>Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.</p></dd>
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
@@ -87,9 +85,9 @@ stand-specific HD models.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If plot is NULL or has a single value, a single list is returned. If there is more than one plot,
-multiple embedded lists are returned with plots as the list names.
-Returns a list if the parameter model is not null:</p><ul><li><p><code>input</code>: list of the data used to construct the model (list(H, D))</p></li>
+    <p>If <code>plot</code> is NULL or has a single value, a single list is returned. If there is more than one plot,
+multiple embedded lists are returned with plots as the list names.</p>
+<p>If <code>model</code> is not null (model comparison), returns a list :</p><ul><li><p><code>input</code>: list of the data used to construct the model (list(H, D))</p></li>
 <li><p><code>model</code>: outputs of the model (same outputs as given by <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>, <code><a href="https://rdrr.io/r/stats/nls.html" class="external-link">stats::nls()</a></code>)</p></li>
 <li><p><code>RSE</code>: Residual Standard Error of the model</p></li>
 <li><p><code>RSElog</code>: Residual Standard Error of the log model (<code>NULL</code> if other model)</p></li>
@@ -99,9 +97,9 @@ Returns a list if the parameter model is not null:</p><ul><li><p><code>input</co
 <li><p><code>formula</code>: Formula of the model</p></li>
 <li><p><code>method</code>: Name of the method used to construct the model</p></li>
 <li><p><code>predicted</code>: Predicted height values</p></li>
-</ul><p>If the parameter model is null, the function return a graph with all the methods for
-comparison, the function also returns a data.frame with:</p><ul><li><p><code>method</code>: The method that had been used to construct the graph</p></li>
-<li><p><code>color</code>: The color of the curve in the graph</p></li>
+<li><p><code>fitPlot</code>: a ggplot object containing the model fitting plot</p></li>
+</ul><p>If the parameter model is null, the function return a plot with all the methods for
+comparison, the function also returns a data.frame with:</p><ul><li><p><code>method</code>: The method that had been used to construct the plot</p></li>
 <li><p><code>RSE</code>: Residual Standard Error of the model</p></li>
 <li><p><code>RSElog</code>: Residual Standard Error of the log model (<code>NULL</code> if other model)</p></li>
 <li><p><code>Average_bias</code>: The average bias for the model</p></li>
@@ -117,7 +115,7 @@ where RSE is the Residual Standard Error).</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY</p>
+    <p>Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY, Arthur Bailly</p>
     </div>
 
     <div class="section level2">
@@ -126,25 +124,33 @@ where RSE is the Residual Standard Error).</p>
 <span class="r-in"><span><span class="co"># Load a data set</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">NouraguesHD</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># To model the height from a dataset</span></span></span>
+<span class="r-in"><span><span class="co"># Fit H-D models for the Nouragues dataset</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span>D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>, drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="modelHD-1.png" alt="" width="700" height="433"></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> To build a HD model you must use the parameter 'method' in this function</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># If the method needed is known</span></span></span>
-<span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span>D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>, method <span class="op">=</span> <span class="st">"weibull"</span>, drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># For a chosen model</span></span></span>
+<span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span>D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span></span>
+<span class="r-in"><span>method <span class="op">=</span> <span class="st">"log2"</span>, drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="modelHD-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span>D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>, method <span class="op">=</span> <span class="st">"log1"</span>, drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="modelHD-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using weights</span></span></span>
 <span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>, method <span class="op">=</span> <span class="st">"weibull"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  drawGraph <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="modelHD-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># With multiple stands (plots)</span></span></span>
+<span class="r-in"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu">modelHD</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span>, </span></span>
+<span class="r-in"><span>  plot <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">plotId</span>, drawGraph <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="modelHD-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="modelHD-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

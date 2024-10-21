@@ -114,14 +114,12 @@
 </h3>
 <p><strong>First, check for any typo in the taxonomy</strong></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span>genus <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genus</span>, species <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">species</span>, useCache <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Using useCache=TRUE is recommended to reduce online search time for the next query</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genusCorr</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusCorrected</span></span>
+<code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span>genus <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genus</span>, species <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">species</span>, useCache <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genusCorr</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusCorrected</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">speciesCorr</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesCorrected</span></span></code></pre></div>
 <p><strong>If needed, retrieve APG III families and orders from genus
 names</strong></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">APG</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genusCorr</span>, findOrder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">familyAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">family</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">orderAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">order</span></span></code></pre></div>
@@ -131,7 +129,7 @@ names</strong></p>
 </h3>
 <p><strong>Retrieve wood density using the plot level average if no
 genus level information is available</strong></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dataWD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">genusCorr</span>,</span>
 <span>  species <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">speciesCorr</span>,</span>
@@ -142,7 +140,7 @@ genus level information is available</strong></p>
 <p><strong>The same but using the family average and adding other wood
 density values as references (here invented for the
 example)</strong></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">LocalWoodDensity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Ziziphus"</span>, <span class="st">"Terminalia"</span>, <span class="st">"Garcinia"</span><span class="op">)</span>,</span>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"oenopolia"</span>, <span class="st">"bellirica"</span>, <span class="st">"indica"</span><span class="op">)</span>,</span>
@@ -160,15 +158,15 @@ example)</strong></p>
 <pre><code><span><span class="co">## Your taxonomic table contains 196 taxa</span></span></code></pre>
 <p><strong>Below the number of wood density value estimated at the
 species, genus and plot level:</strong></p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At species level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">dataWD</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2415</span></span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At genus level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">dataWD</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"genus"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 2957</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At plot level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="va">dataWD</span><span class="op">$</span><span class="va">levelWD</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"genus"</span>, <span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 394</span></span></code></pre>
@@ -178,20 +176,18 @@ species, genus and plot level:</strong></p>
 <h2 id="build-height-diameter-models">Build height-diameter models<a class="anchor" aria-label="anchor" href="#build-height-diameter-models"></a>
 </h2>
 <p><strong>You may compare different models at once</strong></p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
 <span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="BIOMASS_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <pre><code><span><span class="co">## To build a HD model you must use the parameter 'method' in this function</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">method</th>
-<th align="left">color</th>
 <th align="right">RSE</th>
 <th align="right">RSElog</th>
 <th align="right">Average_bias</th>
@@ -199,28 +195,24 @@ species, genus and plot level:</strong></p>
 <tbody>
 <tr class="odd">
 <td align="left">log1</td>
-<td align="left">blue</td>
 <td align="right">4.305059</td>
 <td align="right">0.2231136</td>
 <td align="right">0.0042275</td>
 </tr>
 <tr class="even">
 <td align="left">log2</td>
-<td align="left">green</td>
 <td align="right">4.222718</td>
 <td align="right">0.2215495</td>
 <td align="right">0.0031217</td>
 </tr>
 <tr class="odd">
 <td align="left">weibull</td>
-<td align="left">orange</td>
 <td align="right">4.307951</td>
 <td align="right">NA</td>
 <td align="right">0.0028240</td>
 </tr>
 <tr class="even">
 <td align="left">michaelis</td>
-<td align="left">purple</td>
 <td align="right">4.294488</td>
 <td align="right">NA</td>
 <td align="right">0.0145642</td>
@@ -228,22 +220,24 @@ species, genus and plot level:</strong></p>
 </tbody>
 </table>
 <p><strong>Compute the local H-D model with the lowest RSE</strong></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"log2"</span>,</span>
 <span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><strong>Compute models specific to given stands</strong></p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<p><strong>Compute models specific to given stands (given
+plots)</strong></p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HDmodelPerPlot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>, method <span class="op">=</span> <span class="st">"weibull"</span>,</span>
-<span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, plot <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">plotId</span></span>
+<span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, plot <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">plotId</span>, drawGraph <span class="op">=</span> <span class="cn">T</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in par(oldpar): calling par(new=TRUE) with no plot</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ResHD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">HDmodelPerPlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, RSE <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">RSE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<p><img src="BIOMASS_files/figure-html/unnamed-chunk-12-1.png" width="700"><img src="BIOMASS_files/figure-html/unnamed-chunk-12-2.png" width="700"></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># To get model parameters by stand :</span></span>
+<span><span class="va">ResHD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">HDmodelPerPlot</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">model</span><span class="op">)</span>, RSE <span class="op">=</span> <span class="va">x</span><span class="op">$</span><span class="va">RSE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">ResHD</span>, row.names <span class="op">=</span> <span class="cn">TRUE</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -277,21 +271,21 @@ species, genus and plot level:</strong></p>
 <p><strong>Retrieve height data from a local Height-diameter
 model</strong> (Note that using a HD model built on French guianan trees
 for Indian trees is only for illustrative purpose here)</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dataHlocal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieveH.html">retrieveH</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">HDmodel</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Retrieve height data from a Feldpaush et al. (2012) averaged
 model</strong></p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dataHfeld</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieveH.html">retrieveH</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  region <span class="op">=</span> <span class="st">"SEAsia"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Retrieve height data from Chave et al. (2012) equation
 6</strong></p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dataHchave</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieveH.html">retrieveH</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  coord <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"long"</span>, <span class="st">"lat"</span><span class="op">)</span><span class="op">]</span></span>
@@ -301,12 +295,12 @@ model</strong></p>
 <h2 id="estimate-agb">Estimate AGB<a class="anchor" aria-label="anchor" href="#estimate-agb"></a>
 </h2>
 <p><strong>Organize data</strong></p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span> <span class="op">&lt;-</span> <span class="va">dataWD</span><span class="op">$</span><span class="va">meanWD</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">H</span> <span class="op">&lt;-</span> <span class="va">dataHlocal</span><span class="op">$</span><span class="va">H</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">Hfeld</span> <span class="op">&lt;-</span> <span class="va">dataHfeld</span><span class="op">$</span><span class="va">H</span></span></code></pre></div>
 <p><strong>Compute AGB(Mg) per tree</strong></p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGBtree</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/computeAGB.html">computeAGB</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>,</span>
@@ -314,11 +308,11 @@ model</strong></p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Compute AGB(Mg) per plot (need to be divided by plot area to
 get Mg/ha)</strong></p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGBplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span><span class="va">AGBtree</span>, <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">plotId</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Compute AGB(Mg) per tree without height information (Eq. 7
 from Chave et al. (2014))</strong></p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGBplotChave</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/computeAGB.html">computeAGB</a></span><span class="op">(</span></span>
 <span>    D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>,</span>
@@ -328,7 +322,7 @@ from Chave et al. (2014))</strong></p>
 <span><span class="op">)</span></span></code></pre></div>
 <p><strong>Compute AGB(Mg) per tree with Feldpausch et al. (2012)
 regional H-D model</strong></p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGBplotFeld</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/computeAGB.html">computeAGB</a></span><span class="op">(</span></span>
 <span>    D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>,</span>
@@ -341,14 +335,14 @@ regional H-D model</strong></p>
 <h2 id="propagate-agb-errors">Propagate AGB errors<a class="anchor" aria-label="anchor" href="#propagate-agb-errors"></a>
 </h2>
 <p><strong>Organize data</strong></p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">sdWD</span> <span class="op">&lt;-</span> <span class="va">dataWD</span><span class="op">$</span><span class="va">sdWD</span></span>
 <span><span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">HfeldRSE</span> <span class="op">&lt;-</span> <span class="va">dataHfeld</span><span class="op">$</span><span class="va">RSE</span></span></code></pre></div>
 <p><strong>Propagate error for all tree at once using the local HD model
 constructed above (modelHD), i.e. non-independent allometric errors will
 be assigned to all trees at each iteration, independently of
 plots.</strong></p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resultMC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span>D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>, errWD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">sdWD</span>, HDmodel <span class="op">=</span> <span class="va">HDmodel</span>, Dpropag <span class="op">=</span> <span class="st">"chave2004"</span><span class="op">)</span></span>
 <span><span class="va">Res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span><span class="va">resultMC</span><span class="op">$</span><span class="va">AGB_simu</span>, <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">plotId</span><span class="op">)</span></span>
 <span><span class="va">Res</span> <span class="op">&lt;-</span> <span class="va">Res</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">Res</span><span class="op">$</span><span class="va">AGB</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -357,7 +351,7 @@ plots.</strong></p>
 <p><img src="BIOMASS_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 <p><strong>Using the Feldpaush regional HD averaged model (code only
 given)</strong></p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resultMC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>,</span>
@@ -373,7 +367,7 @@ given)</strong></p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/segments.html" class="external-link">segments</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Res</span><span class="op">)</span><span class="op">)</span>, <span class="va">Res</span><span class="op">$</span><span class="va">Cred_2.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Res</span><span class="op">)</span><span class="op">)</span>, <span class="va">Res</span><span class="op">$</span><span class="va">Cred_97.5</span>, col <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Per plot using the Chave et al. (2014) Equation 7 (code only
 given)</strong></p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resultMC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  WD <span class="op">=</span> <span class="va">KarnatakaForestsub</span><span class="op">$</span><span class="va">WD</span>,</span>
@@ -398,7 +392,7 @@ ones, you may do the following steps.</p>
 <li>Build a vector of H and RSE where we assume an error of 0.5 m on
 directly measured trees</li>
 </ol>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">Hmix</span> <span class="op">&lt;-</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span></span>
 <span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">RSEmix</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
 <span><span class="va">filt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">Hmix</span><span class="op">)</span></span>
@@ -409,7 +403,7 @@ directly measured trees</li>
 errors (which depend on whether the tree was directly measured or
 estimated)</li>
 </ol>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">genus</span>, <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">species</span><span class="op">)</span></span>
 <span><span class="va">resultMC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">wd</span><span class="op">$</span><span class="va">meanWD</span>, errWD <span class="op">=</span> <span class="va">wd</span><span class="op">$</span><span class="va">sdWD</span>,</span>
