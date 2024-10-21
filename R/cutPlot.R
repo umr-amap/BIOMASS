@@ -4,7 +4,7 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Divides a plot in subplots
+#' Divides one ore more plots into subplots
 #'
 #' This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
 #' This function uses a procrust analysis to fit the rectangle you gave to the plot you have.

@@ -44,7 +44,6 @@
 #' If the parameter model is null, the function return a plot with all the methods for
 #' comparison, the function also returns a data.frame with:
 #'   - `method`: The method that had been used to construct the plot
-#'   - `color`: The color of the curve in the plot
 #'   - `RSE`: Residual Standard Error of the model
 #'   - `RSElog`: Residual Standard Error of the log model (`NULL` if other model)
 #'   - `Average_bias`: The average bias for the model
@@ -61,29 +60,36 @@
 #' # Load a data set
 #' data(NouraguesHD)
 #'
-#' # To model the height from a dataset
+#' # Fit H-D models for the Nouragues dataset
 #' \donttest{
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
 #' }
 #'
-#' # If the method needed is known
-#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
-#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
+#' # For a chosen model
+#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
+#' method = "log2", drawGraph = TRUE)
 #'
 #' # Using weights
 #' HDmodel <- modelHD(
-#'   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
-#'   drawGraph = TRUE
-#' )
+#'   D = NouraguesHD$D, H = NouraguesHD$H,
+#'   method = "log2", useWeight = TRUE,
+#'   drawGraph = TRUE)
+#' 
+#' # With multiple stands (plots)
+#' HDmodel <- modelHD(
+#'   D = NouraguesHD$D, H = NouraguesHD$H,
+#'   method = "log2", useWeight = TRUE, 
+#'   plot = NouraguesHD$plotId, drawGraph = TRUE)
+#' 
 #' @importFrom graphics legend lines par plot grid axis
 #' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict coef
 #' @importFrom utils data
 #' @importFrom data.table data.table
-#' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_minimal theme scale_x_continuous scale_y_continuous
+#' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_minimal theme scale_x_continuous scale_y_continuous element_text 
 
 modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL) {
 
-  # parameters verification -------------------------------------------------
+  # Checking arguments -------------------------------------------------
 
   # Check if there is enough data to compute an accurate model
   nbNonNA <- sum(!is.na(H))
