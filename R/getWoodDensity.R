@@ -111,7 +111,7 @@ if (getRversion() >= "2.15.1") {
 #' }
 #' @seealso [wdData], [sd_10]
 #' @keywords Wood density
-#' @importFrom data.table data.table := setDF setDT setkey copy chmatch %chin%
+#' @importFrom data.table data.table := setDF setDT setkey chmatch %chin%
 #'
 getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region = "World",
                            addWoodDensityData = NULL, verbose = TRUE) {
@@ -148,11 +148,11 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   # Data processing ---------------------------------------------------------
 
   # Load global wood density database downloaded from http://datadryad.org/handle/10255/dryad.235
-  wdData <- setDT(copy(BIOMASS::wdData))
+  wdData <- data.table(BIOMASS::wdData)
 
   # Load the mean standard deviation observed at the species, Genus or Family level
   # in the Dryad dataset when at least 10 individuals are considered
-  sd_10 <- setDT(copy(BIOMASS::sd_10))
+  sd_10 <- data.table(BIOMASS::sd_10)
   sd_tot <- sd(wdData$wd)
 
   Region <- tolower(region)
@@ -175,7 +175,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
   if (!is.null(addWoodDensityData)) {
     setDT(addWoodDensityData)
     if (!("family" %in% names(addWoodDensityData))) {
-      genusFamily <- setDT(copy(BIOMASS::genusFamily))
+      genusFamily <- data.table(BIOMASS::genusFamily)
       addWoodDensityData[genusFamily, on = "genus", family := i.family]
     }
     addWoodDensityData <- addWoodDensityData[!is.na(wd), ]
@@ -195,7 +195,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     inputData[, family := as.character(family)]
   } else {
     if (!exists("genusFamily", inherits = FALSE)) {
-      genusFamily <- setDT(copy(BIOMASS::genusFamily))
+      genusFamily <- data.table(BIOMASS::genusFamily)
     }
     inputData[genusFamily, on = "genus", family := i.family]
   }

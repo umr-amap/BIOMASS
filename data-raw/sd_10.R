@@ -7,7 +7,7 @@ require(data.table)
 # )
 # data_wd[, c("genus", "species") := tstrsplit(Binomial, " ", keep = 1:2)]
 
-data_wd <- setDT(copy(BIOMASS::wdData))
+data_wd <- data.table(BIOMASS::wdData)
 
 
 species <- data_wd[, .(family, genus, wd, .N), by = species][N >= 10][, .(sd = sd(wd)), by = species][, mean(sd)]

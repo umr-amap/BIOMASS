@@ -32,7 +32,7 @@ getTaxonomy <- function(genus, findOrder = FALSE) {
   ################## 1. Retrieve the Family
 
   # Load taxonomical data (sourced from Angiosperm Phylogeny Website, http://www.mobot.org/MOBOT/research/APweb/)
-  genusFamily <- setDT(copy(BIOMASS::genusFamily))
+  genusFamily <- data.table(BIOMASS::genusFamily)
   setkey(genusFamily, genus)
 
   # Create ids
@@ -48,7 +48,7 @@ getTaxonomy <- function(genus, findOrder = FALSE) {
   ################## 2. Retrieve the Order
 
   if (findOrder == TRUE) {
-    apgFamilies <- setDT(copy(BIOMASS::apgFamilies))
+    apgFamilies <- data.table(BIOMASS::apgFamilies)
 
     genusFam <- merge(genusFam, apgFamilies, by.x = "family", by.y = "famAPG", all.x = TRUE)
     genusFam <- genusFam[, .(id, inputGenus, family, order)]

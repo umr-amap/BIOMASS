@@ -22,7 +22,7 @@ setDF(apgFamilies)
 usethis::use_data(apgFamilies, compress = "xz", overwrite = FALSE)
 
 
-apgFamiliesOrg <- setDT(copy(BIOMASS::apgFamilies))
+apgFamiliesOrg <- data.table(BIOMASS::apgFamilies)
 apgFamiliesOrg <- apgFamiliesOrg[base::order(order)]
 apgFamilies <- apgFamilies[base::order(order)]
 
