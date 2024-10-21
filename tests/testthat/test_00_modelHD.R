@@ -1,4 +1,4 @@
-require(data.table)
+#require(data.table)
 
 D <- NouraguesHD$D
 H <- NouraguesHD$H
@@ -58,13 +58,13 @@ test_that("Without parameters", {
   Res <- expect_message(modelHD(D, H, useWeight = TRUE), "build a HD model")
 
   expect_is(Res, "data.frame")
-  expect_equal(ncol(Res), 5)
+  expect_equal(ncol(Res),4)
 
-  res <- "method  color      RSE    RSElog Average_bias
-log1   blue 4.305060 0.2231136  0.004227454
-log2  green 4.222718 0.2215495  0.003121671
-weibull orange 4.307951        NA  0.002823978
-michaelis purple 4.294488        NA  0.014564152
+  res <- "method  RSE    RSElog Average_bias
+log1 4.305060 0.2231136  0.004227454
+log2  4.222718 0.2215495  0.003121671
+weibull 4.307951        NA  0.002823978
+michaelis 4.294488        NA  0.014564152
 "
 
 

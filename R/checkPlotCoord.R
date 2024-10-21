@@ -34,7 +34,7 @@
 #'
 #' @importFrom data.table data.table := setnames
 #' @importFrom sf st_multipoint st_polygon st_sfc
-#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit
+#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -78,7 +78,7 @@
 #'
 checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
-  # parameters verification -------------------------------------------------
+  # Checking arguments -------------------------------------------------
   
   if (is.null(longlat) && is.null(projCoord)) {
     stop("Give at least one set of coordinates: longlat or projCoord")
