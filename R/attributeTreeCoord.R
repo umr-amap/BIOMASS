@@ -44,7 +44,7 @@ attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
   # parameters verification -------------------------------------------------
   setDT(coordAbs)
-  setnames(coordAbs, c("XAbs", "YAbs"), c("X", "Y"), skip_absent = TRUE)
+  setnames(coordAbs, c("XAbs", "YAbs","cornerNum"), c("X", "Y","corner"), skip_absent = TRUE)
 
   if (!length(plot) %in% c(1, nrow(xy))) {
     stop("The 'plot' vector must have a length equal to 1 or nrow(xy)")

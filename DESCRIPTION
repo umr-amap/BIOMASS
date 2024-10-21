@@ -37,10 +37,11 @@ Imports:
 	graphics, 
 	stats, 
 	utils, 
-	data.table (>= 1.9.8), 
+	data.table (>= 1.9.8),
 	rappdirs,
 	sf,
-	terra
+	terra,
+	ggplot2
 VignetteBuilder: knitr
 Suggests:
 	knitr, 

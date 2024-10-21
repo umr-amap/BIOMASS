@@ -7,11 +7,9 @@
 modelHD(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL)
 }
 \arguments{
-\item{D}{Vector with diameter measurements (in cm). NA values are accepted but a
-minimum of 10 valid entries (i.e. having a corresponding height in H) is required.}
+\item{D}{Vector with diameter measurements (in cm). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding height in H) is required.}
 
-\item{H}{Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries
-(i.e. having a corresponding diameter in D) is required.}
+\item{H}{Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.}
 
 \item{method}{Method used to fit the relationship.
 To be chosen between:
@@ -36,9 +34,10 @@ volume, so that larger trees have a stronger influence during the construction o
 stand-specific HD models.}
 }
 \value{
-If plot is NULL or has a single value, a single list is returned. If there is more than one plot,
+If \code{plot} is NULL or has a single value, a single list is returned. If there is more than one plot,
 multiple embedded lists are returned with plots as the list names.
-Returns a list if the parameter model is not null:
+
+If \code{model} is not null (model comparison), returns a list :
 \itemize{
 \item \code{input}: list of the data used to construct the model (list(H, D))
 \item \code{model}: outputs of the model (same outputs as given by \code{\link[stats:lm]{stats::lm()}}, \code{\link[stats:nls]{stats::nls()}})
@@ -50,13 +49,13 @@ Returns a list if the parameter model is not null:
 \item \code{formula}: Formula of the model
 \item \code{method}: Name of the method used to construct the model
 \item \code{predicted}: Predicted height values
+\item \code{fitPlot}: a ggplot object containing the model fitting plot
 }
 
-If the parameter model is null, the function return a graph with all the methods for
+If the parameter model is null, the function return a plot with all the methods for
 comparison, the function also returns a data.frame with:
 \itemize{
-\item \code{method}: The method that had been used to construct the graph
-\item \code{color}: The color of the curve in the graph
+\item \code{method}: The method that had been used to construct the plot
 \item \code{RSE}: Residual Standard Error of the model
 \item \code{RSElog}: Residual Standard Error of the log model (\code{NULL} if other model)
 \item \code{Average_bias}: The average bias for the model
@@ -74,24 +73,31 @@ where RSE is the Residual Standard Error).
 # Load a data set
 data(NouraguesHD)
 
-# To model the height from a dataset
+# Fit H-D models for the Nouragues dataset
 \donttest{
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE)
 }
 
-# If the method needed is known
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", drawGraph = TRUE)
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log1", drawGraph = TRUE)
+# For a chosen model
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
+method = "log2", drawGraph = TRUE)
 
 # Using weights
 HDmodel <- modelHD(
-  D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull", useWeight = TRUE,
-  drawGraph = TRUE
-)
+  D = NouraguesHD$D, H = NouraguesHD$H,
+  method = "log2", useWeight = TRUE,
+  drawGraph = TRUE)
+
+# With multiple stands (plots)
+HDmodel <- modelHD(
+  D = NouraguesHD$D, H = NouraguesHD$H,
+  method = "log2", useWeight = TRUE, 
+  plot = NouraguesHD$plotId, drawGraph = TRUE)
+
 }
 \seealso{
 \code{\link[=retrieveH]{retrieveH()}}
 }
 \author{
-Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
+Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY, Arthur Bailly
 }

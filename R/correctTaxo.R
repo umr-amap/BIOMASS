@@ -117,7 +117,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   # sub-function definition -------------------------------------------------
 
   # split x always returning count columns (padding with NA)
-  tstrsplit_NA <- function(x, pattern = " ", count = 2) {
+  tstrsplit_NA <- function(x, pattern = "\\s+", count = 2) {
     # NOTE extraneous columns ignored maybe better paste them together
     split <- utils::head(tstrsplit(x, pattern), count)
 
@@ -130,7 +130,13 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
   # Data preparation --------------------------------------------------------
 
-  genus <- as.character(genus)
+  # remove spaces at beginning and end, and remove extra spacing
+  squish <- function(x) {
+    x <- gsub("(^\\s+)|(\\s+$)", "", x)
+    gsub("\\s+", " ", x)
+  }
+  
+  genus <- squish(as.character(genus))
 
   if (is.null(species)) {
 
@@ -143,7 +149,7 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     # split genus (query)
     userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
   } else {
-    species <- as.character(species)
+    species <- squish(as.character(species))
 
     # Create a dataframe with the original values
     userTaxo <- data.table(
@@ -156,10 +162,10 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
   }
 
   # If there is an empty genus
-  userTaxo[genus == "", ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
+  userTaxo[is.na(genus) | (genus == ""), ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
 
   # If there is empty species
-  userTaxo[species == "", ":="(species = NA_character_, query = gsub(" ", "", query))]
+  userTaxo[is.na(species) | (species == ""), ":="(species = NA_character_, query = gsub(" ", "", query))]
 
   # get unique values
   qryTaxo <- unique(userTaxo[!is.na(query)])
