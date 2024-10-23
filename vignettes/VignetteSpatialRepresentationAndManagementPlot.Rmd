@@ -98,7 +98,7 @@ If only **4 GPS measurements** have been taken **with a high degree of accuracy*
 ```{r dpi=200}
 check_plot <- checkPlotCoord(
   longlat = cornerCoord[c("Long", "Lat")],
-  # OR projCoord = cornerCoord[c("xProj", "yProj")], 
+  # OR, if exists : projCoord = cornerCoord[c("xProj", "yProj")], 
   relCoord = cornerCoord[c("xRel", "yRel")],
   trustGPScorners = T, cornerID = cornerCoord$Corners,
   drawPlot = TRUE,

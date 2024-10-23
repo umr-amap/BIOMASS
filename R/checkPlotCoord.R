@@ -32,7 +32,7 @@
 #'
 #' @export
 #'
-#' @importFrom data.table data.table := setnames
+#' @importFrom data.table data.table := setnames %between%
 #' @importFrom sf st_multipoint st_polygon st_sfc
 #' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank
 #'
@@ -144,7 +144,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   
   if(trustGPScorners == TRUE) {
   
-    if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and look for outliers
+    if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and search for outliers
       
       cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2],cornerID=cornerID))
       setnames(cornerCoord, c("X","Y","Xrel","Yrel","cornerID"))
@@ -173,14 +173,13 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
         }
       }
       
-      cornerCoord <- cornerCoord[ , c("Xmean","Ymean","Xrel","Yrel","cornerID")]
+      cornerCoord <- data.frame(cornerCoord[ , c("Xmean","Ymean","Xrel","Yrel","cornerID")])
       cornerCoord <- unique(cornerCoord)
-      setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel","cornerID")) 
+      colnames(cornerCoord) <- c("X", "Y","Xrel","Yrel","cornerID")
       
     } else { # if exactly 1 measures for each corner
-      
-      cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
-      setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
+      cornerCoord <- data.frame(cbind(projCoord[,1:2], relCoord[,1:2]))
+      colnames(cornerCoord) <- c("X","Y","Xrel","Yrel")
       outliers <- data.frame()
       if(!is.null(cornerID)) cornerCoord$cornerID = cornerID
     }
@@ -233,28 +232,16 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     cornerProjCoord <- as.matrix(cornerRelCoord[,1:2]) %*% procrustRes$rotation
     cornerProjCoord <- sweep(cornerProjCoord, 2, procrustRes$translation, FUN = "+")
     
-    cornerCoord <- data.table(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
-    setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
+    cornerCoord <- data.frame(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
+    colnames(cornerCoord) <- c("X","Y","Xrel","Yrel")
 
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   
-  # Assign corner numbers in a clockwise direction -----------------------------
-  m1 <- cornerCoord[ rank(Xrel) <= 2, ]
-  tmp1 <- m1[rank(Yrel),]
-  m2 <- cornerCoord[ rank(Xrel) > 2, ]
-  tmp2 <- m2[rank(Yrel),]
-  cornerCoord <- rbind(tmp1,tmp2)
-  cornerCoord$cornerNum <- c(1,2,4,3)
-  
-  # if(! is.null(originalCorner)) {
-  #   # Shift the corner numbers to have corner 1 on the origin
-  #   shift <- 5 - which(cornerCoord$cornerID == originalCorner)
-  #   cornerCoord$cornerNum <- (cornerCoord$cornerNum + shift) %% 4
-  #   cornerCoord$cornerNum[cornerCoord$cornerNum == 0] <- 4
-  # }
-  
-  cornerCoord <- cornerCoord[ order(cornerNum), ]
+  # Sort cornerCoord rows in a counter-clockwise direction ---------------------
+  centroid <- colMeans(cornerCoord[,c("Xrel","Yrel")])
+  angles <- base::atan2(cornerCoord[["Yrel"]] - centroid[2], cornerCoord[["Xrel"]] - centroid[1])
+  cornerCoord <- cornerCoord[order(angles), ]
   
   # Create a polygon -----------------------------------------------------------
   cornerPolygon <- st_multipoint(as.matrix(rbind(cornerCoord[,c("X","Y")], cornerCoord[1,c("X","Y")])))
@@ -263,16 +250,23 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   
   # Calculate projected tree coordinates from relative tree coordinates --------
   if(!is.null(treeCoord)) {
+    if(any(! treeCoord[,1] %between% range(cornerCoord$Xrel)) | any(! treeCoord[,2] %between% range(cornerCoord$Yrel))) {
+      warning("Be careful, one or more trees are not inside the plot defined by relCoord")
+    }
     if(trustGPScorners) {
-      treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
-                                             cornerCoord = cornerCoord[,c("X","Y","cornerNum")],
-                                             dimX = diff(range(cornerCoord$Xrel)),
-                                             dimY = diff(range(cornerCoord$Yrel))
-                                             )
+      treeProjCoord <- bilinearInterpolation(coord = treeCoord[,1:2],
+                                             fromCornerCoord = cornerCoord[,c("Xrel","Yrel")],
+                                             toCornerCoord = cornerCoord[,c("X","Y")], 
+                                             orderedCorner = T)
+      # treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
+      #                                        cornerCoord = cornerCoord[,c("X","Y","cornerNum")],
+      #                                        dimX = diff(range(cornerCoord$Xrel)),
+      #                                        dimY = diff(range(cornerCoord$Yrel))
+      #                                        )
       colnames(treeProjCoord) <- c("X","Y")
     } else {
       treeProjCoord <- as.matrix(treeCoord[,1:2]) %*% procrustRes$rotation
-      treeProjCoord <- data.table(sweep(treeProjCoord, 2, procrustRes$translation, FUN = "+"))
+      treeProjCoord <- data.frame(sweep(treeProjCoord, 2, procrustRes$translation, FUN = "+"))
       colnames(treeProjCoord) <- c("X","Y")
     }
   }
@@ -322,7 +316,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   }
   
   output <- list(
-    cornerCoord = data.frame(cornerCoord),
+    cornerCoord = cornerCoord,
     polygon = cornerPolygon, outliers = outliers
   )
   if (drawPlot) {
@@ -332,7 +326,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     output$codeUTM <- codeUTM
   }
   if (!is.null(treeCoord)) {
-    output$treeProjCoord <- data.frame(treeProjCoord[,c("X","Y")])
+    output$treeProjCoord <- treeProjCoord[,c("X","Y")]
   }
   return(output)
 }
