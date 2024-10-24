@@ -169,6 +169,7 @@ Authors:
   \item Ariane Tanguy
   \item Camille Piponiot
   \item Bruno Hérault \email{bruno.herault@cirad.fr}
+  \item Arthur Bailly \email{arthur.bailly@ird.fr}
 }
 
 Other contributors:

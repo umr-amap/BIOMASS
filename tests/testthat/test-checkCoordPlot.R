@@ -51,7 +51,7 @@ test_that("checkPlotCoord outputs and outliers", {
   expect_is(outputs$outliers, "data.frame")
   
   expect_equal(dim(outputs$outliers), c(10,3))
-  expect_equal(dim(outputs$cornerCoord), c(4, 6))
+  expect_equal(dim(outputs$cornerCoord), c(4, 5))
   
   # with max dist equal 25 there isn't outliers anymore
   expect_failure(expect_warning(
@@ -102,11 +102,11 @@ test_that("checkPlotCoord, trustGPScorners", {
     checkPlotCoord(projCoord = projCoord[-(1:3),], relCoord = relCoord[-(1:3),], trustGPScorners = T, rmOutliers = T, cornerID = cornerID[-(1:3)], drawPlot = F),"At least one corner has less than 5 measurements. We suggest using the argument trustGPScorners = FALSE"
   )
   res_trustGPScorners_T <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
-  expect_equivalent(res_trustGPScorners_T$cornerCoord[,1:2] , unique(projCoord0))
+  expect_equivalent(res_trustGPScorners_T$cornerCoord[,1:2] , unique(projCoord0)[c(1,4,3,2),])
   
   res_trustGPScorners_F <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = F, rmOutliers = T, cornerID = cornerID, drawPlot = F)
-  expect_equal(res_trustGPScorners_T$cornerCoord[,3:6] , res_trustGPScorners_F$cornerCoord[,3:6])
-  expect_equal(res_trustGPScorners_T$cornerCoord[,1:2], round(res_trustGPScorners_F$cornerCoord[,1:2],digits = -1))
+  expect_equivalent(res_trustGPScorners_T$cornerCoord[,3:5] , res_trustGPScorners_F$cornerCoord[,3:5])
+  expect_equivalent(res_trustGPScorners_T$cornerCoord[,1:2], round(res_trustGPScorners_F$cornerCoord[,1:2],digits = -1))
   
   # Test when there's only 4 measures and trustGPScorners = F
   expect_equal(res_trustGPScorners_F , checkPlotCoord(projCoord = projCoord0[c(1,8,15,22),], relCoord = relCoord[c(1,8,15,22),], trustGPScorners = F, rmOutliers = T, drawPlot = F, cornerID = cornerID[c(1,8,15,22)]))
@@ -131,13 +131,13 @@ test_that("checkPlotCoord, origin corner", {
   res_NE <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_NE, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
   res_SW <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_SW, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
   
-  expect_equal(res_SW$cornerCoord[c("Xrel","Yrel","cornerNum")] , res_NE$cornerCoord[c("Xrel","Yrel","cornerNum")])
+  expect_equivalent(res_SW$cornerCoord[c("Xrel","Yrel")] , res_NE$cornerCoord[,c("Xrel","Yrel")])
   expect_equivalent(res_SW$cornerCoord[c("X","Y","cornerID")] , res_NE$cornerCoord[c(3,4,1,2),c("X","Y","cornerID")])
   
   # Test when the origin of the relative coordinates is not(0;0)
   relCoord_SW <- relCoord_SW + 200
   res_SW_200 <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_SW, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
-  expect_equal(res_SW$cornerCoord[c("X","Y","cornerID","cornerNum")] , res_SW_200$cornerCoord[c("X","Y","cornerID","cornerNum")])
+  expect_equal(res_SW$cornerCoord[c("X","Y","cornerID")] , res_SW_200$cornerCoord[c("X","Y","cornerID")])
   expect_equal(res_SW$cornerCoord[c("Xrel","Yrel")]+200 , res_SW_200$cornerCoord[c("Xrel","Yrel")])
 })
 

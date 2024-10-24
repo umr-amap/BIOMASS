@@ -2,28 +2,43 @@
 % Please edit documentation in R/bilinearInterpolation.R
 \name{bilinearInterpolation}
 \alias{bilinearInterpolation}
-\title{Bilinear interpolation of X and Y absolute coordinates}
+\title{Generalized bilinear interpolation of coordinates}
 \usage{
-bilinearInterpolation(relCoord, cornerCoord, dimX, dimY)
+bilinearInterpolation(coord, fromCornerCoord, toCornerCoord, orderedCorner = F)
 }
 \arguments{
-\item{relCoord}{a matrix : the relative coordinates to transform}
+\item{coord}{a matrix or data.frame : coordinates to be transformed, with X and Y corresponding to the first two columns}
 
-\item{cornerCoord}{a data.table : the absolute corners coordinates and its numbering following a clockwise direction (names resp. "X","Y","cornerNum")}
+\item{fromCornerCoord}{a matrix or data.frame : corner coordinates of the plot in the original coordinate system, with X and Y corresponding to the first two columns}
 
-\item{dimX}{a vector indicating the size of the plot on the X axis, in meters and in the relative coordinates system}
+\item{toCornerCoord}{a matrix or data.frame : corner coordinates of the plot in the coordinate system to be projected, with the same line order as fromCornerCoord and , with X and Y corresponding to the first two columns}
 
-\item{dimY}{a vector indicating the size of the plot on the Y axis, in meters and in the relative coordinates system}
+\item{orderedCorner}{a logical, indicating if fromCornerCoord and toCornerCoord rows are sorted in correct order (clockwise or counter-clockwise)}
 }
 \value{
-a data.table containing the absolute coordinates of desired points
+a data.frame containing the converted coordinates
 }
 \description{
-Apply a bilinear interpolation to convert relative coordinates into absolute coordinates, using the 4 corners absolute coordinates of the plot.
+Apply a generalized bilinear interpolation to convert any coordinates from one original coordinate system to another, using the plot's 4 corner coordinates of both system.
+}
+\details{
+The plot represented by the 4 coordinates in fromCornerCoord must have 4 right angles, i.e. a rectangular (or square) plot.
+}
+\examples{
+fromCornerCoord <- expand.grid(X = c(0, 100), Y = c(0, 50))
+rot_mat <- matrix(c(cos(-pi/6),sin(-pi/6),-sin(-pi/6),cos(-pi/6)),nrow=2)
+toCornerCoord <- as.matrix(fromCornerCoord) \%*\% rot_mat
+toCornerCoord <- sweep(toCornerCoord, 2, c(50,100), FUN = "+")
+coord <- expand.grid(X = seq(0,100,10), Y = seq(0,50,5))
+projCoord = bilinearInterpolation(coord = coord, fromCornerCoord = fromCornerCoord, toCornerCoord = toCornerCoord)
+# plot(coord, xlim=c(-10,150),ylim=c(-5,200), col="blue") ; points(fromCornerCoord) ; points(projCoord , col="purple") ; points(toCornerCoord, col="red")
+}
+\references{
+C. -C. Wei and C. -H. Chen, "Generalized Bilinear Interpolation of Motion Vectors for Quad-Tree Mesh," 2008 International Conference on Intelligent Information Hiding and Multimedia Signal Processing, Harbin, China, 2008, pp. 635-638, doi: 10.1109/IIH-MSP.2008.283.
 }
 \author{
 Arthur Bailly
 }
-\keyword{Internal}
 \keyword{bilinear}
+\keyword{generalized}
 \keyword{interpolation}
