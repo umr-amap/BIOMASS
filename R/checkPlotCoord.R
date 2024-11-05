@@ -18,7 +18,7 @@
 #' @param maxDist a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)
 #' @param rmOutliers a logical indicating if detected outliers are removed from the coordinate calculation
 #' @param drawPlot a logical indicating if the plot design should be displayed and returned
-#' @param treeCoord a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively
+#' @param treeCoord (optional) a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -254,15 +254,10 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
       warning("Be careful, one or more trees are not inside the plot defined by relCoord")
     }
     if(trustGPScorners) {
-      treeProjCoord <- bilinearInterpolation(coord = treeCoord[,1:2],
-                                             fromCornerCoord = cornerCoord[,c("Xrel","Yrel")],
-                                             toCornerCoord = cornerCoord[,c("X","Y")], 
-                                             orderedCorner = T)
-      # treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
-      #                                        cornerCoord = cornerCoord[,c("X","Y","cornerNum")],
-      #                                        dimX = diff(range(cornerCoord$Xrel)),
-      #                                        dimY = diff(range(cornerCoord$Yrel))
-      #                                        )
+      treeProjCoord <- bilinear_interpolation(coord = treeCoord[,1:2],
+                                             from_corner_coord = cornerCoord[,c("Xrel","Yrel")],
+                                             to_corner_coord = cornerCoord[,c("X","Y")], 
+                                             ordered_corner = T)
       colnames(treeProjCoord) <- c("X","Y")
     } else {
       treeProjCoord <- as.matrix(treeCoord[,1:2]) %*% procrustRes$rotation

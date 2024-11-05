@@ -33,7 +33,7 @@ checkPlotCoord(
 
 \item{drawPlot}{a logical indicating if the plot design should be displayed and returned}
 
-\item{treeCoord}{a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively}
+\item{treeCoord}{(optional) a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively}
 }
 \value{
 Returns a list including :

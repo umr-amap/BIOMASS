@@ -98,8 +98,7 @@ cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY
     ))
     
     # Transformation of relative grid coordinates into absolute coordinates
-    #absCoord <- bilinearInterpolation(relCoord = gridMat , cornerCoord = data[,.(X,Y,cornerNum)] ,dimX = plotDimX, dimY = plotDimY )
-    absCoord <- bilinearInterpolation(coord = gridMat , fromCornerCoord = relCoordMat , toCornerCoord = absCoordMat )
+    absCoord <- bilinear_interpolation(coord = gridMat , from_corner_coord = relCoordMat , to_corner_coord = absCoordMat )
 
     return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], XAbs=absCoord[, 1], YAbs=absCoord[, 2]))
   }

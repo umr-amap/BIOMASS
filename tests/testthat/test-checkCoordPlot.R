@@ -119,7 +119,7 @@ test_that("checkPlotCoord, origin corner", {
   )
   cornerID <- rep(c("SW","NW","SE","NE"),e=7)
   
-  # Test when the origin is not the South-East corner
+  # Test when the origin is not the South-West corner
   relCoord_NE <- data.frame(
     X = rep(c(100,100,0,0),e=7),
     Y = rep(c(100,0,0,100),e=7)
