@@ -30,8 +30,8 @@ test_that("bilinear_interpolation function", {
   
   expect_is(proj_coord,"data.frame")
   expect_equal(nrow(proj_coord), nrow(coord))
-  expect_equal(names(proj_coord), c("Xinterp","Yinterp"))
-  expect_equal(proj_coord, data.frame(Xinterp=c(59.15064,81.96152),Yinterp=c(134.1506,164.6410)) , tolerance = 1e-6)
+  expect_equal(names(proj_coord), c("x_interp","y_interp"))
+  expect_equal(proj_coord, data.frame(x_interp=c(59.15064,81.96152),y_interp=c(134.1506,164.6410)) , tolerance = 1e-6)
   
   # Test when to_corner_coord colnames are supplied 
   colnames(to_corner_coord) <- c("Xproj","Yproj")
@@ -69,7 +69,7 @@ test_that("bilinear_interpolation function", {
   #coord <- expand.grid(X = seq(0,100,10), Y = seq(0,50,5))
   proj_coord = bilinear_interpolation(coord = coord, from_corner_coord = from_corner_coord, to_corner_coord = to_corner_coord)
   #plot(from_corner_coord , xlim=c(-200,110), ylim=c(-110,60) , asp=1) ; points(coord , col="blue") ; points(proj_coord , col="purple") ; points(to_corner_coord, col="red")
-  expect_equal(proj_coord, data.frame(Xinterp=c(-140.8494 ,-118.0385 ),Yinterp=c(-65.84936,-35.35898)) , tolerance = 1e-6)
+  expect_equal(proj_coord, data.frame(x_interp=c(-140.8494 ,-118.0385 ),y_interp=c(-65.84936,-35.35898)) , tolerance = 1e-6)
   
   # If the origin is the NE corner :
   to_corner_coord <- sweep(from_corner_coord, 2, c(60,60), FUN = "+")

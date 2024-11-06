@@ -1,5 +1,5 @@
 ---
-title: "Manage plot and tree coordinates with BIOMASS"
+title: "Spatialized trees and forest stands metrics with BIOMASS"
 author: "Arthur Bailly"
 date: "`r Sys.Date()`"
 output: 
@@ -10,7 +10,7 @@ output:
     self_contained: yes
     theme: cayman
 vignette: >
-  %\VignetteIndexEntry{Manage plot and tree coordinates with BIOMASS}
+  %\VignetteIndexEntry{Spatialized trees and forest stands metrics with BIOMASS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,8 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-#require(BIOMASS)
-devtools::load_all()
+require(BIOMASS)
 require(knitr)
 require(ggplot2)
 require(data.table)
