@@ -132,7 +132,7 @@ test_that("divide_plot with projected coordinates", {
   multiple_proj_coord <- rbind(proj_coord_1,proj_coord_2)
   multiple_rel_coord$plotID <- rep(c("plot1","plot2"),e=4)
   multiple_subplots <- divide_plot(rel_coord = multiple_rel_coord[,c("x","y")], grid_size = 50, proj_coord = multiple_proj_coord, plot_ID_corner = multiple_rel_coord$plotID)
-  ggplot(multiple_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
+  #ggplot(multiple_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(multiple_subplots[c(24,40),] ,
                     data.frame(plotID=c("plot1","plot2"),subplot_id=c("plot1_2_1","plot2_1_1"),
                                x=c(150,100), y=c(100,100), x_proj=c(329.9038,60), y_proj=c(271.6025,110)),
@@ -151,11 +151,17 @@ test_that("divide_plot with tree coordinates", {
   subplots <- divide_plot(rel_coord = rel_coord_1, grid_size = 50, tree_coord = tree_coord_1)
   expect_equal(subplots$tree_coord$subplot_id[c(1,6,56,61)],c("subplot_0_0","subplot_1_0","subplot_0_1","subplot_1_1"))
   
+  # Test with multiple columns for tree_coord
+  tree_coord_1[c("H","AGB")] <- data.frame(H = rnorm(nrow(tree_coord_1),10,3), AGB = runif(nrow(tree_coord_1),0,2))
+  subplots <- divide_plot(rel_coord = rel_coord_1, grid_size = 50, tree_coord = tree_coord_1)
+  expect_equal(names(subplots$tree_coord) , c("X","Y","subplot_id","H","AGB"))
+  
   # Test with multiple plots
   rel_coord_2 <- expand.grid(x = c(0, 100), y = c(0, 100))
   multiple_rel_coord <- rbind(rel_coord_1 , rel_coord_2)
   plot_ID_corner <- rep(c("plot1","plot2"),e=4)
   tree_coord_2 <- expand.grid(X = seq(5,95,20), Y = seq(5,95,20))
+  tree_coord_2[c("H","AGB")] <- data.frame(H = rnorm(nrow(tree_coord_2),10,3), AGB = runif(nrow(tree_coord_2),0,2))
   multiple_tree_coord <- rbind(tree_coord_1,tree_coord_2)
   plot_ID_tree <- c(rep("plot1",nrow(tree_coord_1)),rep("plot3",nrow(tree_coord_2)))
   
@@ -173,5 +179,7 @@ test_that("divide_plot with tree coordinates", {
   
   expect_equal(multiple_subplots$tree_coord$subplot_id[c(122,125,137,140)],
                c("plot2_0_0","plot2_1_0","plot2_0_1","plot2_1_1"))
+  expect_equal(names(multiple_subplots$tree_coord) , c("X","Y","plot_id","subplot_id","H","AGB"))
+  
   
 })

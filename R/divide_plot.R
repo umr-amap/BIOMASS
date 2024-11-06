@@ -1,39 +1,53 @@
 #' Divides one ore more plots into subplots
 #'
-#' This function divides a plot (or several plots) into subplots in the relative coordinates system, and returns the coordinates of subplot corners
-#' If corner coordinates in the projected coordinate system is supplied (proj_coord), subplot projected coordinates are calculated by a bilinear interpolation in relation with plot corner relative coordinates.
+#' @description
+#' This function divides a plot (or several plots) into subplots in the relative coordinates system, and returns the coordinates of subplot corners.
 #'
-#' @param rel_coord a data frame containing the relative (local) coordinates of plot corners, with X and Y on the first and second column respectively
-#' @param proj_coord (optional) a data frame containing the projected coordinates of plot corners, with X and Y on the first and second column respectively, and with the same row order than rel_coord
-#' @param grid_size a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, the grid cells will be considered as squares.
+#' @details
+#'  If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
+#' 
+#' @param rel_coord a data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively
+#' @param proj_coord a data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord
+#' @param grid_size a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
 #' @param plot_ID_corner if dealing with multiple plots : a vector indicating plot IDs for corners.
-#' @param tree_coord (otpional) a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
+#' @param tree_coord a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
 #' @param plot_ID_tree if dealing with multiple plots : a vector indicating tree plot IDs.
 #'
-#' @return Returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#' @return If tree_coord isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `plot_ID_corner`: If dealing with multiple plots : the plot code
-#'   - `subplot`: The automatically generated subplot code
-#'   - `Xrel`:  The relative X-axis coordinates of subplots corners
-#'   - `Yrel`:  The relative Y-axis coordinates of subplots corners
-#'   - `X`:  If proj_coord is supplied : the projected X-axis coordinates of subplots corners
-#'   - `Y`:  If proj_coord is supplied : the projected Y-axis coordinates of subplots corners
+#'   - `subplot_id`: The automatically generated subplot code, using the following rule : subplot_X_Y 
+#'   - `x` and `y` (or the column names provided by rel_coord) : the relative X-axis and Y-axis coordinates of subplots corners. 
+#'   - `x_proj` and `y_proj` (or the column names provided by proj_coord) :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
+#'   
+#'   If tree_coord is supplied, returns a list containing the previous data-frame and a data-frame containing for each tree : 
+#'   - the relative coordinates
+#'   - the subplot_id associated
+#'   - the rest of tree_coord columns supplied
 #'
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
 #' @importFrom data.table data.table := setnames setcolorder 
 #' @examples
 #'
-#' coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
-#' cornerNum <- c(1, 2, 4, 3)
-#' plot <- rep("plot1", 4)
+#' # Rectangular plot and grid cells
+#' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 100, 100))
+#' subplots <- divide_plot(rel_coord, grid_size = c(100,50))
+#' 
+#' # Squared plot
+#' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
+#' proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
+#' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 #'
-#' cut <- cutPlot(coord, plot, cornerNum, grid_size = 100, dimX = 200, dimY = 200)
+#' tree_coord <- data.frame(x_proj = runif(50,0,200), y_proj = runif(50,0,200))
+#' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100, tree_coord = tree_coord)
 #'
-#' # plot the result
-#' plot(coord, main = "example", xlim = c(4900, 5300), ylim = c(4900, 5300), asp = 1)
-#' text(coord, labels = cornerNum, pos = 1)
-#' points(cut$XAbs, cut$YAbs, pch = "+")
-#' legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
+#' # Dealing with multiple plots 
+#' rel_coord <- rbind(rel_coord, rel_coord)
+#' proj_coord <- rbind(proj_coord, proj_coord + 200)
+#' tree_coord <- rbind(tree_coord, data.frame(x_proj = runif(50,0,200), y_proj = runif(50,0,200)))
+#' plot_ID_corner <- rep(c("plot1","plot2"), e=4)
+#' plot_ID_tree <- rep(c("plot1","plot2"), e=50)
+#' subplots <- divide_plot(rel_coord, proj_coord, 100, plot_ID_corner, tree_coord, plot_ID_tree)
 #' 
 divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner = NULL, tree_coord = NULL, plot_ID_tree = NULL) {
   
@@ -151,13 +165,15 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
   if(!is.null(tree_coord)) {
     tree_coord <- as.data.table(tree_coord)
     if(!is.null(plot_ID_tree)){
-      tree_coord[,plot_ID_tree:=plot_ID_tree]
+      tree_coord[,plot_id:=plot_ID_tree]
+      setcolorder(tree_coord , "plot_id" , after = 2) # if tree_coord has more than 2 col
     } else{
-      tree_coord[,plot_ID_tree:=""]
+      tree_coord[,plot_id:=""]
+      setcolorder(tree_coord , "plot_id" , after = 2) # if tree_coord has more than 2 col
     } 
     
     invisible(lapply(split(sub_corner_coord, by = "subplot_id", keep.by = TRUE), function(dat) {
-      tree_coord[ plot_ID_tree == dat$plot_ID_corner[1] &
+      tree_coord[ plot_id == dat$plot_ID_corner[1] &
                    get(names(tree_coord)[1]) %between% range(dat[[3]]) &
                    get(names(tree_coord)[2]) %between% range(dat[[4]]),
                  subplot_id := dat$subplot_id[1] ]
@@ -167,7 +183,10 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
       warning("One or more trees could not be assigned to a subplot (not in a subplot area)")
     }
     if(is.null(plot_ID_tree)) {
-      tree_coord[ , c("subplot_id","plot_ID_tree") := list(paste0("subplot",subplot_id),NULL)]
+      tree_coord[ , c("subplot_id","plot_id") := list(paste0("subplot",subplot_id),NULL)]
+      setcolorder(tree_coord , "subplot_id" , after = 2)
+    } else {
+      setcolorder(tree_coord , "subplot_id" , after = 3)
     }
   }
   
@@ -178,12 +197,11 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
     sub_corner_coord[ , c("subplot_id","plot_ID_corner") := list(paste0("subplot",subplot_id),NULL)]
   }
   
-  
   if(is.null(tree_coord)) {
     output <- data.frame(sub_corner_coord)
   } else {
     output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
-                   tree_coord = tree_coord)
+                   tree_coord = data.frame(tree_coord))
   }
 
   return(output)
