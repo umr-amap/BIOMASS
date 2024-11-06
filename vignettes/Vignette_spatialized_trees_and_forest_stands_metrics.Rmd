@@ -187,7 +187,7 @@ subplots <- divide_plot(
 For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners (keeping column names) but can also assign to each tree its subplot with the `tree_coord` :
 
 ```{r divide_plot_trees}
-trees <- relocate(trees, xRel, yRel, .before = everything()) # to get the coordinates at the first two columns 
+trees <- trees[,c("xRel","yRel","plot","D","WD","H")]
 
 subplots <- divide_plot(
   rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
@@ -204,7 +204,9 @@ The function can handle as many plots as you wish, using the `plot_ID_corner` an
 ```{r divide_multiple_plots}
 multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")], check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")])
 multiple_plots$plot_ID = rep(c("NB1","NB2"),e=4)
-multiple_trees <- rbind(trees, mutate(trees, plot="NB2"))
+trees_2 <- trees
+trees_2$plot <- "NB2"
+multiple_trees <- rbind(trees, trees_2)
 
 mulitple_subplots <- divide_plot(
   rel_coord = multiple_plots[c("Xrel","Yrel")],
