@@ -51,5 +51,6 @@ Suggests:
 	curl,
 	geodata,
 	httr2,
-	pkgdown
+	pkgdown,
+	dplyr
 RoxygenNote: 7.3.2
