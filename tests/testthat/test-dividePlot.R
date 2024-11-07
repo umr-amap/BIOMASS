@@ -33,7 +33,7 @@ test_that("divide_plot on relative coordinates only", {
   # Test when rel_coord is a matrix (colnames aren't supplied)
   rel_coord <- matrix(c(0,100,0,100,0,0,100,100), ncol=2)
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
-  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x=c(0,50,0,50), y=c(0,0,50,50)))
+  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,0,50), y_rel=c(0,0,50,50)))
   
   # Test when rel_coord is a data.table
   rel_coord <- data.table(expand.grid(x_field = c(0, 100), y_field = c(0, 100)))
