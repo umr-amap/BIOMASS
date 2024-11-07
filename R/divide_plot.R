@@ -16,7 +16,7 @@
 #' @return If tree_coord isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `plot_ID_corner`: If dealing with multiple plots : the plot code
 #'   - `subplot_id`: The automatically generated subplot code, using the following rule : subplot_X_Y 
-#'   - `x` and `y` (or the column names provided by rel_coord) : the relative X-axis and Y-axis coordinates of subplots corners. 
+#'   - `x_rel` and `y_rel` (or the column names provided by rel_coord) : the relative X-axis and Y-axis coordinates of subplots corners. 
 #'   - `x_proj` and `y_proj` (or the column names provided by proj_coord) :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
 #'   
 #'   If tree_coord is supplied, returns a list containing the previous data-frame and a data-frame containing for each tree : 
@@ -53,7 +53,7 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
   
   # Parameters verification ----------------------------------------------------
   if (is.matrix(rel_coord)) {
-    rel_coord <- data.frame(x=rel_coord[,1],y=rel_coord[,2])
+    rel_coord <- data.frame(x_rel=rel_coord[,1],y_rel=rel_coord[,2])
   }
   if (!is.null(proj_coord) && !is.data.frame(proj_coord)) {
     proj_coord <- data.frame(x_proj=proj_coord[,1], y_proj=proj_coord[,2])
