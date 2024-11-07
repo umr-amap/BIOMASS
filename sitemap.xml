@@ -1,7 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://umr-amap.github.io/BIOMASS/404.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/BIOMASS.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/articles/VignetteSpatialRepresentationAndManagementPlot.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/articles/Vignette_spatialized_trees_and_forest_stands_metrics.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/index.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/plot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/authors.html</loc></url>
@@ -15,7 +15,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/apgFamilies.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/attributeTree.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/attributeTreeCoord.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/reference/bilinearInterpolation.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/bilinear_interpolation.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cacheManager.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cachePath.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/checkPlotCoord.html</loc></url>
@@ -27,6 +27,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/correctTaxo.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/createCache.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cutPlot.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/divide_plot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/feldCoef.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/genusFamily.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/getBioclimParam.html</loc></url>
