@@ -131,14 +131,14 @@ test_that("checkPlotCoord, origin corner", {
   res_NE <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_NE, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
   res_SW <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_SW, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
   
-  expect_equivalent(res_SW$cornerCoord[c("Xrel","Yrel")] , res_NE$cornerCoord[,c("Xrel","Yrel")])
-  expect_equivalent(res_SW$cornerCoord[c("X","Y","cornerID")] , res_NE$cornerCoord[c(3,4,1,2),c("X","Y","cornerID")])
+  expect_equivalent(res_SW$cornerCoord[c("x_rel","y_rel")] , res_NE$cornerCoord[,c("x_rel","y_rel")])
+  expect_equivalent(res_SW$cornerCoord[c("x_proj","y_proj","cornerID")] , res_NE$cornerCoord[c(3,4,1,2),c("x_proj","y_proj","cornerID")])
   
   # Test when the origin of the relative coordinates is not(0;0)
   relCoord_SW <- relCoord_SW + 200
   res_SW_200 <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord_SW, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F)
-  expect_equal(res_SW$cornerCoord[c("X","Y","cornerID")] , res_SW_200$cornerCoord[c("X","Y","cornerID")])
-  expect_equal(res_SW$cornerCoord[c("Xrel","Yrel")]+200 , res_SW_200$cornerCoord[c("Xrel","Yrel")])
+  expect_equal(res_SW$cornerCoord[c("x_proj","y_proj","cornerID")] , res_SW_200$cornerCoord[c("x_proj","y_proj","cornerID")])
+  expect_equal(res_SW$cornerCoord[c("x_rel","y_rel")]+200 , res_SW_200$cornerCoord[c("x_rel","y_rel")])
 })
 
 
@@ -153,8 +153,8 @@ test_that("checkPlotCoord, tree coordinates", {
   )
   cornerID <- rep(c("SW","NW","SE","NE"),e=7)
   treeCoord <- data.frame(
-    X = c(10,20,30),
-    Y = c(10,20,30)
+    x_proj = c(10,20,30),
+    y_proj = c(10,20,30)
   )
   res <- checkPlotCoord(projCoord = projCoord, relCoord = relCoord, trustGPScorners = T, rmOutliers = T, cornerID = cornerID, drawPlot = F, treeCoord = treeCoord)
   expect_is(res$treeProjCoord, "data.frame")

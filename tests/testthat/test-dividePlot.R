@@ -33,38 +33,38 @@ test_that("divide_plot on relative coordinates only", {
   # Test when rel_coord is a matrix (colnames aren't supplied)
   rel_coord <- matrix(c(0,100,0,100,0,0,100,100), ncol=2)
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
-  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,0,50), y_rel=c(0,0,50,50)))
+  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,50,0), y_rel=c(0,0,50,50)))
   
   # Test when rel_coord is a data.table
   rel_coord <- data.table(expand.grid(x_field = c(0, 100), y_field = c(0, 100)))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
-  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_field=c(0,50,0,50), y_field=c(0,0,50,50)))
+  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,50,0), y_rel=c(0,0,50,50)))
   
   # Test when rel_coord is a data.frame 
   rel_coord <- expand.grid(x_field = c(0, 100), y_field = c(0, 100))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
-  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_field=c(0,50,0,50), y_field=c(0,0,50,50)))
+  expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,50,0), y_rel=c(0,0,50,50)))
   
   # Test rectangular division
   rect_subplots <- divide_plot(rel_coord, grid_size = c(25,50))
-  expect_equivalent(rect_subplots[29:32,] , data.frame(subplot_id=rep("subplot_3_1",4),x_field=c(75,100,75,100), y_field=c(50,50,100,100)))
+  expect_equivalent(rect_subplots[29:32,] , data.frame(subplot_id=rep("subplot_3_1",4),x_rel=c(75,100,100,75), y_rel=c(50,50,100,100)))
   
   # Test when the origin is not (0;0)
   rel_coord_2 <- expand.grid(x_field = c(10, 110), y_field = c(10, 110))
   subplots <- divide_plot(rel_coord = rel_coord_2, grid_size = 50)
-  expect_equivalent(subplots[13:16,] , data.frame(subplot_id=rep("subplot_1_1",4),x=c(60,110,60,110), y=c(60,60,110,110)))
+  expect_equivalent(subplots[13:16,] , data.frame(subplot_id=rep("subplot_1_1",4),x=c(60,110,110,60), y=c(60,60,110,110)))
   
   # Test multiple plots
   multiple_rel_coord <- rbind(rel_coord , rel_coord_2)
   multiple_rel_coord$plotID <- rep(c("plot1","plot2"),e=4)
   multiple_subplots <- divide_plot(rel_coord = multiple_rel_coord[,c("x_field","y_field")], grid_size = 50, plot_ID_corner = multiple_rel_coord$plotID)
-  expect_equivalent(multiple_subplots[29:32,] , data.frame(plotID=rep("plot2",4),subplot_id=rep("plot2_1_1",4),x_field=c(60,110,60,110), y_field=c(60,60,110,110)))
+  expect_equivalent(multiple_subplots[29:32,] , data.frame(plotID=rep("plot2",4),subplot_id=rep("plot2_1_1",4),x_rel=c(60,110,110,60), y_field=c(60,60,110,110)))
   
   # Test rectangular plot
   rel_coord <- expand.grid(x = c(0, 100), y = c(0, 50))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = c(50,25))
-  #ggplot(subplots,aes(x=x,y=y,label=subplot_id)) + geom_point() + geom_text(position = position_jitter()) + coord_equal()
-  expect_equivalent(subplots[5:8,] , data.frame(subplot_id=rep("subplot_1_0",4),x=c(50,100,50,100), y=c(0,0,25,25)))
+  #ggplot(subplots,aes(x=x_rel,y=y,label=subplot_id)) + geom_point() + geom_text(position = position_jitter()) + coord_equal()
+  expect_equivalent(subplots[5:8,] , data.frame(subplot_id=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)))
 })
   
 test_that("divide_plot with projected coordinates", {
@@ -76,47 +76,46 @@ test_that("divide_plot with projected coordinates", {
   proj_coord <- sweep(proj_coord, 2, c(110,110), FUN = "+")
   
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50, proj_coord = proj_coord)
-  #ggplot(subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
+  #ggplot(subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x_rel,y=y_rel)) + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(subplots[13:16,c("subplot_id","x_proj","y_proj")] ,
                     data.frame(subplot_id="subplot_1_1",
-                               x_proj=c(128.3013,171.6025,103.3013,146.6025),
-                               y_proj=c(178.3013,203.3013,221.6025,246.6025)),
+                               x_proj=c(128.3013,171.6025,146.6025,103.3013),
+                               y_proj=c(178.3013,203.3013,246.6025,221.6025)),
                     tol = 1e-5)
   
   # Test when proj_coord is a data.table
   proj_coord <- as.data.table(proj_coord)
   colnames(proj_coord) <- c("Xproj","Yproj")
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50, proj_coord = proj_coord)
-  expect_equivalent(subplots[13:16,c("subplot_id","Xproj","Yproj")] ,
+  expect_equivalent(subplots[13:16,c("subplot_id","x_proj","y_proj")] ,
                     data.frame(subplot_id="subplot_1_1",
-                               Xproj=c(128.3013,171.6025,103.3013,146.6025),
-                               Yproj=c(178.3013,203.3013,221.6025,246.6025)),
+                               x_proj=c(128.3013,171.6025,146.6025,103.3013),
+                               y_proj=c(178.3013,203.3013,246.6025,221.6025)),
                     tol = 1e-5)
   
   # Test when proj_coord is a data.frame
   proj_coord <- as.data.frame(proj_coord)
-  colnames(proj_coord) <- c("X_proj","Y_proj")
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50, proj_coord = proj_coord)
-  expect_equal(names(subplots) , c("subplot_id", "x", "y", "X_proj", "Y_proj"))
+  expect_equal(names(subplots) , c("subplot_id", "x_rel", "y_rel", "x_proj", "y_proj"))
   
   # Test rectangular plot with rectangular division
   rel_coord <- expand.grid(x = c(0, 100), y = c(0, 75))
   proj_coord <- as.matrix(rel_coord) %*% rot_mat
   proj_coord <- sweep(proj_coord, 2, c(110,110), FUN = "+")
   rect_subplots <- divide_plot(rel_coord, grid_size = c(50,25), proj_coord = proj_coord)
-  #ggplot(rect_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
+  #ggplot(rect_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x_rel,y=y_rel)) + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(rect_subplots[21:24,c(1,4,5)],
-                    data.frame(subplot_id=rep("subplot_1_2",4), x_proj=c(128.3013,171.6025,115.8013,159.1025), y_proj=c(178.3013,203.3013,199.9519,224.9519)),
+                    data.frame(subplot_id=rep("subplot_1_2",4), x_proj=c(128.3013,171.6025,159.1025,115.8013), y_proj=c(178.3013,203.3013,224.9519,199.9519)),
                     tol=1e-5)
   
   # Test when the origin is the NE corner :
   inv_proj_coord <- proj_coord[c(4,3,2,1),]
   rect_subplots <- divide_plot(rel_coord, grid_size = c(50,25), proj_coord = inv_proj_coord)
-  #ggplot(rect_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
+  #ggplot(rect_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x_rel,y=y_rel)) + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(rect_subplots[1:4,c(1,4,5)],
                     data.frame(subplot_id=rep("subplot_0_0",4),
-                               x_proj=c(128.3013,171.6025,115.8013,159.1025)[c(4,3,2,1)],
-                               y_proj=c(178.3013,203.3013,199.9519,224.9519)[c(4,3,2,1)]),
+                               x_proj=c(128.3013,171.6025,159.1025,115.8013)[c(3,4,1,2)],
+                               y_proj=c(178.3013,203.3013,224.9519,199.9519)[c(3,4,1,2)]),
                     tol=1e-5)
   
   # Test multiple plots
@@ -132,10 +131,11 @@ test_that("divide_plot with projected coordinates", {
   multiple_proj_coord <- rbind(proj_coord_1,proj_coord_2)
   multiple_rel_coord$plotID <- rep(c("plot1","plot2"),e=4)
   multiple_subplots <- divide_plot(rel_coord = multiple_rel_coord[,c("x","y")], grid_size = 50, proj_coord = multiple_proj_coord, plot_ID_corner = multiple_rel_coord$plotID)
-  #ggplot(multiple_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x,y=y)) + geom_text(position = position_jitter()) + coord_equal()
+  #ggplot(multiple_subplots,aes(x=x_proj,y=y_proj,label=subplot_id)) + geom_point() + geom_point(aes(x=x_rel,y=y_rel)) + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(multiple_subplots[c(24,40),] ,
                     data.frame(plotID=c("plot1","plot2"),subplot_id=c("plot1_2_1","plot2_1_1"),
-                               x=c(150,100), y=c(100,100), x_proj=c(329.9038,60), y_proj=c(271.6025,110)),
+                               x_rel=c(100,50), y_rel=c(100,100),
+                               x_proj=c(286.6025,103.3013), y_proj=c(246.6025,135.0000)),
                     tol=1e-5)
   
 })
@@ -147,9 +147,15 @@ test_that("divide_plot with tree coordinates", {
   # Test warning when a tree is not in any subplot
   expect_warning(divide_plot(rel_coord = rel_coord_1, grid_size = 50, tree_coord = data.frame(x=110,y=110)))
   
+  # Test when there is no tree in a subplot 
+  expect_equal(divide_plot(rel_coord = rel_coord_1, grid_size = 50, tree_coord = data.frame(x=1,y=1))$tree_coord , data.frame(x=1,y=1,subplot_id="subplot_0_0"))
+  
+  
+  # basic test
   tree_coord_1 <- expand.grid(X = seq(0,100,10), Y = seq(0,100,10))
   subplots <- divide_plot(rel_coord = rel_coord_1, grid_size = 50, tree_coord = tree_coord_1)
   expect_equal(subplots$tree_coord$subplot_id[c(1,6,56,61)],c("subplot_0_0","subplot_1_0","subplot_0_1","subplot_1_1"))
+  
   
   # Test with multiple columns for tree_coord
   tree_coord_1[c("H","AGB")] <- data.frame(H = rnorm(nrow(tree_coord_1),10,3), AGB = runif(nrow(tree_coord_1),0,2))
