@@ -164,17 +164,15 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
   # Apply divide_plot_fct to all plots
   sub_corner_coord <- combine_coord[, divide_plot_fct(.SD, grid_size), by = plot_ID_corner, .SDcols = colnames(combine_coord)]
   
-  # Assigning trees to subplots ------------------------------------------------
+  # Assigning trees to subplots -------------------------------------------------------------
   if(!is.null(tree_coord)) {
     tree_coord <- as.data.table(tree_coord)
+    
     if(!is.null(plot_ID_tree)){
       tree_coord[,plot_id:=plot_ID_tree]
-      setcolorder(tree_coord , "plot_id" , after = 2)
     } else{
       tree_coord[,plot_id:=""]
-      setcolorder(tree_coord , "plot_id" , after = 2)
     } 
-    
     invisible(lapply(split(sub_corner_coord, by = "subplot_id", keep.by = TRUE), function(dat) {
       tree_coord[ plot_id == dat$plot_ID_corner[1] &
                    get(names(tree_coord)[1]) %between% range(dat[["x_rel"]]) &
@@ -189,6 +187,7 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, plot_ID_corner 
       tree_coord[ , c("subplot_id","plot_id") := list(paste0("subplot",subplot_id),NULL)]
       setcolorder(tree_coord , "subplot_id" , after = 2)
     } else {
+      setcolorder(tree_coord , "plot_id" , after = 2)
       setcolorder(tree_coord , "subplot_id" , after = 3)
     }
   }

@@ -20,7 +20,8 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-require(BIOMASS)
+#require(BIOMASS)
+devtools::load_all()
 require(knitr)
 require(ggplot2)
 require(data.table)
@@ -126,7 +127,7 @@ check_plot_trust_field <- checkPlotCoord(
 
 We can see that the corners of the plot do not correspond to the GPS measurements. In fact, they correspond to the best compromise between the shape and dimensions of the plot and the GPS measurements.
 
-## Tree coordinates in the projected/geographic coordinate system
+## Tree coordinates in the projected/geographic coordinate system {#tree_coordinates}
 
 Tree coordinates are almost always measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `treeCoord` argument.
 
@@ -153,7 +154,12 @@ Note the difference in corner and tree positions between the two situations.
 
 The tree coordinates can be obtained via the `$treeProjCoord` output.
 
-You can also grep and modify the plot via the `$plotDesign` output which is a ggplot object. For exemple, to change the plot title : 
+```{r}
+trees <- trees %>% mutate(check_plot_trust_GPS$treeProjCoord)
+```
+
+
+You can also grep and modify the plot via the `$plotDesign` output which is a ggplot object. For example, to change the plot title : 
 
 ```{r}
 plot_to_change <- check_plot_trust_GPS$plotDesign
@@ -161,7 +167,7 @@ plot_to_change$labels$title <- "A nice title !"
 plot_to_change
 ```
 
-If you want to retrieve the GPS coordinates of the trees in a longitude/latitude format, see this line of code:
+If you want to retrieve the GPS coordinates of the trees in a longitude/latitude format, use this code:
 
 ```{r}
 treeGPSCoord <- as.data.frame( proj4::project(check_plot_trust_GPS$treeProjCoord, proj = check_plot_trust_GPS$codeUTM, inverse = TRUE) )
@@ -174,43 +180,117 @@ WORK IN PROGRESS
 
 # Dividing plots
 
-Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the plot corners for division (be aware that the plot must be rectangular, ie, have 4 right angles) :
+Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the corner relative coordinates of the plot to divide it into a grid (be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles) :
 
 ```{r divide_plot}
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
-  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
-  grid_size = 50 # or c(50,50)
+  rel_coord = check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel")],
+  proj_coord = check_plot_trust_GPS$cornerCoord[c("x_proj","y_proj")],
+  grid_size = 25 # or c(50,50)
   )
+
+kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot() returns")
 ```
 
-For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners (keeping column names) but can also assign to each tree its subplot with the `tree_coord` :
+If you don't have any projected coordinates, just let `proj_coord` = NULL.
+
+For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_coord` argument** :
 
 ```{r divide_plot_trees}
 trees <- trees %>% dplyr::relocate(xRel, yRel, .before = everything()) # to get the coordinates at the first two columns 
 
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
-  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
-  grid_size = 50, # or c(50,50)
+  rel_coord = check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel")],
+  proj_coord = check_plot_trust_GPS$cornerCoord[c("x_proj","y_proj")],
+  grid_size = 25, # or c(50,50)
   tree_coord = trees
   )
 ```
 
-Note that `tree_coord` can contain any number of columns, but the first two must be the coordinates of the trees in the relative system.
+The function now returns a list containing : 
+
+* `sub_corner_coord` : coordinates of subplot corners as previously
+
+* `tree_coord` : the tree data-frame with the subplot_id added in the 3rd column position
+
+```{r}
+kable(head(subplots$tree_coord), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_coord returns")
+```
 
 The function can handle as many plots as you wish, using the `plot_ID_corner` and `plot_ID_tree` arguments :
 
 ```{r divide_multiple_plots}
-multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")], check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")])
+multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel","x_proj","y_proj")], check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel","x_proj","y_proj")])
 multiple_plots$plot_ID = rep(c("NB1","NB2"),e=4)
 multiple_trees <- rbind(trees, trees %>% dplyr::mutate(plot="NB2"))
 
-mulitple_subplots <- divide_plot(
-  rel_coord = multiple_plots[c("Xrel","Yrel")],
+multiple_subplots <- divide_plot(
+  rel_coord = multiple_plots[c("x_rel","y_rel")],
+  proj_coord = multiple_plots[c("x_proj","y_proj")],
   grid_size = 50, 
   plot_ID_corner = multiple_plots$plot_ID,
   tree_coord = multiple_trees,
   plot_ID_tree = multiple_trees$plot
 )
 ```
+
+# Summarizing tree metrics at subplot level
+
+Once you've applied the `divide_plot()` function with a valid `tree_coord` argument, you can summarize any tree metric present in divide_plot()$tree_coord at the subplot level with the subplot_summary() function.
+
+```{r subplot_summary}
+subplot_metric <- subplot_summary(subplots = subplots,
+                                  value = "H") # H is the tree metric
+
+subplot_metric$tree_summary
+subplot_metric$polygon
+subplot_metric$plot_design
+```
+
+By default, the function sums the metric per subplot but you can request any valid function with the `function_name` argument :
+
+```{r subplot_summary_sd}
+
+foo <- function(x) {return(mean(x,na.))}
+
+subplot_metric <- subplot_summary(subplots = subplots,
+                                  value = "H", #H is the tree metric
+                                  function_name = "foo") 
+subplot_metric <- subplot_summary(subplots = subplots,
+                                  value = "H", #H is the tree metric
+                                  function_name = "median") 
+```
+
+The output of the function is a list containing : 
+
+* `$tree_summary` : a summary of the metric per subplot 
+
+* `$polygon` : same as `$tree_summary` with sf polygons in last column 
+
+* `$plot_design` : (if draw_plot=T) a ggplot object that can easily be modified
+
+
+** DEUX OPTIONS POUR LA SUITE **
+
+* Soit l'utilisateur peut set display_trees = TRUE, et les arbres seront affichés mais dans ce cas, il faut que les colonnes x_proj et y_proj soit bien présentes dans son tree data-frame 
+
+* Soit on laisse l'utilisateur afficher lui-même les arbres car c'est plutôt facile : 
+
+```{r}
+custom_plot <- subplot_metric$plot_design
+custom_plot + 
+  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D), shape=1) + 
+  ggtitle("The title you want") 
+```
+
+
+```{r subplot_summary_display_trees}
+multiple_subplot_metric <- subplot_summary(
+  subplots = multiple_subplots,
+  value = "H", display_trees = T)
+
+
+```
+
+
+
