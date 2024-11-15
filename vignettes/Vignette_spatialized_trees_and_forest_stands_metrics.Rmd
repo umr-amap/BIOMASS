@@ -20,13 +20,15 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-require(BIOMASS)
+#require(BIOMASS)
 require(knitr)
 require(ggplot2)
 require(data.table)
 require(tidyverse)
 require(dplyr)
 ```
+
+/!\ VIGNETTE IN PROGRESS /!\
 
 # Overview
 
@@ -174,40 +176,53 @@ WORK IN PROGRESS
 
 # Dividing plots
 
-Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the plot corners for division (be aware that the plot must be rectangular, ie, have 4 right angles) :
+Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the corner relative coordinates of the plot to divide it into a grid (be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles) :
 
 ```{r divide_plot}
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
-  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
-  grid_size = 50 # or c(50,50)
+  rel_coord = check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel")],
+  proj_coord = check_plot_trust_GPS$cornerCoord[c("x_proj","y_proj")],
+  grid_size = 25 # or c(25,25)
   )
+
+kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot() returns")
 ```
 
-For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners (keeping column names) but can also assign to each tree its subplot with the `tree_coord` :
+If you don't have any projected coordinates, just let `proj_coord` = NULL.
+
+For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_coord` argument** :
 
 ```{r divide_plot_trees}
 trees <- trees %>% dplyr::relocate(xRel, yRel, .before = everything()) # to get the coordinates at the first two columns 
 
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
-  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
-  grid_size = 50, # or c(50,50)
+  rel_coord = check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel")],
+  proj_coord = check_plot_trust_GPS$cornerCoord[c("x_proj","y_proj")],
+  grid_size = 25, # or c(50,50)
   tree_coord = trees
   )
 ```
 
-Note that `tree_coord` can contain any number of columns, but the first two must be the coordinates of the trees in the relative system.
+The function now returns a list containing : 
+
+* `sub_corner_coord` : coordinates of subplot corners as previously
+
+* `tree_coord` : the tree data-frame with the subplot_id added in the 3rd column position
+
+```{r}
+kable(head(subplots$tree_coord), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_coord returns")
+```
 
 The function can handle as many plots as you wish, using the `plot_ID_corner` and `plot_ID_tree` arguments :
 
 ```{r divide_multiple_plots}
-multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")], check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")])
+multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel","x_proj","y_proj")], check_plot_trust_GPS$cornerCoord[c("x_rel","y_rel","x_proj","y_proj")])
 multiple_plots$plot_ID = rep(c("NB1","NB2"),e=4)
 multiple_trees <- rbind(trees, trees %>% dplyr::mutate(plot="NB2"))
 
-mulitple_subplots <- divide_plot(
-  rel_coord = multiple_plots[c("Xrel","Yrel")],
+multiple_subplots <- divide_plot(
+  rel_coord = multiple_plots[c("x_rel","y_rel")],
+  proj_coord = multiple_plots[c("x_proj","y_proj")],
   grid_size = 50, 
   plot_ID_corner = multiple_plots$plot_ID,
   tree_coord = multiple_trees,
