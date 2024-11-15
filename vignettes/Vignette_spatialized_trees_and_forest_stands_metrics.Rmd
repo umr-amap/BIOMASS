@@ -250,12 +250,6 @@ subplot_metric$plot_design
 By default, the function sums the metric per subplot but you can request any valid function with the `function_name` argument :
 
 ```{r subplot_summary_sd}
-
-foo <- function(x) {return(mean(x,na.))}
-
-subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "H", #H is the tree metric
-                                  function_name = "foo") 
 subplot_metric <- subplot_summary(subplots = subplots,
                                   value = "H", #H is the tree metric
                                   function_name = "median") 
