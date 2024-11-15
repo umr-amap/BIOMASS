@@ -4,7 +4,7 @@
 #' Quality check of plot corner and tree coordinates.
 #'
 #' @details
-#' If trustGPScorners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the maxDist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems.
+#' If trustGPScorners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the maxDist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems. Be aware that this projection only works if the plot, in the relative coordinates system, is rectangular (ie, has 4 right angles).
 #' 
 #' If trustGPScorners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 #' 
@@ -18,23 +18,23 @@
 #' @param maxDist a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)
 #' @param rmOutliers a logical indicating if detected outliers are removed from the coordinate calculation
 #' @param drawPlot a logical indicating if the plot design should be displayed and returned
-#' @param treeCoord a data frame containing at least the tree coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively
+#' @param treeCoord a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
 #' @return Returns a list including :
-#'    - `cornerCoord`: a data frame containing the projected and relative coordinates, the ID (if cornerID is supplied) and the number of the 4 corners of the plot 
+#'    - `cornerCoord`: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if cornerID is supplied) of the 4 corners of the plot 
 #'    - `polygon`: a spatial polygon
 #'    - `outliers`: a data frame containing the projected coordinates, the ID (if cornerID is supplied) and the row number of GPS points considered outliers 
 #'    - `plotDesign`: if `drawPlot` is TRUE, a ggplot object corresponding to the design of the plot
 #'    - `codeUTM`: if `longlat` is supplied, a character containing the UTM code of the GPS coordinates
-#'    - `treeProjCoord`: if `treeCoord` is supplied, a data frame containing the coordinates of the trees in the projected coordinate system
+#'    - `treeProjCoord`: if `treeCoord` is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)
 #'
 #' @export
 #'
-#' @importFrom data.table data.table := setnames
+#' @importFrom data.table data.table := setnames %between%
 #' @importFrom sf st_multipoint st_polygon st_sfc
-#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit
+#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -78,7 +78,10 @@
 #'
 checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
-  # parameters verification -------------------------------------------------
+  
+  warning("please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord' will be removed in the next version ")
+  
+  # Checking arguments -------------------------------------------------
   
   if (is.null(longlat) && is.null(projCoord)) {
     stop("Give at least one set of coordinates: longlat or projCoord")
@@ -143,17 +146,17 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   }
   
   if(trustGPScorners == TRUE) {
-  
-    if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and look for outliers
+    
+    if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and search for outliers
       
       cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2],cornerID=cornerID))
-      setnames(cornerCoord, c("X","Y","Xrel","Yrel","cornerID"))
+      setnames(cornerCoord, c("x_proj","y_proj","x_rel","y_rel","cornerID"))
       if (any(table(cornerCoord$cornerID) < 5)) {
         warning("At least one corner has less than 5 measurements. We suggest using the argument trustGPScorners = FALSE")
       }
-      cornerCoord[ , c("Xmean","Ymean","nRow") := list(mean(X),mean(Y),.I) , by=cornerID] 
-      cornerCoord[ , outlier := ifelse( sqrt((X - Xmean)^2 + (Y-Ymean)^2) > maxDist, T, F)]
-      outliers <- cornerCoord[outlier==T , c("X","Y","cornerID","nRow")]
+      cornerCoord[ , c("Xmean","Ymean","nRow") := list(mean(x_proj),mean(y_proj),.I) , by=cornerID] 
+      cornerCoord[ , outlier := ifelse( sqrt((x_proj - Xmean)^2 + (y_proj-Ymean)^2) > maxDist, T, F)]
+      outliers <- cornerCoord[outlier==T , c("x_proj","y_proj","cornerID","nRow")]
       
       if (any(cornerCoord[,sum(!outlier),by=cornerID][[2]]==0)) {
         stop("All measurements for at least one corner are considered as outliers.\n
@@ -165,22 +168,21 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
         cornerCoord <- cornerCoord[outlier==F ,]
         existOutliers <- T
         while(existOutliers) {
-          cornerCoord[ , outlier := ifelse( sqrt((X - Xmean)^2 + (Y-Ymean)^2) > maxDist, T, F)]
-          outliers <- rbind(outliers , cornerCoord[outlier==T , c("X","Y","cornerID","nRow")])
+          cornerCoord[ , outlier := ifelse( sqrt((x_proj - Xmean)^2 + (y_proj-Ymean)^2) > maxDist, T, F)]
+          outliers <- rbind(outliers , cornerCoord[outlier==T , c("x_proj","y_proj","cornerID","nRow")])
           cornerCoord <- cornerCoord[outlier==F ,]
           if(nrow(cornerCoord)+nrow(outliers) == nrow(projCoord)) existOutliers <- F
-          cornerCoord[ , c("Xmean","Ymean") := list(mean(X),mean(Y)) , by=cornerID]
+          cornerCoord[ , c("Xmean","Ymean") := list(mean(x_proj),mean(y_proj)) , by=cornerID]
         }
       }
       
-      cornerCoord <- cornerCoord[ , c("Xmean","Ymean","Xrel","Yrel","cornerID")]
+      cornerCoord <- data.frame(cornerCoord[ , c("Xmean","Ymean","x_rel","y_rel","cornerID")])
       cornerCoord <- unique(cornerCoord)
-      setnames(cornerCoord, colnames(cornerCoord), c("X", "Y","Xrel","Yrel","cornerID")) 
+      colnames(cornerCoord) <- c("x_proj", "y_proj","x_rel","y_rel","cornerID")
       
     } else { # if exactly 1 measures for each corner
-      
-      cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
-      setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
+      cornerCoord <- data.frame(cbind(projCoord[,1:2], relCoord[,1:2]))
+      colnames(cornerCoord) <- c("x_proj","y_proj","x_rel","y_rel")
       outliers <- data.frame()
       if(!is.null(cornerID)) cornerCoord$cornerID = cornerID
     }
@@ -188,7 +190,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   } else { # trustGPScorners = "FALSE"
     
     cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2]))
-    setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
+    setnames(cornerCoord, c("x_proj","y_proj","x_rel","y_rel"))
     cornerCoord[, nRow := .I]
     
     # Transformation of relCoord to projected coordinates by a procrust analyses
@@ -200,7 +202,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     cornerCoord[ , outlier := ifelse(
       sqrt((procrustCoord[, 1] - projCoord[, 1])^2 + (procrustCoord[, 2] - projCoord[, 2])^2) > maxDist, T, F)]
     
-    outliers <- cornerCoord[outlier==T , c("X","Y","nRow")]
+    outliers <- cornerCoord[outlier==T , c("x_proj","y_proj","nRow")]
     
     if (length(outliers)==nrow(projCoord)){
       stop("All coordinates points are considered as outliers at the first stage.\n
@@ -220,7 +222,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
           sqrt((procrustCoord[, 1] - projCoord[-outliers$nRow, 1])^2 + 
                  (procrustCoord[, 2] - projCoord[-outliers$nRow, 2])^2) > maxDist, T, F)]
         
-        outliers <- rbind(outliers , cornerCoord[outlier==T , c("X","Y","nRow")])
+        outliers <- rbind(outliers , cornerCoord[outlier==T , c("x_proj","y_proj","nRow")])
         cornerCoord <- cornerCoord[outlier==F ,]
         if(nrow(cornerCoord)+nrow(outliers) == nrow(projCoord)) refineCoord <- F
       }
@@ -233,47 +235,37 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     cornerProjCoord <- as.matrix(cornerRelCoord[,1:2]) %*% procrustRes$rotation
     cornerProjCoord <- sweep(cornerProjCoord, 2, procrustRes$translation, FUN = "+")
     
-    cornerCoord <- data.table(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
-    setnames(cornerCoord, c("X","Y","Xrel","Yrel"))
-
+    cornerCoord <- data.frame(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
+    colnames(cornerCoord) <- c("x_proj","y_proj","x_rel","y_rel")
+    
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   
-  # Assign corner numbers in a clockwise direction -----------------------------
-  m1 <- cornerCoord[ rank(Xrel) <= 2, ]
-  tmp1 <- m1[rank(Yrel),]
-  m2 <- cornerCoord[ rank(Xrel) > 2, ]
-  tmp2 <- m2[rank(Yrel),]
-  cornerCoord <- rbind(tmp1,tmp2)
-  cornerCoord$cornerNum <- c(1,2,4,3)
-  
-  # if(! is.null(originalCorner)) {
-  #   # Shift the corner numbers to have corner 1 on the origin
-  #   shift <- 5 - which(cornerCoord$cornerID == originalCorner)
-  #   cornerCoord$cornerNum <- (cornerCoord$cornerNum + shift) %% 4
-  #   cornerCoord$cornerNum[cornerCoord$cornerNum == 0] <- 4
-  # }
-  
-  cornerCoord <- cornerCoord[ order(cornerNum), ]
+  # Sort cornerCoord rows in a counter-clockwise direction ---------------------
+  centroid <- colMeans(cornerCoord[,c("x_rel","y_rel")])
+  angles <- base::atan2(cornerCoord[["y_rel"]] - centroid[2], cornerCoord[["x_rel"]] - centroid[1])
+  cornerCoord <- cornerCoord[order(angles), ]
   
   # Create a polygon -----------------------------------------------------------
-  cornerPolygon <- st_multipoint(as.matrix(rbind(cornerCoord[,c("X","Y")], cornerCoord[1,c("X","Y")])))
+  cornerPolygon <- st_multipoint(as.matrix(rbind(cornerCoord[,c("x_proj","y_proj")], cornerCoord[1,c("x_proj","y_proj")])))
   cornerPolygon <- st_polygon(x = list(cornerPolygon), dim = "XY")
   cornerPolygon <- st_sfc(list(cornerPolygon))
   
   # Calculate projected tree coordinates from relative tree coordinates --------
   if(!is.null(treeCoord)) {
+    if(any(! treeCoord[,1] %between% range(cornerCoord$x_rel)) | any(! treeCoord[,2] %between% range(cornerCoord$y_rel))) {
+      warning("Be careful, one or more trees are not inside the plot defined by relCoord")
+    }
     if(trustGPScorners) {
-      treeProjCoord <- bilinearInterpolation(relCoord = treeCoord[,1:2],
-                                             cornerCoord = cornerCoord[,c("X","Y","cornerNum")],
-                                             dimX = diff(range(cornerCoord$Xrel)),
-                                             dimY = diff(range(cornerCoord$Yrel))
-                                             )
-      colnames(treeProjCoord) <- c("X","Y")
+      treeProjCoord <- bilinear_interpolation(coord = treeCoord[,1:2],
+                                              from_corner_coord = cornerCoord[,c("x_rel","y_rel")],
+                                              to_corner_coord = cornerCoord[,c("x_proj","y_proj")], 
+                                              ordered_corner = T)
+      colnames(treeProjCoord) <- c("x_proj","y_proj")
     } else {
       treeProjCoord <- as.matrix(treeCoord[,1:2]) %*% procrustRes$rotation
-      treeProjCoord <- data.table(sweep(treeProjCoord, 2, procrustRes$translation, FUN = "+"))
-      colnames(treeProjCoord) <- c("X","Y")
+      treeProjCoord <- data.frame(sweep(treeProjCoord, 2, procrustRes$translation, FUN = "+"))
+      colnames(treeProjCoord) <- c("x_proj","y_proj")
     }
   }
   
@@ -281,9 +273,9 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   
   if (drawPlot) {
     projCoordPlot <- projCoord[,c(1,2)]
-    setnames(projCoordPlot , c("X","Y"))
+    setnames(projCoordPlot , c("x_proj","y_proj"))
     projCoordPlot$whatpoint <- "GPS measurements"
-    cornerCoordPlot <- cornerCoord[,c("X","Y")]
+    cornerCoordPlot <- cornerCoord[,c("x_proj","y_proj")]
     cornerCoordPlot$whatpoint <- "Reference corners"
     projCoordPlot <- rbind(projCoordPlot,cornerCoordPlot)
     if(!is.null(treeCoord)) {
@@ -291,20 +283,20 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
       projCoordPlot <- rbind(projCoordPlot,treeProjCoord)
     }
     projCoordPlot$whatpoint <- factor(projCoordPlot$whatpoint, levels = c("GPS measurements","Outliers (discarded)","Reference corners","Trees"))
-    arrowPlot <- data.frame(X = rep(cornerCoord$X[1]), Y =rep(cornerCoord$Y[1]),
-                            Xend = c(cornerCoord$X[1]+(cornerCoord$X[4]-cornerCoord$X[1])/4,cornerCoord$X[1]+(cornerCoord$X[2]-cornerCoord$X[1])/4),
-                            Yend = c(cornerCoord$Y[1]+(cornerCoord$Y[4]-cornerCoord$Y[1])/4,cornerCoord$Y[1]+(cornerCoord$Y[2]-cornerCoord$Y[1])/4))
+    arrowPlot <- data.frame(X = rep(cornerCoord$x_proj[1]), Y =rep(cornerCoord$y_proj[1]),
+                            Xend = c(cornerCoord$x_proj[1]+(cornerCoord$x_proj[4]-cornerCoord$x_proj[1])/4,cornerCoord$x_proj[1]+(cornerCoord$x_proj[2]-cornerCoord$x_proj[1])/4),
+                            Yend = c(cornerCoord$y_proj[1]+(cornerCoord$y_proj[4]-cornerCoord$y_proj[1])/4,cornerCoord$y_proj[1]+(cornerCoord$y_proj[2]-cornerCoord$y_proj[1])/4))
     
     if(exists("outliers") && nrow(outliers)!=0) {
       projCoordPlot$whatpoint[outliers$nRow] <- "Outliers (discarded)"
     }
     plotDesign <- ggplot2::ggplot(data = projCoordPlot) +
-      geom_point(aes(x=X,y=Y,col=whatpoint,shape = whatpoint),size=2) + 
+      geom_point(aes(x=x_proj,y=y_proj,col=whatpoint,shape = whatpoint),size=2) + 
       scale_shape_manual(values=c(2,4,15,1), drop=FALSE) +
       scale_color_manual(values=c('black','red',"black","darkgreen"), drop = FALSE) +
-      geom_polygon(data = cornerPolygon[[1]][[1]][,] , mapping = aes(x=X,y=Y), colour="black",fill=NA,linewidth=1.2)+
+      geom_polygon(data = cornerPolygon[[1]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
       geom_segment(data=arrowPlot, mapping=aes(x=X,y=Y,xend=Xend,yend=Yend), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
-      geom_text(data = arrowPlot, mapping = aes(x=Xend,y=Yend,label=c("Xrel","Yrel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
+      geom_text(data = arrowPlot, mapping = aes(x=Xend,y=Yend,label=c("x_rel","y_rel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
       ggtitle("Plot display") +
       theme_minimal() + 
       theme(legend.title=element_blank())+
@@ -322,7 +314,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   }
   
   output <- list(
-    cornerCoord = data.frame(cornerCoord),
+    cornerCoord = cornerCoord,
     polygon = cornerPolygon, outliers = outliers
   )
   if (drawPlot) {
@@ -332,7 +324,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     output$codeUTM <- codeUTM
   }
   if (!is.null(treeCoord)) {
-    output$treeProjCoord <- data.frame(treeProjCoord[,c("X","Y")])
+    output$treeProjCoord <- treeProjCoord[,c("x_proj","y_proj")]
   }
   return(output)
 }
