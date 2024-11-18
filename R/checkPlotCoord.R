@@ -18,7 +18,7 @@
 #' @param maxDist a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)
 #' @param rmOutliers a logical indicating if detected outliers are removed from the coordinate calculation
 #' @param drawPlot a logical indicating if the plot design should be displayed and returned
-#' @param treeCoord (optional) a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
+#' @param treeCoord a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
@@ -77,6 +77,8 @@
 #' }
 #'
 checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
+  
+  warning("please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord` will be removed in the next version ")
   
   # Checking arguments -------------------------------------------------
   
@@ -143,7 +145,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   }
   
   if(trustGPScorners == TRUE) {
-  
+
     if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and search for outliers
       
       cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2],cornerID=cornerID))
