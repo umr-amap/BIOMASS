@@ -13,7 +13,7 @@
 #' @param tree_coords a character vector of size 2 containing the column names of the relative coordinates of the trees.
 #' @param corner_plot_ID if dealing with multiple plots : a vector indicating plot IDs for corners.
 #' @param tree_plot_ID if dealing with multiple plots : a vector indicating tree plot IDs.
-#' @param grid_tol a numeric between [0;1] corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
+#' @param grid_tol a numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
 #' @param centred_grid when grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centred on the plot.
 #'
 #' @return If tree_df isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
@@ -39,25 +39,26 @@
 #' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
 #' proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
 #' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
-#'
-#' # Assigning trees to subplots 
+#' 
+#' # Assigning trees to subplots
 #' tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
 #' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 #' subplots$sub_corner_coord
 #' subplots$tree_df
-#'
+#' 
 #' # When grid dimensions don't fit perfectly plot dimensions
 #' subplots <- divide_plot(rel_coord, grid_size = c(45,50))
-#' subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = T)
-#'
-#' # Dealing with multiple plots 
+#' subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+#' 
+#' # Dealing with multiple plots
 #' rel_coord <- rbind(rel_coord, rel_coord)
 #' proj_coord <- rbind(proj_coord, proj_coord + 200)
 #' tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 #' corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 #' tree_plot_ID <- rep(c("plot1","plot2"), e=50)
 #' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df, c("x_tree","y_tree"), corner_plot_ID, tree_plot_ID)
-#' 
+#'
+ 
 divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
   
   # Parameters verification ----------------------------------------------------

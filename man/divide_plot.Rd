@@ -31,7 +31,7 @@ divide_plot(
 
 \item{tree_plot_ID}{if dealing with multiple plots : a vector indicating tree plot IDs.}
 
-\item{grid_tol}{a numeric between \link{0;1} corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
+\item{grid_tol}{a numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
 
 \item{centred_grid}{when grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centred on the plot.}
 }
@@ -67,7 +67,7 @@ rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
 proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
 subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 
-# Assigning trees to subplots 
+# Assigning trees to subplots
 tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
 subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 subplots$sub_corner_coord
@@ -75,9 +75,9 @@ subplots$tree_df
 
 # When grid dimensions don't fit perfectly plot dimensions
 subplots <- divide_plot(rel_coord, grid_size = c(45,50))
-subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = T)
+subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
 
-# Dealing with multiple plots 
+# Dealing with multiple plots
 rel_coord <- rbind(rel_coord, rel_coord)
 proj_coord <- rbind(proj_coord, proj_coord + 200)
 tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
