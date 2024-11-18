@@ -78,7 +78,6 @@
 #'
 checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
-  
   warning("please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord' will be removed in the next version ")
   
   # Checking arguments -------------------------------------------------
@@ -146,7 +145,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
   }
   
   if(trustGPScorners == TRUE) {
-    
+
     if(nrow(projCoord)!= 4) { # if multiple measures of each corner, then do the mean of coordinates and search for outliers
       
       cornerCoord <- data.table(cbind(projCoord[,1:2], relCoord[,1:2],cornerID=cornerID))

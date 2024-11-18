@@ -4,10 +4,10 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Divides a plot in subplots
+#' Divides one ore more plots into subplots
 #'
 #' This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
-#' This function uses a procrust analysis to fit the rectangle you gave to the plot you have.
+#' These coordinates are calculated by a bilinear interpolation with the projected corner coordinates as references.  
 #'
 #' @param projCoord A data frame containing the projected coordinates of plot corners, with X and Y on the first and second column respectively
 #' @param plot A vector indicating the plot codes
@@ -98,9 +98,9 @@ cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY
     ))
     
     # Transformation of relative grid coordinates into absolute coordinates
-    absCoord <- bilinearInterpolation(relCoord = gridMat , cornerCoord = data[,.(X,Y,cornerNum)] ,dimX = plotDimX, dimY = plotDimY )
+    absCoord <- bilinear_interpolation(coord = gridMat , from_corner_coord = relCoordMat , to_corner_coord = absCoordMat )
 
-    return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], absCoord[, 1], absCoord[, 2]))
+    return(data.table(XRel = gridMat[, 1], YRel = gridMat[, 2], XAbs=absCoord[, 1], YAbs=absCoord[, 2]))
   }
 
   # Apply gridFunction to all plots

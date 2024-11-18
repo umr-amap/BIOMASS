@@ -1,5 +1,5 @@
 ---
-title: "Manage plot and tree coordinates with BIOMASS"
+title: "Spatialized trees and forest stands metrics with BIOMASS"
 author: "Arthur Bailly"
 date: "`r Sys.Date()`"
 output: 
@@ -10,7 +10,7 @@ output:
     self_contained: yes
     theme: cayman
 vignette: >
-  %\VignetteIndexEntry{Manage plot and tree coordinates with BIOMASS}
+  %\VignetteIndexEntry{Spatialized trees and forest stands metrics with BIOMASS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,6 +25,7 @@ require(knitr)
 require(ggplot2)
 require(data.table)
 require(tidyverse)
+require(dplyr)
 ```
 
 # Overview
@@ -96,9 +97,9 @@ If **enough coordinates have been recorded for each corner** (for more informati
 If only **4 GPS measurements** have been taken **with a high degree of accuracy** (by a geometer, for example), or if you have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
 ```{r dpi=200}
-check_plot <- checkPlotCoord(
+check_plot_trust_GPS <- checkPlotCoord(
   longlat = cornerCoord[c("Long", "Lat")],
-  # OR projCoord = cornerCoord[c("xProj", "yProj")], 
+  # OR, if exists : projCoord = cornerCoord[c("xProj", "yProj")], 
   relCoord = cornerCoord[c("xRel", "yRel")],
   trustGPScorners = T, cornerID = cornerCoord$Corners,
   drawPlot = TRUE,
@@ -115,7 +116,7 @@ Let's degrade the data to simulate the fact that we only have 8 GPS coordinates 
 ```{r dpi=200}
 degradedCornerCoord <- cornerCoord[c(1:2,11:12,21:22,31:32),]
   
-check_plot <- checkPlotCoord(
+check_plot_trust_field <- checkPlotCoord(
   longlat = degradedCornerCoord[, c("Long", "Lat")],
   # OR projCoord = cornerCoord[c("xProj", "yProj")], 
   relCoord = degradedCornerCoord[, c("xRel", "yRel")],
@@ -155,7 +156,7 @@ The tree coordinates can be obtained via the `$treeProjCoord` output.
 You can also grep and modify the plot via the `$plotDesign` output which is a ggplot object. For exemple, to change the plot title : 
 
 ```{r}
-plot_to_change <- check_plot$plotDesign
+plot_to_change <- check_plot_trust_GPS$plotDesign
 plot_to_change$labels$title <- "A nice title !"
 plot_to_change
 ```
@@ -173,6 +174,43 @@ WORK IN PROGRESS
 
 # Dividing plots
 
-WORK IN PROGRESS
+Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the plot corners for division (be aware that the plot must be rectangular, ie, have 4 right angles) :
 
+```{r divide_plot}
+subplots <- divide_plot(
+  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
+  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
+  grid_size = 50 # or c(50,50)
+  )
+```
 
+For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners (keeping column names) but can also assign to each tree its subplot with the `tree_coord` :
+
+```{r divide_plot_trees}
+trees <- trees %>% dplyr::relocate(xRel, yRel, .before = everything()) # to get the coordinates at the first two columns 
+
+subplots <- divide_plot(
+  rel_coord = check_plot_trust_field$cornerCoord[c("Xrel","Yrel")],
+  proj_coord = check_plot_trust_field$cornerCoord[c("X","Y")], #optional
+  grid_size = 50, # or c(50,50)
+  tree_coord = trees
+  )
+```
+
+Note that `tree_coord` can contain any number of columns, but the first two must be the coordinates of the trees in the relative system.
+
+The function can handle as many plots as you wish, using the `plot_ID_corner` and `plot_ID_tree` arguments :
+
+```{r divide_multiple_plots}
+multiple_plots <- rbind(check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")], check_plot_trust_GPS$cornerCoord[c("Xrel","Yrel")])
+multiple_plots$plot_ID = rep(c("NB1","NB2"),e=4)
+multiple_trees <- rbind(trees, trees %>% dplyr::mutate(plot="NB2"))
+
+mulitple_subplots <- divide_plot(
+  rel_coord = multiple_plots[c("Xrel","Yrel")],
+  grid_size = 50, 
+  plot_ID_corner = multiple_plots$plot_ID,
+  tree_coord = multiple_trees,
+  plot_ID_tree = multiple_trees$plot
+)
+```

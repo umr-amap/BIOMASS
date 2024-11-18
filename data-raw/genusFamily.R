@@ -261,7 +261,7 @@ usethis::use_data(genusFamily, compress = "xz")
 
 
 genusFamily <- genusFamily[base::order(family)]
-genusFamilyOrg <- setDT(copy(BIOMASS::genusFamily))
+genusFamilyOrg <- data.table(BIOMASS::genusFamily)
 genusFamilyOrg <- genusFamilyOrg[base::order(family)]
 
 result <- merge(genusFamilyOrg, genusFamily, all = T, by = "genus")

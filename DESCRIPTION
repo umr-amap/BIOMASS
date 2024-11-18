@@ -1,7 +1,7 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.1.13
+Version: 2.1.14
 Date: 2024-03-19
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
@@ -13,7 +13,8 @@ Authors@R: c(
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
 	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc")),
-	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb"))
+	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb")),
+	person("Arthur", "Bailly", email = "arthur.bailly@ird.fr ", role = c("aut"))
   )
 Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. 
 	These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, 
@@ -50,5 +51,6 @@ Suggests:
 	curl,
 	geodata,
 	httr2,
-	pkgdown
+	pkgdown,
+	dplyr
 RoxygenNote: 7.3.2

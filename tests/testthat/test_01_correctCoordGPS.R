@@ -71,26 +71,26 @@ test_that("correct coord GPS in UTM", {
 })
 
 test_that("correct coord GPS error", {
-  expect_error(correctCoordGPS(), "Give at least one set of coordinates")
+  expect_error(suppressWarnings(correctCoordGPS()), "Give at least one set of coordinates")
   expect_error(
-    correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = 52, rangeY = 53,rmOutliers = FALSE),
+    suppressWarnings(correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = 52, rangeY = 53,rmOutliers = FALSE)),
     "must be of length 2"
   )
   expect_error(
-    correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = c(15, 0),rmOutliers = FALSE),
+    suppressWarnings(correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 100), rangeY = c(0, 100), maxDist = c(15, 0),rmOutliers = FALSE)),
     "Your argument maxDist must be of length 1"
   )
   expect_error(
-    correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 40), rangeY = c(0, 40),rmOutliers = FALSE),
+    suppressWarnings(correctCoordGPS(projCoord = projCoord, coordRel = coordRel, rangeX = c(0, 40), rangeY = c(0, 40),rmOutliers = FALSE)),
     "coordRel must be inside the X and Y ranges"
   )
   expect_error(
-    correctCoordGPS(projCoord = projCoord, coordRel = rbind(coordRel, c(40, 40)), rangeX = c(0, 100), rangeY = c(0, 100),rmOutliers = FALSE),
+    suppressWarnings(correctCoordGPS(projCoord = projCoord, coordRel = rbind(coordRel, c(40, 40)), rangeX = c(0, 100), rangeY = c(0, 100),rmOutliers = FALSE)),
     "same dimension"
   )
   skip_if_not_installed("proj4")
   expect_error(
-    correctCoordGPS(longlat = c(15, 12), projCoord = projCoord,rmOutliers = FALSE),
+    suppressWarnings(correctCoordGPS(longlat = c(15, 12), projCoord = projCoord,rmOutliers = FALSE)),
     "Give only one set of coordinates"
   )
 })

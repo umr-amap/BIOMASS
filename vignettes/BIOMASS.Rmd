@@ -53,7 +53,7 @@ KarnatakaForestsub <- droplevels(KarnatakaForest[selecPlot, ])
 
 **First, check for any typo in the taxonomy**
 ```{r eval=test, cache=CACHE}
-Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
+Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = TRUE, verbose = FALSE)
 KarnatakaForestsub$genusCorr <- Taxo$genusCorrected
 KarnatakaForestsub$speciesCorr <- Taxo$speciesCorrected
 ```
@@ -128,14 +128,16 @@ HDmodel <- modelHD(
 )
 ```
 
-**Compute models specific to given stands**
+**Compute models specific to given stands (given plots)**
 ```{r, cache=CACHE}
 HDmodelPerPlot <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H, method = "weibull",
-  useWeight = TRUE, plot = NouraguesHD$plotId
+  useWeight = TRUE, plot = NouraguesHD$plotId, drawGraph = T
 )
+# To get model parameters by stand :
 ResHD <- t(sapply(HDmodelPerPlot, function(x) c(coef(x$model), RSE = x$RSE)))
 kable(ResHD, row.names = TRUE, digits = 3)
+
 ```
 
 
