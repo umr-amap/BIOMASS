@@ -31,7 +31,7 @@ If tree_coord isn't supplied, returns a data-frame containing as many rows as th
 \itemize{
 \item \code{plot_ID_corner}: If dealing with multiple plots : the plot code
 \item \code{subplot_id}: The automatically generated subplot code, using the following rule : subplot_X_Y
-\item \code{x} and \code{y} (or the column names provided by rel_coord) : the relative X-axis and Y-axis coordinates of subplots corners.
+\item \code{x_rel} and \code{y_rel} (or the column names provided by rel_coord) : the relative X-axis and Y-axis coordinates of subplots corners.
 \item \code{x_proj} and \code{y_proj} (or the column names provided by proj_coord) :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
 }
 
