@@ -78,7 +78,7 @@
 #'
 checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPScorners, cornerID=NULL, maxDist = 15, rmOutliers = TRUE,  drawPlot = TRUE, treeCoord = NULL) {
   
-  warning("please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord' will be removed in the next version ")
+  warning("please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord` will be removed in the next version ")
   
   # Checking arguments -------------------------------------------------
   
