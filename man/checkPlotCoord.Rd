@@ -33,17 +33,17 @@ checkPlotCoord(
 
 \item{drawPlot}{a logical indicating if the plot design should be displayed and returned}
 
-\item{treeCoord}{(optional) a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively}
+\item{treeCoord}{a data frame containing at least the relative tree coordinates (field/local coordinates), with X and Y corresponding to the first and second columns respectively}
 }
 \value{
 Returns a list including :
 \itemize{
-\item \code{cornerCoord}: a data frame containing the projected and relative coordinates, the ID (if cornerID is supplied) and the number of the 4 corners of the plot
+\item \code{cornerCoord}: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if cornerID is supplied) of the 4 corners of the plot
 \item \code{polygon}: a spatial polygon
 \item \code{outliers}: a data frame containing the projected coordinates, the ID (if cornerID is supplied) and the row number of GPS points considered outliers
 \item \code{plotDesign}: if \code{drawPlot} is TRUE, a ggplot object corresponding to the design of the plot
 \item \code{codeUTM}: if \code{longlat} is supplied, a character containing the UTM code of the GPS coordinates
-\item \code{treeProjCoord}: if \code{treeCoord} is supplied, a data frame containing the coordinates of the trees in the projected coordinate system
+\item \code{treeProjCoord}: if \code{treeCoord} is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)
 }
 }
 \description{
