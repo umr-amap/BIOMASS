@@ -20,8 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-#require(BIOMASS)
-devtools::load_all()
+require(BIOMASS)
 require(knitr)
 require(ggplot2)
 require(data.table)
@@ -43,7 +42,7 @@ BIOMASS enables users to manage their plots by :
 
 * dividing plots into subplots
 
-* summarizing the desired information at subplot level
+* summarising the desired information at subplot level
 
 
 # Required data
@@ -195,9 +194,11 @@ kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the 
 
 If you don't have any projected coordinates, just let `proj_coord` = NULL.
 
-For the purposes of summarizing and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_df` and `tree_coords` arguments** :
+For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_df` and `tree_coords` arguments** :
 
 ```{r divide_plot_trees}
+trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
+
 subplots <- divide_plot(
   rel_coord = check_plot_trust_GPS$corner_coord[c("x_rel","y_rel")],
   proj_coord = check_plot_trust_GPS$corner_coord[c("x_proj","y_proj")],
@@ -229,59 +230,82 @@ multiple_subplots <- divide_plot(
   proj_coord = multiple_plots[c("x_proj","y_proj")],
   grid_size = 50,
   corner_plot_ID = multiple_plots$plot_ID,
-  tree_coord = multiple_trees,
+  tree_df = multiple_trees,
+  tree_coords = c("xRel","yRel"),
   tree_plot_ID = multiple_trees$plot
 )
 ```
 
-# Summarizing tree metrics at subplot level
+# Summarising tree metrics at subplot level
 
-Once you've applied the `divide_plot()` function with a valid `tree_coord` argument, you can summarize any tree metric present in divide_plot()$tree_coord at the subplot level with the subplot_summary() function.
+Once you've applied the `divide_plot()` function with a valid `tree_coord` argument, you can summarise any tree metric present in divide_plot()$tree_df at the subplot level with the `subplot_summary()` function.
 
 ```{r subplot_summary}
-subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "H") # H is the tree metric
+# AGB metric was added before applying the divide_plot() function, but it could have been added afterwards with : 
+# subplots$tree_df$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
 
-subplot_metric$tree_summary
-subplot_metric$polygon
-subplot_metric$plot_design
+subplot_metric <- subplot_summary(subplots = subplots,
+                                  value = "AGB") # AGB is the tree metric
 ```
 
-By default, the function sums the metric per subplot but you can request any valid function with the `function_name` argument :
+By default, the function sums the metric per subplot but you can request any valid function with the `fun` argument :
 
-```{r subplot_summary_sd}
+```{r subplot_summary_quantile}
 subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "H", #H is the tree metric
-                                  function_name = "median") 
+                                  value = "AGB",
+                                  fun = quantile, probs = 0.9)
 ```
 
 The output of the function is a list containing : 
 
 * `$tree_summary` : a summary of the metric per subplot 
 
-* `$polygon` : same as `$tree_summary` with sf polygons in last column 
+* `$polygon` : an sf object containing a simple feature collection of the subplot's polygon
 
 * `$plot_design` : (if draw_plot=T) a ggplot object that can easily be modified
 
+## Customizing the ggplot
 
-** DEUX OPTIONS POUR LA SUITE **
+Here are some examples to custom the ggplot of the `subplot_summary()` function :
 
-* Soit l'utilisateur peut set display_trees = TRUE, et les arbres seront affichés mais dans ce cas, il faut que les colonnes x_proj et y_proj soit bien présentes dans son tree data-frame 
-
-* Soit on laisse l'utilisateur afficher lui-même les arbres car c'est plutôt facile : 
-
-```{r}
+```{r customize_plot}
+subplot_metric <- subplot_summary(subplots = subplots,
+                                  value = "AGB") 
 custom_plot <- subplot_metric$plot_design
+# Change the title :
 custom_plot + 
-  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D), shape=1) + 
-  ggtitle("The title you want") 
+  labs(title = "Sum of AGB per hectare")
+# Change the legend text : 
+custom_plot + 
+  labs(fill="Sum of AGB per hectare")
+# Display trees : 
+custom_plot + 
+  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj), shape=3) 
+# Display trees with diameter as size point : 
+custom_plot + 
+  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D), shape=1) +
+  labs(size = "Tree diameter (m)", fill = "Sum of AGB per hectare") 
+# Display trees with diameter as size point and height as color point (and a smaller legend on the right) : 
+custom_plot + 
+  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D, col = H), shape=1) +
+  labs(size = "Tree diameter (m)", col = "Tree size (m)", fill = "Sum of AGB per hectare") +
+  scale_color_gradientn(colours = c("white","black")) +
+  theme(legend.position = "right", legend.key.size = unit(0.5, 'cm'))
 ```
 
+## Exporting as a shapefile
+
+```{r exporting_shapefile}
+subplot_polygons <- subplot_metric$polygon 
+# sf::st_crs(subplot_polygons)
+# sf::st_write(obj = , dsn = "../../Documents/Nourragues.shp")
+```
+
+
+## Dealing with multiple plots
 
 ```{r subplot_summary_display_trees}
 multiple_subplot_metric <- subplot_summary(
   subplots = multiple_subplots,
-  value = "H", display_trees = T)
-
-
+  value = "AGB")
 ```
