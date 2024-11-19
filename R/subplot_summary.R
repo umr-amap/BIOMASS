@@ -1,11 +1,11 @@
 #' Summarise and display tree information by subplot
 #'
 #' @description
-#' After applying the [divide_plot()] function, this function summarises the desired tree metric by sub-plot and displays the plot representation.
+#' After applying the [divide_plot()] function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
 #'
 #' @param subplots output of the [divide_plot()] function
 #' @param value a character indicating the column in subplots$tree_df to display
-#' @param draw_plot a logical indicating wether the plot design should be displayed and returned
+#' @param draw_plot a logical indicating whether the plot design should be displayed and returned
 #' @param fun the function to be applied
 #' @param ... optional arguments to fun
 #'
@@ -15,12 +15,20 @@
 #'  - `plot_design` : (if draw_plot=T) a ggplot object (or a list of ggplot objects) that can easily be modified
 #'
 #' @export
+#' 
+#' @author Arthur Bailly
 #'
 #' @importFrom data.table data.table :=
 #' @importFrom grDevices terrain.colors
 #' @importFrom ggplot2 ggplot aes geom_sf theme_minimal scale_fill_gradientn theme ggtitle
 #' 
 #' @examples
+#' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
+#' proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
+#' tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
+#' subplots <- BIOMASS::divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+#' subplot_summary(subplots , value = "metric", draw_plot = FALSE) # sum summary
+#' subplot_summary(subplots , value = "metric", draw_plot = FALSE, fun = median, probs=0.9) # sum summary
 #'
 #'
 subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum, ...) {
@@ -103,8 +111,9 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
   
   # Adjusting column names and adding summary per hectare
   setnames(tree_summary, "V1", paste(value,"summary",sep="_"))
-  tree_summary <- data.frame(tree_summary)
-  tree_summary[[paste(value,"summary per_ha",sep="_")]] <- sf_polygons[[3]]
+  tree_summary <- data.frame(tree_summary[order(subplot_id)])
+  
+  tree_summary[[paste(value,"summary per_ha",sep="_")]] <- sf_polygons[[3]][match(x = tree_summary$subplot_id , table = sf_polygons[[1]])]
   
   if(all(tree_summary$plot_id=="subplot")) { # If just one plot :
     tree_summary$plot_id <- NULL # delete plot_id column

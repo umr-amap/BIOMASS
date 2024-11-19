@@ -37,7 +37,7 @@
 #' 
 #' # Squared plot and projected coordinates associated
 #' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
-#' proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
+#' proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
 #' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 #' 
 #' # Assigning trees to subplots
