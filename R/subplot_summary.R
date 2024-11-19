@@ -47,7 +47,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
 
   # Data processing ------------------------------------------------------------
   corner_dat <- data.table(subplots$sub_corner_coord)
-  tree_summary <- data.table(subplots$tree_df)[, fun(get(value), ...) , by=c("subplot_id")]
+  tree_summary <- data.table(subplots$tree_df)[!is.na(subplot_id), fun(get(value), ...) , by=c("subplot_id")]
   tree_summary[,plot_id:=sapply(strsplit(tree_summary$subplot_id,"_"),function(x)x[[1]])]#Add plot_id to be able to loop on it
   
   sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_id"), function(dat) {
@@ -97,6 +97,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
       print(plot_design)
       plot_design
     })
+    names(plot_list) <- unique(tree_summary$plot_id)
     
   }
   
