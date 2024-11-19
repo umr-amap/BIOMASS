@@ -35,20 +35,20 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
 
   # Checking parameters --------------------------------------------------------
   if(is.data.frame(subplots)) {
-    stop("subplots argument does\'nt contain any tree data frame. Use the divide_plot() function with a non-null tree_df argument")
+    stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_df argument")
   }
-  if (!is.list(subplots) && any(names(subplots)!=c("sub_corner_coord","tree_df"))) {
-    stop("subplots argument must be the output of the divide_plot_function(), with a non-null tree_df argument")
+  if (is.list(subplots) && (is.null(names(subplots)) || any(names(subplots)!=c("sub_corner_coord","tree_df")))) {
+    stop("subplots argument must be the output of the divide_plot_function, with a non-null tree_df argument")
   }
   if(any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
     subplots$sub_corner_coord[,c("x_proj","y_proj")] <- subplots$sub_corner_coord[,c("x_rel","y_rel")]
-    message("projected coordinates are not found in subplots items (no x_proj and y_proj colnames found), tree metric will be summarised in the relative coordinate system")
+    message("projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system")
   }
-  if(!is.null(value) && !value %in% names(subplots$tree_df)) {
+  if(is.null(value) || !value %in% names(subplots$tree_df)) {
     stop("value is not a column name of subplots$tree_df")
   }
   if(!is.function(fun)) {
-    stop(paste("your function",function_name, "is not a function"))
+    stop("the function supplied using `fun =` is not a function")
   } else {
     fun <- match.fun(fun)
   }
@@ -56,7 +56,10 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
   # Data processing ------------------------------------------------------------
   corner_dat <- data.table(subplots$sub_corner_coord)
   tree_summary <- data.table(subplots$tree_df)[!is.na(subplot_id), fun(get(value), ...) , by=c("subplot_id")]
-  tree_summary[,plot_id:=sapply(strsplit(tree_summary$subplot_id,"_"),function(x)x[[1]])]#Add plot_id to be able to loop on it
+  if(any(duplicated(tree_summary$subplot_id))) {
+    stop("the function supplied using `fun` must return a single value")
+  }
+  tree_summary[,plot_id:=sapply(strsplit(tree_summary$subplot_id,"_"),function(x)x[[1]])] #Add plot_id to be able to loop on it
   
   sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_id"), function(dat) {
     
@@ -75,12 +78,13 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
                              value_fun / sf::st_area(subplot_polygon) * 10000)
     names(df_polygon) <- c("subplot_id",
                            paste(value, "summary", sep = "_"),
-                           paste(value, "summary", "per_ha", sep = "_"))
+                           paste(value, "summary_per_ha", sep = "_"))
     
     sf_polygon <- sf::st_sf(list(subplot_polygon),df_polygon)
     sf::st_geometry(sf_polygon) <- "sf_subplot_polygon"
     sf_polygon
   }))
+  sf_polygons <- sf_polygons[order(sf_polygons$subplot_id),]
   
   # Plot the plot(s) -----------------------------------------------------------
   
@@ -113,11 +117,13 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
   setnames(tree_summary, "V1", paste(value,"summary",sep="_"))
   tree_summary <- data.frame(tree_summary[order(subplot_id)])
   
-  tree_summary[[paste(value,"summary per_ha",sep="_")]] <- sf_polygons[[3]][match(x = tree_summary$subplot_id , table = sf_polygons[[1]])]
+  tree_summary[[paste(value,"summary_per_ha",sep="_")]] <- sf_polygons[[3]][match(x = tree_summary$subplot_id , table = sf_polygons[[1]])]
   
   if(all(tree_summary$plot_id=="subplot")) { # If just one plot :
     tree_summary$plot_id <- NULL # delete plot_id column
-    plot_list <- plot_list[[1]] # unlist the output
+    if(draw_plot) {
+      plot_list <- plot_list[[1]] # unlist the output
+    }
   } else{
     tree_summary <- tree_summary[,c(3,1,2,4)]
   }
