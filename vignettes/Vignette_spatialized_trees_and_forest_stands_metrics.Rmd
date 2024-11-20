@@ -128,7 +128,7 @@ check_plot_trust_field <- check_plot_coord(
 
 We can see that the corners of the plot do not correspond to the GPS measurements. In fact, they correspond to the best compromise between the shape and dimensions of the plot and the GPS measurements.
 
-## Tree coordinates in the projected/geographic coordinate system {#tree_coordinates}
+## Retrieving tree projected coordinates {#tree_coordinates}
 
 Tree coordinates are almost always measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_df` and `tree_coords` arguments.
 
@@ -238,7 +238,7 @@ multiple_subplots <- divide_plot(
 
 # Summarising tree metrics at subplot level
 
-Once you've applied the `divide_plot()` function with a valid `tree_coord` argument, you can summarise any tree metric present in divide_plot()$tree_df at the subplot level with the `subplot_summary()` function.
+Once you've applied the `divide_plot()` function with a `tree_df` argument, you can summarise any tree metric present in divide_plot()$tree_df at the subplot level with the `subplot_summary()` function.
 
 ```{r subplot_summary}
 # AGB metric was added before applying the divide_plot() function, but it could have been added afterwards with : 
@@ -272,12 +272,9 @@ Here are some examples to custom the ggplot of the `subplot_summary()` function 
 subplot_metric <- subplot_summary(subplots = subplots,
                                   value = "AGB") 
 custom_plot <- subplot_metric$plot_design
-# Change the title :
+# Change the title and legend :
 custom_plot + 
-  labs(title = "Sum of AGB per hectare")
-# Change the legend text : 
-custom_plot + 
-  labs(fill="Sum of AGB per hectare")
+  labs(title = "Nourragues plot" , fill="Sum of AGB per hectare")
 # Display trees : 
 custom_plot + 
   geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj), shape=3) 
@@ -298,7 +295,6 @@ custom_plot +
 ```{r exporting_shapefile}
 subplot_polygons <- subplot_metric$polygon 
 # sf::st_crs(subplot_polygons)
-# sf::st_write(obj = , dsn = "../../Documents/Nourragues.shp")
 ```
 
 
