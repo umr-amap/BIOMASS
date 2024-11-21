@@ -126,16 +126,9 @@ check_plot_coord <- function(proj_coord = NULL, longlat = NULL, rel_coord, trust
   if (trust_GPS_corners==T && (!is.null(proj_coord)) && nrow(proj_coord)!=4 & is.null(corner_ID)) {
     stop("The argument corner_ID is needed if trust_GPS_corners is TRUE and if multiple measurements of each corner have been realized")
   }
-  if (nrow(unique(rel_coord)) != 4) {
-    stop( paste(nrow(unique(rel_coord)),"unique corners are detected in rel_coord instead of 4"))
-  }
   if (!is.null(corner_ID) && length(corner_ID) != nrow(rel_coord)) {
     stop("corner_ID must be the same length as the number of rows in rel_coord")
   }
-  if (!is.null(corner_ID) && length(unique(corner_ID)) !=4) {
-    stop(paste(length((unique(corner_ID))),"unique corners are detected in corner_ID instead of 4"))
-  }
-  
   
   # function -------------------------------------------------------------------
   
