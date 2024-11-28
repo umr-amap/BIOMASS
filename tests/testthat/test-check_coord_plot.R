@@ -159,9 +159,9 @@ test_that("check_plot_coord, tree coordinates", {
     Y = c(10,20,30)
   )
   res <- check_plot_coord(proj_coord = proj_coord, rel_coord = rel_coord, trust_GPS_corners = T, rm_outliers = T, corner_ID = corner_ID, draw_plot = F, tree_df = tree_df, tree_coords = c("X","Y"))
-  expect_is(res$treeproj_coord, "data.frame")
-  expect_equal(dim(res$treeproj_coord), c(nrow(tree_df),2))
-  expect_equal(res$treeproj_coord , sweep(tree_df, 2, c(200000,9000000), FUN = "+"))
+  expect_is(res$tree_proj_coord, "data.frame")
+  expect_equal(dim(res$tree_proj_coord), c(nrow(tree_df),2))
+  expect_equivalent(res$tree_proj_coord , sweep(tree_df, 2, c(200000,9000000), FUN = "+"))
   tree_df$AGB <- c(20,25,30)  
   expect_equal(res, check_plot_coord(proj_coord = proj_coord, rel_coord = rel_coord, trust_GPS_corners = T, rm_outliers = T, corner_ID = corner_ID, draw_plot = F, tree_df = tree_df, tree_coords = c("X","Y")))
   

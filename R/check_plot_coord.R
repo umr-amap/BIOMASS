@@ -288,8 +288,8 @@ check_plot_coord <- function(proj_coord = NULL, longlat = NULL, rel_coord, trust
     }
     proj_coord_plot$whatpoint <- factor(proj_coord_plot$whatpoint, levels = c("GPS measurements","Outliers (discarded)","Reference corners","Trees"))
     arrow_plot <- data.frame(X = rep(corner_coord$x_proj[1]), Y =rep(corner_coord$y_proj[1]),
-                             Xend = c(corner_coord$x_proj[1]+(corner_coord$x_proj[4]-corner_coord$x_proj[1])/4,corner_coord$x_proj[1]+(corner_coord$x_proj[2]-corner_coord$x_proj[1])/4),
-                             Yend = c(corner_coord$y_proj[1]+(corner_coord$y_proj[4]-corner_coord$y_proj[1])/4,corner_coord$y_proj[1]+(corner_coord$y_proj[2]-corner_coord$y_proj[1])/4))
+                             Xend = c(corner_coord$x_proj[1]+(corner_coord$x_proj[2]-corner_coord$x_proj[1])/4,corner_coord$x_proj[1]+(corner_coord$x_proj[4]-corner_coord$x_proj[1])/4),
+                             Yend = c(corner_coord$y_proj[1]+(corner_coord$y_proj[2]-corner_coord$y_proj[1])/4,corner_coord$y_proj[1]+(corner_coord$y_proj[4]-corner_coord$y_proj[1])/4))
     
     if(exists("outliers") && nrow(outliers)!=0) {
       proj_coord_plot$whatpoint[outliers$row_number] <- "Outliers (discarded)"

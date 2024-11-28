@@ -14,11 +14,11 @@ bilinear_interpolation(
 \arguments{
 \item{coord}{a matrix or data.frame : coordinates to be transformed, with X and Y corresponding to the first two columns}
 
-\item{from_corner_coord}{a matrix or data.frame : corner coordinates of the plot in the original coordinate system, with X and Y corresponding to the first two columns}
+\item{from_corner_coord}{a matrix or data.frame : corner coordinates of the rectangular plot in the original coordinate system, with X and Y corresponding to the first two columns}
 
 \item{to_corner_coord}{a matrix or data.frame : corner coordinates of the plot in the coordinate system to be projected, with the same line order as from_corner_coord and , with X and Y corresponding to the first two columns}
 
-\item{ordered_corner}{a logical, indicating if from_corner_coord and to_corner_coord rows are sorted in correct order (clockwise or counter-clockwise)}
+\item{ordered_corner}{a logical, if TRUE : indicating that from_corner_coord and to_corner_coord rows are sorted in correct order (clockwise or counter-clockwise)}
 }
 \value{
 a data.frame containing the converted coordinates
@@ -28,6 +28,8 @@ Apply a generalized bilinear interpolation to convert any coordinates from one o
 }
 \details{
 The plot represented by the 4 coordinates in from_corner_coord must have 4 right angles, i.e. a rectangular (or square) plot.
+
+When ordered_corner = FALSE, the function automatically reassigns corners in a counter-clockwise order.
 }
 \examples{
 from_corner_coord <- expand.grid(X = c(0, 100), Y = c(0, 50))
@@ -35,8 +37,9 @@ rot_mat <- matrix(c(cos(-pi/6),sin(-pi/6),-sin(-pi/6),cos(-pi/6)),nrow=2)
 to_corner_coord <- as.matrix(from_corner_coord) \%*\% rot_mat
 to_corner_coord <- sweep(to_corner_coord, 2, c(50,100), FUN = "+")
 coord <- expand.grid(X = seq(0,100,10), Y = seq(0,50,5))
-projCoord = bilinear_interpolation(coord = coord, from_corner_coord = from_corner_coord, to_corner_coord = to_corner_coord)
-# plot(coord, xlim=c(-10,150),ylim=c(-5,200), col="blue") ; points(from_corner_coord) ; points(projCoord , col="purple") ; points(to_corner_coord, col="red")
+projCoord = bilinear_interpolation(coord = coord,
+                                   from_corner_coord = from_corner_coord,
+                                   to_corner_coord = to_corner_coord)
 }
 \references{
 C. -C. Wei and C. -H. Chen, "Generalized Bilinear Interpolation of Motion Vectors for Quad-Tree Mesh," 2008 International Conference on Intelligent Information Hiding and Multimedia Signal Processing, Harbin, China, 2008, pp. 635-638, doi: 10.1109/IIH-MSP.2008.283.
