@@ -32,9 +32,13 @@ After applying the \code{\link[=divide_plot]{divide_plot()}} function, this func
 rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
 proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
 tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
-subplots <- BIOMASS::divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
-subplot_summary(subplots , value = "metric", draw_plot = FALSE) # sum summary
-subplot_summary(subplots , value = "metric", draw_plot = FALSE, fun = median, probs=0.9) # sum summary
+subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50,
+                        tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+# Sum summary (by default)
+subplot_summary(subplots , value = "metric", draw_plot = FALSE)
+# 9th quantile summary (for example)
+subplot_summary(subplots , value = "metric", draw_plot = FALSE,
+                fun = quantile, probs=0.9)
 
 
 }

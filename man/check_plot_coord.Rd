@@ -96,7 +96,6 @@ check_plot_coord(
   draw_plot = TRUE
 )
 }
-
 }
 \author{
 Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY

@@ -69,7 +69,8 @@ subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 
 # Assigning trees to subplots
 tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
-subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+subplots <- divide_plot(rel_coord, proj_coord, 100,
+                        tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 subplots$sub_corner_coord
 subplots$tree_df
 
@@ -83,7 +84,9 @@ proj_coord <- rbind(proj_coord, proj_coord + 200)
 tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 tree_plot_ID <- rep(c("plot1","plot2"), e=50)
-subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df, c("x_tree","y_tree"), corner_plot_ID, tree_plot_ID)
+subplots <- divide_plot(rel_coord, proj_coord, 100,
+                        tree_df, c("x_tree","y_tree"),
+                        corner_plot_ID, tree_plot_ID)
 
 }
 \author{

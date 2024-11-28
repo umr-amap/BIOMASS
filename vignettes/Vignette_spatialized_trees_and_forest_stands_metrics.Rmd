@@ -24,8 +24,6 @@ require(BIOMASS)
 require(knitr)
 require(ggplot2)
 require(data.table)
-require(tidyverse)
-require(dplyr)
 ```
 
 /!\\ VIGNETTE IN PROGRESS /!\\

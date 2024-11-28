@@ -12,8 +12,8 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
-test <- TRUE
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE, eval=FALSE)
+test <- FALSE
 CACHE <- TRUE
 require(knitr)
 require(BIOMASS)

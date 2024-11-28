@@ -29,6 +29,7 @@
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
 #' @importFrom data.table data.table := setcolorder 
+#' @importFrom stats dist
 #' @examples
 #'
 #' # Rectangular plot and grid cells
@@ -42,7 +43,8 @@
 #' 
 #' # Assigning trees to subplots
 #' tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
-#' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+#' subplots <- divide_plot(rel_coord, proj_coord, 100,
+#'                         tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 #' subplots$sub_corner_coord
 #' subplots$tree_df
 #' 
@@ -56,7 +58,9 @@
 #' tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 #' corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 #' tree_plot_ID <- rep(c("plot1","plot2"), e=50)
-#' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df, c("x_tree","y_tree"), corner_plot_ID, tree_plot_ID)
+#' subplots <- divide_plot(rel_coord, proj_coord, 100,
+#'                         tree_df, c("x_tree","y_tree"),
+#'                         corner_plot_ID, tree_plot_ID)
 #'
  
 divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
