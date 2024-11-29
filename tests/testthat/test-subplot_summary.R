@@ -57,4 +57,27 @@ test_that("subplot_summary", {
   # Test with quantile function 
   res_quantile <- subplot_summary(subplots_less_tree, value = "metric", draw_plot = F, fun = quantile, probs=0.75)
   expect_equal(res_quantile$tree_summary[res_quantile$tree_summary$subplot_id=="subplot_3_2","metric_summary"],16.255414,tol=1e-5)
+  
+  # Test multiple plots 
+  multiple_rel_coord <- rbind(rel_coord , rel_coord)
+  multiple_proj_coord <- rbind(proj_coord,proj_coord)
+  multiple_rel_coord$plotID <- rep(c("plot1","plot2"),e=4)
+  multiple_tree_df <- rbind(tree_df,tree_df)
+  multiple_tree_df$plot_id <- rep(c("plot1","plot2"),e=nrow(tree_df))
+  multiple_subplots <- divide_plot(rel_coord = multiple_rel_coord[,c("x_rel","y_rel")], grid_size = 50, proj_coord = multiple_proj_coord, corner_plot_ID = multiple_rel_coord$plotID,
+                                   tree_df = multiple_tree_df , tree_coords = c("x_tree","y_tree"), tree_plot_ID = multiple_tree_df$plot_id)
+  res_multiple <- subplot_summary(multiple_subplots, value = "metric", draw_plot = F)
+  expect_equivalent(res_multiple$tree_summary[1:15,c("metric_summary","metric_summary_per_ha")] , res_less_tree$tree_summary[c("metric_summary","metric_summary_per_ha")])
+  expect_equivalent(res_multiple$tree_summary$subplot_id[1:5],c("plot1_0_0","plot1_0_1","plot1_0_2","plot1_0_3","plot1_1_0"))
+})
+
+
+test_that("ggplot_subplot_summary", {
+  set.seed(52)
+  rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
+  proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
+  subplots <- divide_plot(rel_coord, grid_size = 50)
+  tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
+  subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+  vdiffr::expect_doppelganger("disp-subplot-summary", subplot_summary(subplots, value = "metric", draw_plot = T)$plot_design)
 })
