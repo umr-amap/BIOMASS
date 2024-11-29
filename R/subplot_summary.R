@@ -63,7 +63,9 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
   if(any(duplicated(tree_summary$subplot_id))) {
     stop("the function supplied using `fun` must return a single value")
   }
-  tree_summary[,plot_id:=sapply(strsplit(tree_summary$subplot_id,"_"),function(x)x[[1]])] #Add plot_id to be able to loop on it
+  tree_summary[, plot_id:= #Add plot_id to be able to loop on it
+                 sapply(strsplit(tree_summary$subplot_id,"_"),
+                        function(x) paste(x[-((length(x)-1) : length(x))],collapse="_"))] # instead of function(x) x[1] in case plot_id contains any "_"
   
   sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_id"), function(dat) {
     
@@ -111,7 +113,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
       }
         
       print(plot_design)
-      plot_design
+      return(invisible(plot_design))
     })
     names(plot_list) <- unique(tree_summary$plot_id)
     
