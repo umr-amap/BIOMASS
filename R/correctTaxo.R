@@ -218,66 +218,74 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     # split missing taxo in chunks of 30
     slices <- split(missingTaxo[, slice := ceiling(.I / BATCH_SIZE)], by = "slice", keep.by = TRUE)
 
-    # for each slice of queries
-    if (verbose) {
-      pb <- utils::txtProgressBar(style = 3)
-    }
-    queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-
-      req <- httr2::request("https://tnrsapi.xyz/tnrs_api.php")
-      req <- httr2::req_headers(req,
-        'Accept' = 'application/json',
-        'Content-Type' = "application/json",
-        'charset' = "UTF-8"
-      )
-      req <- httr2::req_body_json(req, list(
-        opts = list(
-          class = jsonlite::unbox("wfo"),
-          mode = jsonlite::unbox("resolve"),
-          matches = jsonlite::unbox("best")
-        ),
-        data = unname(data.frame(seq_along(slice$query),slice$query))
-      ))
-
-      req <- httr2::req_error(req, function(response) FALSE)
-      qryResult <- httr2::req_perform(req)
-
-      if (httr2::resp_is_error(qryResult)) {
-        message("There appears to be a problem reaching the tnrs API.")
-        return(invisible(NULL))
+    queriedTaxo <- tryCatch(
+      {
+        pb <- if(verbose) utils::txtProgressBar(style = 3)
+        # for each slice of queries
+        queriedTaxo <- rbindlist(lapply(slices, function(slice) {
+          
+          req <- httr2::request("https://tnrsapi.xyz/tnrs_api.php")
+          req <- httr2::req_headers(req,
+            'Accept' = 'application/json',
+            'Content-Type' = "application/json",
+            'charset' = "UTF-8"
+          )
+          req <- httr2::req_body_json(req, list(
+            opts = list(
+              class = jsonlite::unbox("wfo"),
+              mode = jsonlite::unbox("resolve"),
+              matches = jsonlite::unbox("best")
+            ),
+            data = unname(data.frame(seq_along(slice$query),slice$query))
+          ))
+          
+          req <- httr2::req_timeout(req, 20)
+          qryResult <- httr2::req_perform(req)
+          
+          # parse answer from tnrs
+          answer <- setDT(httr2::resp_body_json(qryResult, simplifyVector = TRUE))
+          
+          # recode empty strings as NA
+          answer[, names(answer) := lapply(.SD, function(x) {
+            x[x==""]<-NA
+            x
+          })]
+          
+          # format result
+          answer <- answer[, .(
+            submittedName = Name_submitted,
+            score = as.numeric(Overall_score),
+            matchedName = Name_matched,
+            from = "iplant_tnrs",
+            acceptedName = Accepted_name
+          )]
+          
+          if (verbose) {
+            utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
+          }
+          
+          Sys.sleep(WAIT_DELAY)
+          
+          answer
+        }))        
+      },
+      error = function(e) {
+        NA
+      },
+      finally = {
+        if(!is.null(pb)) {
+          close(pb)
+          pb <- NULL
+        }
       }
-
-      # parse answer from tnrs
-      answer <- setDT(httr2::resp_body_json(qryResult, simplifyVector = TRUE))
-
-      # recode empty strings as NA
-      answer[, names(answer) := lapply(.SD, function(x) {
-        x[x==""]<-NA
-        x
-      })]
-
-      # format result
-      answer <- answer[, .(
-        submittedName = Name_submitted,
-        score = as.numeric(Overall_score),
-        matchedName = Name_matched,
-        from = "iplant_tnrs",
-        acceptedName = Accepted_name
-      )]
-
-      if (verbose) {
-        utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
-      }
-
-      Sys.sleep(WAIT_DELAY)
-
-      answer
-    }))
-    if (verbose) {
-      close(pb)
-    }
+    )
   }
 
+  if(is.na(queriedTaxo)) {
+    warning("There seem to be a problem reaching the TNRS API!", immediate. = TRUE, call. = FALSE)
+    return(invisible(NULL))
+  }
+  
   # build reference taxonomy from cached and queried ones
   fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
 
