@@ -217,10 +217,11 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
 
     # split missing taxo in chunks of 30
     slices <- split(missingTaxo[, slice := ceiling(.I / BATCH_SIZE)], by = "slice", keep.by = TRUE)
-
+    
+    pb <- if(verbose) utils::txtProgressBar(style = 3)
+    
     queriedTaxo <- tryCatch(
       {
-        pb <- if(verbose) utils::txtProgressBar(style = 3)
         # for each slice of queries
         queriedTaxo <- rbindlist(lapply(slices, function(slice) {
           
@@ -270,19 +271,20 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
         }))        
       },
       error = function(e) {
-        NA
+        structure(list(), message = e$message)
       },
       finally = {
+        # close progress bar
         if(!is.null(pb)) {
           close(pb)
-          pb <- NULL
         }
       }
     )
   }
 
-  if(is.na(queriedTaxo)) {
-    warning("There seem to be a problem reaching the TNRS API!", immediate. = TRUE, call. = FALSE)
+  if(nrow(missingTaxo) && is.null(nrow(queriedTaxo))) {
+    warning("There seem to be a problem reaching the TNRS API!\n", 
+      attr(queriedTaxo, "message"), immediate. = TRUE, call. = FALSE)
     return(invisible(NULL))
   }
   
