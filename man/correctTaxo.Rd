@@ -57,7 +57,7 @@ Cache path discovery protocol
 }
 
 \examples{
-\donttest{
+\dontrun{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
 correctTaxo(genus = "Astrocarium standleanum")
 }
