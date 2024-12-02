@@ -45,12 +45,12 @@ test_that("divide_plot on relative coordinates only", {
   rel_coord <- expand.grid(x_field = c(0, 100), y_field = c(0, 100))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
   expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,50,0), y_rel=c(0,0,50,50)))
-  
+
   # Test when rel_coord contains more than 2 columns 
   rel_coord$other_col <- rnorm(ncol(rel_coord))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50)
   expect_equal(subplots[1:4,] , data.frame(subplot_id=rep("subplot_0_0",4),x_rel=c(0,50,50,0), y_rel=c(0,0,50,50)))
-  
+
   # Test rectangular division
   rect_subplots <- divide_plot(rel_coord, grid_size = c(25,50))
   expect_equivalent(rect_subplots[29:32,] , data.frame(subplot_id=rep("subplot_3_1",4),x_rel=c(75,100,100,75), y_rel=c(50,50,100,100)))
@@ -72,11 +72,10 @@ test_that("divide_plot on relative coordinates only", {
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = c(50,25))
   #ggplot(subplots,aes(x=x_rel,y=y,label=subplot_id)) + geom_point() + geom_text(position = position_jitter()) + coord_equal()
   expect_equivalent(subplots[5:8,] , data.frame(subplot_id=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)))
-  
+
   # Test non-adjusted grid 
   subplots <- suppressWarnings(divide_plot(rel_coord = rel_coord, grid_size = c(45,20), grid_tol = 0.3, centred_grid = T))
   expect_equivalent(subplots[5:8,] , data.frame(subplot_id=rep("subplot_1_0",4),x=c(50,95,95,50), y=c(5,5,25,25)))
-  
 })
   
 test_that("divide_plot with projected coordinates", {
@@ -109,12 +108,12 @@ test_that("divide_plot with projected coordinates", {
   proj_coord <- as.data.frame(proj_coord)
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50, proj_coord = proj_coord)
   expect_equal(names(subplots) , c("subplot_id", "x_rel", "y_rel", "x_proj", "y_proj"))
-  
+
   # Test when proj_coord contains more than 2 columns 
   proj_coord$other_col <- rnorm(ncol(proj_coord))
   subplots <- divide_plot(rel_coord = rel_coord, grid_size = 50, proj_coord = proj_coord)
   expect_equal(names(subplots) , c("subplot_id", "x_rel", "y_rel", "x_proj", "y_proj"))
-  
+
   # Test rectangular plot with rectangular division
   rel_coord <- expand.grid(x = c(0, 100), y = c(0, 75))
   proj_coord <- as.matrix(rel_coord) %*% rot_mat

@@ -1,3 +1,23 @@
+* version 2.2
+- Modified bilinear interpolation to generalized bilinear interpolation that can deal with rectangular plot and non (0;0) origin corner plot
+- Added check_plot_coord function which will replace correctCoordGPS() :
+  - calculation of projected coordinates of plot corners depend on trust_GPS_corners argument : if TRUE, a bilinear interpolation is applied (after averaging plot corners and removing outliers) to retrieve tree projected coordinates, if FALSE a procrust analyses is applied as before
+  - rangeX and rangeY are no longer needed : they are calculated using relative coordinates dimensions of the plot corners
+  - a ggplot is returned as output instead of a plot of the plot
+  - calculation of the projected coordinates of the trees is done, using tree_df and tree_coords arguments
+- Added divide_plot function which will replace cutPlot()
+  - No corner numerotation is needed anymore, neither dimX and dimY (the dimensions of the plot)
+  - plot division is made on relative coordinates and then transformed in projected coordinates (if supplied) with a bilinear interpolation
+  - trees are attributed to each subplot using tree_df and tree_coords agruments
+  - Message warning if the grid dimensions don't match the plot dimensions
+  - Used of the argument grid_tol to control the plot area which is included in the grid
+  - The grid can be plot-centred using centred_grid argument
+- Added subplot_summary which will replace summaryByPlot
+  - the function can take any tree metric using the value argument
+  - any valid function can be applied as a summary
+  - a ggplot is returned as output instead of just plot the plot division
+- Added "Spatialized trees and forest stands metrics with BIOMASS" vignette which will replace the "Manage trees and plot coordinates with BIOMASS" vignette
+
 * version 2.1.14
 - Fix an issue about the inversion of subplot locations in cutPlot
 - Change the automatic corner numbering from counter-clockwise to clockise direction in cutPlot

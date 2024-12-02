@@ -38,7 +38,6 @@ test_that("check_plot_coord error", {
   expect_error(check_plot_coord(proj_coord=proj_coord, rel_coord=rel_coord, trust_GPS_corners=T,corner_ID = wrong_corner_ID),"corner_ID instead of 4")
 })
 
-
 test_that("check_plot_coord outputs and outliers", {
   # with max dist equal 10
   expect_warning(
@@ -164,9 +163,7 @@ test_that("check_plot_coord, tree coordinates", {
   expect_equivalent(res$tree_proj_coord , sweep(tree_df, 2, c(200000,9000000), FUN = "+"))
   tree_df$AGB <- c(20,25,30)  
   expect_equal(res, check_plot_coord(proj_coord = proj_coord, rel_coord = rel_coord, trust_GPS_corners = T, rm_outliers = T, corner_ID = corner_ID, draw_plot = F, tree_df = tree_df, tree_coords = c("X","Y")))
-  
 })
-
 
 test_that("check_plot_coord, splashed corners", {
   proj_coord <- data.frame(
@@ -184,8 +181,3 @@ test_that("check_plot_coord, splashed corners", {
   corner_ID <- rep(c("SW","NW","SE","NE"),e=4)
   expect_error(suppressWarnings(check_plot_coord(proj_coord = proj_coord, rel_coord = rel_coord, trust_GPS_corners = T, corner_ID = corner_ID, rm_outliers = T, draw_plot = F, max_dist = 5)))
 })
-
-
-
-
-

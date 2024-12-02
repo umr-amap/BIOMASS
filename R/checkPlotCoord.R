@@ -236,7 +236,7 @@ checkPlotCoord <- function(projCoord = NULL, longlat = NULL, relCoord, trustGPSc
     
     cornerCoord <- data.frame(cbind(cornerProjCoord[,1:2], cornerRelCoord[,1:2]))
     colnames(cornerCoord) <- c("x_proj","y_proj","x_rel","y_rel")
-    
+
     if(!is.null(cornerID)) cornerCoord$cornerID <- unique(cornerID)
   } # End trustGPScorners = "FALSE"
   

@@ -76,7 +76,6 @@
 #'   draw_plot = TRUE
 #' )
 #' }
-#'
 check_plot_coord <- function(proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, corner_ID=NULL, max_dist = 15, rm_outliers = TRUE,  draw_plot = TRUE, tree_df = NULL, tree_coords=NULL) {
   
   # Checking arguments -------------------------------------------------
@@ -135,7 +134,6 @@ check_plot_coord <- function(proj_coord = NULL, longlat = NULL, rel_coord, trust
   if (!is.null(corner_ID) && length(unique(corner_ID)) !=4) {
     stop(paste(length((unique(corner_ID))),"unique corners are detected in corner_ID instead of 4"))
   }
-  
   
   # function -------------------------------------------------------------------
   

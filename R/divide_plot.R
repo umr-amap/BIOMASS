@@ -6,8 +6,8 @@
 #' @details
 #'  If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
 #' 
-#' @param rel_coord a data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively
-#' @param proj_coord a data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord
+#' @param rel_coord a matrix or data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively
+#' @param proj_coord a matrix or data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord
 #' @param grid_size a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
 #' @param tree_df a data frame containing tree relative coordinates and other tree metrics (one row per tree).
 #' @param tree_coords a character vector of size 2 containing the column names of the relative coordinates of the trees.
@@ -29,6 +29,7 @@
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
 #' @importFrom data.table data.table := setcolorder 
+#' @importFrom stats dist
 #' @examples
 #'
 #' # Rectangular plot and grid cells
@@ -37,12 +38,13 @@
 #' 
 #' # Squared plot and projected coordinates associated
 #' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
-#' proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
+#' proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
 #' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 #' 
 #' # Assigning trees to subplots
 #' tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
-#' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+#' subplots <- divide_plot(rel_coord, proj_coord, 100,
+#'                         tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 #' subplots$sub_corner_coord
 #' subplots$tree_df
 #' 
@@ -56,17 +58,19 @@
 #' tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 #' corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 #' tree_plot_ID <- rep(c("plot1","plot2"), e=50)
-#' subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df, c("x_tree","y_tree"), corner_plot_ID, tree_plot_ID)
+#' subplots <- divide_plot(rel_coord, proj_coord, 100,
+#'                         tree_df, c("x_tree","y_tree"),
+#'                         corner_plot_ID, tree_plot_ID)
 #'
  
 divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
   
-  # Parameters verification ----------------------------------------------------
+  # Checking parameters --------------------------------------------------------
   if (is.matrix(rel_coord)) {
-    rel_coord <- data.frame(x_rel=rel_coord[,1],y_rel=rel_coord[,2])
+    rel_coord <- data.frame(rel_coord)
   }
   if (!is.null(proj_coord) && !is.data.frame(proj_coord)) {
-    proj_coord <- data.frame(x_proj=proj_coord[,1], y_proj=proj_coord[,2])
+    proj_coord <- data.frame(proj_coord)
   }
   if (!is.null(corner_plot_ID) && nrow(rel_coord) != length(corner_plot_ID)) {
     stop("The length of corner_plot_ID and the number of rows of rel_coord are different")
@@ -106,7 +110,7 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL,
   }
   
   
-  # Formatting data  -----------------------------------------------------------
+  # Data processing ------------------------------------------------------------
   
   if(length(grid_size)!=2) grid_size = rep(grid_size,2)
 
@@ -117,7 +121,6 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL,
   } else{
     rel_coord[,corner_plot_ID:=""]
   }
-  setcolorder(rel_coord , "corner_plot_ID" , after = 2) # if rel_coord has more than 2 col
 
   # Sorting rows in a counter-clockwise direction and check for non-rectangular plot
   sort_rows <- function(dat) {
@@ -187,6 +190,7 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL,
   sub_corner_coord <- combine_coord[, divide_plot_fct(.SD, grid_size), by = corner_plot_ID, .SDcols = colnames(combine_coord)]
   
   # Assigning trees to subplots -------------------------------------------------------------
+  
   if(!is.null(tree_df)) {
     tree_df <- as.data.table(tree_df)
     
@@ -205,13 +209,13 @@ divide_plot <- function(rel_coord, proj_coord = NULL, grid_size, tree_df = NULL,
     if (anyNA(tree_df[, subplot_id])) {
       warning("One or more trees could not be assigned to a subplot (not in a subplot area)")
     }
+
     if(is.null(tree_plot_ID)) {
       tree_df[ , c("subplot_id","plot_id") := list(paste0("subplot",subplot_id),NULL)]
     } 
   }
   
-  
-  # returns --------------------------------------------------------------------
+  # Returns --------------------------------------------------------------------
   
   if(is.null(corner_plot_ID)) {
     sub_corner_coord[ , c("subplot_id","corner_plot_ID") := list(paste0("subplot",subplot_id),NULL)]

@@ -17,9 +17,9 @@ divide_plot(
 )
 }
 \arguments{
-\item{rel_coord}{a data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively}
+\item{rel_coord}{a matrix or data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively}
 
-\item{proj_coord}{a data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord}
+\item{proj_coord}{a matrix or data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord}
 
 \item{grid_size}{a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
@@ -64,12 +64,13 @@ subplots <- divide_plot(rel_coord = rel_coord, grid_size = c(100,50))
 
 # Squared plot and projected coordinates associated
 rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
-proj_coord <- data.frame(x_proj = c(110, 190, 60, 145), y_proj = c(110, 160, 196, 245))
+proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
 subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 
 # Assigning trees to subplots
 tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
-subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+subplots <- divide_plot(rel_coord, proj_coord, 100,
+                        tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
 subplots$sub_corner_coord
 subplots$tree_df
 
@@ -83,7 +84,9 @@ proj_coord <- rbind(proj_coord, proj_coord + 200)
 tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 tree_plot_ID <- rep(c("plot1","plot2"), e=50)
-subplots <- divide_plot(rel_coord, proj_coord, 100, tree_df, c("x_tree","y_tree"), corner_plot_ID, tree_plot_ID)
+subplots <- divide_plot(rel_coord, proj_coord, 100,
+                        tree_df, c("x_tree","y_tree"),
+                        corner_plot_ID, tree_plot_ID)
 
 }
 \author{
