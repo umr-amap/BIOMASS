@@ -142,6 +142,8 @@
 <span class="r-in"><span>  rmOutliers <span class="op">=</span> <span class="cn">FALSE</span> , drawPlot <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>please, use check_plot_coord() instead of checkPlotCoord(). `checkPlotCoord` will be removed in the next version </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Be carefull, you may have GNSS measurement outliers. </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Removing them may improve the georeferencing of your plot (see  the rmOutliers argument).</span>
 <span class="r-in"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu">checkPlotCoord</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  projCoord <span class="op">=</span> <span class="va">projCoord</span>, relCoord <span class="op">=</span> <span class="va">relCoord</span>,</span></span>
 <span class="r-in"><span>  trustGPScorners <span class="op">=</span> <span class="cn">FALSE</span>, </span></span>
@@ -160,27 +162,28 @@
 <span class="r-plt img"><img src="checkPlotCoord-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $cornerCoord</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x_proj   y_proj x_rel y_rel cornerID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1010.415 1009.665     0     0       SW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1094.374 1009.251   100     0       SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 1102.096 1102.775   100   100       NE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1009.983 1100.338     0   100       NW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1010.161 1009.387     0     0       SW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1098.682 1010.475   100     0       SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 1102.502 1097.780   100   100       NE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1009.487 1107.287     0   100       NW</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry set for 1 feature </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 1009.983 ymin: 1009.251 xmax: 1102.096 ymax: 1102.775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 1009.487 ymin: 1009.387 xmax: 1102.502 ymax: 1107.287</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> POLYGON ((1010.415 1009.665, 1094.374 1009.251,...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> POLYGON ((1010.161 1009.387, 1098.682 1010.475,...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $outliers</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x_proj   y_proj cornerID  nRow</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;num&gt;    &lt;num&gt;   &lt;char&gt; &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 1010.644 1085.660       NW     7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2: 1011.531 1111.887       NW     8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3: 1114.752 1009.414       SE    13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4: 1116.213 1008.822       SE    14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5: 1103.418 1090.059       NE    16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 1009.072 1080.749       NW     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: 1010.869 1113.861       NW     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3: 1008.089 1085.732       NW     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4: 1119.314 1011.496       SE    11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5: 1084.231 1009.394       SE    15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6: 1093.754 1108.305       NE    18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $plotDesign</span>
 <span class="r-plt img"><img src="checkPlotCoord-2.png" alt="" width="700" height="433"></span>

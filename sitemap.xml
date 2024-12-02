@@ -6,7 +6,6 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/plot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/authors.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/index.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/readme.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/AGBmonteCarlo.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/BIOMASS-package.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/HDmethods.html</loc></url>
@@ -44,6 +43,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/procrust.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/retrieveH.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/sd_10.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/subplot_summary.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/summaryByPlot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/wdData.html</loc></url>
 </urlset>
