@@ -5,48 +5,60 @@
 \title{Check coordinates of plot corners and trees}
 \usage{
 check_plot_coord(
+  corner_data,
   proj_coord = NULL,
   longlat = NULL,
   rel_coord,
   trust_GPS_corners,
-  corner_ID = NULL,
-  max_dist = 15,
-  rm_outliers = TRUE,
   draw_plot = TRUE,
-  tree_df = NULL,
-  tree_coords = NULL
+  tree_data = NULL,
+  tree_coords = NULL,
+  corner_ID = NULL,
+  max_dist = 10,
+  rm_outliers = TRUE,
+  plot_ID = NULL,
+  tree_plot_ID = NULL,
+  ask = T
 )
 }
 \arguments{
-\item{proj_coord}{(optional, if longlat is not supplied) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively.}
+\item{corner_data}{A data frame, data frame extension, containing the plot corner coordinates.}
 
-\item{longlat}{(optional, if proj_coord is not supplied) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively}
+\item{proj_coord}{(optional, if longlat is not supplied) A character vector specifying the column names of the corner projected coordinates (x,y)}
 
-\item{rel_coord}{a data frame containing the plot corner coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively, and with the same row order than longlat or proj_coord}
+\item{longlat}{(optional, if proj_coord is not supplied) A character vector specifying the column names of the corner geographic coordinates (long,lat).}
 
-\item{trust_GPS_corners}{a logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.}
+\item{rel_coord}{A character vector specifying the column names of the corner relative coordinates (that of the field, ie, the local ones).}
 
-\item{corner_ID}{a vector indicating the ID of the corners (e.g c("SE","SE",...)) in the case you have multiple measurements for each corner}
+\item{trust_GPS_corners}{A logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.}
 
-\item{max_dist}{a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)}
+\item{draw_plot}{A logical indicating if the plot design should be displayed and returned.}
 
-\item{rm_outliers}{a logical indicating if detected outliers are removed from the coordinate calculation}
+\item{tree_data}{A data frame, data frame extension, containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics.}
 
-\item{draw_plot}{a logical indicating if the plot design should be displayed and returned}
+\item{tree_coords}{A character vector specifying the column names of the tree relative coordinates.}
 
-\item{tree_df}{a data frame containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics}
+\item{corner_ID}{If dealing with repeated measurements of each corner : a character specifying the ID of the corners.}
 
-\item{tree_coords}{a character vector of length 2 containing the column names of the relative coordinates in tree_df}
+\item{max_dist}{If dealing with repeated measurements of each corner : the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m).}
+
+\item{rm_outliers}{If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.}
+
+\item{plot_ID}{If dealing with multiple plots : a character indicating the variable name for corner plot IDs in corner_data.}
+
+\item{tree_plot_ID}{If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.}
+
+\item{ask}{If TRUE and dealing with multiple plots, then prompt user before displaying each plot.}
 }
 \value{
 Returns a list including :
 \itemize{
 \item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot
 \item \code{polygon}: a spatial polygon
-\item \code{outliers}: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS points considered outliers
+\item \code{tree_proj_coord}: if \code{tree_data} is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)
+\item \code{outliers}: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
 \item \code{UTM_code}: if \code{longlat} is supplied, a character containing the UTM code of the GPS coordinates
-\item \code{tree_proj_coord}: if \code{tree_df} is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)
 }
 }
 \description{
@@ -60,41 +72,28 @@ If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate sy
 If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
 }
 \examples{
-proj_coord <- data.frame(
-  X = c(
-    runif(5, min = 9, max = 11), runif(5, min = 8, max = 12),
-    runif(5, min = 80, max = 120), runif(5, min = 90, max = 110)
-  ),
-  Y = c(
-    runif(5, min = 9, max = 11), runif(5, min = 80, max = 120),
-    runif(5, min = 8, max = 12), runif(5, min = 90, max = 110)
-  )
-)
-proj_coord <- proj_coord + 1000
-rel_coord <- data.frame(
-  X = c(rep(0, 10), rep(100, 10)),
-  Y = c(rep(c(rep(0, 5), rep(100, 5)), 2))
-)
-corner_ID <- rep(c("SW","NW","SE","NE"),e=5)
+
+set.seed(52)
+corner_data <- data.frame(
+  x_proj = c( rnorm(5, 0, 5), rnorm(5, 0, 5),
+              rnorm(5, 100, 5), rnorm(5, 100, 5)) + 1000,
+  y_proj = c( rnorm(5, 0, 5), rnorm(5, 100, 5),
+              rnorm(5, 0, 5), rnorm(5, 100, 5)) + 1000,
+  x_rel = c(rep(0, 10), rep(100, 10)),
+  y_rel = c(rep(c(rep(0, 5), rep(100, 5)), 2)),
+  corner_ID = rep(c("SW","NW","SE","NE"),e=5) )
 
 aa <- check_plot_coord(
-  proj_coord = proj_coord, rel_coord = rel_coord,
-  trust_GPS_corners = TRUE, corner_ID = corner_ID,
-  rm_outliers = FALSE , draw_plot = FALSE
+ corner_data = corner_data,
+ proj_coord = c("x_proj","y_proj"), rel_coord = c("x_rel","y_rel"),
+ trust_GPS_corners = TRUE,
+ corner_ID = "corner_ID",
+ draw_plot = FALSE, rm_outliers = F
 )
-bb <- check_plot_coord(
-  proj_coord = proj_coord, rel_coord = rel_coord,
-  trust_GPS_corners = FALSE, 
-  rm_outliers = TRUE, max_dist = 10,
-  draw_plot = FALSE
-)
+
+aa$corner_coord
 \donttest{
-check_plot_coord(
-  proj_coord = proj_coord, rel_coord = rel_coord,
-  trust_GPS_corners = TRUE, corner_ID = corner_ID,
-  rm_outliers = TRUE , max_dist = 10,
-  draw_plot = TRUE
-)
+  aa$plot_design
 }
 }
 \author{
