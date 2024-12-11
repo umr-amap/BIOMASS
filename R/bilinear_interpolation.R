@@ -66,7 +66,7 @@ bilinear_interpolation = function(coord, from_corner_coord, to_corner_coord, ord
   }
 
   # Verification of a rectangular plot for from_corner_coord
-  if(!all(abs(stats::dist(rbind(from_corner_coord[,1:2],centroid))[c(4,7,9,10)] - mean(stats::dist(rbind(from_corner_coord[,1:2],centroid))[c(4,7,9,10)]))<0.1)) {
+  if(!all(abs(stats::dist(rbind(from_corner_coord[,1:2],centroid))[c(4,7,9,10)] - mean(stats::dist(rbind(from_corner_coord[,1:2],centroid))[c(4,7,9,10)]))<0.01)) {
     stop("The plot in the relative coordinate system is not a rectangle (or a square). You may consider using trustGPScorners = F")
   }
   
