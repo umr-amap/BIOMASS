@@ -9,6 +9,10 @@
 #' If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 #' 
 #' If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
+#' 
+#' If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.
+#' 
+#' When ref_raster is supplied, this raster is cropped for every plot contained in corner_data. 
 #'
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates.
 #' @param proj_coord (optional, if longlat is not supplied) A character vector specifying the column names of the corner projected coordinates (x,y)
@@ -23,6 +27,7 @@
 #' @param rm_outliers If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.
 #' @param plot_ID If dealing with multiple plots : a character indicating the variable name for corner plot IDs in corner_data.
 #' @param tree_plot_ID If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.
+#' @param ref_raster A SpatRaster object from terra package, typically a chm raster created from LiDAR data  
 #' @param ask If TRUE and dealing with multiple plots, then prompt user before displaying each plot. 
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
@@ -40,8 +45,9 @@
 #' @importFrom data.table data.table := setnames %between% copy
 #' @importFrom sf st_multipoint st_polygon st_sfc
 #' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank
+#' @importFrom terra vect crop as.data.frame
 #'
-#' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
+#' @author  Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN
 #'
 #' @examples
 #' 
@@ -68,7 +74,7 @@
 #'   aa$plot_design
 #' }
 
-check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords=NULL, corner_ID=NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ask = T) {
+check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords=NULL, corner_ID=NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, ask = T) {
   
   ##### Checking arguments -----------------------------------------------------
   
@@ -141,10 +147,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   if(!is.null(proj_coord)) {
     setnames(corner_dt, old = proj_coord, new = c("x_proj","y_proj"))
-  } else{
+  }
+  if(!is.null(longlat)) {
     setnames(corner_dt, old = longlat, new = c("long","lat"))
   }
-  
   if( !is.null(corner_ID) ) setnames(corner_dt, old = corner_ID, new = "corner_ID")
   
   if(!is.null(plot_ID)) {
@@ -183,7 +189,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
   
   # Apply latlong2UTM_fct to all plots if necessary
-  if(is.null(proj_coord)) {
+  if(!is.null(longlat)) {
     UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
   }
   
@@ -346,10 +352,26 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   corner_polygon <- st_sfc( lapply( split(corner_checked,corner_checked$plot_ID) , create_polygon ) )
     
   ### Draw the plot ------------------------------------------------------------
-  draw_plot_fct <-  function(corner_dat) { # corner_dat = corner_dt[plot_ID=="",]
+  draw_plot_fct <-  function(corner_dat) { # corner_dat = corner_dt
     
     current_plot_ID <- unique(corner_dat$plot_ID)
     corner_dat <- corner_dat[, c("plot_ID","x_proj","y_proj")]
+    
+    # Raster CHM
+    if(!is.null(ref_raster)) {
+      # Convert the polygon into a terra::SpatVector
+      terra_polygon <- vect(corner_polygon[[match(current_plot_ID,names(corner_polygon))]])
+      # Crop raster to represent the plot
+      plot_raster <- crop(ref_raster, terra_polygon, mask=T )
+      # Convert the SpatRaster into a data frame
+      plot_raster <- as.data.frame(plot_raster, xy=TRUE)
+      # plot the raster
+      plot_design <- ggplot() +
+        geom_raster(data = plot_raster, mapping = aes(x=x,y=y,fill=csm_Nou_2022_1m)) +
+        scale_fill_gradientn(colours = rev(terrain.colors(10)))
+    } else {
+      plot_design <- ggplot()
+    }
     
     # All GPS measurements :
     corner_dat[ , whatpoint := "GPS measurements"]
@@ -378,22 +400,21 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     y1 <- corner_dat[whatpoint == "Reference corners" , y_proj][2]
     x2 <- corner_dat[whatpoint == "Reference corners" , x_proj][4]
     y2 <- corner_dat[whatpoint == "Reference corners" , y_proj][4]
-    
     arrow_plot <- data.frame(x = x0, y = y0,
                              x_end = c(x0 + (x1-x0) / 4, x0 + (x2-x0) / 4),
                              y_end = c(y0 + (y1-y0) / 4, y0 + (y2-y0) / 4))
     
-    plot_design <- ggplot2::ggplot(data = corner_dat) +
-      geom_point(aes(x = x_proj, y = y_proj, col = whatpoint, shape = whatpoint), size=2) + 
-        scale_shape_manual(values=c(2,4,15,1,1), drop=FALSE) +
-        scale_color_manual(values=c('black','red',"black","#994F00","#006CD1"), drop = FALSE) +
-        geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
-        geom_segment(data=arrow_plot, mapping=aes(x=x,y=y,xend=x_end,yend=y_end), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
-        geom_text(data = arrow_plot, mapping = aes(x=x_end,y=y_end,label=c("x_rel","y_rel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
-        ggtitle(paste("Plot",current_plot_ID)) +
-        theme_minimal() + 
-        theme(legend.title=element_blank())+
-        coord_equal()
+    plot_design <- plot_design + 
+      geom_point(data = corner_dat, mapping = aes(x = x_proj, y = y_proj, col = whatpoint, shape = whatpoint), size=2) + 
+      scale_shape_manual(values=c(2,4,15,1,1), drop=FALSE) +
+      scale_color_manual(values=c('black','red',"black","#994F00","#006CD1"), drop = FALSE) +
+      geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
+      geom_segment(data=arrow_plot, mapping=aes(x=x,y=y,xend=x_end,yend=y_end), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
+      geom_text(data = arrow_plot, mapping = aes(x=x_end,y=y_end,label=c("x_rel","y_rel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
+      ggtitle(paste("Plot",current_plot_ID)) +
+      theme_minimal() + 
+      theme(legend.title=element_blank())+
+      coord_equal()
     
     if(draw_plot) print(plot_design)
     

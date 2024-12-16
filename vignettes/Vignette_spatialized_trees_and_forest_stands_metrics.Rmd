@@ -104,6 +104,15 @@ check_plot_trust_GPS <- check_plot_coord(
   trust_GPS_corners = T, corner_ID = corner_coord$Corners,
   draw_plot = TRUE,
   max_dist = 10, rm_outliers = TRUE )
+
+check_plot_trust_GPS <- check_plot_coord(
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  proj_coord = c("xProj", "yProj"), 
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
+  draw_plot = TRUE,
+  max_dist = 10, rm_outliers = TRUE )
 ```
 
 The two blue arrows represent the relative coordinate system when projected into the projected coordinate system. 

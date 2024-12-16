@@ -18,6 +18,7 @@ check_plot_coord(
   rm_outliers = TRUE,
   plot_ID = NULL,
   tree_plot_ID = NULL,
+  ref_raster = NULL,
   ask = T
 )
 }
@@ -48,6 +49,8 @@ check_plot_coord(
 
 \item{tree_plot_ID}{If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.}
 
+\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data}
+
 \item{ask}{If TRUE and dealing with multiple plots, then prompt user before displaying each plot.}
 }
 \value{
@@ -70,6 +73,10 @@ If trust_GPS_corners is TRUE, corner coordinates in the projected coordinate sys
 If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 
 If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
+
+If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.
+
+When ref_raster is supplied, this raster is cropped for every plot contained in corner_data.
 }
 \examples{
 
@@ -98,4 +105,6 @@ aa$corner_coord
 }
 \author{
 Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
+
+Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN
 }
