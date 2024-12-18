@@ -19,6 +19,7 @@ check_plot_coord(
   plot_ID = NULL,
   tree_plot_ID = NULL,
   ref_raster = NULL,
+  prop_tree = NULL,
   ask = T
 )
 }
@@ -49,7 +50,9 @@ check_plot_coord(
 
 \item{tree_plot_ID}{If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.}
 
-\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data}
+\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data.}
+
+\item{prop_tree}{The column name variable of tree_data for which the tree visualization will be proportional.}
 
 \item{ask}{If TRUE and dealing with multiple plots, then prompt user before displaying each plot.}
 }
@@ -58,7 +61,7 @@ Returns a list including :
 \itemize{
 \item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot
 \item \code{polygon}: a spatial polygon
-\item \code{tree_proj_coord}: if \code{tree_data} is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)
+\item \code{tree_data}: if \code{tree_data} is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 \item \code{outliers}: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
 \item \code{UTM_code}: if \code{longlat} is supplied, a character containing the UTM code of the GPS coordinates

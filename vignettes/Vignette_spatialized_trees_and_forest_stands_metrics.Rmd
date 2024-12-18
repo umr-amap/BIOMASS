@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE, echo = TRUE,
   comment = "#>", fig.align = "center"
 )
-require(BIOMASS)
+#require(BIOMASS)
 require(knitr)
 require(ggplot2)
 require(data.table)
@@ -94,16 +94,16 @@ You can give either GPS coordinates (with the longlat argument) or another proje
 
 If **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), you will need to provide the corner names via the `corner_ID` argument. In this case, each coordinates will be averaging by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the rm_outliers and max_dist arguments. 
 
-If only **4 GPS measurements** have been taken **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
+If only **1 GPS measurements by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
 ```{r dpi=200}
-check_plot_trust_GPS <- check_plot_coord(
-  longlat = corner_coord[c("Long", "Lat")],
-  # Or, if exists : proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = corner_coord[c("xRel", "yRel")],
-  trust_GPS_corners = T, corner_ID = corner_coord$Corners,
-  draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE )
+# check_plot_trust_GPS <- check_plot_coord(
+#   longlat = corner_coord[c("Long", "Lat")],
+#   # Or, if exists : proj_coord = corner_coord[c("xProj", "yProj")], 
+#   rel_coord = corner_coord[c("xRel", "yRel")],
+#   trust_GPS_corners = T, corner_ID = corner_coord$Corners,
+#   draw_plot = TRUE,
+#   max_dist = 10, rm_outliers = TRUE )
 
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = corner_coord,
@@ -125,10 +125,18 @@ Let's degrade the data to simulate the fact that we only have 8 GPS coordinates 
 ```{r dpi=200}
 degraded_corner_coord <- corner_coord[c(1:2,11:12,21:22,31:32),]
   
+# check_plot_trust_field <- check_plot_coord(
+#   longlat = degraded_corner_coord[, c("Long", "Lat")],
+#   # OR proj_coord = corner_coord[c("xProj", "yProj")], 
+#   rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+#   trust_GPS_corners = F,
+#   draw_plot = TRUE )
+
 check_plot_trust_field <- check_plot_coord(
-  longlat = degraded_corner_coord[, c("Long", "Lat")],
+  corner_data = degraded_corner_coord,
+  longlat = c("Long", "Lat"),
   # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+  rel_coord = c("xRel", "yRel"), corner_ID = "Corners",
   trust_GPS_corners = F,
   draw_plot = TRUE )
 ```
@@ -137,34 +145,85 @@ We can see that the corners of the plot do not correspond to the GPS measurement
 
 ## Retrieving tree projected coordinates {#tree_coordinates}
 
-Tree coordinates are almost always measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_df` and `tree_coords` arguments.
+Tree coordinates are almost always measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
 
 ```{r}
+# check_plot_trust_GPS <- check_plot_coord(
+#   longlat = corner_coord[c("Long", "Lat")],
+#   # OR proj_coord = corner_coord[c("xProj", "yProj")], 
+#   rel_coord = corner_coord[c("xRel", "yRel")],
+#   trust_GPS_corners = T, corner_ID = corner_coord$Corners,
+#   draw_plot = TRUE,
+#   max_dist = 10, rm_outliers = TRUE,
+#   tree_df = trees, tree_coords = c("xRel","yRel") )
+
 check_plot_trust_GPS <- check_plot_coord(
-  longlat = corner_coord[c("Long", "Lat")],
-  # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = corner_coord[c("xRel", "yRel")],
-  trust_GPS_corners = T, corner_ID = corner_coord$Corners,
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
   draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE,
-  tree_df = trees, tree_coords = c("xRel","yRel") )
+  max_dist = 10, rm_outliers = TRUE, 
+  tree_data = trees, tree_coords = c("xRel","yRel") )
+
+check_plot_coord(
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
+  draw_plot = TRUE,
+  max_dist = 10, rm_outliers = TRUE, 
+  tree_data = trees, tree_coords = c("xRel","yRel"), prop_tree = "H" )
+
+
+trees_2 <- trees
+trees_2$xRel[1] <- -10
+check_plot_coord(
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
+  draw_plot = TRUE,
+  max_dist = 10, rm_outliers = TRUE, 
+  tree_data = trees_2, tree_coords = c("xRel","yRel") )
+
+check_plot_coord(
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
+  draw_plot = TRUE,
+  max_dist = 10, rm_outliers = TRUE, 
+  tree_data = trees_2, tree_coords = c("xRel","yRel"), prop_tree = "H" )
+
+# check_plot_trust_field <- check_plot_coord(
+#   longlat = degraded_corner_coord[, c("Long", "Lat")],
+#   # OR proj_coord = corner_coord[c("xProj", "yProj")],
+#   rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+#   trust_GPS_corners = F,
+#   draw_plot = TRUE,
+#   tree_df = trees, tree_coords = c("xRel","yRel") )
 
 check_plot_trust_field <- check_plot_coord(
-  longlat = degraded_corner_coord[, c("Long", "Lat")],
-  # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+  corner_data = degraded_corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"), corner_ID = "Corners",
   trust_GPS_corners = F,
-  draw_plot = TRUE,
-  tree_df = trees, tree_coords = c("xRel","yRel") )
+  draw_plot = TRUE ,
+  tree_data = trees, tree_coords = c("xRel","yRel"), prop_tree = "H")
 ```
 
-Note the difference in corner and tree positions between the two situations.
+Note the differences in corner and tree positions between the two situations.
 
-The tree coordinates can be obtained via the `$tree_proj_coord` output.
+The projected coordinates of the trees are added to the tree data frame and returned by the output `$tree_data` (columns x_proj and y_proj).
 
 ```{r}
-trees[c("x_proj","y_proj")] <- check_plot_trust_GPS$tree_proj_coord
+trees <- check_plot_trust_GPS$tree_data
+
+kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
 ```
+
+The output of the function also standardises the names of the relative tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot` column telling if a tree is in the plot or not.
 
 You can also grep and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title : 
 
@@ -177,7 +236,7 @@ plot_to_change
 If you want to retrieve the GPS coordinates of the trees in a longitude/latitude format, use this code:
 
 ```{r}
-tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_proj_coord, proj = check_plot_trust_GPS$UTM_code, inverse = TRUE) )
+tree_GPS_coord <- as.data.frame( proj4::project(trees[c("x_proj","y_proj")], proj = check_plot_trust_GPS$UTM_code$UTM_code, inverse = TRUE) )
 ```
 
 
