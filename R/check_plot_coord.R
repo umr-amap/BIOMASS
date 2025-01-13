@@ -377,7 +377,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       plot_raster <- as.data.frame(plot_raster, xy=TRUE)
       # plot the raster
       plot_design <- ggplot() +
-        geom_raster(data = plot_raster, mapping = aes(x=x,y=y,fill=csm_Nou_2022_1m)) +
+        geom_raster(data = plot_raster, mapping = aes(x = x, y = y, fill = .data[[names(plot_raster)[3]]] ) ) +
         scale_fill_gradientn(colours = rev(terrain.colors(10)))
     } else {
       plot_design <- ggplot()
