@@ -75,7 +75,7 @@
 #'   aa$plot_design
 #' }
 
-check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords=NULL, corner_ID=NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, ask = T) {
+check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, corner_ID = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, ask = T) {
   
   ##### Checking arguments -----------------------------------------------------
   
@@ -140,7 +140,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop("The argument tree_plot_ID is required if plot_ID is supplied.")
   }
   if(!is.null(tree_data) && !is.null(tree_plot_ID) && any(! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])) ) {
-    warning( paste( "These ID's are found in tree_plot_ID but not in plot_ID :" , paste(unique(tree_data[[tree_plot_ID]])[! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])] , collapse = " ")) )
+    warning( paste( "These ID's are found in tree_plot_ID but not in plot_ID :" , paste(unique(tree_data[[tree_plot_ID]])[! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])] , collapse = " "),"\n") )
   }
   
   
@@ -173,6 +173,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       setnames(tree_data, old = tree_plot_ID, new = "plot_ID")
     } else {
       tree_data[, plot_ID := "" ]
+    }
+    if(sum(is.na(tree_data[, c("x_rel","y_rel")])) != 0) {
+      warning("Missing values are detected in the relative coordinates of the trees. These trees will be removed from the dataset.\n")
+      tree_data <- tree_data[ ! (is.na(x_rel) | is.na(y_rel))  , ]
     }
   }
   
@@ -218,7 +222,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       if (any(table(corner_dat$corner_ID) < 5)) {
         warning(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) ,
-                 "At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE"))
+                 "At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE\n"))
       }
       
       if(trust_GPS_corners == TRUE) { # if GPS corner locations are trusted, just average their locations
@@ -250,7 +254,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
         warning(call. = F,
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) ,
                  "Be carefull, you may have GNSS measurement outliers. \n",
-                 "Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments)."))
+                 "Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments).\n"))
       }
       
       if( rm_outliers & sum(corner_dat$outlier)!=0 ) {
@@ -335,7 +339,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       if(any(! tree_data[plot_ID %in% unique(corner_dat$plot_ID) , ][["is_in_plot"]])) { 
         warning(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) , 
-                 "Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_proj_coord output)"))
+                 "Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_proj_coord output)\n"))
       }
     }
     
@@ -402,7 +406,6 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
                              y_end = c(y0 + (y1-y0) / 4, y0 + (y2-y0) / 4))
     
     # Plot Corners
-    plot_design <- ggplot()
     plot_design <- plot_design + 
       geom_point(data = corner_dat, mapping = aes(x = x_proj, y = y_proj, col = whatpoint, shape = whatpoint), size=2) + 
       geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
@@ -412,7 +415,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       theme_minimal() + 
       coord_equal()
     
-    cols <- c("GPS measurements"="black", "Outliers (discarded)"="red", "Reference corners"="black", "Trees"="#994F00","Trees outside the plot"="#006CD1")
+    cols <- c("GPS measurements"="black", "Outliers (discarded)"="red", "Reference corners"="black")
     shapes <- c("GPS measurements"=2, "Outliers (discarded)"=4, "Reference corners"=15, "Trees"=1,"Trees outside the plot"=13)
     
     plot_design <- plot_design +
@@ -422,16 +425,16 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     # Plot Trees :
     if(!is.null(tree_data)) {
       
-      if(is.null(prop_tree)) {
+      if(is.null(prop_tree)) { # if there is no proportional variable to display
         
         tree_data[ plot_ID == current_plot_ID, tree_shape := ifelse(is_in_plot,1,13)]
-        tree_data[ plot_ID == current_plot_ID, tree_label := ifelse(is_in_plot," ","outside the plot")] # Tree lables for the legend
+        tree_data[ plot_ID == current_plot_ID, tree_label := ifelse(is_in_plot," ","outside the plot")] # Tree labels for the legend
         
         plot_design <- plot_design +
           geom_point(data = tree_data[plot_ID == current_plot_ID, ],
                      mapping = aes(x = x_proj, y = y_proj, alpha = tree_label), # as color and shape are already in corner aes, we fake an alpha aes to get a proper legend
                      shape = tree_data[plot_ID == current_plot_ID, ][["tree_shape"]],
-                     col="grey25") +
+                     col="grey25", size = 2) +
           scale_alpha_manual(values = c(" "=1,"outside the plot"=1)) + # set the alpha to 1
           guides( alpha = guide_legend(title = 'Trees', 
                                        override.aes = list(shape = if(sum(!tree_data[plot_ID == current_plot_ID, "is_in_plot"])==0) c(1) else c(1,13) ) ) )
@@ -439,9 +442,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
         tree_data[, tree_label := NULL]
         tree_data[, tree_shape := NULL]
         
-      } else {
-        
-        tree_data[ plot_ID == current_plot_ID & is_in_plot==F, tree_label := ""]
+      } else { # if there is a proportional variable to display
         
         plot_design <- plot_design +
           # Display the trees inside the plot
@@ -452,24 +453,16 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
                      shape = 1) +
           scale_alpha(range = c(0,1)) +
           scale_size(range = c(0,5)) + 
-          guides( alpha = guide_legend(title = paste('Trees :', prop_tree), order = 2,
-                                       override.aes = list(shape = 1 ) ),
+          guides( alpha = guide_legend(title = paste('Trees :', prop_tree), order = 2),
                   size = guide_legend(title = paste('Trees :', prop_tree), order = 2,
-                                      override.aes = list(shape = 1 ) )) + 
-          
-          # Display the trees outside the plot
+                                      override.aes = list(shape = 1 ) )) +
+          # Display the trees outside the plot (but don't display them in the legend)
           geom_point(data = tree_data[plot_ID == current_plot_ID & is_in_plot==F, ],
-                     mapping = aes(x = x_proj, y = y_proj, fill = tree_label),  # we fake a fill aes to get a proper legend
-                     shape = 13) + 
-          guides( fill = guide_legend(title = 'Trees outside the plot', order = 3,
-                                      override.aes = list(shape = 13) )) 
-          
-        tree_data[, tree_label := NULL]
-        
+                     mapping = aes(x = x_proj, y = y_proj),
+                     shape = 13, size = 2)
       }
     }
       
-    
     if(draw_plot) print(plot_design)
     
     return(invisible(plot_design))

@@ -4,7 +4,7 @@
 #' After applying the [divide_plot()] function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
 #'
 #' @param subplots output of the [divide_plot()] function
-#' @param value a character indicating the column in subplots$tree_df to display
+#' @param value a character indicating the column in subplots$tree_data to display
 #' @param draw_plot a logical indicating whether the plot design should be displayed and returned
 #' @param fun the function to be applied
 #' @param ... optional arguments to fun
@@ -25,9 +25,9 @@
 #' @examples
 #' rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
 #' proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
-#' tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
+#' tree_data <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
 #' subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50,
-#'                         tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+#'                         tree_data = tree_data, tree_coords = c("x_tree","y_tree"))
 #' # Sum summary (by default)
 #' subplot_summary(subplots , value = "metric", draw_plot = FALSE)
 #' # 9th quantile summary (for example)
@@ -39,17 +39,17 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
 
   # Checking parameters --------------------------------------------------------
   if(is.data.frame(subplots)) {
-    stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_df argument")
+    stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
   }
-  if (is.list(subplots) && (is.null(names(subplots)) || any(names(subplots)!=c("sub_corner_coord","tree_df")))) {
-    stop("subplots argument must be the output of the divide_plot_function, with a non-null tree_df argument")
+  if (is.list(subplots) && (is.null(names(subplots)) || any(names(subplots)!=c("sub_corner_coord","tree_data")))) {
+    stop("subplots argument must be the output of the divide_plot_function, with a non-null tree_data argument")
   }
   if(any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
     subplots$sub_corner_coord[,c("x_proj","y_proj")] <- subplots$sub_corner_coord[,c("x_rel","y_rel")]
     message("projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system")
   }
-  if(is.null(value) || !value %in% names(subplots$tree_df)) {
-    stop("value is not a column name of subplots$tree_df")
+  if(is.null(value) || !value %in% names(subplots$tree_data)) {
+    stop("value is not a column name of subplots$tree_data")
   }
   if(!is.function(fun)) {
     stop("the function supplied using `fun =` is not a function")
@@ -59,7 +59,8 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
 
   # Data processing ------------------------------------------------------------
   corner_dat <- data.table(subplots$sub_corner_coord)
-  tree_summary <- data.table(subplots$tree_df)[!is.na(subplot_id), fun(get(value), ...) , by=c("subplot_id")]
+  tree_summary <- data.table(subplots$tree_data)[!is.na(subplot_id), fun(get(value), ...) , by=c("subplot_id")]
+  tree_summary <- data.table(subplots$tree_data)[!is.na(subplot_id), fun(get(value), ...) , by=c("subplot_id")]
   if(any(duplicated(tree_summary$subplot_id))) {
     stop("the function supplied using `fun` must return a single value")
   }
