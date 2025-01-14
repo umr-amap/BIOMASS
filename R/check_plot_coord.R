@@ -365,7 +365,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   draw_plot_fct <-  function(corner_dat) { # corner_dat = corner_dt
     
     current_plot_ID <- unique(corner_dat$plot_ID)
-    corner_dat <- corner_dat[, c("plot_ID","x_proj","y_proj")]
+    corner_dat <- corner_dat[, c("plot_ID","x_proj","y_proj","x_rel","y_rel")]
     
     # Raster CHM
     if(!is.null(ref_raster)) {
@@ -391,7 +391,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     
     # Reference corners :
     corner_checked[plot_ID == current_plot_ID, whatpoint := "Reference corners"]
-    corner_dat <- rbind(corner_dat, corner_checked[plot_ID == current_plot_ID, c("plot_ID","x_proj","y_proj","whatpoint")])
+    corner_dat <- rbind(corner_dat, corner_checked[plot_ID == current_plot_ID, c("plot_ID","x_proj","y_proj","x_rel","y_rel","whatpoint")])
     corner_checked[, whatpoint := NULL]
     
     # x_rel and y_rel arrows :
@@ -404,13 +404,25 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     arrow_plot <- data.frame(x = x0, y = y0,
                              x_end = c(x0 + (x1-x0) / 4, x0 + (x2-x0) / 4),
                              y_end = c(y0 + (y1-y0) / 4, y0 + (y2-y0) / 4))
+    x0_rel <- corner_dat[whatpoint == "Reference corners" , x_rel][1]
+    y0_rel <- corner_dat[whatpoint == "Reference corners" , y_rel][1]
+    x1_rel <- corner_dat[whatpoint == "Reference corners" , x_rel][2]
+    y1_rel <- corner_dat[whatpoint == "Reference corners" , y_rel][2]
+    x2_rel <- corner_dat[whatpoint == "Reference corners" , x_rel][4]
+    y2_rel <- corner_dat[whatpoint == "Reference corners" , y_rel][4]
+    pos_text_arrow <- bilinear_interpolation( 
+      coord = data.frame(
+        x = c(x0_rel + (x1_rel-x0_rel) / 4 , x0_rel + (x2_rel-x0_rel) / 4 - (x1_rel-x0_rel) / 8) ,
+        y = c(y0_rel + (y1_rel-y0_rel) / 4 - (y2_rel-y0_rel) / 8, y0_rel + (y2_rel-y0_rel) / 4) ) ,
+      from_corner_coord =  corner_dat[whatpoint == "Reference corners" , c("x_rel","y_rel")],
+      to_corner_coord = corner_dat[whatpoint == "Reference corners" , c("x_proj","y_proj")])
     
     # Plot Corners
     plot_design <- plot_design + 
       geom_point(data = corner_dat, mapping = aes(x = x_proj, y = y_proj, col = whatpoint, shape = whatpoint), size=2) + 
       geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
       geom_segment(data=arrow_plot, mapping=aes(x=x,y=y,xend=x_end,yend=y_end), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
-      geom_text(data = arrow_plot, mapping = aes(x=x_end,y=y_end,label=c("x_rel","y_rel")), hjust=c(0,-0.3), vjust=c(-0.5,0), col="blue" ) +
+      geom_text(data = pos_text_arrow, mapping = aes(x=x_proj, y=y_proj, label=c("x_rel","y_rel")), col="blue" ) +
       ggtitle(paste("Plot",current_plot_ID)) +
       theme_minimal() + 
       coord_equal()
