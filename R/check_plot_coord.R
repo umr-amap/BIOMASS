@@ -427,7 +427,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       theme_minimal() + 
       coord_equal()
     
-    cols <- c("GPS measurements"="black", "Outliers (discarded)"="red", "Reference corners"="black")
+    cols <- c("GPS measurements"="black", "GPS outliers (discarded)"="red", "Reference corners"="black")
     shapes <- c("GPS measurements"=2, "Outliers (discarded)"=4, "Reference corners"=15, "Trees"=1,"Trees outside the plot"=13)
     
     plot_design <- plot_design +
