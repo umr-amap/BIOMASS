@@ -75,8 +75,10 @@ subplots$sub_corner_coord
 subplots$tree_data
 
 # When grid dimensions don't fit perfectly plot dimensions
-subplots <- divide_plot(rel_coord, grid_size = c(45,50))
-subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+\donttest{
+ subplots <- divide_plot(rel_coord, grid_size = c(45,50))
+ subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+}
 
 # Dealing with multiple plots
 rel_coord <- rbind(rel_coord, rel_coord)

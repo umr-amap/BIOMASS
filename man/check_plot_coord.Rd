@@ -98,7 +98,7 @@ aa <- check_plot_coord(
  proj_coord = c("x_proj","y_proj"), rel_coord = c("x_rel","y_rel"),
  trust_GPS_corners = TRUE,
  corner_ID = "corner_ID",
- draw_plot = FALSE, rm_outliers = F
+ draw_plot = FALSE, rm_outliers = FALSE
 )
 
 aa$corner_coord
