@@ -387,7 +387,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     corner_dat[ , whatpoint := "GPS measurements"]
     
     # Outliers 
-    corner_dat[outliers[plot_ID == current_plot_ID] , whatpoint :=  "Outliers (discarded)" , on = c("plot_ID","x_proj","y_proj")]
+    corner_dat[outliers[plot_ID == current_plot_ID] , whatpoint :=  "GPS outliers (discarded)" , on = c("plot_ID","x_proj","y_proj")]
     
     # Reference corners :
     corner_checked[plot_ID == current_plot_ID, whatpoint := "Reference corners"]
@@ -428,7 +428,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       coord_equal()
     
     cols <- c("GPS measurements"="black", "GPS outliers (discarded)"="red", "Reference corners"="black")
-    shapes <- c("GPS measurements"=2, "Outliers (discarded)"=4, "Reference corners"=15, "Trees"=1,"Trees outside the plot"=13)
+    shapes <- c("GPS measurements"=2, "GPS outliers (discarded)"=4, "Reference corners"=15, "Trees"=1,"Trees outside the plot"=13)
     
     plot_design <- plot_design +
       scale_color_manual(values=cols, guide = guide_legend("Corners", order=1)) + 
