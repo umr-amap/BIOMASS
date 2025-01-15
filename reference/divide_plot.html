@@ -48,7 +48,7 @@
 <span>  <span class="va">rel_coord</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">grid_size</span>,</span>
-<span>  tree_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tree_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_coords <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  corner_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -73,7 +73,7 @@
 <dd><p>a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.</p></dd>
 
 
-<dt id="arg-tree-df">tree_df<a class="anchor" aria-label="anchor" href="#arg-tree-df"></a></dt>
+<dt id="arg-tree-data">tree_data<a class="anchor" aria-label="anchor" href="#arg-tree-data"></a></dt>
 <dd><p>a data frame containing tree relative coordinates and other tree metrics (one row per tree).</p></dd>
 
 
@@ -99,12 +99,12 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If tree_df isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
+    <p>If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
 <li><p><code>subplot_id</code>: The automatically generated subplot code, using the following rule : subplot_X_Y</p></li>
 <li><p><code>x_rel</code> and <code>y_rel</code> : the relative X-axis and Y-axis coordinates of subplots corners.</p></li>
 <li><p><code>x_proj</code> and <code>y_proj</code> :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners</p></li>
-</ul><p>If tree_df is supplied, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
-<li><p>the tree_df data-frame with the subplot_id of each tree in the last column</p></li>
+</ul><p>If tree_data is supplied, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
+<li><p>the tree_data data-frame with the subplot_id of each tree in the last column</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -128,9 +128,9 @@
 <span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, proj_coord <span class="op">=</span> <span class="va">proj_coord</span>, grid_size <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Assigning trees to subplots</span></span></span>
-<span class="r-in"><span><span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, <span class="va">proj_coord</span>, <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                        tree_df <span class="op">=</span> <span class="va">tree_df</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                        tree_data <span class="op">=</span> <span class="va">tree_data</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">subplots</span><span class="op">$</span><span class="va">sub_corner_coord</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     subplot_id x_rel y_rel x_proj y_proj</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot_0_0     0     0  210.0  210.0</span>
@@ -149,74 +149,76 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot_1_1   200   100  333.0  396.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot_1_1   200   200  283.0  483.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16 subplot_1_1   100   200  196.5  433.0</span>
-<span class="r-in"><span><span class="va">subplots</span><span class="op">$</span><span class="va">tree_df</span></span></span>
+<span class="r-in"><span><span class="va">subplots</span><span class="op">$</span><span class="va">tree_data</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        x_tree     y_tree  subplot_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   92.161217  87.826667 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   22.394660 121.838824 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   53.980142 112.194797 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   97.064533 120.880932 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  189.082933 184.676845 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   69.683542 188.079980 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  192.382697 124.244630 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   23.342933  97.900301 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  128.752198 193.759966 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  32.162287  36.250095 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 174.424961 125.240717 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  72.769263  63.927925 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 177.693219  64.367489 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 149.289394 107.588101 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 111.595751  74.749915 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 151.458074  22.586449 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 107.059920 172.952964 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  30.652118  71.620969 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19   6.084209 108.057235 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  38.593455 173.845049 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  49.478390 152.586067 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 159.626488  89.802414 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  64.763898  19.745450 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 199.007480 197.815417 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25   7.339173  68.712160 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26   4.344464  36.671449 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 169.018924  22.684300 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 190.288347 188.320628 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 167.602763  70.292833 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 172.394021  16.984366 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 178.549091 132.253414 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 167.544386 198.157239 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33   5.049280 166.178122 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34  26.624075  76.144431 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35  36.438776  84.788411 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  13.117103 140.876089 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37   8.698435  28.334548 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 108.515666 113.466192 subplot_1_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39  50.253620  74.251417 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40   6.463110 170.803041 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  19.030295  84.546999 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42  16.933631  39.291503 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43  80.199616  47.233954 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44  29.454475  23.021458 subplot_0_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  53.211666 125.363830 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 150.302503  72.323796 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 121.148797  36.812470 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48 133.785693   8.873578 subplot_1_0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  76.548322 152.111150 subplot_0_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 131.955857  13.281403 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   51.958106  74.680080 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   14.223925 145.035017 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3.843068 160.729281 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   46.451866 148.842696 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  164.357939 122.537341 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   83.782042  73.838098 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   43.705988 110.826181 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  116.631934  67.935801 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    2.773768 178.235419 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 163.972499  45.357006 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 123.461906  49.478801 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 163.245088  22.208424 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 190.140255 105.218617 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 132.747603  66.321216 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 127.047749  15.298431 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   1.593114 101.468876 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 137.033055 123.120472 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18   9.646664 114.523066 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 112.610381  42.983369 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  89.237819 171.052247 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  95.743520   7.940341 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 183.652175  84.009961 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 164.058545  48.652797 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  51.210288 118.042125 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 168.134278 173.901249 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  44.234386 169.742622 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  23.736516 114.831022 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  69.994976  36.474899 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 148.528853 186.509067 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 133.215365  18.512889 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 128.947254 139.381012 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 157.410616 101.205512 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  40.794233 121.014920 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  44.637811 154.445944 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   6.310994 167.263967 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 164.111599  94.343070 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  54.215509 194.434294 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 189.245818 127.284878 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39  65.223722 165.754952 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  64.314446 101.065343 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 143.684919   8.797394 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 116.168296 184.187304 subplot_1_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  28.926403 135.003247 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 193.006966  23.452007 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45   7.390662  79.256956 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  14.931466 117.729061 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  93.548940  26.158600 subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 118.595818  32.430279 subplot_1_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  11.012697 175.333927 subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  64.757544  62.799655 subplot_0_0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># When grid dimensions don't fit perfectly plot dimensions</span></span></span>
-<span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">45</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span> <span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">45</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The x-dimension of the plot is not a multiple of the x-dimension of the grid size</span>
-<span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">41</span>,<span class="fl">41</span><span class="op">)</span> , grid_tol <span class="op">=</span> <span class="fl">0.4</span>, centred_grid <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">41</span>,<span class="fl">41</span><span class="op">)</span> , grid_tol <span class="op">=</span> <span class="fl">0.4</span>, centred_grid <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The x-dimension of the plot is not a multiple of the x-dimension of the grid size</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The y-dimension of the plot is not a multiple of the y-dimension of the grid size</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dealing with multiple plots</span></span></span>
 <span class="r-in"><span><span class="va">rel_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">rel_coord</span>, <span class="va">rel_coord</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">proj_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">proj_coord</span>, <span class="va">proj_coord</span> <span class="op">+</span> <span class="fl">200</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">tree_df</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">tree_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">corner_plot_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plot1"</span>,<span class="st">"plot2"</span><span class="op">)</span>, e<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tree_plot_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plot1"</span>,<span class="st">"plot2"</span><span class="op">)</span>, e<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu">divide_plot</span><span class="op">(</span><span class="va">rel_coord</span>, <span class="va">proj_coord</span>, <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                        <span class="va">tree_df</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                        <span class="va">tree_data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        <span class="va">corner_plot_ID</span>, <span class="va">tree_plot_ID</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

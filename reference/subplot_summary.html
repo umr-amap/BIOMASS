@@ -56,7 +56,7 @@
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
-<dd><p>a character indicating the column in subplots$tree_df to display</p></dd>
+<dd><p>a character indicating the column in subplots$tree_data to display</p></dd>
 
 
 <dt id="arg-draw-plot">draw_plot<a class="anchor" aria-label="anchor" href="#arg-draw-plot"></a></dt>
@@ -86,28 +86,29 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">rel_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_rel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span>, y_rel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">200</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">proj_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_proj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">210</span>, <span class="fl">383</span>, <span class="fl">110</span>, <span class="fl">283</span><span class="op">)</span>, y_proj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">210</span>, <span class="fl">310</span>, <span class="fl">383</span>, <span class="fl">483</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">10</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, y_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">0</span>,<span class="fl">200</span><span class="op">)</span>, metric <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span>,<span class="fl">10</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="divide_plot.html">divide_plot</a></span><span class="op">(</span><span class="va">rel_coord</span>, proj_coord <span class="op">=</span> <span class="va">proj_coord</span>, grid_size <span class="op">=</span> <span class="fl">50</span>,</span></span>
-<span class="r-in"><span>                        tree_df <span class="op">=</span> <span class="va">tree_df</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                        tree_data <span class="op">=</span> <span class="va">tree_data</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_tree"</span>,<span class="st">"y_tree"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Sum summary (by default)</span></span></span>
 <span class="r-in"><span><span class="fu">subplot_summary</span><span class="op">(</span><span class="va">subplots</span> , value <span class="op">=</span> <span class="st">"metric"</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tree_summary</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     subplot_id metric_summary metric_summary_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot_0_1       40.36589             161.75067</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot_0_2       44.11341             176.76742</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot_0_3       27.04323             108.36525</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot_1_0       28.82499             115.50498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot_1_1       10.45078              41.87745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot_1_2       49.82367             199.64904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot_1_3       23.71833              95.04201</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot_2_0       73.66027             295.16501</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot_2_1       10.42498              41.77409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot_2_2       19.25030              77.13813</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot_2_3       20.60999              82.58657</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot_3_0       57.14601             228.99049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot_3_1       52.45570             210.19588</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot_3_2       10.04750              40.26147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot_3_3       25.18808             100.93146</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot_0_0       24.49649              98.16018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot_0_1       30.05625             120.43879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot_0_2       90.13604             361.18527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot_0_3       24.12797              96.68348</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot_1_0       18.03139              72.25381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot_1_1       12.30719              49.31628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot_1_2       15.96526              63.97458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot_1_3       15.45064              61.91244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot_2_0       33.56860             134.51315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot_2_1       59.52565             238.52599</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot_2_2       32.68268             130.96318</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot_2_3       20.04093              80.30626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot_3_0       38.99547             156.25925</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot_3_1       33.77228             135.32933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot_3_2       35.30392             141.46676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 subplot_3_3       37.70724             151.09714</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 16 features and 3 fields</span>
@@ -117,16 +118,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              subplot_id metric_summary metric_summary_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0        0.00000               0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1       40.36589             161.75067</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_2 subplot_0_2       44.11341             176.76742</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_3 subplot_0_3       27.04323             108.36525</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0       28.82499             115.50498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1       10.45078              41.87745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_2 subplot_1_2       49.82367             199.64904</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_3 subplot_1_3       23.71833              95.04201</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_0 subplot_2_0       73.66027             295.16501</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_1 subplot_2_1       10.42498              41.77409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0       24.49649              98.16018</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1       30.05625             120.43879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_2 subplot_0_2       90.13604             361.18527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_3 subplot_0_3       24.12797              96.68348</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0       18.03139              72.25381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1       12.30719              49.31628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_2 subplot_1_2       15.96526              63.97458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_3 subplot_1_3       15.45064              61.91244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_0 subplot_2_0       33.56860             134.51315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_1 subplot_2_1       59.52565             238.52599</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         sf_subplot_polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 POLYGON ((210 210, 253.25 2...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 POLYGON ((185 253.25, 228.2...</span>
@@ -144,21 +145,22 @@
 <span class="r-in"><span>                fun <span class="op">=</span> <span class="va">quantile</span>, probs<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tree_summary</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     subplot_id metric_summary metric_summary_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot_0_1      14.509661              58.14184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot_0_2      16.260469              65.15753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot_0_3      10.494205              42.05146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot_1_0      12.321004              49.37165</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot_1_1      10.450781              41.87745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot_1_2      15.771173              63.19686</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot_1_3      13.723469              54.99148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot_2_0      17.909439              71.76514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot_2_1       9.126446              36.57070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot_2_2      12.337602              49.43816</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot_2_3      20.609994              82.58657</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot_3_0      14.400939              57.70618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot_3_1      17.869030              71.60322</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot_3_2      10.047502              40.26147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot_3_3       8.253866              33.07417</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot_0_0      10.440282              41.83539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot_0_1       8.019066              32.13330</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot_0_2      18.038259              72.28134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot_0_3      14.515884              58.16678</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot_1_0      12.205742              48.90978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot_1_1      12.307186              49.31628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot_1_2       8.905429              35.68506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot_1_3      10.620562              42.55779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot_2_0      11.120390              44.56066</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot_2_1      17.808120              71.35914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot_2_2      13.488605              54.05036</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot_2_3      13.808467              55.33208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot_3_0      17.641247              70.69047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot_3_1      13.827582              55.40868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot_3_2      15.201382              60.91365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 subplot_3_3      16.271080              65.20005</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 16 features and 3 fields</span>
@@ -168,16 +170,16 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 features:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              subplot_id metric_summary metric_summary_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0       0.000000               0.00000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1      14.509661              58.14184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_2 subplot_0_2      16.260469              65.15753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_3 subplot_0_3      10.494205              42.05146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0      12.321004              49.37165</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1      10.450781              41.87745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_2 subplot_1_2      15.771173              63.19686</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_3 subplot_1_3      13.723469              54.99148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_0 subplot_2_0      17.909439              71.76514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_1 subplot_2_1       9.126446              36.57070</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0      10.440282              41.83539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1       8.019066              32.13330</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_2 subplot_0_2      18.038259              72.28134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_3 subplot_0_3      14.515884              58.16678</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0      12.205742              48.90978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1      12.307186              49.31628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_2 subplot_1_2       8.905429              35.68506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_3 subplot_1_3      10.620562              42.55779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_0 subplot_2_0      11.120390              44.56066</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_2_1 subplot_2_1      17.808120              71.35914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         sf_subplot_polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 POLYGON ((210 210, 253.25 2...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 POLYGON ((185 253.25, 228.2...</span>

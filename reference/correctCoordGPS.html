@@ -132,11 +132,15 @@
 <span class="r-in"><span>  rangeX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, rangeY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
 <span class="r-in"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu">correctCoordGPS</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  projCoord <span class="op">=</span> <span class="va">projCoord</span>, coordRel <span class="op">=</span> <span class="va">coordRel</span>,</span></span>
 <span class="r-in"><span>  rangeX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, rangeY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, rmOutliers <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>calling par(new=TRUE) with no plot</span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">correctCoordGPS</span><span class="op">(</span></span></span>
@@ -144,46 +148,48 @@
 <span class="r-in"><span>  rangeX <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, rangeY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, drawPlot <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>longer object length is not a multiple of shorter object length</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $cornerCoords</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          X        Y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1106.936 1105.784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1006.944 1107.049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1108.593 1108.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 1008.599 1109.400</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $correctedCoord</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           X        Y</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1005.679 1007.057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1006.944 1107.049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1006.944 1107.049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1006.944 1107.049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1006.944 1107.049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1006.944 1107.049</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 1105.671 1005.792</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 1106.936 1105.784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 1106.936 1105.784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 1106.936 1105.784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1106.936 1105.784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 1106.936 1105.784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1007.482 1009.406</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1008.599 1109.400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  1008.599 1109.400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  1008.599 1109.400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  1008.599 1109.400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1008.599 1109.400</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 1107.476 1008.289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 1108.593 1108.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 1108.593 1108.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 1108.593 1108.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 1108.593 1108.282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 1108.593 1108.282</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $polygon</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry set for 1 feature </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 1005.679 ymin: 1005.792 xmax: 1106.936 ymax: 1107.049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 1007.482 ymin: 1008.289 xmax: 1108.593 ymax: 1109.4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> POLYGON ((1005.679 1007.057, 1105.671 1005.792,...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> POLYGON ((1007.482 1009.406, 1107.476 1008.289,...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $outliers</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  7 13 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  6  7 11 13 14 18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

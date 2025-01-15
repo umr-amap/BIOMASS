@@ -45,16 +45,22 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">check_plot_coord</span><span class="op">(</span></span>
+<span>  <span class="va">corner_data</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  longlat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">rel_coord</span>,</span>
 <span>  <span class="va">trust_GPS_corners</span>,</span>
-<span>  corner_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_dist <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  rm_outliers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tree_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  tree_coords <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  tree_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tree_coords <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  corner_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_dist <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  rm_outliers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tree_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ref_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  prop_tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ask <span class="op">=</span> <span class="cn">T</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -62,131 +68,125 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-proj-coord">proj_coord<a class="anchor" aria-label="anchor" href="#arg-proj-coord"></a></dt>
-<dd><p>(optional, if longlat is not supplied) a data frame containing the plot corner coordinates in a projected coordinate system, with X and Y corresponding to the first and second columns respectively.</p></dd>
+<dl><dt id="arg-corner-data">corner_data<a class="anchor" aria-label="anchor" href="#arg-corner-data"></a></dt>
+<dd><p>A data frame, data frame extension, containing the plot corner coordinates.</p></dd>
+
+
+<dt id="arg-proj-coord">proj_coord<a class="anchor" aria-label="anchor" href="#arg-proj-coord"></a></dt>
+<dd><p>(optional, if longlat is not supplied) A character vector specifying the column names of the corner projected coordinates (x,y)</p></dd>
 
 
 <dt id="arg-longlat">longlat<a class="anchor" aria-label="anchor" href="#arg-longlat"></a></dt>
-<dd><p>(optional, if proj_coord is not supplied) a data frame containing the plot corner coordinates in longitude and latitude, with longitude and latitude corresponding to the first and second columns respectively</p></dd>
+<dd><p>(optional, if proj_coord is not supplied) A character vector specifying the column names of the corner geographic coordinates (long,lat).</p></dd>
 
 
 <dt id="arg-rel-coord">rel_coord<a class="anchor" aria-label="anchor" href="#arg-rel-coord"></a></dt>
-<dd><p>a data frame containing the plot corner coordinates in the relative coordinates system (that of the field), with X and Y corresponding to the first and second columns respectively, and with the same row order than longlat or proj_coord</p></dd>
+<dd><p>A character vector specifying the column names of the corner relative coordinates (that of the field, ie, the local ones).</p></dd>
 
 
 <dt id="arg-trust-gps-corners">trust_GPS_corners<a class="anchor" aria-label="anchor" href="#arg-trust-gps-corners"></a></dt>
-<dd><p>a logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.</p></dd>
-
-
-<dt id="arg-corner-id">corner_ID<a class="anchor" aria-label="anchor" href="#arg-corner-id"></a></dt>
-<dd><p>a vector indicating the ID of the corners (e.g c("SE","SE",...)) in the case you have multiple measurements for each corner</p></dd>
-
-
-<dt id="arg-max-dist">max_dist<a class="anchor" aria-label="anchor" href="#arg-max-dist"></a></dt>
-<dd><p>a numeric giving the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m)</p></dd>
-
-
-<dt id="arg-rm-outliers">rm_outliers<a class="anchor" aria-label="anchor" href="#arg-rm-outliers"></a></dt>
-<dd><p>a logical indicating if detected outliers are removed from the coordinate calculation</p></dd>
+<dd><p>A logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.</p></dd>
 
 
 <dt id="arg-draw-plot">draw_plot<a class="anchor" aria-label="anchor" href="#arg-draw-plot"></a></dt>
-<dd><p>a logical indicating if the plot design should be displayed and returned</p></dd>
+<dd><p>A logical indicating if the plot design should be displayed and returned.</p></dd>
 
 
-<dt id="arg-tree-df">tree_df<a class="anchor" aria-label="anchor" href="#arg-tree-df"></a></dt>
-<dd><p>a data frame containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics</p></dd>
+<dt id="arg-tree-data">tree_data<a class="anchor" aria-label="anchor" href="#arg-tree-data"></a></dt>
+<dd><p>A data frame, data frame extension, containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics.</p></dd>
 
 
 <dt id="arg-tree-coords">tree_coords<a class="anchor" aria-label="anchor" href="#arg-tree-coords"></a></dt>
-<dd><p>a character vector of length 2 containing the column names of the relative coordinates in tree_df</p></dd>
+<dd><p>A character vector specifying the column names of the tree relative coordinates.</p></dd>
+
+
+<dt id="arg-corner-id">corner_ID<a class="anchor" aria-label="anchor" href="#arg-corner-id"></a></dt>
+<dd><p>If dealing with repeated measurements of each corner : a character specifying the ID of the corners.</p></dd>
+
+
+<dt id="arg-max-dist">max_dist<a class="anchor" aria-label="anchor" href="#arg-max-dist"></a></dt>
+<dd><p>If dealing with repeated measurements of each corner : the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m).</p></dd>
+
+
+<dt id="arg-rm-outliers">rm_outliers<a class="anchor" aria-label="anchor" href="#arg-rm-outliers"></a></dt>
+<dd><p>If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.</p></dd>
+
+
+<dt id="arg-plot-id">plot_ID<a class="anchor" aria-label="anchor" href="#arg-plot-id"></a></dt>
+<dd><p>If dealing with multiple plots : a character indicating the variable name for corner plot IDs in corner_data.</p></dd>
+
+
+<dt id="arg-tree-plot-id">tree_plot_ID<a class="anchor" aria-label="anchor" href="#arg-tree-plot-id"></a></dt>
+<dd><p>If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.</p></dd>
+
+
+<dt id="arg-ref-raster">ref_raster<a class="anchor" aria-label="anchor" href="#arg-ref-raster"></a></dt>
+<dd><p>A SpatRaster object from terra package, typically a chm raster created from LiDAR data.</p></dd>
+
+
+<dt id="arg-prop-tree">prop_tree<a class="anchor" aria-label="anchor" href="#arg-prop-tree"></a></dt>
+<dd><p>The column name variable of tree_data for which the tree visualization will be proportional.</p></dd>
+
+
+<dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>
+<dd><p>If TRUE and dealing with multiple plots, then prompt user before displaying each plot.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a list including :</p><ul><li><p><code>corner_coord</code>: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot</p></li>
 <li><p><code>polygon</code>: a spatial polygon</p></li>
-<li><p><code>outliers</code>: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS points considered outliers</p></li>
+<li><p><code>tree_data</code>: if <code>tree_data</code> is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).</p></li>
+<li><p><code>outliers</code>: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers</p></li>
 <li><p><code>plot_design</code>: if <code>draw_plot</code> is TRUE, a ggplot object corresponding to the design of the plot</p></li>
 <li><p><code>UTM_code</code>: if <code>longlat</code> is supplied, a character containing the UTM code of the GPS coordinates</p></li>
-<li><p><code>tree_proj_coord</code>: if <code>tree_df</code> is supplied, a data frame containing the coordinates of the trees in the projected coordinate system (x_proj and y_proj)</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If trust_GPS_corners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the max_dist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems. Be aware that this projection only works if the plot, in the relative coordinates system, is rectangular (ie, has 4 right angles).</p>
 <p>If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.</p>
 <p>If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).</p>
+<p>If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.</p>
+<p>When ref_raster is supplied, this raster is cropped for every plot contained in corner_data.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY</p>
+<p>Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">proj_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">9</span>, max <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">8</span>, max <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">80</span>, max <span class="op">=</span> <span class="fl">120</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">90</span>, max <span class="op">=</span> <span class="fl">110</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span>,</span></span>
-<span class="r-in"><span>  Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">9</span>, max <span class="op">=</span> <span class="fl">11</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">80</span>, max <span class="op">=</span> <span class="fl">120</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">8</span>, max <span class="op">=</span> <span class="fl">12</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span>, min <span class="op">=</span> <span class="fl">90</span>, max <span class="op">=</span> <span class="fl">110</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">proj_coord</span> <span class="op">&lt;-</span> <span class="va">proj_coord</span> <span class="op">+</span> <span class="fl">1000</span></span></span>
-<span class="r-in"><span><span class="va">rel_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">corner_ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SW"</span>,<span class="st">"NW"</span>,<span class="st">"SE"</span>,<span class="st">"NE"</span><span class="op">)</span>,e<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">52</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">corner_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  x_proj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>  y_proj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1000</span>,</span></span>
+<span class="r-in"><span>  x_rel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  y_rel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  corner_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SW"</span>,<span class="st">"NW"</span>,<span class="st">"SE"</span>,<span class="st">"NE"</span><span class="op">)</span>,e<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="fu">check_plot_coord</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  proj_coord <span class="op">=</span> <span class="va">proj_coord</span>, rel_coord <span class="op">=</span> <span class="va">rel_coord</span>,</span></span>
-<span class="r-in"><span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>, corner_ID <span class="op">=</span> <span class="va">corner_ID</span>,</span></span>
-<span class="r-in"><span>  rm_outliers <span class="op">=</span> <span class="cn">FALSE</span> , draw_plot <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span> corner_data <span class="op">=</span> <span class="va">corner_data</span>,</span></span>
+<span class="r-in"><span> proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span> corner_ID <span class="op">=</span> <span class="st">"corner_ID"</span>,</span></span>
+<span class="r-in"><span> draw_plot <span class="op">=</span> <span class="cn">FALSE</span>, rm_outliers <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Be carefull, you may have GNSS measurement outliers. </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Removing them may improve the georeferencing of your plot (see  the rm_outliers argument).</span>
-<span class="r-in"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu">check_plot_coord</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  proj_coord <span class="op">=</span> <span class="va">proj_coord</span>, rel_coord <span class="op">=</span> <span class="va">rel_coord</span>,</span></span>
-<span class="r-in"><span>  trust_GPS_corners <span class="op">=</span> <span class="cn">FALSE</span>, </span></span>
-<span class="r-in"><span>  rm_outliers <span class="op">=</span> <span class="cn">TRUE</span>, max_dist <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  draw_plot <span class="op">=</span> <span class="cn">FALSE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span> Be carefull, you may have GNSS measurement outliers. </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>  Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments).</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">aa</span><span class="op">$</span><span class="va">corner_coord</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x_rel y_rel    x_proj    y_proj corner_ID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0     0  998.7492 1000.5710        SW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   100     0 1100.1082  999.3673        SE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   100   100 1101.7783 1101.7051        NE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0   100 1000.0759 1098.6455        NW</span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="fu">check_plot_coord</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  proj_coord <span class="op">=</span> <span class="va">proj_coord</span>, rel_coord <span class="op">=</span> <span class="va">rel_coord</span>,</span></span>
-<span class="r-in"><span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>, corner_ID <span class="op">=</span> <span class="va">corner_ID</span>,</span></span>
-<span class="r-in"><span>  rm_outliers <span class="op">=</span> <span class="cn">TRUE</span> , max_dist <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">aa</span><span class="op">$</span><span class="va">plot_design</span></span></span>
 <span class="r-plt img"><img src="check_plot_coord-1.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $corner_coord</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      x_proj   y_proj x_rel y_rel corner_ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1009.745 1010.190     0     0        SW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1094.010 1010.244   100     0        SE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 1100.178 1101.744   100   100        NE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  1009.544 1100.008     0   100        NW</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $polygon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry set for 1 feature </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 1009.544 ymin: 1010.19 xmax: 1100.178 ymax: 1101.744</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> POLYGON ((1009.745 1010.19, 1094.01 1010.244, 1...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $outliers</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      x_proj   y_proj corner_ID row_number</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;num&gt;    &lt;num&gt;    &lt;char&gt;      &lt;int&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: 1008.298 1119.143        NW          9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2: 1106.981 1011.344        SE         14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3: 1108.716 1091.493        NE         17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $plot_design</span>
-<span class="r-plt img"><img src="check_plot_coord-2.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
