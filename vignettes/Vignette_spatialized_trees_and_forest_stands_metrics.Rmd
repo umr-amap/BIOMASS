@@ -71,6 +71,8 @@ Note that both Lat/Long and xProj/yProj coordinates are included in this dataset
 ```{r}
 trees <- read.csv(system.file("external", "NouraguesPlot.csv",package = "BIOMASS", mustWork = TRUE))
 
+# METTRE DES ARBRES HORS PLOT A TITRE ILLUSTRATIFS
+
 kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
 ```
 
@@ -94,14 +96,14 @@ You can give either GPS coordinates (with the longlat argument) or another proje
 
 If **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), you will need to provide the corner names via the `corner_ID` argument. In this case, each coordinates will be averaging by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the rm_outliers and max_dist arguments. 
 
-If only **4 GPS measurements** have been taken **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
+If only **1 GPS measurements by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
 ```{r dpi=200}
 check_plot_trust_GPS <- check_plot_coord(
-  longlat = corner_coord[c("Long", "Lat")],
-  # Or, if exists : proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = corner_coord[c("xRel", "yRel")],
-  trust_GPS_corners = T, corner_ID = corner_coord$Corners,
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),  # or, if exists : proj_coord = c("xProj", "yProj"), 
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
   draw_plot = TRUE,
   max_dist = 10, rm_outliers = TRUE )
 ```
@@ -115,47 +117,54 @@ Let's degrade the data to simulate the fact that we only have 8 GPS coordinates 
 
 ```{r dpi=200}
 degraded_corner_coord <- corner_coord[c(1:2,11:12,21:22,31:32),]
-  
+
 check_plot_trust_field <- check_plot_coord(
-  longlat = degraded_corner_coord[, c("Long", "Lat")],
-  # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+  corner_data = degraded_corner_coord,
+  longlat = c("Long", "Lat"), # or proj_coord = c("xProj", "yProj"), 
+  rel_coord = c("xRel", "yRel"), corner_ID = "Corners",
   trust_GPS_corners = F,
   draw_plot = TRUE )
 ```
 
 We can see that the corners of the plot do not correspond to the GPS measurements. In fact, they correspond to the best compromise between the shape and dimensions of the plot and the GPS measurements.
 
-## Retrieving tree projected coordinates {#tree_coordinates}
+## Visualising and retrieving projected tree coordinates {#tree_coordinates}
 
-Tree coordinates are almost always measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_df` and `tree_coords` arguments.
+Tree coordinates are usually measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
 
 ```{r}
+
+trees[1,2:3] <- c( -10, -10)
+
 check_plot_trust_GPS <- check_plot_coord(
-  longlat = corner_coord[c("Long", "Lat")],
-  # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = corner_coord[c("xRel", "yRel")],
-  trust_GPS_corners = T, corner_ID = corner_coord$Corners,
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"),
+  trust_GPS_corners = T, corner_ID = "Corners",
   draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE,
-  tree_df = trees, tree_coords = c("xRel","yRel") )
+  max_dist = 10, rm_outliers = TRUE, 
+  tree_data = trees, tree_coords = c("xRel","yRel") )
 
 check_plot_trust_field <- check_plot_coord(
-  longlat = degraded_corner_coord[, c("Long", "Lat")],
-  # OR proj_coord = corner_coord[c("xProj", "yProj")], 
-  rel_coord = degraded_corner_coord[, c("xRel", "yRel")],
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"), corner_ID = "Corners",
   trust_GPS_corners = F,
-  draw_plot = TRUE,
-  tree_df = trees, tree_coords = c("xRel","yRel") )
+  draw_plot = TRUE ,
+  tree_data = trees, tree_coords = c("xRel","yRel"))
 ```
 
-Note the difference in corner and tree positions between the two situations.
+Note the differences in corner and tree positions between the two situations.
 
-The tree coordinates can be obtained via the `$tree_proj_coord` output.
+The projected coordinates of the trees are added to the tree data frame and returned by the output `$tree_data` (columns x_proj and y_proj).
 
 ```{r}
-trees[c("x_proj","y_proj")] <- check_plot_trust_GPS$tree_proj_coord
+check_trees <- check_plot_trust_GPS$tree_data
+
+kable(head(check_trees), digits = 3, row.names = FALSE, caption = "Head of the table check_trees")
 ```
+
+The output of the function also standardises the names of the relative tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot` column, telling if a tree is in the plot or not.
 
 You can also grep and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title : 
 
@@ -165,10 +174,10 @@ plot_to_change <- plot_to_change + ggtitle("A custom title")
 plot_to_change
 ```
 
-If you want to retrieve the GPS coordinates of the trees in a longitude/latitude format, use this code:
+If you supplied longitude and latitude corner coordinates, you can retrieve the GPS coordinates of the trees in a longitude/latitude format using this code:
 
 ```{r}
-tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_proj_coord, proj = check_plot_trust_GPS$UTM_code, inverse = TRUE) )
+tree_GPS_coord <- as.data.frame( proj4::project(check_trees[c("x_proj","y_proj")], proj = check_plot_trust_GPS$UTM_code$UTM_code, inverse = TRUE) )
 ```
 
 
@@ -176,9 +185,21 @@ tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_proj_c
 
 WORK IN PROGRESS
 
+
+```{r}
+check_plot_trust_field <- check_plot_coord(
+  corner_data = corner_coord,
+  longlat = c("Long", "Lat"),
+  rel_coord = c("xRel", "yRel"), corner_ID = "Corners",
+  trust_GPS_corners = F,
+  draw_plot = TRUE ,
+  tree_data = trees, tree_coords = c("xRel","yRel"), prop_tree = "H")
+```
+
+
 # Dividing plots
 
-Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid (be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles) :
+Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid. Be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles :
 
 ```{r divide_plot}
 subplots <- divide_plot(
@@ -192,16 +213,16 @@ kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the 
 
 If you don't have any projected coordinates, just let `proj_coord` = NULL.
 
-For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_df` and `tree_coords` arguments** :
+For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_data` and `tree_coords` arguments** :
 
 ```{r divide_plot_trees}
-trees$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
+check_trees$AGB <- computeAGB(check_trees$D, check_trees$WD, H = check_trees$H)
 
 subplots <- divide_plot(
   rel_coord = check_plot_trust_GPS$corner_coord[c("x_rel","y_rel")],
   proj_coord = check_plot_trust_GPS$corner_coord[c("x_proj","y_proj")],
   grid_size = 25, # or c(50,50)
-  tree_df = trees, tree_coords = c("xRel","yRel")
+  tree_data = check_trees, tree_coords = c("x_rel","y_rel")
   )
 ```
 
@@ -209,10 +230,10 @@ The function now returns a list containing :
 
 * `sub_corner_coord` : coordinates of subplot corners as previously
 
-* `tree_df` : the tree data-frame with the **subplot_id added in last column**
+* `tree_data` : the tree data-frame with the **subplot_id added in last column**
 
 ```{r}
-kable(head(subplots$tree_df), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_df returns")
+kable(head(subplots$tree_data), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
 The function can handle as many plots as you wish, using the `corner_plot_ID` and `tree_plot_ID` arguments :
@@ -220,27 +241,27 @@ The function can handle as many plots as you wish, using the `corner_plot_ID` an
 ```{r divide_multiple_plots}
 multiple_plots <- rbind(check_plot_trust_GPS$corner_coord[c("x_rel","y_rel","x_proj","y_proj")], check_plot_trust_GPS$corner_coord[c("x_rel","y_rel","x_proj","y_proj")])
 multiple_plots$plot_ID = rep(c("NB1","NB2"),e=4)
-multiple_trees <- rbind(trees,trees)
-multiple_trees$plot = rep(c("NB1","NB2"),e=nrow(trees))
+multiple_trees <- rbind(check_trees,check_trees)
+multiple_trees$plot = rep(c("NB1","NB2"),e=nrow(check_trees))
 
 multiple_subplots <- divide_plot(
   rel_coord = multiple_plots[c("x_rel","y_rel")],
   proj_coord = multiple_plots[c("x_proj","y_proj")],
   grid_size = 50,
   corner_plot_ID = multiple_plots$plot_ID,
-  tree_df = multiple_trees,
-  tree_coords = c("xRel","yRel"),
+  tree_data = multiple_trees,
+  tree_coords = c("x_rel","y_rel"),
   tree_plot_ID = multiple_trees$plot
 )
 ```
 
 # Summarising tree metrics at subplot level
 
-Once you've applied the `divide_plot()` function with a `tree_df` argument, you can summarise any tree metric present in divide_plot()$tree_df at the subplot level with the `subplot_summary()` function.
+Once you've applied the `divide_plot()` function with a `tree_data` argument, you can summarise any tree metric present in divide_plot()$tree_data at the subplot level with the `subplot_summary()` function.
 
 ```{r subplot_summary}
 # AGB metric was added before applying the divide_plot() function, but it could have been added afterwards with : 
-# subplots$tree_df$AGB <- computeAGB(trees$D, trees$WD, H = trees$H)
+# subplots$tree_data$AGB <- computeAGB(check_trees$D, check_trees$WD, H = check_trees$H)
 
 subplot_metric <- subplot_summary(subplots = subplots,
                                   value = "AGB") # AGB is the tree metric
@@ -275,14 +296,14 @@ custom_plot +
   labs(title = "Nourragues plot" , fill="Sum of AGB per hectare")
 # Display trees : 
 custom_plot + 
-  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj), shape=3) 
+  geom_point(data=check_trees, mapping = aes(x = x_proj, y = y_proj), shape=1) 
 # Display trees with diameter as size point : 
 custom_plot + 
-  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D), shape=1) +
+  geom_point(data=check_trees, mapping = aes(x = x_proj, y = y_proj, size = D), shape=1) +
   labs(size = "Tree diameter (m)", fill = "Sum of AGB per hectare") 
 # Display trees with diameter as size point and height as color point (and a smaller legend on the right) : 
 custom_plot + 
-  geom_point(data=trees, mapping = aes(x = x_proj, y = y_proj, size = D, col = H), shape=1) +
+  geom_point(data=check_trees, mapping = aes(x = x_proj, y = y_proj, size = D, col = H), shape=1) +
   labs(size = "Tree diameter (m)", col = "Tree size (m)", fill = "Sum of AGB per hectare") +
   scale_color_gradientn(colours = c("white","black")) +
   theme(legend.position = "right", legend.key.size = unit(0.5, 'cm'))

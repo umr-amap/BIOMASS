@@ -1,3 +1,13 @@
+* version 2.2.2
+- Add the ref_raster argument to the check_plot_coord() function to display the plot over a reference raster (typically a chm). 
+- Add the prop_tree argument to display trees proportionally (in size and alpha transparency) to a tree_data variable
+
+* version 2.2.1 
+- Modified check_plot_coord(), the function now : 
+  - handles multiple plots using the 'plot_id' and 'tree_plot_id' arguments. The new argument 'ask' prompts user before displaying each plot. 
+  - takes as its first argument a data-frame of corner coordinates (in a pipe-use way), and the column names of its relative/projected coordinates for the rest  
+
+
 * version 2.2
 - Modified bilinear interpolation to generalized bilinear interpolation that can deal with rectangular plot and non (0;0) origin corner plot
 - Added check_plot_coord function which will replace correctCoordGPS() :

@@ -8,7 +8,7 @@ divide_plot(
   rel_coord,
   proj_coord = NULL,
   grid_size,
-  tree_df = NULL,
+  tree_data = NULL,
   tree_coords = NULL,
   corner_plot_ID = NULL,
   tree_plot_ID = NULL,
@@ -23,7 +23,7 @@ divide_plot(
 
 \item{grid_size}{a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
-\item{tree_df}{a data frame containing tree relative coordinates and other tree metrics (one row per tree).}
+\item{tree_data}{a data frame containing tree relative coordinates and other tree metrics (one row per tree).}
 
 \item{tree_coords}{a character vector of size 2 containing the column names of the relative coordinates of the trees.}
 
@@ -36,7 +36,7 @@ divide_plot(
 \item{centred_grid}{when grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centred on the plot.}
 }
 \value{
-If tree_df isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
 \item \code{subplot_id}: The automatically generated subplot code, using the following rule : subplot_X_Y
@@ -44,10 +44,10 @@ If tree_df isn't supplied, returns a data-frame containing as many rows as there
 \item \code{x_proj} and \code{y_proj} :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
 }
 
-If tree_df is supplied, returns a list containing :
+If tree_data is supplied, returns a list containing :
 \itemize{
 \item the previous data-frame
-\item the tree_df data-frame with the subplot_id of each tree in the last column
+\item the tree_data data-frame with the subplot_id of each tree in the last column
 }
 }
 \description{
@@ -68,24 +68,26 @@ proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 38
 subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
 
 # Assigning trees to subplots
-tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
+tree_data <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
 subplots <- divide_plot(rel_coord, proj_coord, 100,
-                        tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+                        tree_data = tree_data, tree_coords = c("x_tree","y_tree"))
 subplots$sub_corner_coord
-subplots$tree_df
+subplots$tree_data
 
 # When grid dimensions don't fit perfectly plot dimensions
-subplots <- divide_plot(rel_coord, grid_size = c(45,50))
-subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+\donttest{
+ subplots <- divide_plot(rel_coord, grid_size = c(45,50))
+ subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+}
 
 # Dealing with multiple plots
 rel_coord <- rbind(rel_coord, rel_coord)
 proj_coord <- rbind(proj_coord, proj_coord + 200)
-tree_df <- rbind(tree_df, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
+tree_data <- rbind(tree_data, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
 corner_plot_ID <- rep(c("plot1","plot2"), e=4)
 tree_plot_ID <- rep(c("plot1","plot2"), e=50)
 subplots <- divide_plot(rel_coord, proj_coord, 100,
-                        tree_df, c("x_tree","y_tree"),
+                        tree_data, c("x_tree","y_tree"),
                         corner_plot_ID, tree_plot_ID)
 
 }

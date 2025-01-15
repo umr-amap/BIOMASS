@@ -9,7 +9,7 @@ subplot_summary(subplots, value = NULL, draw_plot = TRUE, fun = sum, ...)
 \arguments{
 \item{subplots}{output of the \code{\link[=divide_plot]{divide_plot()}} function}
 
-\item{value}{a character indicating the column in subplots$tree_df to display}
+\item{value}{a character indicating the column in subplots$tree_data to display}
 
 \item{draw_plot}{a logical indicating whether the plot design should be displayed and returned}
 
@@ -31,9 +31,9 @@ After applying the \code{\link[=divide_plot]{divide_plot()}} function, this func
 \examples{
 rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
 proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
-tree_df <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
+tree_data <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
 subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50,
-                        tree_df = tree_df, tree_coords = c("x_tree","y_tree"))
+                        tree_data = tree_data, tree_coords = c("x_tree","y_tree"))
 # Sum summary (by default)
 subplot_summary(subplots , value = "metric", draw_plot = FALSE)
 # 9th quantile summary (for example)
