@@ -47,7 +47,7 @@ kable(head(trees), digits = 3, row.names = FALSE, caption = "Head of the table t
 We can see in the table that we have for each trees the name of the plot we have, the `xRel` and `yRel`, the relative coordinate of the trees inside the plot. The rest of the column is for calculate the AGB at the end.
 
 ```{r, fig.cap="Plot the coordinate long lat"}
-coord <- read.csv(system.file("external", "Coord.csv",
+coord <- read.csv(system.file("extdata", "Coord.csv",
   package = "BIOMASS", mustWork = TRUE
 ))
 

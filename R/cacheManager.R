@@ -25,7 +25,7 @@ cacheManager <- function(nameFile) {
   }
   
   if (nameFile == "feldRegion.grd") {
-    return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
+    return(system.file("extdata", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }
   
   url <- list(

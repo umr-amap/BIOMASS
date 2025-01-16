@@ -55,7 +55,7 @@ Two data frames are required for the rest :
 In this vignette, we will use the Nouragues dataset as an exemple :
 
 ```{r}
-corner_coord <- read.csv(system.file("external", "Coord.csv",package = "BIOMASS", mustWork = TRUE))
+corner_coord <- read.csv(system.file("extdata", "Coord.csv",package = "BIOMASS", mustWork = TRUE))
 
 kable(head(corner_coord), digits = 5, row.names = FALSE, caption = "Head of the table corner_coord")
 ```
@@ -69,7 +69,7 @@ Note that both Lat/Long and xProj/yProj coordinates are included in this dataset
 
 
 ```{r}
-trees <- read.csv(system.file("external", "NouraguesPlot.csv",package = "BIOMASS", mustWork = TRUE))
+trees <- read.csv(system.file("extdata", "NouraguesPlot.csv",package = "BIOMASS", mustWork = TRUE))
 
 # METTRE DES ARBRES HORS PLOT A TITRE ILLUSTRATIFS
 
