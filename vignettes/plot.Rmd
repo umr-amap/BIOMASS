@@ -35,7 +35,7 @@ You need the following information to use the following function in your analysi
   - The X, Y directions
 
 ```{r}
-trees <- read.csv(system.file("external", "NouraguesPlot.csv",
+trees <- read.csv(system.file("extdata", "NouraguesPlot.csv",
   package = "BIOMASS", mustWork = TRUE
 ))
 ```

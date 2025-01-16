@@ -100,7 +100,7 @@
 
 #' Nouragues forest dataset
 #'
-#' This dataset contains 4 of the 12 plots of `Petit Plateau' permanent plots fifth census, 2012, Nouragues forestTree dataset (French Guiana). For educational purposes, some virtual trees have been added in the dataset.
+#' This dataset contains 4 of the 12 plots of `Petit Plateau' permanent plots fifth census, 2012, Nouragues forestTree dataset (French Guiana). For educational purposes, some virtual trees have been added in the dataset. Dead trees have been removed.
 #' 
 #' @docType data
 #' @usage data(NouraguesTrees)
@@ -155,13 +155,15 @@
 #' @docType data
 #' @usage data(NouraguesPlot201)
 #' @format
-#' A data frame with 40 (simulated GPS measurements) of the 7 following variables :
+#' A data frame with 40 (simulated GPS measurements) of the 9 following variables :
 #'   - `Site`: Name of the site set up in the Nouragues forest
 #'   - `Plot`: Plot ID of the site
 #'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
 #'   - `Yfield`: Tree location on the y-axis in the local coordinate system
 #'   - `Xutm`: Tree location on the x-axis in the UTM coordinate system
 #'   - `Yutm`: Tree location on the y-axis in the UTM coordinate system
+#'   - `Long`: Tree longitude coordinate
+#'   - `Lat`: Tree latitude coordinate
 #'   - `CornerID` : IDs of the plot corners 
 #'
 #' @references
