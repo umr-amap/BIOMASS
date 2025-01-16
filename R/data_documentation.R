@@ -98,6 +98,82 @@
 "KarnatakaForest"
 
 
+#' Nouragues forest dataset
+#'
+#' This dataset contains 4 of the 12 plots of `Petit Plateau' permanent plots fifth census, 2012, Nouragues forestTree dataset (French Guiana). For educational purposes, some virtual trees have been added in the dataset.
+#' 
+#' @docType data
+#' @usage data(NouraguesTrees)
+#' @format
+#' A data frame with 2050 observations (trees) of the 8 following variables :
+#'   - `site`: Name of the site set up in the Nouragues forest
+#'   - `plot`: Plot ID
+#'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
+#'   - `Yfield`: Tree location on the y-axis in the local coordinate system
+#'   - `family`: Tree family
+#'   - `genus`: Tree genus
+#'   - `species`: Tree species
+#'   - `D`: Tree diameter (in cm)
+#'
+#' @references
+#'  `Petit Plateau' permanent plots fifth census, 2012, Nouragues forest, https://doi.org/10.18167/DVN1/TZ1RL9, CIRAD Dataverse, V1
+#' @examples
+#' data(NouraguesTrees)
+#' str(NouraguesTrees)
+#' @keywords datasets
+"NouraguesTrees"
+
+
+#' Nouragues plot coordinates
+#'
+#' Dataset containing the corner coordinates of 4 plots of `Petit Plateau' in Nouragues forest (French Guiana).
+#' 
+#' @docType data
+#' @usage data(NouraguesCoords)
+#' @format
+#' A data frame with 16 observations (GPS measurements) of the 6 following variables :
+#'   - `Site`: Name of the site set up in the Nouragues forest
+#'   - `Plot`: Plot ID of the site
+#'   - `Xutm`: Tree location on the x-axis in the UTM coordinate system
+#'   - `Yutm`: Tree location on the y-axis in the UTM coordinate system
+#'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
+#'   - `Yfield`: Tree location on the y-axis in the local coordinate system
+#'
+#' @references
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", https://doi.org/10.18167/DVN1/HXKS4E, CIRAD Dataverse, V2
+#' @examples
+#' data(NouraguesCoords)
+#' str(NouraguesCoords)
+#' @keywords datasets
+"NouraguesCoords"
+
+
+#' Nouragues plot 201 coordinates
+#' 
+#' Simulated corner coordinates of Nouragues 'Petit plateau' plot 201. The original coordinates have been modified to make the plot non-squared, and 10 repeated measurements of each corner have been simulated adding a random error to x and y coordinates..
+#' 
+#' @docType data
+#' @usage data(NouraguesPlot201)
+#' @format
+#' A data frame with 40 (simulated GPS measurements) of the 7 following variables :
+#'   - `Site`: Name of the site set up in the Nouragues forest
+#'   - `Plot`: Plot ID of the site
+#'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
+#'   - `Yfield`: Tree location on the y-axis in the local coordinate system
+#'   - `Xutm`: Tree location on the x-axis in the UTM coordinate system
+#'   - `Yutm`: Tree location on the y-axis in the UTM coordinate system
+#'   - `CornerID` : IDs of the plot corners 
+#'
+#' @references
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", https://doi.org/10.18167/DVN1/HXKS4E, CIRAD Dataverse, V2
+#' @examples
+#' data(NouraguesPlot201)
+#' str(NouraguesPlot201)
+#' @keywords datasets
+"NouraguesPlot201"
+
+
+
 #' Height-Diameter data
 #'
 #' Dataset from two 1-ha plots from the Nouragues forest (French Guiana)
