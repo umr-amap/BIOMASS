@@ -70,7 +70,7 @@ subplots_201 <- divide_plot(
   corner_data = check_plot201$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = 50)
-subplots_201$sub_corner_coord
+subplots_201
 
 # Assigning trees to subplots
 data("NouraguesTrees")
@@ -81,7 +81,8 @@ subplots_201 <- suppressWarnings(
     rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
     grid_size = 50,
     tree_data = plot201_trees, tree_coords = c("Xfield","Yfield")))
-head(subplots$tree_data)
+head(subplots_201$sub_corner_coord)
+head(subplots_201$tree_data)
 
 # When grid dimensions don't fit perfectly plot dimensions
 \donttest{

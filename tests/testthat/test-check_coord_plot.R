@@ -1,13 +1,13 @@
+context("Check plot coordinates")
+
 data("NouraguesCoords")
 data("NouraguesPlot201")
 data("NouraguesTrees")
 
-context("Check plot coordinates")
-
 test_that("check_plot_coord error", {
 
   expect_error(check_plot_coord(proj_coord=NouraguesPlot201[c("Xutm","Yutm")], rel_coord=NouraguesPlot201[c("Xfield","Yfield")]),
-               "The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and it associated coordinates variable names.")
+               "The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
   expect_error(check_plot_coord(corner_data = as.matrix(NouraguesPlot201), rel_coord = c("Xfield","Yfield")),
                "corner_data must a data frame or a data frame extension")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, rel_coord = c("Xfield","Yfield")),
