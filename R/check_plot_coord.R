@@ -77,14 +77,14 @@
 #' plot_204_coords <- NouraguesCoords[NouraguesCoords$Plot==204,]
 #' data("NouraguesTrees")
 #' plot_204_trees <- NouraguesTrees[NouraguesTrees$Plot == 204, ]
+#' nouragues_raster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",package = "BIOMASS", mustWork = TRUE))
 #' check_plot_204 <- check_plot_coord(
-#'   corner_data = plot_204_coords,
-#'   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-#'   trust_GPS_corners = TRUE, draw_plot = FALSE,
-#'   tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
-#'   prop_tree = "D"
+#'  corner_data = plot_204_coords,
+#'  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+#'  trust_GPS_corners = TRUE, draw_plot = FALSE,
+#'  tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
+#'  ref_raster = nouragues_raster, prop_tree = "D"
 #' )
-#' check_plot_204$corner_coord
 #' \donttest{
 #'   check_plot_204$plot_design
 #' }

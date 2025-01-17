@@ -12,6 +12,8 @@ test_that("check_plot_coord error", {
                "corner_data must a data frame or a data frame extension")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, rel_coord = c("Xfield","Yfield")),
                "You must supply the name of at least one set of coordinates : longlat or proj_coord")
+  expect_error(check_plot_coord(corner_data = NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("x","y")),
+               "column names supplied by rel_coord are not found in corner_data")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, proj_coord = c("xproj","yproj"), rel_coord = c("Xfield","Yfield")),
                "column names supplied by proj_coord are not found in corner_data")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, longlat = c("xproj","yproj"), rel_coord = c("Xfield","Yfield")),
@@ -43,6 +45,9 @@ test_that("check_plot_coord error", {
   
   expect_warning(check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "These ID's are found in tree_plot_ID but not in plot_ID : 201 213 223")
   
+  NA_trees <- NouraguesTrees[NouraguesTrees$Plot==204,] ; NA_trees[1,"Xfield"] <- NA
+  expect_warning(check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NA_trees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot", draw_plot = F), "Missing values are detected in the relative coordinates of the trees. These trees will be removed from the dataset.")
+
 })
 
 test_that("check_plot_coord outputs and outliers", {
@@ -115,7 +120,6 @@ test_that("check_plot_coord, plot design", {
 
 
 test_that("check_plot_coord, tree data and raster", {
-  #expect_warning(check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")) , "Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)") # Doesn't work because of the carriage return at the end 
   
   res <- suppressWarnings(
     check_plot_coord(
@@ -136,9 +140,8 @@ test_that("check_plot_coord, tree data and raster", {
       trust_GPS_corners = T, rm_outliers = T, corner_ID = "CornerID", draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D",
       ref_raster = nouragues_raster))
-  vdiffr::expect_doppelganger("check-plot-201-trees-prop", 
+  vdiffr::expect_doppelganger("check-plot-201-rast-prop", 
                               res_prop_raster$plot_design)
-  
   
   
 })
