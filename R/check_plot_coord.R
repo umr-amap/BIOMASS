@@ -15,9 +15,9 @@
 #' When ref_raster is supplied, this raster is cropped for every plot contained in corner_data. 
 #'
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates.
-#' @param proj_coord (optional, if longlat is not supplied) A character vector specifying the column names of the corner projected coordinates (x,y)
-#' @param longlat (optional, if proj_coord is not supplied) A character vector specifying the column names of the corner geographic coordinates (long,lat).
-#' @param rel_coord A character vector specifying the column names of the corner relative coordinates (that of the field, ie, the local ones).
+#' @param proj_coord (optional, if longlat is not supplied) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param longlat (optional, if proj_coord is not supplied) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
+#' @param rel_coord A character vector of length 2 specifying the column names (resp. x, y) of the corner relative coordinates (that of the field, ie, the local ones).
 #' @param trust_GPS_corners A logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.
 #' @param draw_plot A logical indicating if the plot design should be displayed and returned.
 #' @param tree_data A data frame, data frame extension, containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics.
@@ -56,7 +56,7 @@
 #' check_plot201 <- check_plot_coord(
 #'   corner_data = NouraguesPlot201,
 #'   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-#'   trust_GPS_corners = T, corner_ID = "CornerID", draw_plot = F)
+#'   trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
 #' check_plot201$corner_coord
 #' \donttest{
 #'   check_plot201$plot_design
@@ -67,7 +67,7 @@
 #' check_plots <- check_plot_coord(
 #'   corner_data = NouraguesCoords,
 #'   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-#'   trust_GPS_corners = T, plot_ID = "Plot", draw_plot = F)
+#'   trust_GPS_corners = TRUE, plot_ID = "Plot", draw_plot = FALSE)
 #' check_plots$corner_coord
 #' \donttest{
 #'   check_plots$plot_design
@@ -80,7 +80,7 @@
 #' check_plot_204 <- check_plot_coord(
 #'   corner_data = plot_204_coords,
 #'   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-#'   trust_GPS_corners = T, draw_plot = F,
+#'   trust_GPS_corners = TRUE, draw_plot = FALSE,
 #'   tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
 #'   prop_tree = "D"
 #' )
@@ -94,7 +94,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   ##### Checking arguments -----------------------------------------------------
   
   if(missing(corner_data)) {
-    stop("The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and it associated coordinates variable names.")
+    stop("The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
     stop("corner_data must a data frame or a data frame extension")
@@ -200,7 +200,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   ### Transform the geographic coordinates into UTM coordinates ----------------
   
-  latlong2UTM_fct <- function(dat) { # dat = corner_dt[plot_ID == "NB1" , ]
+  latlong2UTM_fct <- function(dat) { # dat = corner_dt
     proj_coord <- latlong2UTM(dat[, c("long","lat")])
     UTM_code <- unique(proj_coord[, "codeUTM"])
     if(length(UTM_code)>1) {

@@ -203,8 +203,9 @@ Dividing plots into several rectangular sub-plots is performed using the `divide
 
 ```{r divide_plot}
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_GPS$corner_coord[c("x_rel","y_rel")],
-  proj_coord = check_plot_trust_GPS$corner_coord[c("x_proj","y_proj")],
+  corner_data = check_plot_trust_GPS$corner_coord,
+  rel_coord = c("x_rel","y_rel"),
+  proj_coord = c("x_proj","y_proj"),
   grid_size = 25 # or c(25,25)
   )
 
@@ -219,8 +220,9 @@ For the purposes of summarising and representing subplots (coming in the next se
 check_trees$AGB <- computeAGB(check_trees$D, check_trees$WD, H = check_trees$H)
 
 subplots <- divide_plot(
-  rel_coord = check_plot_trust_GPS$corner_coord[c("x_rel","y_rel")],
-  proj_coord = check_plot_trust_GPS$corner_coord[c("x_proj","y_proj")],
+  corner_data = check_plot_trust_GPS$corner_coord, 
+  rel_coord = c("x_rel","y_rel"),
+  proj_coord = c("x_proj","y_proj"),
   grid_size = 25, # or c(50,50)
   tree_data = check_trees, tree_coords = c("x_rel","y_rel")
   )
@@ -245,13 +247,14 @@ multiple_trees <- rbind(check_trees,check_trees)
 multiple_trees$plot = rep(c("NB1","NB2"),e=nrow(check_trees))
 
 multiple_subplots <- divide_plot(
-  rel_coord = multiple_plots[c("x_rel","y_rel")],
-  proj_coord = multiple_plots[c("x_proj","y_proj")],
+  corner_data = multiple_plots,
+  rel_coord = c("x_rel","y_rel"),
+  proj_coord = c("x_proj","y_proj"),
   grid_size = 50,
-  corner_plot_ID = multiple_plots$plot_ID,
+  corner_plot_ID = "plot_ID",
   tree_data = multiple_trees,
   tree_coords = c("x_rel","y_rel"),
-  tree_plot_ID = multiple_trees$plot
+  tree_plot_ID = "plot"
 )
 ```
 

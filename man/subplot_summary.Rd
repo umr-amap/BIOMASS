@@ -22,24 +22,55 @@ a list containg the following elements :
 \itemize{
 \item \code{tree_summary} : a summary of the metric per subplot
 \item \code{polygon} : an sf object : simple feature collection of the subplot's polygon
-\item \code{plot_design} : (if draw_plot=T) a ggplot object (or a list of ggplot objects) that can easily be modified
+\item \code{plot_design} : a ggplot object (or a list of ggplot objects) that can easily be modified
 }
 }
 \description{
 After applying the \code{\link[=divide_plot]{divide_plot()}} function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
 }
 \examples{
-rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
-proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
-tree_data <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200), metric = rnorm(50,10,5))
-subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 50,
-                        tree_data = tree_data, tree_coords = c("x_tree","y_tree"))
-# Sum summary (by default)
-subplot_summary(subplots , value = "metric", draw_plot = FALSE)
-# 9th quantile summary (for example)
-subplot_summary(subplots , value = "metric", draw_plot = FALSE,
-                fun = quantile, probs=0.9)
+# One plot with repeated measurements of each corner
+data("NouraguesPlot201")
+data("NouraguesTrees")
+check_plot201 <- check_plot_coord(
+  corner_data = NouraguesPlot201,
+  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+  trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+subplots_201 <- suppressWarnings(
+  divide_plot(
+    corner_data = check_plot201$corner_coord, 
+    rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+    grid_size = 50,
+    tree_data =  NouraguesTrees[NouraguesTrees$Plot == 201,],
+    tree_coords = c("Xfield","Yfield")))
+# Sum summary (by default) of diameter
+subplots_201_sum <- subplot_summary(subplots_201 , value = "D", draw_plot = FALSE)
+subplots_201_sum$tree_summary
+subplots_201_sum$polygon
+\donttest{
+  subplots_201_sum$plot_design
+}
+# 9th quantile summary (for example) of diameter
+subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FALSE,
+                                      fun = quantile, probs=0.9)
+  
 
+# Dealing with multiple plots
+data("NouraguesCoords")
+nouragues_subplots <- suppressWarnings(
+ divide_plot(
+   corner_data = NouraguesCoords,
+   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
+   corner_plot_ID = "Plot",
+   grid_size = 50,
+   tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
+   tree_plot_ID = "Plot"))
+# Sum summary (by default)
+nouragues_sum <- subplot_summary(nouragues_subplots , value = "D", draw_plot = FALSE)
+nouragues_sum$tree_summary
+\donttest{
+  subplots_201_sum$plot_design
+}
 
 }
 \author{

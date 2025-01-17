@@ -26,11 +26,11 @@ check_plot_coord(
 \arguments{
 \item{corner_data}{A data frame, data frame extension, containing the plot corner coordinates.}
 
-\item{proj_coord}{(optional, if longlat is not supplied) A character vector specifying the column names of the corner projected coordinates (x,y)}
+\item{proj_coord}{(optional, if longlat is not supplied) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
 
-\item{longlat}{(optional, if proj_coord is not supplied) A character vector specifying the column names of the corner geographic coordinates (long,lat).}
+\item{longlat}{(optional, if proj_coord is not supplied) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).}
 
-\item{rel_coord}{A character vector specifying the column names of the corner relative coordinates (that of the field, ie, the local ones).}
+\item{rel_coord}{A character vector of length 2 specifying the column names (resp. x, y) of the corner relative coordinates (that of the field, ie, the local ones).}
 
 \item{trust_GPS_corners}{A logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.}
 
@@ -82,28 +82,42 @@ If longlat and proj_coord are supplied, only longitude/latitude coordinates will
 When ref_raster is supplied, this raster is cropped for every plot contained in corner_data.
 }
 \examples{
-
-set.seed(52)
-corner_data <- data.frame(
-  x_proj = c( rnorm(5, 0, 5), rnorm(5, 0, 5),
-              rnorm(5, 100, 5), rnorm(5, 100, 5)) + 1000,
-  y_proj = c( rnorm(5, 0, 5), rnorm(5, 100, 5),
-              rnorm(5, 0, 5), rnorm(5, 100, 5)) + 1000,
-  x_rel = c(rep(0, 10), rep(100, 10)),
-  y_rel = c(rep(c(rep(0, 5), rep(100, 5)), 2)),
-  corner_ID = rep(c("SW","NW","SE","NE"),e=5) )
-
-aa <- check_plot_coord(
- corner_data = corner_data,
- proj_coord = c("x_proj","y_proj"), rel_coord = c("x_rel","y_rel"),
- trust_GPS_corners = TRUE,
- corner_ID = "corner_ID",
- draw_plot = FALSE, rm_outliers = FALSE
-)
-
-aa$corner_coord
+# One plot with repeated measurements of each corner
+data("NouraguesPlot201")
+check_plot201 <- check_plot_coord(
+  corner_data = NouraguesPlot201,
+  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+  trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+check_plot201$corner_coord
 \donttest{
-  aa$plot_design
+  check_plot201$plot_design
+}
+
+# 4 plots with one measurement of each corner
+data("NouraguesCoords")
+check_plots <- check_plot_coord(
+  corner_data = NouraguesCoords,
+  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+  trust_GPS_corners = TRUE, plot_ID = "Plot", draw_plot = FALSE)
+check_plots$corner_coord
+\donttest{
+  check_plots$plot_design
+}
+
+# Displaying the associated CHM raster and representing trees proportionally to their diameter
+plot_204_coords <- NouraguesCoords[NouraguesCoords$Plot==204,]
+data("NouraguesTrees")
+plot_204_trees <- NouraguesTrees[NouraguesTrees$Plot == 204, ]
+check_plot_204 <- check_plot_coord(
+  corner_data = plot_204_coords,
+  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+  trust_GPS_corners = TRUE, draw_plot = FALSE,
+  tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
+  prop_tree = "D"
+)
+check_plot_204$corner_coord
+\donttest{
+  check_plot_204$plot_design
 }
 }
 \author{
