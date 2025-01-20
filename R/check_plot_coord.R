@@ -233,7 +233,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     
     if(nrow(corner_dat) != 4) { # if multiple measurements of each corner
       
-      if (any(table(corner_dat$corner_ID) < 5)) {
+      if (trust_GPS_corners && any(table(corner_dat$corner_ID) < 5)) {
         warning(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) ,
                  "At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE\n"))

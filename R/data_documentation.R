@@ -150,7 +150,7 @@
 
 #' Nouragues plot 201 coordinates
 #' 
-#' Simulated corner coordinates of Nouragues 'Petit plateau' plot 201. The original coordinates have been modified to make the plot non-squared, and 10 repeated measurements of each corner have been simulated adding a random error to x and y coordinates..
+#' Simulated corner coordinates of Nouragues 'Petit plateau' plot 201. The original coordinates have been modified to make the plot non-squared, and 10 repeated measurements of each corner have been simulated adding a random error to x and y coordinates.
 #' 
 #' @docType data
 #' @usage data(NouraguesPlot201)
