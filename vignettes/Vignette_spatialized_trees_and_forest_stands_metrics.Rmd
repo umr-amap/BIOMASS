@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 require(BIOMASS)
 require(knitr)
 require(ggplot2)
-require(data.table)
 ```
 
 
@@ -144,12 +143,8 @@ kable(check_plot_trust_GPS$corner_coord, row.names = FALSE, caption = "Reference
 
 The associated polygon is returned via the `$polygon` output and can be saved into a shapefile like this : 
 
-```{r}
-# toto <- check_plot_trust_GPS$polygon$geometry
-# sf::st_set_crs(x = toto, value = check_plot_trust_GPS$UTM_code) # ne fonctionne pas !
-# sf::st_write(toto, "../../Documents/NOURAGUES/toto.shp", layer_options = "GEOMETRY=AS_XY")
-# sf::st_write(check_plot_trust_GPS$polygon$geometry, "your_directory/plot201.shp", layer_options = "GEOMETRY=AS_XY")
-
+```{r, eval=FALSE}
+sf::st_write(check_plot_trust_GPS$polygon, "your_directory/plot201.shp")
 ```
 
 For full details, the `$outlier_corners` output returns all the information about GPS outliers found by the function, and the `$UTM_code` output returns the UTM code calculated by the function if geographic coordinates have been supplied.

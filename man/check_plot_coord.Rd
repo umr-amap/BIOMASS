@@ -60,7 +60,7 @@ check_plot_coord(
 Returns a list including :
 \itemize{
 \item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot
-\item \code{polygon}: a spatial polygon
+\item \code{polygon}: a sf object containing plot's polygon(s)
 \item \code{tree_data}: if \code{tree_data} is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 \item \code{outliers}: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot

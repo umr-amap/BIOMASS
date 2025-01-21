@@ -35,7 +35,7 @@
 #'
 #' @return Returns a list including :
 #'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot 
-#'    - `polygon`: a spatial polygon
+#'    - `polygon`: a sf object containing plot's polygon(s)
 #'    - `tree_data`: if `tree_data` is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 #'    - `outliers`: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers 
 #'    - `plot_design`: if `draw_plot` is TRUE, a ggplot object corresponding to the design of the plot
@@ -44,7 +44,7 @@
 #' @export
 #'
 #' @importFrom data.table data.table := setnames %between% copy
-#' @importFrom sf st_multipoint st_polygon st_sfc
+#' @importFrom sf st_multipoint st_polygon st_sfc st_as_sf
 #' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text geom_raster scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank guides guide_legend scale_alpha scale_alpha_manual scale_size
 #' @importFrom terra vect crop as.data.frame
 #'
@@ -373,7 +373,8 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
   
   # Apply create_polygons to all plots and convert into simple feature geometry list column
-  corner_polygon <- st_sfc( lapply( split(corner_checked,corner_checked$plot_ID) , create_polygon ) )
+  corner_polygon <- st_sfc( lapply( split(corner_checked,corner_checked$plot_ID) , create_polygon ), 
+                            crs = ifelse(!is.null(longlat), UTM_code$UTM_code, ""))
     
   ### Draw the plot ------------------------------------------------------------
   draw_plot_fct <-  function(corner_dat) { # corner_dat = corner_dt
@@ -508,7 +509,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   output <- list(
     corner_coord = as.data.frame(corner_checked),
-    polygon = as.data.frame(corner_polygon),
+    polygon = st_as_sf(corner_polygon),
     plot_design = ggplot_list
     )
   
