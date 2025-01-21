@@ -1,3 +1,21 @@
+#' APG dataset
+#'
+#' Retrieved APG III families and orders from genus names of the sub-dataset KarnatakaForest using BIOMASS getTaxonomy function : 
+#' getTaxonomy(KarnatakaForestsub$genusCorr, findOrder = TRUE)
+#'
+#' @docType data
+#' @usage data("APG")
+#' @format
+#' A data frame with 5766 observations on the following 3 variables :
+#'   - `inputGenus`: Names of the genus
+#'   - `family`: Names of the retrieved family
+#'   - `order`: Names of the retrieved order
+#'
+#' @references
+#' See "KarnatakaForest" dataset.
+#' @keywords datasets
+"APG"
+
 #' Angiosperm Phylogeny Group (APG III) dataset
 #'
 #' APGIII Families taken from the Angiosperm Phylogeny Website (http://www.mobot.org/MOBOT/research/APweb/)
@@ -18,6 +36,8 @@
 #' @keywords datasets internal
 #'
 "apgFamilies"
+
+
 
 
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
@@ -206,6 +226,24 @@
 #' str(sd_10)
 #' @keywords datasets wdData getWoodDensity internal
 "sd_10"
+
+#' Taxo dataset
+#'
+#' Corrected taxonomy  of the sub-dataset KarnatakaForest using BIOMASS correctTaxo function : 
+#' correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
+#'
+#' @docType data
+#' @usage data("Taxo")
+#' @format
+#' A data frame with 5766 observations on the following 3 variables :
+#'   - `genusCorrected`: Corrected names of the genus
+#'   - `speciesCorrected`: Corrected names of the species
+#'   - `nameModified`: TRUE when names have been modified, FALSE if not
+#'
+#' @references
+#' See "KarnatakaForest" dataset.
+#' @keywords datasets
+"Taxo"
 
 
 #' The global wood density database
