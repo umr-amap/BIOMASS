@@ -51,14 +51,20 @@ KarnatakaForestsub <- droplevels(KarnatakaForest[selecPlot, ])
 ##Check and retrieve taxonomy
 **First, check for any typo in the taxonomy**
 ```{r eval=test, cache=CACHE}
-Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
+#uncomment the following line to check & retrieve taxonomy using correctTaxo function :
+#Taxo <- correctTaxo(genus = KarnatakaForestsub$genus, species = KarnatakaForestsub$species, useCache = FALSE, verbose = FALSE)
+#comment the following line loading the corrected version :
+Taxo <- readRDS(file.path("data", "Taxo.RDS"))
 KarnatakaForestsub$genusCorr <- Taxo$genusCorrected
 KarnatakaForestsub$speciesCorr <- Taxo$speciesCorrected
 ```
 
 **If needed, retrieve APG III families and orders from genus names**
 ```{r eval=test, cache=CACHE}
-APG <- getTaxonomy(KarnatakaForestsub$genusCorr, findOrder = TRUE)
+#uncomment the following line to retrieve APG III families and orders from genus names using getTaxonomy function :
+#APG <- getTaxonomy(KarnatakaForestsub$genusCorr, findOrder = TRUE)
+#comment the following line loading the corrected version :
+APG <- readRDS(file.path("data", "APG.RDS"))
 KarnatakaForestsub$familyAPG <- APG$family
 KarnatakaForestsub$orderAPG <- APG$order
 ```
