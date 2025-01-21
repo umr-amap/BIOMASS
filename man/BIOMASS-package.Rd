@@ -174,7 +174,7 @@ Other contributors:
 \itemize{
   \item Jerome Chave \email{jerome.chave@univ-tlse3.fr} [data contributor]
   \item Ted Feldpausch \email{T.R.Feldpausch@exeter.ac.uk} [data contributor]
-  \item Philippe Verley \email{philippe.verley@ird.fr } [contributor]
+  \item Philippe Verley \email{philippe.verley@ird.fr} [contributor]
 }
 
 }
