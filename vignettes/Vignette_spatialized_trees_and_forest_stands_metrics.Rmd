@@ -28,7 +28,7 @@ require(ggplot2)
 
 # Overview
 
-BIOMASS enables users to manage their plots by :
+BIOMASS enables users to manage their plots by:
 
 * calculating the projected/geographic coordinates of the plot's corners and the trees from the relative coordinates (or local coordinates, ie, those of the field) 
 
@@ -45,14 +45,14 @@ BIOMASS enables users to manage their plots by :
 
 Two data frames are required for the rest. One for the corner coordinates of the plot(s), and another for the trees coordinates. 
 
-* The **corner coordinates data frame**, must contains at least :
+* The **corner coordinates data frame**, must contains at least:
   - the name of the plots if there are several plots
   - the coordinates of the plot's corners in the geographic or projected coordinate system (the GPS coordinates or another projected coordinates)
   - the coordinates of the plot's corners in the relative coordinate system (the local or field coordinates)
 
-In this vignette, for educational purposes, we will not use only one but two datasets of corner coordinates, derived from permanent plots in the Nouragues forest (French Guiana) : 
+In this vignette, for educational purposes, we will not use only one but **two datasets of corner coordinates**, derived from permanent plots in the Nouragues forest (French Guiana): 
 
-  - **NouraguesPlot201** which contains simulated corner coordinates of **one plot with repeated GPS measurements of each corner** : 
+  1. **NouraguesPlot201** which contains simulated corner coordinates of **one plot with repeated GPS measurements of each corner**: 
 
 ```{r}
 data("NouraguesPlot201")
@@ -60,7 +60,7 @@ data("NouraguesPlot201")
 kable(head(NouraguesPlot201), digits = 5, row.names = FALSE, caption = "Head of NouraguesPLot201")
 ```
 
-  - **NouraguesCoords** which contains corner coordinates of **four plots with a single GPS measurement of each corner**, also derived from Nouragues forest : 
+  2. **NouraguesCoords** which contains corner coordinates of **four plots with a single GPS measurement of each corner**, also derived from Nouragues forest: 
 
 ```{r}
 data("NouraguesCoords")
@@ -68,10 +68,10 @@ data("NouraguesCoords")
 kable(head(NouraguesCoords), digits = 5, row.names = FALSE, caption = "Head of NouraguesCoords")
 ```
 
-* The **trees coordinates data frame**, must contains at least :
+* The **trees coordinates data frame**, must contains at least:
   - the name of the plots if there are several plots
   - the tree coordinates in the relative coordinate system (the local/field one)
-  - the desired information about trees, such as diameter, wood density, height, etc. (see BIOMASS vignette)
+  - the desired information about trees, such as diameter, wood density, height, AGB, etc. (see BIOMASS vignette)
 
 ```{r}
 data("NouraguesTrees")
@@ -83,7 +83,7 @@ This dataset is also derived from the [2012 Nouragues forest dataset](https://da
 
 # Checking plot's coordinates
 
-The user is faced with two situations : 
+The user is faced with two situations: 
 
 * The **GPS coordinates** of the plot corners are considered **very accurate** or **enough measurements have been made** to be confident in the accuracy of their mean. In this case, the shape of the plot measured on the field will follow the GPS coordinates of the plot corners when projected into the projected/geographic coordinate system. See [3.1.1](#trustGSPcorner)
 
@@ -141,7 +141,7 @@ Reference corner coordinates are returned by the function via the `$corner_coord
 kable(check_plot_trust_GPS$corner_coord, row.names = FALSE, caption = "Reference corner coordinates")
 ```
 
-The associated polygon is returned via the `$polygon` output and can be saved into a shapefile like this : 
+The associated polygon is returned via the `$polygon` output and can be saved into a shapefile like this: 
 
 ```{r, eval=FALSE}
 sf::st_write(check_plot_trust_GPS$polygon, "your_directory/plot201.shp")
@@ -182,7 +182,7 @@ kable(head(check_plot_trust_GPS$tree_data), digits = 3, row.names = FALSE, capti
 
 The output of the function also standardises the names of the relative tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot` column, indicating if a tree is in the plot or not.
 
-You can also get and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title : 
+You can also get and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title: 
 
 ```{r}
 plot_to_change <- check_plot_trust_GPS$plot_design
@@ -202,6 +202,7 @@ tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_data[c
 If you have LiDAR data in raster format (typically a CHM raster) that you want to compare with a tree metric, this can be done with the `ref_raster` and the `prop_tree` arguments.
 
 ```{r}
+# Load internal CHM raster
 nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",package = "BIOMASS", mustWork = TRUE))
 
 check_plot_trust_GPS <- check_plot_coord(
@@ -214,12 +215,11 @@ check_plot_trust_GPS <- check_plot_coord(
 
 ## Checking multiple plots at once
 
-When `corner_data` and `tree_data` contain several plots, you have to supply the column names containing the plots IDs of the corners and the trees via the `plot_ID` and `tree_plot_ID` arguments :
+When `corner_data` and `tree_data` contain several plots, you have to supply the column names containing the plots IDs of the corners and the trees via the `plot_ID` and `tree_plot_ID` arguments:
 
 ```{r}
-data("NouraguesCoords")
 multiple_checks <- check_plot_coord(
-  corner_data = NouraguesCoords,
+  corner_data = NouraguesCoords, # NouraguesCoords contains 4 plots
   proj_coord = c("Xutm", "Yutm"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE, 
   plot_ID = "Plot",
@@ -232,7 +232,7 @@ Be aware that by default, the function will ask you to type Enter between each p
 
 # Dividing plots
 
-Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid. Be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles :
+Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid. Be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles:
 
 ```{r divide_plot}
 subplots <- divide_plot(
@@ -247,9 +247,13 @@ kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the 
 
 If you don't have any projected coordinates, just let `proj_coord` = NULL.
 
-For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_data` and `tree_coords` arguments** :
+For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_data` and `tree_coords` arguments**:
 
 ```{r divide_plot_trees}
+# Add AGB predictions (calculated in Vignette BIOMASS) to plot201Trees
+AGB_data <- readRDS("saved_data/NouraguesTreesAGB.rds")
+plot201Trees <- merge(plot201Trees , AGB_data[c("Xfield","Yfield","D","AGB")])
+
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"),
@@ -259,17 +263,17 @@ subplots <- divide_plot(
   )
 ```
 
-The function now returns a list containing : 
+The function now returns a list containing: 
 
-* `sub_corner_coord` : coordinates of subplot corners as previously
+* `sub_corner_coord`: coordinates of subplot corners as previously
 
-* `tree_data` : the tree data-frame with the **subplot_ID added in last column**
+* `tree_data`: the tree data-frame with the **subplot_ID added in last column**
 
 ```{r}
 kable(head(subplots$tree_data), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-The function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments :
+The function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
 
 ```{r divide_multiple_plots}
 multiple_subplots <- divide_plot(
@@ -285,48 +289,61 @@ multiple_subplots <- divide_plot(
 Once you've applied the `divide_plot()` function with a non-null `tree_data` argument, you can summarise any tree metric present in divide_plot()$tree_data at the subplot level with the `subplot_summary()` function.
 
 ```{r subplot_summary}
-subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "D") # AGB is the tree metric
+subplot_metric <- subplot_summary(
+  subplots = subplots,
+  value = "AGB", # AGB was added before applying divide_plot()
+  per_ha = TRUE) 
 ```
 
-By default, the function sums the metric per subplot but you can request any valid function with the `fun` argument :
+**By default, the function sums the metric per subplot** and divide the result by the area of each subplot (to obtain a summary **per hectare**) , but you can request any valid function with the `fun` argument and choose between a raw or a per hectare summary with the `per_ha` argument.
 
 ```{r subplot_summary_quantile}
-subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "D",
-                                  fun = quantile, probs = 0.9)
+subplot_metric <- subplot_summary(
+  subplots = subplots,
+  value = "AGB",
+  fun = quantile, probs = 0.5, # yes, it is the median
+  per_ha = FALSE)
 ```
 
-The output of the function is a list containing : 
+The output of the function is a list containing: 
 
-* `$tree_summary` : a summary of the metric per subplot 
+* `$tree_summary`: a summary of the metric per subplot 
 
-* `$polygon` : an object of the class `sf` containing a simple feature collection of the subplot's polygon
+* `$polygon`: an object of the class `sf` containing a simple feature collection of the subplot's polygon
 
-* `$plot_design` : (if draw_plot=T) a ggplot object that can easily be modified
+* `$plot_design`: a ggplot object that can easily be modified
 
-Of course, the function can handle as many plots as supplied in divide_plot() :
+The returned **polygons can be saved into a shapefile** like this: 
+```{r, eval=FALSE}
+# Set the CRS of the polygons
+subplot_polygons <- sf::st_set_crs(subplot_metric$polygon , value = "EPSG:2972")
+
+# Save the polygons in a shapefile
+sf::st_write(subplot_polygons, "your_directory/subplots_201.shp")
+```
+
+And of course, the function can handle **as many plots as supplied in divide_plot()**:
 
 ```{r subplot_summary_display_trees}
 multiple_subplot_metric <- subplot_summary(
   subplots = multiple_subplots,
-  value = "D")
+  value = "D", fun = mean, per_ha = FALSE)
 ```
 
 
 ## Customizing the ggplot
 
-Here are some examples to custom the ggplot of the `subplot_summary()` function :
+Here are some examples to custom the ggplot of the `subplot_summary()` function:
 
 ```{r customize_plot}
 subplot_metric <- subplot_summary(subplots = subplots,
-                                  value = "D") 
+                                  value = "AGB") 
 
 custom_plot <- subplot_metric$plot_design
-# Change the title and legend :
+# Change the title and legend:
 custom_plot + 
   labs(title = "Nourragues plot" , fill="Sum of AGB per hectare")
-# Display trees with diameter as size and transparency (and a smaller legend on the right) : 
+# Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
   geom_point(data=plot201Trees, mapping = aes(x = Xutm, y = Yutm, size = D, alpha= D), shape=1,) +
   labs(fill = "Sum of AGB per hectare") +

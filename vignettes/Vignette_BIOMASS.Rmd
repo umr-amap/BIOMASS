@@ -1,0 +1,340 @@
+---
+title: 'Vignette BIOMASS'
+output:
+  prettydoc::html_pretty: 
+    number_sections: yes
+    toc: yes
+    highlight: vignette
+    self_contained: yes
+description: >
+  Estimating above-ground biomass with BIOMASS
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette BIOMASS}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = TRUE,
+  comment = "#>", fig.align = "center")
+require(knitr)
+require(BIOMASS)
+```
+
+# General workflow and required data
+
+For the sake of clarity, and to be consistent with the BIOMASS paper ([Réjou-Méchain et al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)), this vignette will follow the same workflow as presented in the paper:
+
+![](img/BIOMASS_workflow.png)
+
+As can be seen, the **estimate of the above-ground biomass** (AGB) of a tree, and **its associated uncertainty**, is based on its **wood density**, its **diameter**, and its **height**.
+
+However, **wood density** and **height** are rarely included in forest inventory data. This is why the package proposes an estimate of these two parameters, based on more usual data.
+
+In this vignette, we will use some of the data obtained in [2012 from a forest inventory in the Nourages forest](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) (French Guiana). For educational purposes, some virtual trees have been added in the data.
+
+```{r}
+data("NouraguesTrees")
+knitr::kable(head(NouraguesTrees))
+```
+
+These data do not contain any information on wood density or height of the trees. Only the diameter is known, as no estimate can be made without this parameter.
+
+# Wood density 
+
+**Wood density** is estimated **from tree taxonomy**, using the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) as a reference. So the first step might be to correct the taxonomy of the trees.
+
+## Checking and retrieving trees taxonomy
+
+This is done with the `correctTaxo()` function:
+
+```{r, cache=TRUE, eval=FALSE}
+Taxo <- correctTaxo(
+  genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
+  species = NouraguesTrees$Species, 
+  useCache = TRUE, verbose = FALSE)
+```
+
+```{r, include=FALSE}
+#saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
+Taxo <- readRDS(file = "saved_data/Taxo_vignette.rds")
+```
+
+The corrected genus and species of the trees can now be added to the data: 
+
+```{r}
+NouraguesTrees$GenusCorrected <- Taxo$genusCorrected
+NouraguesTrees$SpeciesCorrected <- Taxo$speciesCorrected
+```
+
+When the function is called for the first time, a temporary file containing the request to TNRS will be created. Once this has been done, the use of `useCache = TRUE` will access the saved temporary file in order to avoid time-consuming replication of server requests.
+
+Here, as an example, the species name of the first tree has been corrected from "guyanensis" to "guianensis": 
+
+```{r}
+NouraguesTrees$Species[1] ; NouraguesTrees$SpeciesCorrected[1]
+```
+
+If you want (but this is optional for the rest), you can retrieve APG III families and orders from genus names.
+
+```{r eval=FALSE, cache=TRUE}
+APG <- getTaxonomy(NouraguesTrees$GenusCorrected, findOrder = TRUE)
+NouraguesTrees$familyAPG <- APG$family
+NouraguesTrees$orderAPG <- APG$order
+```
+
+## Getting wood density
+
+Wood densities are retrieved using the `getWoodDensity()` function. By default, the function assigns to each taxon a species- or genus-level average if at least one wood density value in the same genus as the focal taxon is available in the reference data-base. For unidentified trees or if the genus is missing in the reference database, the stand-level mean wood density is assigned to the tree.
+
+```{r cache=TRUE}
+wood_densities <- getWoodDensity(
+  genus = NouraguesTrees$GenusCorrected,
+  species = NouraguesTrees$SpeciesCorrected,
+  stand = NouraguesTrees$Plot # for unidentified or non-documented trees in the reference database
+)
+
+NouraguesTrees$WD <- wood_densities$meanWD
+```
+
+For information, here are the number of wood density value estimated at the species, genus and plot level:
+```{r eval=TRUE}
+# At species level
+sum(wood_densities$levelWD == "species")
+# At genus level
+sum(wood_densities$levelWD == "genus")
+# At plot level
+sum(!wood_densities$levelWD %in% c("genus", "species"))
+```
+
+The `family` argument also assigns to the trees a family-level wood density average, but it should be borne in mind that the taxon-average approach gives relatively poor estimates above the genus level (Flores & Coomes 2011).
+**Additional wood density values can be added** using the `addWoodDensityData` argument (here invented for the example):
+
+```{r eval=FALSE, cache=TRUE}
+LocalWoodDensity <- data.frame(
+  genus = c("Paloue", "Handroanthus"),
+  species = c("princeps", "serratifolius"),
+  wd = c(0.65, 0.72) )
+
+add_wood_densities <- getWoodDensity(
+  genus = NouraguesTrees$GenusCorrected,
+  species = NouraguesTrees$SpeciesCorrected,
+  family = NouraguesTrees$familyAPG,
+  stand = NouraguesTrees$Plot,
+  addWoodDensityData = LocalWoodDensity
+)
+```
+
+# Height
+
+As accurate tree height measurements are rare, or rarely exhaustive, BIOMASS proposes 3 methods to estimate trees height: 
+
+If a subset of well-measured trees is available in the studied region: 
+
+- Construct a local Height–Diameter (H-D) allometry using this subset of data (see [Réjou-Méchain et al. 2015](https://www.sciencedirect.com/science/article/pii/S0034425715300894))
+
+If not: 
+
+- Use the continent- or region-speciﬁc H–D models proposed by [Feldpausch et al. (2012)](https://bg.copernicus.org/articles/9/3381/2012/)
+- Use a generic H–D model based on a single bioclimatic predictor E (eqn 6a in [Chave et al. 2014)](https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.12629)
+
+## Building a local H-D model
+
+As no height was measured in our dataset, we will use the `NouraguesHD` dataset, which contains the H-D relationships of two 1-ha plots from the Nouragues forest.
+
+```{r}
+data("NouraguesHD")
+```
+
+The `modelHD()` function is used to either **compare four implemented models to ﬁt H–D relationships** in the tropics, or to **compute the desired H-D model**.
+
+Here we first compare the five H-D models:
+
+```{r, message=FALSE}
+HD_res <- modelHD(
+  D = NouraguesHD$D, H = NouraguesHD$H,
+  useWeight = TRUE, drawGraph = T)
+
+kable(HD_res)
+```
+
+As the log2 model has the lowest RSE, we build this model using the `method` argument and add its predictions to the dataset with the `retrieveH()` function:
+
+```{r}
+HDmodel <- modelHD(
+  D = NouraguesHD$D, H = NouraguesHD$H,
+  method = "log2", useWeight = TRUE)
+
+H_model <- retrieveH(
+  D = NouraguesTrees$D,
+  model = HDmodel)
+
+NouraguesTrees$H_model <-  H_model$H
+```
+
+Note that we could have created a model for each stand present in NouraguesHD data using the `plot` argument.
+
+## Using the region-speciﬁc H–D model (Feldpausch)
+
+No need to compute any model here, as the predictions of the model proposed by Feldspausch et al. are directly retrieved by the `retrieveH()` function. Simply indicate the region concerned:
+
+```{r, cache=TRUE}
+H_feldspausch <- retrieveH(
+  D = NouraguesTrees$D,
+  region = "GuianaShield")
+
+NouraguesTrees$H_feldspausch <- H_feldspausch$H
+```
+
+Available regions are listed in the documentation of the function. 
+
+## Using the generic H–D model based on a bioclimatic predictor (Chave)
+
+In the same way as for the previous model, the predictions of the model proposed by Chave et al. are directly retrieved by the `retrieveH()` function. It is the coordinates of the plot (or of the trees) in a longitude/latitude format that must be provided.
+
+We therefore need to first import the coordinates of the corners of the plots present in NouraguesCoords:
+
+```{r, eval=FALSE, cache=TRUE}
+data("NouraguesCoords")
+coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+
+H_chave  <- retrieveH(
+  D = NouraguesTrees$D,
+  coord = coords)
+
+NouraguesTrees$H_chave <- H_chave$H
+```
+
+# Estimate AGB
+
+Once tree diameter, wood density and height have been retrieved, the generalised allometric model (eqn 4
+of [Chave et al. (2014)]((https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.12629))) can be used with the `computeAGB()` function, where AGB values are reported in Mg instead of in kg:
+
+```{r, cache=T}
+NouraguesTrees$AGB <- computeAGB(
+  D = NouraguesTrees$D,
+  WD = NouraguesTrees$WD,
+  H = NouraguesTrees$H_model)
+```
+
+```{r, include=FALSE}
+#saveRDS(NouraguesTrees, file = "saved_data/NouraguesTreesAGB.rds")
+```
+
+For AGB estimates using tree heights obtained by the ‘Chave method’, it is more accurate to provide the area coordinates directly instead of the tree height estimates:
+
+```{r eval=FALSE}
+NouraguesTrees$AGB_Chave <- computeAGB(
+    D = NouraguesTrees$D,
+    WD = NouraguesTrees$WD,
+    coord = coords)
+```
+
+# Propagate AGB errors
+
+The `AGBmonteCarlo()` function allows the user to propagate diﬀerent sources of error up to the ﬁnal AGB estimate.
+
+The error propagation due to the **uncertainty of the model parameters** of the AGB allometric equation (Chave et al. 2014) **is automatically performed** by the function. However, the propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parametrised by the user**.
+
+## Diameter measurement error
+
+Using the `Dpropag` argument of the `AGBmonteCarlo()` function, the user can set diameter measurement errors by: 
+
+- providing a standard deviation value corresponding to the measurement uncertainty (e.g `Dpropag = 1`)
+- providing a vector of standard deviation values associated with each tree measurement uncertainty
+- using the implemented example of Chave et al. 2004 with `Dpropag = "chave2004"`, where small errors are applied on 95% of the trees and large errors to the remaining 5%
+
+```{r, cache = T}
+D_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
+  Dpropag = "chave2004",
+  errWD = rep(0,nrow(NouraguesTrees)) , errH = 0) # no error propagation on WD and H here
+```
+
+## Wood density error
+
+As the error in measuring wood density is almost never known, the `getWoodDensity()` function returns prior standard deviation values associated with each tree wood density using the mean standard deviation of the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) at the species, genus and family levels.
+
+This output can be provide through the `errWD` argument:
+
+```{r, cache=T}
+WD_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
+  errWD = wood_densities$sdWD,
+  Dpropag = 0 , errH = 0) # no error propagation on D and H here
+```
+
+## Height error
+
+As for the diameter errors, the user can provide either a SD value or a vector of SD values associated with tree height measurement errors, using the `errH` argument.
+
+**If tree heights have been estimated via the "Feldspausch" or the "Chave" method**, the user can provide the output of the `retrieveH()` function for the `errH` argument:
+
+```{r, eval = FALSE}
+H_feld_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
+  errH = H_feldspausch$RSE,
+  Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees))) # no error propagation on D and WD here
+```
+
+**If tree heights have been estimated via a local HD-model**, instead of the `errH` and the `H` arguments, the user can provide the output of the `modelHD()` function using the `modelHD` argument.
+
+```{r, cache=TRUE}
+H_model_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
+  HDmodel = HDmodel, # but we provide HDmodel
+  Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees))) # no error propagation on D and WD here
+```
+
+## All together and AGB visualisation of plots
+
+Let's propagate all sources of errors using the HD-model:
+
+```{r, cache=TRUE}
+error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
+  HDmodel = HDmodel, # but we provide HDmodel
+  Dpropag = "chave2004",
+  errWD = wood_densities$sdWD)
+```
+
+The function returns the mean, median, standard deviation and credibility intervals of the total AGB of the dataset but nothing about the AGB at the plot level. To do this, you can use the `summaryByPlot()` function:
+
+
+```{r, cache=TRUE}
+AGB_by_plot <- summaryByPlot(AGB_val = error_prop$AGB_simu, plot = NouraguesTrees$Plot, drawPlot = TRUE)
+
+```
+
+# Some tricks
+
+## Mixing measured and estimated height values
+
+If you want to use a mix of directly-measured height and of estimated ones, you proceed as follows:
+
+(@) Build a vector of H and RSE where we assume an error of 0.5 m on directly measured trees
+
+```{r, eval = FALSE }
+# NouraguesHD contains 163 trees that were not measured
+NouraguesHD$Hmix <- NouraguesHD$H
+NouraguesHD$RSEmix <- 0.5
+filt <- is.na(NouraguesHD$Hmix)
+NouraguesHD$Hmix[filt] <- retrieveH(NouraguesHD$D, model = HDmodel)$H[filt]
+NouraguesHD$RSEmix[filt] <- HDmodel$RSE
+```
+
+(@) Apply the AGBmonteCarlo by setting the height values and their errors (which depend on whether the tree was directly measured or estimated)
+```{r eval=FALSE}
+wd <- getWoodDensity(NouraguesHD$genus, NouraguesHD$species)
+resultMC <- AGBmonteCarlo(
+  D = NouraguesHD$D, WD = wd$meanWD, errWD = wd$sdWD,
+  H = NouraguesHD$Hmix, errH = NouraguesHD$RSEmix,
+  Dpropag = "chave2004"
+)
+summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesHD$plotId, drawPlot = TRUE)
+```
+
+## Add your tricks
+
+If you would like to share a code that might be useful to users (code authorship will be respected), you can create a new issue on the [BIOMASS github page](https://github.com/umr-amap/BIOMASS/issues), or contact Dominique (dominique.lamonica@ird.fr).
