@@ -1,10 +1,3 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "indice_line", "indice_col", "V1"
-  ))
-}
-
-
 #' Summarize by plot (or subplot) the posterior distribution of AGB values
 #'
 #' @description
