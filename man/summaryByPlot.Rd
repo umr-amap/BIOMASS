@@ -4,7 +4,7 @@
 \alias{summaryByPlot}
 \title{Summarize by plot (or subplot) the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_val, plot, drawPlot = FALSE, subplot = NULL)
+summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 }
 \arguments{
 \item{AGB_val}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_val element of the list),
@@ -13,8 +13,6 @@ or just the output of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}
 \item{plot}{Vector with the code of plot}
 
 \item{drawPlot}{a logical to draw the plot (see Details)}
-
-\item{subplot}{Data frame, output of the function \code{\link[=cutPlot]{cutPlot()}}}
 }
 \value{
 a data frame where:
@@ -24,8 +22,6 @@ a data frame where:
 \item \code{Cred_2.5}: the quantile 2.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 \item \code{Cred_97.5}: the quantile 97.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
 }
-
-If the \code{subplot} is set, the output is a list with the previous data frame and a simple features (sf) geometry object.
 }
 \description{
 This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums

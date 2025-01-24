@@ -70,10 +70,7 @@ dataset (mean of the entire dataset) or, if stand is set, the name of the stand 
 }
 }
 \description{
-The function estimates the wood density (WD) of the trees from their taxonomy or from their
-congeners using the global wood density database (Chave et al. 2009, Zanne et al. 2009) or
-any additional dataset. The WD can either be attributed to an individual at a species, genus,
-family or stand level.
+The function estimates the wood density (WD) of the trees from their taxonomy or from their congeners using the global wood density database (Chave et al. 2009, Zanne et al. 2009) or any additional dataset. The WD can either be attributed to an individual at a species, genus, family or stand level.
 }
 \details{
 The function assigns to each taxon a species- or genus- level average if at least

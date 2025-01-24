@@ -166,11 +166,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 
   # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
-    qnorm(runif(n, pnorm(lower, mean = mean, sd = sd), pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
+    qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
   }
-
-
-
 
 
   ### Propagate error with Markov Chain Monte Carlo approach
@@ -201,18 +198,10 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   }
 
 
-
-
-
   # --------------------- WD ---------------------
-
 
   #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
   WD_simu <- suppressWarnings(replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39)))
-
-
-
-
 
 
   # --------------------- H ---------------------

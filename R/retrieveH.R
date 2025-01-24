@@ -1,7 +1,7 @@
 #' Retrieving tree height from models
 #'
-#' From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an
-#' estimation of the total tree height.
+#' @description 
+#' From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an estimate of the total tree height.
 #'
 #' @param D Vector of diameters.
 #' @param model A model output by the function [modelHD()].
@@ -28,10 +28,12 @@
 #' @return Returns a list with:
 #'   - `H`: Height predicted by the model
 #'   - `RSE` Residual Standard Error of the model, or a vector of those for each plot
+#'   
 #' @references
 #' Feldpausch et al. _Tree height integrated into pantropical forest biomass estimates_. Biogeosciences (2012): 3381-3403.
-#' Chave et al. _Improved allometric models to estimate the aboveground biomass of tropical trees_.
-#' Global change biology 20.10 (2014): 3177-3190.
+#' 
+#' Chave et al. _Improved allometric models to estimate the aboveground biomass of tropical trees_. Global change biology 20.10 (2014): 3177-3190.
+#' 
 #' @author Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 #' @seealso [modelHD()]
 #' @export
@@ -110,7 +112,6 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
       if (length(E) == 1) {
         E <- rep(E, length(D))
       }
-
 
       logD <- log(D)
 

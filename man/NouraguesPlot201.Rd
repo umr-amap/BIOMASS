@@ -9,12 +9,12 @@ A data frame with 40 (simulated GPS measurements) of the 9 following variables :
 \itemize{
 \item \code{Site}: Name of the site set up in the Nouragues forest
 \item \code{Plot}: Plot ID of the site
-\item \code{Xfield}: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot)
-\item \code{Yfield}: Tree location on the y-axis in the local coordinate system
-\item \code{Xutm}: Tree location on the x-axis in the UTM coordinate system
-\item \code{Yutm}: Tree location on the y-axis in the UTM coordinate system
-\item \code{Long}: Tree longitude coordinate
-\item \code{Lat}: Tree latitude coordinate
+\item \code{Xfield}: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot)
+\item \code{Yfield}: Corner location on the y-axis in the local coordinate system
+\item \code{Xutm}: Corner location on the x-axis in the UTM coordinate system
+\item \code{Yutm}: Corner location on the y-axis in the UTM coordinate system
+\item \code{Long}: Corner longitude coordinate
+\item \code{Lat}: Corner latitude coordinate
 \item \code{CornerID} : IDs of the plot corners
 }
 }
@@ -22,7 +22,7 @@ A data frame with 40 (simulated GPS measurements) of the 9 following variables :
 data(NouraguesPlot201)
 }
 \description{
-Simulated corner coordinates of Nouragues 'Petit plateau' plot 201. The original coordinates have been modified to make the plot non-squared, and 10 repeated measurements of each corner have been simulated adding a random error to x and y coordinates..
+Simulated corner coordinates of Nouragues 'Petit plateau' plot 201. The original coordinates have been modified to make the plot non-squared, and 10 repeated measurements of each corner have been simulated adding a random error to x and y coordinates.
 }
 \examples{
 data(NouraguesPlot201)

@@ -5,14 +5,16 @@
 \alias{NouraguesCoords}
 \title{Nouragues plot coordinates}
 \format{
-A data frame with 16 observations (GPS measurements) of the 6 following variables :
+A data frame with 16 observations (GPS measurements) of the 8 following variables :
 \itemize{
 \item \code{Site}: Name of the site set up in the Nouragues forest
 \item \code{Plot}: Plot ID of the site
-\item \code{Xutm}: Tree location on the x-axis in the UTM coordinate system
-\item \code{Yutm}: Tree location on the y-axis in the UTM coordinate system
-\item \code{Xfield}: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot)
-\item \code{Yfield}: Tree location on the y-axis in the local coordinate system
+\item \code{Xfield}: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot)
+\item \code{Yfield}: Corner location on the y-axis in the local coordinate system
+\item \code{Xutm}: Corner location on the x-axis in the UTM coordinate system
+\item \code{Yutm}: Corner location on the y-axis in the UTM coordinate system
+\item \code{Long}: Corner longitude coordinate
+\item \code{Lat}: Corner latitude coordinate
 }
 }
 \usage{

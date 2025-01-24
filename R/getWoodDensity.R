@@ -10,10 +10,8 @@ if (getRversion() >= "2.15.1") {
 
 #' Estimating wood density
 #'
-#' The function estimates the wood density (WD) of the trees from their taxonomy or from their
-#' congeners using the global wood density database (Chave et al. 2009, Zanne et al. 2009) or
-#' any additional dataset. The WD can either be attributed to an individual at a species, genus,
-#' family or stand level.
+#' @description
+#' The function estimates the wood density (WD) of the trees from their taxonomy or from their congeners using the global wood density database (Chave et al. 2009, Zanne et al. 2009) or any additional dataset. The WD can either be attributed to an individual at a species, genus, family or stand level.
 #'
 #' @param genus Vector of genus names
 #' @param species Vector of species names
@@ -142,9 +140,7 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     }
   }
 
-
-
-
+  
   # Data processing ---------------------------------------------------------
 
   # Load global wood density database downloaded from http://datadryad.org/handle/10255/dryad.235

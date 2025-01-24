@@ -1,15 +1,7 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "id", "family"
-  ))
-}
-
-
-#' Retrieving the taxonomy
+#' Retrieve trees taxonomy
 #'
-#' From a genus, the function `getTaxonomy` finds the APG III family, and optionally the
-#' order, from the [genusFamily] database and the [apgFamilies] dataset
-#'
+#' @description
+#' From given genus, the function finds the APG III family, and optionally the order, from the [genusFamily] database and the [apgFamilies] dataset
 #'
 #' @param genus Vector of genus names
 #' @param findOrder (Boolean) If `TRUE`, the output will contain the taxonomical orders of the families.
