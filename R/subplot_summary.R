@@ -4,8 +4,9 @@
 #' After applying the [divide_plot()] function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
 #'
 #' @param subplots output of the [divide_plot()] function
-#' @param value a character indicating the column in subplots$tree_data to display
-#' @param draw_plot a logical indicating whether the plot design should be displayed and returned
+#' @param value a character indicating the column in subplots$tree_data (a tree metric) to be summarised 
+#' @param draw_plot a logical indicating whether the plot design should be displayed
+#' @param per_ha a logical indicating whether the metric summary should be per hectare
 #' @param fun the function to be applied
 #' @param ... optional arguments to fun
 #'
@@ -66,7 +67,7 @@
 #'   subplots_201_sum$plot_design
 #' }
 #'
-subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum, ...) {
+subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ...) {
 
   # Checking parameters --------------------------------------------------------
   if(is.data.frame(subplots)) {
@@ -131,17 +132,18 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, fun = sum,
   plot_list <- lapply(unique(tree_summary$plot_id), function(plot_id) {
     
     plot_design <- ggplot(sf_polygons[grep(plot_id,sf_polygons$subplot_ID),]) +
-      geom_sf(mapping = aes(fill=.data[[names(sf_polygons)[3]]])) +
+      geom_sf(mapping = aes(fill=.data[[names(sf_polygons)[ifelse(per_ha , 3, 2)]]])) +
       theme_minimal() + 
       scale_fill_gradientn(colours = rev(terrain.colors(20))) + 
       theme(legend.position="bottom", #legend.title = element_blank(),
             legend.key.size = unit(0.8,"cm"), 
-            axis.title = element_blank()
+            axis.title = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust=1)
             )
     if(plot_id == "subplot") {
-      plot_design <- plot_design + ggtitle(paste("Summary of",value,"per ha"))
+      plot_design <- plot_design + ggtitle(paste("Summary of",value,ifelse(per_ha,"per ha","")))
     } else {
-      plot_design <- plot_design + ggtitle(paste(plot_id,": summary of",value,"per ha"))
+      plot_design <- plot_design + ggtitle(paste(plot_id,": summary of",value,ifelse(per_ha,"per ha","")))
     }
     
     if(draw_plot) print(plot_design)

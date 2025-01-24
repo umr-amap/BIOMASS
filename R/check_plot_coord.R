@@ -478,11 +478,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
                                    size = .data[[prop_tree]],
                                    alpha = .data[[prop_tree]]), 
                      shape = 1) +
-          scale_alpha(range = c(0,1)) +
-          scale_size(range = c(0,5)) + 
+          scale_alpha(range = c(0.2,1)) +
+          scale_size(range = c(0.1,6)) + 
           guides( alpha = guide_legend(title = paste('Trees :', prop_tree), order = 2),
-                  size = guide_legend(title = paste('Trees :', prop_tree), order = 2,
-                                      override.aes = list(shape = 1 ) )) +
+                  size = guide_legend(title = paste('Trees :', prop_tree), order = 2, override.aes = list(shape = 1) )) +
           # Display the trees outside the plot (but don't display them in the legend)
           geom_point(data = tree_data[plot_ID == current_plot_ID & is_in_plot==F, ],
                      mapping = aes(x = x_proj, y = y_proj),

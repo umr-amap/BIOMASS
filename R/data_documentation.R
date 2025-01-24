@@ -131,13 +131,15 @@
 #' @docType data
 #' @usage data(NouraguesCoords)
 #' @format
-#' A data frame with 16 observations (GPS measurements) of the 6 following variables :
+#' A data frame with 16 observations (GPS measurements) of the 8 following variables :
 #'   - `Site`: Name of the site set up in the Nouragues forest
 #'   - `Plot`: Plot ID of the site
-#'   - `Xutm`: Tree location on the x-axis in the UTM coordinate system
-#'   - `Yutm`: Tree location on the y-axis in the UTM coordinate system
-#'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
-#'   - `Yfield`: Tree location on the y-axis in the local coordinate system
+#'   - `Xfield`: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
+#'   - `Yfield`: Corner location on the y-axis in the local coordinate system
+#'   - `Xutm`: Corner location on the x-axis in the UTM coordinate system
+#'   - `Yutm`: Corner location on the y-axis in the UTM coordinate system
+#'   - `Long`: Corner longitude coordinate
+#'   - `Lat`: Corner latitude coordinate
 #'
 #' @references
 #' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", https://doi.org/10.18167/DVN1/HXKS4E, CIRAD Dataverse, V2
@@ -158,12 +160,12 @@
 #' A data frame with 40 (simulated GPS measurements) of the 9 following variables :
 #'   - `Site`: Name of the site set up in the Nouragues forest
 #'   - `Plot`: Plot ID of the site
-#'   - `Xfield`: Tree location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
-#'   - `Yfield`: Tree location on the y-axis in the local coordinate system
-#'   - `Xutm`: Tree location on the x-axis in the UTM coordinate system
-#'   - `Yutm`: Tree location on the y-axis in the UTM coordinate system
-#'   - `Long`: Tree longitude coordinate
-#'   - `Lat`: Tree latitude coordinate
+#'   - `Xfield`: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
+#'   - `Yfield`: Corner location on the y-axis in the local coordinate system
+#'   - `Xutm`: Corner location on the x-axis in the UTM coordinate system
+#'   - `Yutm`: Corner location on the y-axis in the UTM coordinate system
+#'   - `Long`: Corner longitude coordinate
+#'   - `Lat`: Corner latitude coordinate
 #'   - `CornerID` : IDs of the plot corners 
 #'
 #' @references
