@@ -50,6 +50,7 @@ if (getRversion() >= "2.15.1") {
 #' text(coord, labels = corner$corner, pos = 1)
 numberCorner <- function(longlat = NULL, projCoord = NULL, plot, origin, clockWise) {
 
+  .Deprecated(msg = "'numberCorner()' is deprecated and will be removed in the next version.\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
 
   # Parameters verification -------------------------------------------------
 

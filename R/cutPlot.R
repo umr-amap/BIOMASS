@@ -42,6 +42,8 @@ if (getRversion() >= "2.15.1") {
 #' legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
 #' 
 cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY = 200) {
+  
+  .Deprecated(msg = "'cutPlot()' has been replaced by `divide_plot()` and will be removed in the next version.\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
 
   # parameter verification --------------------------------------------------
   if (!is.data.frame(projCoord)) {
