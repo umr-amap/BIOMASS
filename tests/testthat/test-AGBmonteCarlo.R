@@ -1,7 +1,7 @@
-data("KarnatakaForest")
+data("NouraguesTrees")
 data("NouraguesHD")
 
-KarnatakaForest <- KarnatakaForest[1:100, ]
+NouraguesTrees <- NouraguesTrees[1:100, ]
 
 HDmodel <- modelHD(
   D = NouraguesHD$D,
@@ -12,15 +12,18 @@ HDmodel <- modelHD(
 
 nIter <- 50
 
-D <- KarnatakaForest$D
-coord <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
+D <- NouraguesTrees$D
+
+data("NouraguesCoords")
+coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+
 H <- predictHeight(D, HDmodel)
 
-WD <- suppressMessages(getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species))
+WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
 
 context("AGBmonteCarlo")
 test_that("AGBmonteCarlo error", {
-  skip_on_cran()
+  
   expect_error(AGBmonteCarlo(D), "The WD and errWD arguments must be not NULL")
 
   expect_error(
@@ -64,7 +67,7 @@ test_that("AGBmonteCarlo error", {
   )
 
   expect_error(
-    AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1:50, ]),
+    AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, coord = rbind(coord, coord)),
     "coord should be either"
   )
 
@@ -100,8 +103,7 @@ test_that("AGBmonteCarlo error", {
 })
 
 
-test_that("AGB monte Carlo on the HDmodel", {
-  skip_on_cran()
+test_that("AGB monte Carlo with HDmodel", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
   expect_length(AGB, 5)
@@ -124,8 +126,7 @@ test_that("AGB monte Carlo on the HDmodel", {
 })
 
 
-test_that("AGB monte Carlo on the H", {
-  skip_on_cran()
+test_that("AGB monte Carlo with H", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = HDmodel$RSE, n = nIter)
   expect_length(AGB, 5)
@@ -148,32 +149,31 @@ test_that("AGB monte Carlo on the H", {
 })
 
 
-# test_that("AGB monte Carlo on the coord", {
-#   set.seed(10)
-#   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
-#   expect_length(AGB, 5)
-# 
-#   expect_length(AGB$meanAGB, 1)
-#   expect_is(AGB$meanAGB, "numeric")
-# 
-#   expect_length(AGB$medAGB, 1)
-#   expect_is(AGB$medAGB, "numeric")
-# 
-#   expect_length(AGB$sdAGB, 1)
-#   expect_is(AGB$sdAGB, "numeric")
-# 
-#   expect_length(AGB$credibilityAGB, 2)
-#   expect_is(AGB$credibilityAGB, "numeric")
-# 
-#   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
-#   expect_is(AGB$AGB_simu, "matrix")
-#   expect_is(AGB$AGB_simu[1, 1], "numeric")
-# 
-#   expect_is(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord[1, ], n = nIter), "list")
-# })
-
-test_that("AGB monte Carlo on the Dpropag", {
+test_that("AGB monte Carlo with coord", {
   skip_on_cran()
+  set.seed(10)
+  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
+  expect_length(AGB, 5)
+
+  expect_length(AGB$meanAGB, 1)
+  expect_is(AGB$meanAGB, "numeric")
+
+  expect_length(AGB$medAGB, 1)
+  expect_is(AGB$medAGB, "numeric")
+
+  expect_length(AGB$sdAGB, 1)
+  expect_is(AGB$sdAGB, "numeric")
+
+  expect_length(AGB$credibilityAGB, 2)
+  expect_is(AGB$credibilityAGB, "numeric")
+
+  expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
+  expect_is(AGB$AGB_simu, "matrix")
+  expect_is(AGB$AGB_simu[1, 1], "numeric")
+
+})
+
+test_that("AGBMonteCarlo with Dpropag", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D,
     Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1),
@@ -199,8 +199,7 @@ test_that("AGB monte Carlo on the Dpropag", {
 })
 
 
-test_that("AGB monte Carlo on the Carbon", {
-  skip_on_cran()
+test_that("AGB monte Carlo with Carbon", {
   
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE)
@@ -223,8 +222,7 @@ test_that("AGB monte Carlo on the Carbon", {
   expect_is(AGB$AGC_simu[1, 1], "numeric")
 })
 
-test_that("AGB monte Carlo on the Dlim", {
-  skip_on_cran()
+test_that("AGB monte Carlo with Dlim", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE, Dlim = 20)
   expect_length(AGB, 5)
@@ -250,7 +248,6 @@ test_that("AGB monte Carlo on the Dlim", {
 
 
 test_that("AGB with NA", {
-  skip_on_cran()
   D[1:5] <- NA
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
@@ -277,7 +274,6 @@ test_that("AGB with NA", {
 
 
 test_that("With the plot value", {
-  skip_on_cran()
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,

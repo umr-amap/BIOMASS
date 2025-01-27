@@ -10,7 +10,6 @@ Phyllanthaceae     Aporosa     lindleyana        plot1", data.table = F)
 suppressMessages({
   context("Function to get the wood density")
   test_that("Function getWoodDensity", {
-    skip_on_cran()
     test$family <- getTaxonomy(test$genus)$family
 
     expect_error(
@@ -63,7 +62,7 @@ suppressMessages({
 
 
   test_that("Function getWoodDensity with other parameters", {
-    skip_on_cran()
+
     test$family <- getTaxonomy(test$genus)$family
 
     expect_error(

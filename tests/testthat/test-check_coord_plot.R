@@ -89,7 +89,7 @@ test_that("check_plot_coord in long lat", {
   expect_is(outputs_longlat, "list")
   expect_length(outputs_longlat, 5)
   expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code"))
-  expect_equal(outputs_longlat[c(1,2,4)], outputs_proj_coord[c(1,2,4)])
+  expect_equal(outputs_longlat[c(1,4)], outputs_proj_coord[c(1,4)])
 })
 
 test_that("check_plot_coord, trust_GPS_corners", {

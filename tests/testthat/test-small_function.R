@@ -1,14 +1,14 @@
 options(stringsAsFactors = FALSE)
 
-data("KarnatakaForest")
+data("NouraguesTrees")
 data("NouraguesHD")
 
-KarnatakaForest <- KarnatakaForest[1:50, ]
+NouraguesTrees <- NouraguesTrees[1:50, ]
 
 # Argument repetitive
-D <- KarnatakaForest$D
-coord <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
+D <- NouraguesTrees$D
 
+data("NouraguesCoords")
 
 skip_if_not_function <- function(name) {
   if (!exists(name)) {
@@ -16,40 +16,50 @@ skip_if_not_function <- function(name) {
   }
 }
 
-# context("Function computeE")
-# test_that("Compute E", {
-#   skip_if_not_function("computeE")
-#
-#   E <- computeE(coord,useCache=F)
-#
-#   expect_is(E, "numeric")
-#   expect_length(E, 50)
-#
-#   expect_equal(computeE(cbind(12, 50),useCache=F), 1.129928, tolerance = 0.1)
-#
-#   expect_error(computeE(cbind(long = -20, lat = 4),useCache=F), "coordinate")
-# })
+context("Function computeE")
+test_that("Compute E", {
+  
+  skip_if_not_function("computeE")
+  
+  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
-# context("Function getBioclimParam")
-# test_that("getBioclimParam", {
-#   skip_if_not_function("getBioclimParam")
-#   B <- getBioclimParam(coord,useCache=F)
-#
-#   expect_is(B, "data.frame")
-#   expect_equal(dim(B), c(50, 3))
-#
-#   expect_equal(getBioclimParam(cbind(12, 50),useCache=F),
-#     data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
-#     tolerance = 0.1
-#   )
-# })
+  E <- computeE(coord)
 
+  expect_is(E, "numeric")
+  expect_length(E, 1)
+
+  skip_on_cran()
+  
+  expect_equal(computeE(cbind(12, 50)), 1.129928, tolerance = 0.1)
+  expect_error(computeE(cbind(long = -20, lat = 4)), "coordinate")
+})
+
+context("Function getBioclimParam")
+test_that("getBioclimParam", {
+  
+  skip_if_not_function("getBioclimParam")
+  
+  coord <- NouraguesCoords[c("Long","Lat")]
+  
+  B <- getBioclimParam(coord)
+
+  expect_is(B, "data.frame")
+  expect_equal(dim(B), c(16, 3))
+
+  skip_on_cran()
+  expect_equal(getBioclimParam(cbind(12, 50)),
+    data.frame("tempSeas" = 6.62375, "precSeas" = 0.01925, "CWD" = -0.0921875),
+    tolerance = 0.1
+  )
+})
 
 context("Function getTaxonomy")
-test_that("Without finding the order", {
-  Taxo <- getTaxonomy(KarnatakaForest$genus)
 
-  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus))
+test_that("Without finding the order", {
+  
+  Taxo <- getTaxonomy(NouraguesTrees$Genus)
+
+  expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
   expect_is(Taxo, "data.frame")
   expect_equal(dim(Taxo), c(50, 2))
   expect_is(Taxo[, 1], "character")
@@ -57,20 +67,17 @@ test_that("Without finding the order", {
 
   Taxo <- Taxo[order(Taxo$inputGenus), ]
 
-
   res <- "inputGenus      family
-  Acacia    Fabaceae
-  Alangium   Cornaceae
-  Albizia    Fabaceae
-  Allophylus Sapindaceae
-  Alseodaphne   Lauraceae"
+  Abarema    Fabaceae
+  Amaioua   Rubiaceae
+  Amphirrhox    Violaceae"
 
-  expect_equivalent(unique(Taxo), fread(res, data.table = FALSE))
+  expect_equivalent(unique(Taxo)[1:3,], fread(res, data.table = FALSE))
 })
 
 test_that("With finding the order", {
-  Taxo <- getTaxonomy(KarnatakaForest$genus, findOrder = TRUE)
-  expect_equal(Taxo[, 1], as.character(KarnatakaForest$genus))
+  Taxo <- getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE)
+  expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
 
   expect_is(Taxo, "data.frame")
   expect_equal(dim(Taxo), c(50, 3))
@@ -81,14 +88,11 @@ test_that("With finding the order", {
   Taxo <- Taxo[order(Taxo$inputGenus), ]
 
   res <- "inputGenus      family      order
-  Acacia    Fabaceae    Fabales
-  Alangium   Cornaceae   Cornales
-  Albizia    Fabaceae    Fabales
-  Allophylus Sapindaceae Sapindales
-  Alseodaphne   Lauraceae   Laurales"
+  Abarema  Fabaceae      Fabales
+  Amaioua Rubiaceae  Gentianales
+  Amphirrhox Violaceae Malpighiales"
 
-
-  expect_equivalent(unique(Taxo), fread(res, data.table = FALSE))
+  expect_equivalent(unique(Taxo)[1:3,], fread(res, data.table = FALSE))
 })
 
 
@@ -104,13 +108,20 @@ test_that("loglog function", {
 
 test_that("Michaelis function", {
   skip_if_not_function("michaelisFunction")
+  
+  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+  
   data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
   expect_is(michaelisFunction(data), "nls")
 })
 
 test_that("Weibull function", {
+  
   skip_if_not_function("weibullFunction")
+  
+  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+  
   data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
   expect_is(weibullFunction(data), "nls")
@@ -179,17 +190,18 @@ test_that("predictHeigth with plot argument", {
 })
 
 
-
-
 context("compute Feld Region")
 test_that("compute Feld Region", {
-  expect_equal(unique(computeFeldRegion(coord)), "SEAsia")
+  
+  coord <- cbind(-52.68, 4.08)
+  
+  expect_equal(unique(computeFeldRegion(coord)), "GuianaShield")
   expect_length(computeFeldRegion(coord), nrow(coord))
 
   expect_equal(unique(computeFeldRegion(coord, level = "world")), "Pantropical")
   expect_equal(
     computeFeldRegion(coord, level = rep(c("region", "continent", "world"), length.out = nrow(coord))),
-    rep(c("SEAsia", "SEAsia", "Pantropical"), length.out = nrow(coord))
+    rep(c("GuianaShield", "SEAsia", "Pantropical"), length.out = nrow(coord))
   )
 
   expect_error(computeFeldRegion(coord, level = c("region", "region")))

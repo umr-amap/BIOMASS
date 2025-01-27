@@ -1,7 +1,10 @@
-D <- KarnatakaForest$D[1:50]
-coord <- as.matrix(KarnatakaForest[1:50, c("long", "lat")])
+data("NouraguesTrees")
+D <- NouraguesTrees$D[1:50]
+data("NouraguesCoords")
+coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
 context("Function retriveH")
+
 test_that("With the HDmodel", {
   expect_error(retrieveH(D), "Either")
 
@@ -22,23 +25,29 @@ test_that("With the HDmodel", {
   D[2] <- NA
   H <- retrieveH(D, model = HDmodel)
   expect_false(all(is.na(H$H)))
+  
+  expect_error(retrieveH(D, model = HDmodel, region = "") , "Too many input")
 })
 
+test_that("With the coordinates", {
+  
+  expect_error(retrieveH(D, coord = rbind(coord,coord)) , "coord should be either")
+  
+  skip_on_cran()
+  
+  H <- retrieveH(D, coord = coord)
 
-# test_that("With the coordinates", {
-#   H <- retrieveH(D, coord = coord)
-# 
-#   expect_is(H, "list")
-#   expect_length(H, 2)
-#   expect_is(H$H, "numeric")
-#   expect_is(H$RSE, "numeric")
-#   expect_length(H$H, length(D))
-#   expect_length(H$RSE, 1)
-# 
-#   D[2] <- NA
-#   H <- retrieveH(D, coord = coord)
-#   expect_false(all(is.na(H$H)))
-# })
+  expect_is(H, "list")
+  expect_length(H, 2)
+  expect_is(H$H, "numeric")
+  expect_is(H$RSE, "numeric")
+  expect_length(H$H, length(D))
+  expect_length(H$RSE, 1)
+
+  D[2] <- NA
+  H <- retrieveH(D, coord = coord)
+  expect_false(all(is.na(H$H)))
+})
 
 test_that("With the region", {
   expect_error(retrieveH(D, region = rep("SEAsia", 2)), "region")
