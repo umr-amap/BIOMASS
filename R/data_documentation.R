@@ -45,7 +45,7 @@
 #' @keywords datasets internal
 "feldCoef"
 
-
+ 
 #' Genus Family database
 #'
 #' To create this database, we combined the genera from The Plant List (http://www.theplantlist.org/1.1/browse/-/-/)
@@ -68,34 +68,6 @@
 #' str(genusFamily)
 #' @keywords datasets internal
 "genusFamily"
-
-
-#' Karnataka forest dataset
-#'
-#' Dataset from 96 forest plots (1 ha) established in the central Western Ghats of India by Ramesh et al. (2010).
-#'
-#' @docType data
-#' @usage data("KarnatakaForest")
-#' @format
-#' A data frame with 65889 observations on the following 8 variables :
-#'   - `plotId`: Names of the plots
-#'   - `treeId`: Tree Id, contains a letter (A, B, C...) when an individual has multiple stems
-#'   - `family`: Family
-#'   - `genus`: Genus
-#'   - `species`: Species
-#'   - `D`: Diameter (cm)
-#'   - `lat`: Latitude
-#'   - `long`: Longitude
-#'
-#' @references
-#' Ramesh, B. R. et al. (2010).
-#' _Forest stand structure and composition in 96 sites along environmental gradients in the central Western Ghats of India_
-#' Ecological Archives E091-216. Ecology, 91(10), 3118-3118.
-#' @examples
-#' data(KarnatakaForest)
-#' str(KarnatakaForest)
-#' @keywords datasets
-"KarnatakaForest"
 
 
 #' Nouragues forest dataset
