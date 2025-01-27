@@ -2,6 +2,110 @@ url: https://umr-amap.github.io/BIOMASS/
 
 template:
   bootstrap: 5
+  bootswatch: minty
 
 development:
   mode: auto
+  
+navbar:
+  title: "BIOMASS package"
+  structure:
+    left:  [articles, reference]
+    right: [search, github, lightswitch]
+
+articles:
+- title: Vignettes
+  navbar: ~
+  contents:
+  - Vignette_BIOMASS
+  - Vignette_spatialized_trees_and_forest_stand_metrics
+  
+reference: 
+- title: Estimate above-ground biomass (ABG) and its uncertainty
+  desc: >
+   The following functions aim to retrieve compulsory parameters such as wood density and tree height, which lead to the final estimate of the AGB and its uncertainty
+- subtitle: Correct trees taxonomy
+  contents: 
+  - correctTaxo
+  - getTaxonomy
+- subtitle: Estimate wood density
+  contents:
+  - getWoodDensity
+- subtitle: Estimate trees height
+  contents:
+  - modelHD
+  - retrieveH
+- subtitle: Estimate AGB
+  contents: 
+  - computeAGB
+- subtitle: Propagate uncertainties
+  contents: 
+  - AGBmonteCarlo
+- subtitle: Summarise at stand level
+  contents: 
+  - summaryByPlot
+  
+  
+- title: Spatialized trees and forest stand metrics
+- subtitle: Check plot's coordinates
+  contents:
+  - check_plot_coord
+- subtitle: Divide plot into subplots
+  - divide_plot
+- subtile: Summarise and display tree information by subplot
+  contents:
+  - subplot_summary
+  
+
+- title: Coordinate conversion
+- subtile: From one coordinate system to another
+  desc: >
+    These two function find the conversion using the plot's 4 corner coordinates of both system.
+  contents:
+  - bilinear_interpolation
+  - procrust
+- subtile: From long/lat coordinates to UTM X/Y coordinates
+  contents:
+  - latlong2UTM
+
+
+- title: Other functions
+
+- subtitle: Retrieve Feldpausch regions
+  contents:
+  - computeFeldRegion
+
+- subtitle: Predict tree height from a HD-model
+  contents: 
+  - predictHeight
+  
+- subtitle: Manage user cache
+  contents: 
+  - cacheManager
+  
+
+- title: Documentation
+- subtitle: Methods used for modeling height-diameter relationship
+  contents:
+  - HDmethods
+  
+  
+- title: Data sets
+  desc: >
+   The four data sets used for examples and vignettes
+  contents:
+  - NouraguesHD
+  - NouraguesCoords
+  - NouraguesPlot201
+  - NouraguesTrees
+  
+  
+- title: Deprecated functions
+  desc: >
+   These functions are deprecated and will be removed in the version 3.0
+  contents:
+  - attributeTree
+  - attributeTreeCoord
+  - correctCoordGPS
+  - cutPlot
+  - numberCorner
