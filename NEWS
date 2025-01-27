@@ -1,6 +1,7 @@
 * version 2.2.3
 - Added 3 dataset to the package (NouraguesTrees, NouraguesCoords and NouraguesPlot201) and removed KarnatakaForest
 - Creation of 2 more educational vignettes (Vignette_BIOMASS and Vignette_spatialized_trees_and_forest_stand_metrics)
+- Updated pkgdown BIOMASS website
 
 * version 2.2.2
 - Add the ref_raster argument to the check_plot_coord() function to display the plot over a reference raster (typically a chm). 

@@ -2,6 +2,49 @@ url: https://umr-amap.github.io/BIOMASS/
 
 template:
   bootstrap: 5
+  bootswatch: minty
 
 development:
   mode: auto
+  
+navbar:
+  title: "BIOMASS package"
+  structure:
+    left:  [articles, reference]
+    right: [search, github, lightswitch]
+
+articles:
+- title: Vignettes
+  navbar: ~
+  contents:
+  - Vignette_BIOMASS
+  - Vignette_spatialized_trees_and_forest_stand_metrics
+  
+reference: 
+- title: Estimate above-ground biomass (ABG) and its uncertainty
+- subtitle: Correct trees taxonomy
+  contents: 
+  - correctTaxo
+  - getTaxonomy
+- subtitle: Estimate wood density
+  contents:
+  - getWoodDensity
+- subtitle: Estimate trees height
+  contents:
+  - modelHD
+  - retrieveH
+- subtitle: Estimate AGB
+  contents: 
+  - computeAGB
+- subtitle: Propagate uncertainties
+  contents: 
+  - AGBmonteCarlo
+- subtitle: Summarise at stand level
+  contents: 
+  - summaryByPlot
+  
+- title: Spatialized trees and forest stand metrics
+- subtitle: Check plot's coordinates
+  contents:
+  - check_plot_coord
+  
