@@ -108,7 +108,10 @@ check_plots$corner_coord
 plot_204_coords <- NouraguesCoords[NouraguesCoords$Plot==204,]
 data("NouraguesTrees")
 plot_204_trees <- NouraguesTrees[NouraguesTrees$Plot == 204, ]
-nouragues_raster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",package = "BIOMASS", mustWork = TRUE))
+nouragues_raster <- terra::rast(
+  system.file("extdata", "NouraguesRaster.tif",
+              package = "BIOMASS", mustWork = TRUE)
+  )
 check_plot_204 <- check_plot_coord(
  corner_data = plot_204_coords,
  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),

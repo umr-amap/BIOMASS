@@ -1,7 +1,7 @@
 data("NouraguesTrees")
 D <- NouraguesTrees$D[1:50]
 data("NouraguesCoords")
-coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
 context("Function retriveH")
 

@@ -5,7 +5,7 @@ test_that("ComputeAGB", {
   data("NouraguesTrees")
   data("NouraguesHD")
   data("NouraguesCoords")
-  coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
   
   NouraguesTrees <- NouraguesTrees[1:100, ]
   
@@ -14,7 +14,6 @@ test_that("ComputeAGB", {
   WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
   
   H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE))
-  
   
   expect_error(computeAGB(D, WD$meanWD[1:65]), "different lenghts")
 
@@ -43,8 +42,8 @@ test_that("ComputeAGB", {
   
   # ComputeAGB with coord
   skip_on_cran()
-  expect_length(computeAGB(D, WD$meanWD, coord = coords), 100)
-  expect_error(computeAGB(D, WD$meanWD, coord = rbind(coords,coord)), "coord should be either")
+  expect_length(computeAGB(D, WD$meanWD, coord = coord), 100)
+  expect_error(computeAGB(D, WD$meanWD, coord = rbind(coord,coord)), "coord should be either")
 })
 
 

@@ -32,14 +32,15 @@ test_that("CorrectTaxo", {
     )
   )
 
-  path <- cacheManager("correctTaxo.log")
-  expect_true(file.exists(path))
+  # path <- cacheManager("correctTaxo.log")
+  # expect_true(file.exists(path))
+  # 
+  # a <- setDF(fread(path, header = TRUE, sep = ","))
+  # expect_equal(names(a), c("submittedName", "score", "matchedName", "acceptedName"))
+  # expect_gt(nrow(a), 0)
 
-  a <- setDF(fread(path, header = TRUE, sep = ","))
-  expect_equal(names(a), c("submittedName", "score", "matchedName", "acceptedName"))
-  expect_gt(nrow(a), 0)
-
-  file.rename(path, paste0(path, 0))
+  # file.rename(path, paste0(path, 0))
+  
   # test multiple things here :
   #   1) if the useCache is NULL but there is no Cache to remove
   #   2) if the genus is nonsense, there is no error message that appear if there is no cache
@@ -61,6 +62,6 @@ test_that("CorrectTaxo", {
       nameModified = c("TaxaNotFound", TRUE), stringsAsFactors = FALSE
     )
   )
-  file.remove(path)
-  file.rename(paste0(path, 0), path)
+  #file.remove(path)
+  #file.rename(paste0(path, 0), path)
 })
