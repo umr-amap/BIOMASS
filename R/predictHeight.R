@@ -1,11 +1,4 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "H"
-  ))
-}
-
-
-#' Predicting tree height
+#' Tree height predictions
 #'
 #' The function predicts height from diameter based on a fitted model.
 #'

@@ -83,32 +83,32 @@ appropriate taxonomic level using the \link{sd_10} dataset.
 }
 \examples{
 # Load a data set
-data(KarnatakaForest)
+data(NouraguesTrees)
 
 # Compute the Wood Density up to the genus level and give the mean wood density of the dataset
 \donttest{
 WD <- getWoodDensity(
-  genus = KarnatakaForest$genus,
-  species = KarnatakaForest$species
+  genus = NouraguesTrees$Genus,
+  species = NouraguesTrees$Species
 )
 }
 
 # Compute the Wood Density up to the genus level and then give the mean wood density per stand
 \donttest{
 WD <- getWoodDensity(
-  genus = KarnatakaForest$genus,
-  species = KarnatakaForest$species,
-  stand = KarnatakaForest$plotId
+  genus = NouraguesTrees$Genus,
+  species = NouraguesTrees$Species,
+  stand = NouraguesTrees$plotId
 )
 }
 
 # Compute the Wood Density up to the family level and then give the mean wood density per stand
 \donttest{
 WD <- getWoodDensity(
-  family = KarnatakaForest$family,
-  genus = KarnatakaForest$genus,
-  species = KarnatakaForest$species,
-  stand = KarnatakaForest$plotId
+  family = NouraguesTrees$family,
+  genus = NouraguesTrees$Genus,
+  species = NouraguesTrees$Species,
+  stand = NouraguesTrees$plotId
 )
 str(WD)
 }

@@ -4,14 +4,23 @@
 \alias{subplot_summary}
 \title{Summarise and display tree information by subplot}
 \usage{
-subplot_summary(subplots, value = NULL, draw_plot = TRUE, fun = sum, ...)
+subplot_summary(
+  subplots,
+  value = NULL,
+  draw_plot = TRUE,
+  per_ha = TRUE,
+  fun = sum,
+  ...
+)
 }
 \arguments{
 \item{subplots}{output of the \code{\link[=divide_plot]{divide_plot()}} function}
 
-\item{value}{a character indicating the column in subplots$tree_data to display}
+\item{value}{a character indicating the column in subplots$tree_data (a tree metric) to be summarised}
 
-\item{draw_plot}{a logical indicating whether the plot design should be displayed and returned}
+\item{draw_plot}{a logical indicating whether the plot design should be displayed}
+
+\item{per_ha}{a logical indicating whether the metric summary should be per hectare}
 
 \item{fun}{the function to be applied}
 

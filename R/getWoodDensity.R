@@ -1,13 +1,3 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "regionId", "i.family", "wd", "wd.x", "wd.y", "taxo", ".EACHI",
-    "meanWDsp", "nIndsp", "sdWDsp", "meanWD", "meanWDgn", "nInd", "nIndgn",
-    "sdWD", "sdWDgn", "levelWD", "meanWDfm", "nIndfm", "sdWDfm",
-    "meanWDst", "nIndst", "sdWDst"
-  ))
-}
-
-
 #' Estimating wood density
 #'
 #' @description
@@ -78,32 +68,32 @@ if (getRversion() >= "2.15.1") {
 #'
 #' @examples
 #' # Load a data set
-#' data(KarnatakaForest)
+#' data(NouraguesTrees)
 #'
 #' # Compute the Wood Density up to the genus level and give the mean wood density of the dataset
 #' \donttest{
 #' WD <- getWoodDensity(
-#'   genus = KarnatakaForest$genus,
-#'   species = KarnatakaForest$species
+#'   genus = NouraguesTrees$Genus,
+#'   species = NouraguesTrees$Species
 #' )
 #' }
 #' 
 #' # Compute the Wood Density up to the genus level and then give the mean wood density per stand
 #' \donttest{
 #' WD <- getWoodDensity(
-#'   genus = KarnatakaForest$genus,
-#'   species = KarnatakaForest$species,
-#'   stand = KarnatakaForest$plotId
+#'   genus = NouraguesTrees$Genus,
+#'   species = NouraguesTrees$Species,
+#'   stand = NouraguesTrees$plotId
 #' )
 #' }
 #' 
 #' # Compute the Wood Density up to the family level and then give the mean wood density per stand
 #' \donttest{
 #' WD <- getWoodDensity(
-#'   family = KarnatakaForest$family,
-#'   genus = KarnatakaForest$genus,
-#'   species = KarnatakaForest$species,
-#'   stand = KarnatakaForest$plotId
+#'   family = NouraguesTrees$family,
+#'   genus = NouraguesTrees$Genus,
+#'   species = NouraguesTrees$Species,
+#'   stand = NouraguesTrees$plotId
 #' )
 #' str(WD)
 #' }

@@ -1,29 +1,21 @@
-#' Summarize by plot (or subplot) the posterior distribution of AGB values
+#' Summarise by plot the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarizes the matrix `AGB_val` given by the function [AGBmonteCarlo()] by plot. Or just do the sums
-#' for each plot of the AGB if the argument `AGB_val` is the resulting vector from the function [computeAGB()].
+#' This function summarizes the matrix `AGB_val` given by the function [AGBmonteCarlo()] by plot.
 #'
 #' @details
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
-#' to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from [computeAGB()].
+#' to a plot at each iteration of the AGB monte Carlo approach.
 #'
-#' The `drawPlot` argument is a logical that if it is set `TRUE`, a graph will appear with the plot given on absciss and the value
-#' of AGB on ordinate, the red segments are the quantile, if `AGB_val` is the result of the function [AGBmonteCarlo()].
-#' If the `subplot` arguments is set and the `drawPlot` is set `TRUE`, a graph is drawn with the spatialisation of the plots.
-#'
-#' @param AGB_val Matrix resulting from the function [AGBmonteCarlo()] (AGB_val element of the list),
-#' or just the output of the function [AGBmonteCarlo()]. Or the output of the function [computeAGB()]
-#' @param plot Vector with the code of plot
-#' @param drawPlot a logical to draw the plot (see Details)
+#' @param AGB_val Matrix resulting from the [AGBmonteCarlo()] function (AGB_val element of the list), or just the output of the [AGBmonteCarlo()] function.
+#' @param plot Vector corresponding to the plots code (plots ID)
+#' @param drawPlot A logic indicating whether the graphic should be displayed or not
 #'
 #' @return a data frame where:
 #'   - `plot`: the code of the plot
 #'   - `AGB`: AGB value at the plot level
-#'   - `Cred_2.5`: the quantile 2.5\% for the plot (when output of [AGBmonteCarlo()] is used)
-#'   - `Cred_97.5`: the quantile 97.5\% for the plot (when output of [AGBmonteCarlo()] is used)
-#'
-#'
+#'   - `Cred_2.5`: the 2.5\% quantile for the plot
+#'   - `Cred_97.5`: the 97.5\% quantile for the plot
 #'
 #' @export
 #'
@@ -36,36 +28,27 @@
 #'
 #' # Load a database
 #' data(NouraguesHD)
-#' data(KarnatakaForest)
+#' data(NouraguesTrees)
 #'
 #' # Modelling height-diameter relationship
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 #'
 #' # Retrieving wood density values
 #' \donttest{
-#' KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-#'   stand = KarnatakaForest$plotId
-#' )
+#'   NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
+#'                                 stand = NouraguesTrees$plotId)
 #' }
 #'
 #' # Propagating errors
 #' \donttest{
-#' filt <- KarnatakaForest$plotId %in% c("BSP20", "BSP14")
-#' resultMC <- AGBmonteCarlo(
-#'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-#'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
-#' )
-#' 
-#' plot <- KarnatakaForest$plotId[ filt ]
-#'
-#' # The summary by plot
-#' summaryByPlot(AGB_val = resultMC$AGB_simu, plot)
-#'
-#' # The summary by plot for computeAGB
-#' H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
-#' AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
-#' summaryByPlot(AGB, plot)
+#'   resultMC <- AGBmonteCarlo(
+#'     D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
+#'     errWD = NouraguesWD$sdWD, HDmodel = HDmodel )
+#'   
+#'   # The summary by plot
+#'   summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 #' }
+#'
 summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
 
   ##### Checking arguments -----------------------------------------------------
@@ -75,8 +58,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
   if (!is.matrix(AGB_val) && !is.vector(AGB_val)) {
     stop(
       "The AGB_val must be a matrix you have for the result of the function ",
-      "'AGBmonteCarlo', or just the result of the function. ",
-      "Or the result from the function 'computeAGB'"
+      "'AGBmonteCarlo', or just the result of the function. "
     )
   }
   if (length(plot) != ifelse(is.matrix(AGB_val), nrow(AGB_val), length(AGB_val))) {
@@ -143,13 +125,16 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
   AGB <- Plot[!is.na(plot), mySummary(.I, AGB_val), by = plot]
 
   if (drawPlot) {
-    ABG_plot <- AGB[order(AGB) , i:=.I ]
-    print(ggplot(data = ABG_plot, aes(x = as.factor(i), y = AGB)) + 
+    AGB_plot <- copy(AGB)
+    AGB_plot <- AGB_plot[order(AGB) , i:=.I ]
+    print(ggplot(data = AGB_plot, aes(x = as.factor(i), y = AGB)) + 
       geom_point(size=2) + 
       geom_errorbar(aes(ymin=Cred_2.5, ymax=Cred_97.5), width=.2) +
       labs(x = "", title = "AGB by plot") +
-      scale_x_discrete(breaks = ABG_plot$i, labels = ABG_plot$plot, ) +
+      scale_x_discrete(breaks = AGB_plot$i, labels = AGB_plot$plot, ) +
       theme_minimal())
+    AGB_plot$i <- NULL
+    
   }
 
   return(as.data.frame(AGB))

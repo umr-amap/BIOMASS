@@ -2,7 +2,7 @@
 % Please edit documentation in R/predictHeight.R
 \name{predictHeight}
 \alias{predictHeight}
-\title{Predicting tree height}
+\title{Tree height predictions}
 \usage{
 predictHeight(D, model, err = FALSE, plot = NULL)
 }

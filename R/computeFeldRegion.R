@@ -1,6 +1,6 @@
 #' Retrieving Feldpausch regions
 #'
-#' Extract the Feldpausch et al. (2012)'s regions using local coordinates.
+#' @description Extract the Feldpausch et al. (2012)'s regions using local coordinates.
 #'
 #' @inheritParams computeE
 #' @param level a string or a vector of string, the length must match the number of rows of the parameter coord.
