@@ -3,6 +3,11 @@
 }
 
 .onAttach <- function(libname, pkgname) {
+  
+  packageStartupMessage(
+    "For more information on using BIOMASS, visit https://umr-amap.github.io/BIOMASS"
+  )
+  
   basePath <- cachePath()
   
   if(attr(basePath, "source")=="temp") {

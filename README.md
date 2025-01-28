@@ -1,9 +1,6 @@
 BIOMASS
 ================
 
-  - [The package](#the-package)
-  - [Citation](#citation)
-  - [Install BIOMASS](#install-biomass)
 
 ## The package
 
