@@ -1,6 +1,6 @@
 #' Computing tree above-ground biomass (AGB)
 #'
-#' This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
+#' @description This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
 #'
 #' @param D Tree diameter (in cm), either a vector or a single value.
 #' @param WD Wood density (in g/cm3), either a vector or a single value. If not available, see [getWoodDensity()].

@@ -42,8 +42,7 @@ Returns a list with:
 }
 }
 \description{
-From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an
-estimation of the total tree height.
+From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an estimate of the total tree height.
 }
 \examples{
 # Load a database
@@ -65,8 +64,8 @@ H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 }
 \references{
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates}. Biogeosciences (2012): 3381-3403.
-Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}.
-Global change biology 20.10 (2014): 3177-3190.
+
+Chave et al. \emph{Improved allometric models to estimate the aboveground biomass of tropical trees}. Global change biology 20.10 (2014): 3177-3190.
 }
 \seealso{
 \code{\link[=modelHD]{modelHD()}}

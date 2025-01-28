@@ -7,29 +7,17 @@ BIOMASS
 
 ## The package
 
-R package for estimating aboveground biomass and its uncertainty in
-tropical forests.
+The `BIOMASS` package allows user to estimate above-ground biomass/carbon and its uncertainty in tropical forests. 
 
-Contains functions to estimate aboveground biomass/carbon and its
-uncertainty in tropical forests. These functions allow to:
+Especially by:
 
-1.  retrieve and correct the taxonomy;
-2.  estimate the wood density and its uncertainty;
-3.  construct height-diameter models;
-4.  manage tree and plot coordinates;
-5.  estimate the aboveground biomass/carbon at the stand level with
-    associated uncertainty;
+1.  retrieving and correcting trees taxonomy;
+2.  estimating the wood density and its uncertainty;
+3.  constructing height-diameter models;
+4.  managing tree and plot coordinates;
+5.  estimating the above-ground biomass/carbon at the stand level with the associated uncertainty;
 
-<!--For more information, see
-[article](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
-or the
-[vignette](https://CRAN.R-project.org/package=BIOMASS/vignettes/BIOMASS.html)
-of the package, and the [reference
-manual](https://CRAN.R-project.org/package=BIOMASS/BIOMASS.pdf).--> 
-
-## Citation
-
-To cite 'BIOMASS', please use citation(“BIOMASS”).
+For more information, see the [paper of M. Réjou-Méchain (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
 
 ## Install BIOMASS
 
@@ -51,3 +39,16 @@ To use it :
 ``` r
 library("BIOMASS")
 ```
+
+## Citation
+
+Please cite this package as:
+
+*Rejou-Mechain M, Tanguy A, Piponiot C, Chave J, Herault B* (2017). “BIOMASS : an R package for estimating above-ground biomass and its uncertainty in tropical forests.” _Methods in Ecology and Evolution_, *8*(9). ISSN 2041210X, [doi:10.1111/2041-210X.12753](https://doi.org/10.1111/2041-210X.12753).
+
+Or you can also run 
+
+``` r
+citation("BIOMASS")
+```
+

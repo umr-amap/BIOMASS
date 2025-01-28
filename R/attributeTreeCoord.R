@@ -41,7 +41,8 @@ if (getRversion() >= "2.15.1") {
 #' attributeTreeCoord(xy, Forestplot, dim =100,coordAbs = Outcut)
 attributeTreeCoord <- function(xy, plot, dim, coordAbs) {
 
-
+  .Deprecated(msg = "'attributeTreeCoord()' is deprecated and will be removed in the next version. The projected tree coordinates are now retrieved by the `check_plot_coord()` function\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
+  
   # parameters verification -------------------------------------------------
   setDT(coordAbs)
   setnames(coordAbs, c("XAbs", "YAbs","cornerNum"), c("X", "Y","corner"), skip_absent = TRUE)

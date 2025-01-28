@@ -2,7 +2,7 @@
 % Please edit documentation in R/correctTaxo.R
 \name{correctTaxo}
 \alias{correctTaxo}
-\title{This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).}
+\title{Correct trees taxonomy}
 \usage{
 correctTaxo(
   genus,

@@ -51,37 +51,25 @@ OUTPUT: genusFamily.csv: a file with 2 columns:
 OUTPUT: wdData.csv: download the file and read it from the website : http://datadryad.org/bitstream/handle/10255/dryad.235/GlobalWoodDensityDatabase.xls?sequence=1
 
 
-
-4. Karnataka forest, KarnatakaForest.R
-
-INPUT: 
-	- Macroplot_data_Rev.txt
-	- Species_list.txt
-	- Site_variables.txt
-	
-	Those files contain all the data needed for Karnataka Forest database.
-
-
-
-5. NouraguesHD
+4. NouraguesHD
 
 	For this one, we lost the code to reconstruct the database, but this isn't false data
 
 
 
-6. sd_10, sd_10.R
+5. sd_10, sd_10.R
 
 INPUT: the data from the table wdData, see 3. 
 
 
 
-7. param_4, param_4.R
+6. param_4, param_4.R
 
 INPUT: Allometry-database-2012m_data.csv
 
 
 
-8. param_7, param_7.R
+7. param_7, param_7.R
 
 INPUT:
 	- Allometry-database-2012m_data.csv

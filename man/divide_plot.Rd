@@ -5,6 +5,7 @@
 \title{Divides one ore more plots into subplots}
 \usage{
 divide_plot(
+  corner_data,
   rel_coord,
   proj_coord = NULL,
   grid_size,
@@ -17,29 +18,31 @@ divide_plot(
 )
 }
 \arguments{
-\item{rel_coord}{a matrix or data frame containing the relative (local) coordinates of plot corners, with X and Y corresponding to the first and second column respectively}
+\item{corner_data}{A data frame, data frame extension, containing the plot corner coordinates. Typically, the output \verb{$corner_coord} of the \code{\link[=check_plot_coord]{check_plot_coord()}} function.}
 
-\item{proj_coord}{a matrix or data frame containing the projected coordinates of plot corners, with X and Y corresponding to the first and second column respectively, and with the same row order than rel_coord}
+\item{rel_coord}{A character vector of length 2,  specifying the column names (resp. x, y) of the corner relative coordinates.}
 
-\item{grid_size}{a vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
+\item{proj_coord}{A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
 
-\item{tree_data}{a data frame containing tree relative coordinates and other tree metrics (one row per tree).}
+\item{grid_size}{A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
-\item{tree_coords}{a character vector of size 2 containing the column names of the relative coordinates of the trees.}
+\item{tree_data}{A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).}
 
-\item{corner_plot_ID}{if dealing with multiple plots : a vector indicating plot IDs for corners.}
+\item{tree_coords}{A character vector of length 2, specifying the column names of the relative coordinates of the trees.}
 
-\item{tree_plot_ID}{if dealing with multiple plots : a vector indicating tree plot IDs.}
+\item{corner_plot_ID}{If dealing with multiple plots : a vector indicating plot IDs for corners.}
 
-\item{grid_tol}{a numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
+\item{tree_plot_ID}{If dealing with multiple plots : a vector indicating tree plot IDs.}
 
-\item{centred_grid}{when grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centred on the plot.}
+\item{grid_tol}{A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
+
+\item{centred_grid}{When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.}
 }
 \value{
 If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
-\item \code{subplot_id}: The automatically generated subplot code, using the following rule : subplot_X_Y
+\item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
 \item \code{x_rel} and \code{y_rel} : the relative X-axis and Y-axis coordinates of subplots corners.
 \item \code{x_proj} and \code{y_proj} :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
 }
@@ -47,7 +50,7 @@ If tree_data isn't supplied, returns a data-frame containing as many rows as the
 If tree_data is supplied, returns a list containing :
 \itemize{
 \item the previous data-frame
-\item the tree_data data-frame with the subplot_id of each tree in the last column
+\item the tree_data data-frame with the subplot_ID of each tree in the last column
 }
 }
 \description{
@@ -57,39 +60,51 @@ This function divides a plot (or several plots) into subplots in the relative co
 If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
 }
 \examples{
-
-# Rectangular plot and grid cells
-rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 100, 100))
-subplots <- divide_plot(rel_coord = rel_coord, grid_size = c(100,50))
-
-# Squared plot and projected coordinates associated
-rel_coord <- data.frame(x_rel = c(0, 200, 0, 200), y_rel = c(0, 0, 200, 200))
-proj_coord <- data.frame(x_proj = c(210, 383, 110, 283), y_proj = c(210, 310, 383, 483))
-subplots <- divide_plot(rel_coord, proj_coord = proj_coord, grid_size = 100)
+# One plot with repeated measurements of each corner
+data("NouraguesPlot201")
+check_plot201 <- check_plot_coord(
+  corner_data = NouraguesPlot201,
+  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+  trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+subplots_201 <- divide_plot(
+  corner_data = check_plot201$corner_coord, 
+  rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+  grid_size = 50)
+subplots_201
 
 # Assigning trees to subplots
-tree_data <- data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200))
-subplots <- divide_plot(rel_coord, proj_coord, 100,
-                        tree_data = tree_data, tree_coords = c("x_tree","y_tree"))
-subplots$sub_corner_coord
-subplots$tree_data
+data("NouraguesTrees")
+plot201_trees <- NouraguesTrees[NouraguesTrees$Plot == 201,]
+subplots_201 <- suppressWarnings(
+  divide_plot(
+    corner_data = check_plot201$corner_coord, 
+    rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+    grid_size = 50,
+    tree_data = plot201_trees, tree_coords = c("Xfield","Yfield")))
+head(subplots_201$sub_corner_coord)
+head(subplots_201$tree_data)
 
 # When grid dimensions don't fit perfectly plot dimensions
 \donttest{
- subplots <- divide_plot(rel_coord, grid_size = c(45,50))
- subplots <- divide_plot(rel_coord, grid_size = c(41,41) , grid_tol = 0.4, centred_grid = TRUE)
+  divide_plot(
+    corner_data = check_plot201$corner_coord, 
+    rel_coord = c("x_rel","y_rel"),
+    grid_size = c(41,41),
+    grid_tol = 0.4, centred_grid = TRUE)
 }
 
 # Dealing with multiple plots
-rel_coord <- rbind(rel_coord, rel_coord)
-proj_coord <- rbind(proj_coord, proj_coord + 200)
-tree_data <- rbind(tree_data, data.frame(x_tree = runif(50,0,200), y_tree = runif(50,0,200)))
-corner_plot_ID <- rep(c("plot1","plot2"), e=4)
-tree_plot_ID <- rep(c("plot1","plot2"), e=50)
-subplots <- divide_plot(rel_coord, proj_coord, 100,
-                        tree_data, c("x_tree","y_tree"),
-                        corner_plot_ID, tree_plot_ID)
-
+data("NouraguesCoords")
+nouragues_subplots <- suppressWarnings(
+  divide_plot(
+    corner_data = NouraguesCoords,
+    rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
+    corner_plot_ID = "Plot",
+    grid_size = 50,
+    tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
+    tree_plot_ID = "Plot"))
+head(nouragues_subplots$sub_corner_coord)
+head(nouragues_subplots$tree_data)
 }
 \author{
 Arthur PERE, Arthur BAILLY

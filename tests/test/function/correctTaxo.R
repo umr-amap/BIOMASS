@@ -3,17 +3,13 @@ library(BIOMASS)
 
 
 # data used for the function
-data("KarnatakaForest")
+data("NouraguesTrees")
 
-genus <- KarnatakaForest$genus[1:10]
-species <- KarnatakaForest$species[1:10]
+genus <- NouraguesTrees$Genus[1:10]
+species <- NouraguesTrees$Species[1:10]
 # species = NULL
 
 score <- 0.5
-
-
-
-
 
 
 correctTaxo <- function(genus, species = NULL, score = 0.5) {

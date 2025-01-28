@@ -2,75 +2,56 @@
 % Please edit documentation in R/summaryByPlot.R
 \name{summaryByPlot}
 \alias{summaryByPlot}
-\title{Summarize by plot (or subplot) the posterior distribution of AGB values}
+\title{Summarise by plot the posterior distribution of AGB values}
 \usage{
-summaryByPlot(AGB_val, plot, drawPlot = FALSE, subplot = NULL)
+summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 }
 \arguments{
-\item{AGB_val}{Matrix resulting from the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} (AGB_val element of the list),
-or just the output of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}. Or the output of the function \code{\link[=computeAGB]{computeAGB()}}}
+\item{AGB_val}{Matrix resulting from the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function (AGB_val element of the list), or just the output of the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function.}
 
-\item{plot}{Vector with the code of plot}
+\item{plot}{Vector corresponding to the plots code (plots ID)}
 
-\item{drawPlot}{a logical to draw the plot (see Details)}
-
-\item{subplot}{Data frame, output of the function \code{\link[=cutPlot]{cutPlot()}}}
+\item{drawPlot}{A logic indicating whether the graphic should be displayed or not}
 }
 \value{
 a data frame where:
 \itemize{
 \item \code{plot}: the code of the plot
 \item \code{AGB}: AGB value at the plot level
-\item \code{Cred_2.5}: the quantile 2.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
-\item \code{Cred_97.5}: the quantile 97.5\\% for the plot (when output of \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} is used)
+\item \code{Cred_2.5}: the 2.5\\% quantile for the plot
+\item \code{Cred_97.5}: the 97.5\\% quantile for the plot
 }
-
-If the \code{subplot} is set, the output is a list with the previous data frame and a simple features (sf) geometry object.
 }
 \description{
-This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot. Or just do the sums
-for each plot of the AGB if the argument \code{AGB_val} is the resulting vector from the function \code{\link[=computeAGB]{computeAGB()}}.
+This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot.
 }
 \details{
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
-to a plot at each iteration of the AGB monte Carlo approach. Or discarded when using output from \code{\link[=computeAGB]{computeAGB()}}.
-
-The \code{drawPlot} argument is a logical that if it is set \code{TRUE}, a graph will appear with the plot given on absciss and the value
-of AGB on ordinate, the red segments are the quantile, if \code{AGB_val} is the result of the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}.
-If the \code{subplot} arguments is set and the \code{drawPlot} is set \code{TRUE}, a graph is drawn with the spatialisation of the plots.
+to a plot at each iteration of the AGB monte Carlo approach.
 }
 \examples{
 
 # Load a database
 data(NouraguesHD)
-data(KarnatakaForest)
+data(NouraguesTrees)
 
 # Modelling height-diameter relationship
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 
 # Retrieving wood density values
 \donttest{
-KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-  stand = KarnatakaForest$plotId
-)
+  NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
+                                stand = NouraguesTrees$plotId)
 }
 
 # Propagating errors
 \donttest{
-filt <- KarnatakaForest$plotId \%in\% c("BSP20", "BSP14")
-resultMC <- AGBmonteCarlo(
-  D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-  errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
-)
-
-plot <- KarnatakaForest$plotId[ filt ]
-
-# The summary by plot
-summaryByPlot(AGB_val = resultMC$AGB_simu, plot)
-
-# The summary by plot for computeAGB
-H <- retrieveH(KarnatakaForest$D[filt], model = HDmodel)$H
-AGB <- computeAGB(KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt], H = H)
-summaryByPlot(AGB, plot)
+  resultMC <- AGBmonteCarlo(
+    D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
+    errWD = NouraguesWD$sdWD, HDmodel = HDmodel )
+  
+  # The summary by plot
+  summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 }
+
 }

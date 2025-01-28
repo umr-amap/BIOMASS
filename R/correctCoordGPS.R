@@ -72,6 +72,8 @@ correctCoordGPS <- function(longlat = NULL, projCoord = NULL, coordRel, rangeX, 
   
   warning("This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette")
   
+  .Deprecated(msg = "'correctCoordGPS()' has been replaced by `check_plot_coord()` function and will be removed in the next version.\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
+  
   # To maintain user's original options
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))

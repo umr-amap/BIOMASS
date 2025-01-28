@@ -1,6 +1,6 @@
 #' Fitting height-diameter models
 #'
-#' This function fits and compares (optional) height-diameter models.
+#' @description This function fits and compares (optional) height-diameter models.
 #'
 #' @param D Vector with diameter measurements (in cm). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding height in H) is required.
 #' @param H Vector with total height measurements (in m). NA values are accepted but a minimum of 10 valid entries (i.e. having a corresponding diameter in D) is required.
