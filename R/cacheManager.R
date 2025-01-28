@@ -108,25 +108,25 @@ cachePath <- function(...) {
   )
 }
 
-# #' Function used to create or activate a permanent cache.
-# #' 
-# #' Permanent cache is located by default in user data dir.
-# #' 
-# #' You can provide a custom path (that will be defined as a BIOMASS.cache option)
-# #' but clearCache function will refuse to operate on it for security reasons.
-# #' @param path Use a custom path to host cache
-# #' @return No return value, called for side effects
-# #' @export
-# createCache <- function(path=NULL) {
-#   if(is.null(path)) {
-#     path <- rappdirs::user_data_dir("R/BIOMASS", NULL)
-#   } else {
-#     options(BIOMASS.cache=path)
-#     message("options(BIOMASS.cache=\"", path, "\")")
-#   }
-#   dir.create(path, showWarnings = FALSE, recursive = TRUE)
-#   invisible(NULL)
-# }
+#' Function used to create or activate a permanent cache.
+#'
+#' Permanent cache is located by default in user data dir.
+#'
+#' You can provide a custom path (that will be defined as a BIOMASS.cache option)
+#' but clearCache function will refuse to operate on it for security reasons.
+#' @param path Use a custom path to host cache
+#' @return No return value, called for side effects
+#' @export
+createCache <- function(path=NULL) {
+  if(is.null(path)) {
+    path <- rappdirs::user_data_dir("R/BIOMASS", NULL)
+  } else {
+    options(BIOMASS.cache=path)
+    message("options(BIOMASS.cache=\"", path, "\")")
+  }
+  dir.create(path, showWarnings = FALSE, recursive = TRUE)
+  invisible(NULL)
+}
 
 #' Function to clear cache content and possibly remove it
 #' 

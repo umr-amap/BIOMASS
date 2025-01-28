@@ -84,6 +84,7 @@ reference:
   contents: 
   - cacheManager
   - cachePath
+  - createCache
   - clearCache
 
 
