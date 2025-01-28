@@ -24,6 +24,7 @@ reference:
 - title: Estimate above-ground biomass (ABG) and its uncertainty
   desc: >
    The following functions aim to retrieve compulsory parameters such as wood density and tree height, which lead to the final estimate of the AGB and its uncertainty
+
 - subtitle: Correct trees taxonomy
   contents: 
   - correctTaxo
@@ -44,7 +45,6 @@ reference:
 - subtitle: Summarise at stand level
   contents: 
   - summaryByPlot
-  
   
 - title: Spatialized trees and forest stand metrics
 - subtitle: Check plot's coordinates
