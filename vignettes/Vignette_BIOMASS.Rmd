@@ -47,7 +47,21 @@ These data do not contain any information on wood density or height of the trees
 
 ## Checking and retrieving trees taxonomy
 
-This is done with the `correctTaxo()` function:
+This is done with the `correctTaxo()` function, but before calling it, let's speak about cache !
+
+When the function is called for the first time, a temporary file containing the request to TNRS will be automatically created in an usual existing folder. Once this has been done, during the current session **the use of `useCache = TRUE` will access the saved temporary file** in order to avoid time-consuming replication of server requests. But **by quitting the current R session, this temporary file will be removed**. So before calling `correctTaxo()`, we advise you to define a folder which will host the temporary file but will not be removed between sessions:
+
+```{r, eval=FALSE}
+# By default
+createCache() 
+# Or if you want to set your own cache folder
+createCache("the_path_to_your_cache_folder") 
+# Or 
+options("BIOMASS.cache" = "the_path_to_your_cache_folder")
+
+```
+
+That said, let's continue with the call to the `correctTaxo()` function:
 
 ```{r, cache=TRUE, eval=FALSE}
 Taxo <- correctTaxo(
@@ -67,8 +81,6 @@ The corrected genus and species of the trees can now be added to the data:
 NouraguesTrees$GenusCorrected <- Taxo$genusCorrected
 NouraguesTrees$SpeciesCorrected <- Taxo$speciesCorrected
 ```
-
-When the function is called for the first time, a temporary file containing the request to TNRS will be created. Once this has been done, the use of `useCache = TRUE` will access the saved temporary file in order to avoid time-consuming replication of server requests.
 
 Here, as an example, the species name of the first tree has been corrected from "guyanensis" to "guianensis": 
 
