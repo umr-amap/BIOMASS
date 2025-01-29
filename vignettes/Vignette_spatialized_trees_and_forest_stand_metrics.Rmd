@@ -247,6 +247,18 @@ kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the 
 
 If you don't have any projected coordinates, just let `proj_coord` = NULL.
 
+The function also handles imperfect cuts with the arguments `centred_grid` and `grid_tol`. Here an example with a 40mx45m grid.
+
+```{r}
+subplots <- divide_plot(
+  corner_data = check_plot_trust_GPS$corner_coord, 
+  rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+  grid_size = c(40,45), 
+  centred_grid = T, # centre the grid in the middle of the plot
+  grid_tol = 0.3 # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
+  )
+```
+
 For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_data` and `tree_coords` arguments**:
 
 ```{r divide_plot_trees}
@@ -258,7 +270,7 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25, # or c(50,50)
+  grid_size = 25, # or c(25,25)
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield")
   )
 ```
@@ -273,7 +285,7 @@ The function now returns a list containing:
 kable(head(subplots$tree_data), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-The function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
+Last but not least, the function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
 
 ```{r divide_multiple_plots}
 multiple_subplots <- divide_plot(
@@ -283,6 +295,7 @@ multiple_subplots <- divide_plot(
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
 )
 ```
+
 
 # Summarising tree metrics at subplot level
 

@@ -165,8 +165,8 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     y_plot_length <- diff(range(dat[["y_rel"]]))
     x_not_in_grid <- x_plot_length %% grid_size[1]
     y_not_in_grid <- y_plot_length %% grid_size[2]
-    if( x_not_in_grid != 0 ) warning("The x-dimension of the plot is not a multiple of the x-dimension of the grid size")
-    if( y_not_in_grid != 0 ) warning("The y-dimension of the plot is not a multiple of the y-dimension of the grid size")
+    if( x_not_in_grid != 0 ) warning("\nThe x-dimension of the plot is not a multiple of the x-dimension of the grid size")
+    if( y_not_in_grid != 0 ) warning("\nThe y-dimension of the plot is not a multiple of the y-dimension of the grid size")
     if( x_not_in_grid * y_plot_length + y_not_in_grid * x_plot_length - x_not_in_grid * y_not_in_grid > grid_tol * x_plot_length * y_plot_length ) {
       stop(paste("More than",grid_tol*100,"% of the plot area is not included in the sub-plot grid. If you still want to divide the plot, please increase the value of the grid_tol argument."))
     }

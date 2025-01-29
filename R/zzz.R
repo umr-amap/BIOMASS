@@ -5,7 +5,7 @@
 .onAttach <- function(libname, pkgname) {
   
   packageStartupMessage(
-    "For more information on using BIOMASS, visit https://umr-amap.github.io/BIOMASS"
+    "For more information on using BIOMASS, visit https://umr-amap.github.io/BIOMASS\n"
   )
   
   basePath <- cachePath()
