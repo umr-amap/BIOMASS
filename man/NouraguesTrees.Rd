@@ -28,6 +28,6 @@ data(NouraguesTrees)
 str(NouraguesTrees)
 }
 \references{
-`Petit Plateau' permanent plots fifth census, 2012, Nouragues forest, https://doi.org/10.18167/DVN1/TZ1RL9, CIRAD Dataverse, V1
+`Petit Plateau' permanent plots fifth census, 2012, Nouragues forest, \href{https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9}{https://doi.org/10.18167/DVN1/TZ1RL9}, CIRAD Dataverse, V1
 }
 \keyword{datasets}

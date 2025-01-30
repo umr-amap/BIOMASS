@@ -88,7 +88,7 @@
 #'   - `D`: Tree diameter (in cm)
 #'
 #' @references
-#'  `Petit Plateau' permanent plots fifth census, 2012, Nouragues forest, https://doi.org/10.18167/DVN1/TZ1RL9, CIRAD Dataverse, V1
+#'  `Petit Plateau' permanent plots fifth census, 2012, Nouragues forest, [https://doi.org/10.18167/DVN1/TZ1RL9](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9), CIRAD Dataverse, V1
 #' @examples
 #' data(NouraguesTrees)
 #' str(NouraguesTrees)
@@ -114,7 +114,7 @@
 #'   - `Lat`: Corner latitude coordinate
 #'
 #' @references
-#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", https://doi.org/10.18167/DVN1/HXKS4E, CIRAD Dataverse, V2
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", [https://doi.org/10.18167/DVN1/HXKS4E](https://doi.org/10.18167/DVN1/HXKS4E), CIRAD Dataverse, V2
 #' @examples
 #' data(NouraguesCoords)
 #' str(NouraguesCoords)
@@ -141,7 +141,7 @@
 #'   - `CornerID` : IDs of the plot corners 
 #'
 #' @references
-#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", https://doi.org/10.18167/DVN1/HXKS4E, CIRAD Dataverse, V2
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", [https://doi.org/10.18167/DVN1/HXKS4E](https://doi.org/10.18167/DVN1/HXKS4E), CIRAD Dataverse, V2
 #' @examples
 #' data(NouraguesPlot201)
 #' str(NouraguesPlot201)
