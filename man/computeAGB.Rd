@@ -2,7 +2,7 @@
 % Please edit documentation in R/computeAGB.R
 \name{computeAGB}
 \alias{computeAGB}
-\title{Computing tree above-ground biomass (AGB)}
+\title{Computing tree above ground biomass (AGB)}
 \usage{
 computeAGB(D, WD, H = NULL, coord = NULL, Dlim = NULL)
 }
@@ -26,10 +26,10 @@ proxy (parameter E in Chave et al. 2014). Compulsory if tree heights \code{H} ar
 The function returns the AGB in Mg (or ton) as a single value or a vector.
 }
 \description{
-This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
+This function uses Chave et al. 2014's pantropical models to estimate the above ground biomass of tropical trees.
 }
 \details{
-This function uses two different ways of computing the above-ground biomass of a tree:
+This function uses two different ways of computing the above ground biomass of a tree:
 \enumerate{
 \item If tree height data are available, the AGB is computed thanks to the following equation (Eq. 4 in Chave et al., 2014):
 \deqn{AGB = 0.0673 * (WD * H * D^2)^0.976}
@@ -74,8 +74,9 @@ Global Change Biology, 20 (10), 3177-3190
 Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
 }
 \keyword{AGB}
-\keyword{above-ground}
+\keyword{above}
 \keyword{allometry}
 \keyword{biomass}
 \keyword{carbon}
 \keyword{forest}
+\keyword{ground}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/attributeTreeCoord.R
 \name{attributeTreeCoord}
 \alias{attributeTreeCoord}
-\title{Attribute trees to GPS coordinates}
+\title{Attribute GPS coordinates to trees}
 \usage{
 attributeTreeCoord(xy, plot, dim, coordAbs)
 }
@@ -21,7 +21,7 @@ A data frame with two columns:
 - \code{Yproj}: The \code{Y} coordinates in the absolute coordinate system
 }
 \description{
-Attribute trees to GPS coordinates
+Attribute GPS coordinates to trees
 }
 \examples{
 

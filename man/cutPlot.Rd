@@ -2,7 +2,7 @@
 % Please edit documentation in R/cutPlot.R
 \name{cutPlot}
 \alias{cutPlot}
-\title{Divides one ore more plots into subplots}
+\title{Divides one or more plots into subplots}
 \usage{
 cutPlot(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY = 200)
 }
