@@ -21,18 +21,18 @@ articles:
   - Vignette_spatialized_trees_and_forest_stand_metrics
   
 reference: 
-- title: Estimate above-ground biomass (ABG) and its uncertainty
+- title: Estimate above ground biomass (ABG) and its uncertainty
   desc: >
    The following functions aim to retrieve compulsory parameters such as wood density and tree height, which lead to the final estimate of the AGB and its uncertainty
 
-- subtitle: Correct trees taxonomy
+- subtitle: Correct tree taxonomy
   contents: 
   - correctTaxo
   - getTaxonomy
 - subtitle: Estimate wood density
   contents:
   - getWoodDensity
-- subtitle: Estimate trees height
+- subtitle: Estimate tree height
   contents:
   - modelHD
   - retrieveH
@@ -47,7 +47,7 @@ reference:
   - summaryByPlot
   
 - title: Spatialized trees and forest stand metrics
-- subtitle: Check plot's coordinates
+- subtitle: Check plot coordinates
   contents:
   - check_plot_coord
 - subtitle: Divide plot into subplots
@@ -56,22 +56,19 @@ reference:
 - subtile: Summarise and display tree information by subplot
   contents:
   - subplot_summary
-  
 
-- title: Coordinate conversion
-- subtile: From one coordinate system to another
+
+- title: Other functions
+- subtile: Coordinate conversion from one system to another
   desc: >
     These two function find the conversion using the plot's 4 corner coordinates of both system.
   contents:
   - bilinear_interpolation
   - procrust
-- subtile: From long/lat coordinates to UTM X/Y coordinates
+- subtile: Coordinate conversion from long/lat coordinates to UTM X/Y coordinates
   contents:
   - latlong2UTM
-
-
-- title: Other functions
-
+  
 - subtitle: Retrieve Feldpausch regions
   contents:
   - computeFeldRegion
@@ -94,9 +91,9 @@ reference:
   - HDmethods
   
   
-- title: Data sets
+- title: Datasets
   desc: >
-   The four data sets used for examples and vignettes
+   The four datasets used for examples and vignettes
   contents:
   - NouraguesHD
   - NouraguesCoords

@@ -4,17 +4,17 @@ BIOMASS
 
 ## The package
 
-The `BIOMASS` package allows user to estimate above-ground biomass/carbon and its uncertainty in tropical forests. 
+The `BIOMASS` package allows users to estimate above ground biomass/carbon and its uncertainty in tropical forests. 
 
-Especially by:
+The main implemented steps are as follows :
 
-1.  retrieving and correcting trees taxonomy;
+1.  retrieving and correcting tree taxonomy;
 2.  estimating the wood density and its uncertainty;
 3.  constructing height-diameter models;
-4.  managing tree and plot coordinates;
-5.  estimating the above-ground biomass/carbon at the stand level with the associated uncertainty;
+4.  estimating the above ground biomass/carbon at the stand level with the associated uncertainty;
+5.  managing tree and plot coordinates.
 
-For more information, see the [paper of M. Réjou-Méchain (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
+For more information, see the [paper of Réjou-Méchain et al. (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
 
 ## Install BIOMASS
 

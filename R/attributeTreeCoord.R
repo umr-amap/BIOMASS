@@ -4,7 +4,7 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Attribute trees to GPS coordinates
+#' Attribute GPS coordinates to trees
 #'
 #' @param xy The relative coordinates of the trees within each plot
 #' @param plot The label of the plot (same length as the number of rows of `xy` or length of 1)

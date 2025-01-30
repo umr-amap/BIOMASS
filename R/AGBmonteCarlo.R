@@ -1,4 +1,4 @@
-#' Propagating above-ground biomass (AGB) or carbon (AGC) errors to the stand level
+#' Propagating above ground biomass (AGB) or carbon (AGC) errors to the stand level
 #'
 #' @description Propagation of the errors throughout the steps needed to compute AGB or AGC.
 #'
@@ -18,7 +18,7 @@
 #' 95 percent of the trees).
 #' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
-#' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
+#' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
