@@ -1,22 +1,7 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "query", "from", "submittedName", "nameSubmitted","slice", ".I",
-    "..score", "matchedName", "outName", "nameModified", "scientificScore",
-    "genusCorrected", "speciesCorrected", "acceptedName", "nameScientific",
-    "Name_submitted", "Overall_score", "Name_matched", "Accepted_name",
-    ".N", "."
-  ))
-}
-
-##%######################################################%##
-#                                                          #
-####             ' Checking typos in names              ####
-#                                                          #
-##%######################################################%##
-
+#' Correct trees taxonomy
 #'
+#' @description
 #' This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
-#'
 #'
 #' @details
 #' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
@@ -25,9 +10,7 @@ if (getRversion() >= "2.15.1") {
 #' By default, names are queried in batches of 500, with a 0.5s delay between each query. These values can be modified using options:
 #' `options(BIOMASS.batch_size=500)` for batch size (max 1000), `options(BIOMASS.wait_delay=0.5)` for delay (in seconds).
 #'
-#'
 #' @inheritSection cacheManager Localisation
-#'
 #'
 #' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
 #'  or (genus + species + author) may be given (see example).

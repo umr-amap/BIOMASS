@@ -4,7 +4,7 @@ if (getRversion() >= "2.15.1") {
   ))
 }
 
-#' Divides one ore more plots into subplots
+#' Divides one or more plots into subplots
 #'
 #' This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
 #' These coordinates are calculated by a bilinear interpolation with the projected corner coordinates as references.  
@@ -42,6 +42,8 @@ if (getRversion() >= "2.15.1") {
 #' legend("bottomright", legend = c("orignal", "cut"), pch = c("o", "+"))
 #' 
 cutPlot <- function(projCoord, plot, cornerNum, gridsize = 100, dimX = 200, dimY = 200) {
+  
+  .Deprecated(msg = "'cutPlot()' has been replaced by `divide_plot()` and will be removed in the next version.\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
 
   # parameter verification --------------------------------------------------
   if (!is.data.frame(projCoord)) {

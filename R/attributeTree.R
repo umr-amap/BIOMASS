@@ -41,6 +41,7 @@ if (getRversion() >= "2.15.1") {
 #' attributeTree(xy, plot, cut)
 attributeTree <- function(xy, plot, coordAbs) {
 
+  .Deprecated(msg = "'attributeTree()' is deprecated and will be removed in the next version. The tree attribution to subplots is now done by the `divide_plot()` function\nPlease see the vignette `Spatialized trees and forest stand metrics with BIOMASS`")
 
   # parameters verification -------------------------------------------------
   if (!is.data.frame(xy)) {

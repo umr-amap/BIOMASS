@@ -1,6 +1,6 @@
-#' Propagating above-ground biomass (AGB) or carbon (AGC) errors to the stand level
+#' Propagating above ground biomass (AGB) or carbon (AGC) errors to the stand level
 #'
-#' Propagation of the errors throughout the steps needed to compute AGB or AGC.
+#' @description Propagation of the errors throughout the steps needed to compute AGB or AGC.
 #'
 #' @param D Vector of tree diameters (in cm)
 #' @param WD Vector of wood density estimates (in g/cm3)
@@ -18,7 +18,7 @@
 #' 95 percent of the trees).
 #' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
-#' @param Dlim (optional) Minimum diameter (in cm) for which above-ground biomass should be calculated (all diameter below
+#' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
@@ -43,47 +43,41 @@
 #' @examples
 #' # Load a database
 #' data(NouraguesHD)
-#' data(KarnatakaForest)
-#'
+#' data(NouraguesTrees)
+#' 
 #' # Modelling height-diameter relationship
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
-#'
+#' 
 #' # Retrieving wood density values
 #' \donttest{
-#' KarnatakaWD <- getWoodDensity(KarnatakaForest$genus, KarnatakaForest$species,
-#'   stand = KarnatakaForest$plotId
+#' NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
+#'   stand = NouraguesTrees$Plot
 #' )
 #' }
-#'
-#' # Propagating errors with a standard error in wood density in one plot
-#' filt <- KarnatakaForest$plotId == "BSP20"
-#' set.seed(10)
+#' 
+#' # Propagating errors with a standard error for Wood density
 #' \donttest{
 #' resultMC <- AGBmonteCarlo(
-#'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-#'   errWD = KarnatakaWD$sdWD[filt], HDmodel = HDmodel
+#'   D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
+#'   errWD = NouraguesWD$sdWD, HDmodel = HDmodel
 #' )
-#' str(resultMC)
 #' }
-#'
+#' 
 #' # If only the coordinates are available
-#' lat <- KarnatakaForest$lat[filt]
-#' long <- KarnatakaForest$long[filt]
-#' coord <- cbind(long, lat)
+#' coord <- c(-52.683213,4.083024 )
 #' \donttest{
 #' resultMC <- AGBmonteCarlo(
-#'   D = KarnatakaForest$D[filt], WD = KarnatakaWD$meanWD[filt],
-#'   errWD = KarnatakaWD$sdWD[filt], coord = coord
+#'   D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
+#'   errWD = NouraguesWD$sdWD, coord = coord
 #' )
-#' str(resultMC)
 #' }
-#'
+#' 
 #' # Propagating errors with a standard error in wood density in all plots at once
 #' \donttest{
-#' KarnatakaForest$meanWD <- KarnatakaWD$meanWD
-#' KarnatakaForest$sdWD <- KarnatakaWD$sdWD
+#' NouraguesTrees$meanWD <- NouraguesWD$meanWD
+#' NouraguesTrees$sdWD <- NouraguesWD$sdWD
 #' resultMC <- by(
-#'   KarnatakaForest, KarnatakaForest$plotId,
+#'   NouraguesTrees, NouraguesTrees$Plot,
 #'   function(x) AGBmonteCarlo(
 #'       D = x$D, WD = x$meanWD, errWD = x$sdWD,
 #'       HDmodel = HDmodel, Dpropag = "chave2004"
@@ -93,7 +87,7 @@
 #' credperplot <- sapply(resultMC, "[", 4)
 #' }
 #'
-#' @keywords monte carlo
+#' @keywords Monte Carlo
 #' @importFrom stats pnorm qnorm runif
 #' @export
 
@@ -166,11 +160,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 
   # function truncated random gausien law -----------------------------------
   myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
-    qnorm(runif(n, pnorm(lower, mean = mean, sd = sd), pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
+    qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
   }
-
-
-
 
 
   ### Propagate error with Markov Chain Monte Carlo approach
@@ -201,18 +192,10 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   }
 
 
-
-
-
   # --------------------- WD ---------------------
-
 
   #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
   WD_simu <- suppressWarnings(replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39)))
-
-
-
-
 
 
   # --------------------- H ---------------------

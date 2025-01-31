@@ -1,19 +1,10 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(
-    "RASTval", "long", "lat", "slice", "i.RASTval"
-  ))
-}
-
 #' Retrieving Chave's environmental index
 #'
-#' Extract the Chave et al. 2014's environmental index thanks to the coordinates of the data.
+#' @description Extract the Chave et al. 2014's environmental index thanks to the coordinates of the data.
 #' The function is time-consuming at its first use as it downloads a raster in a folder (see Details).
 #' However, as soon as the raster is downloaded once, the function then runs fast.
 #'
-#'
-#'
 #' @param coord Coordinates of the site(s), a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)) (see examples).
-#'
 #'
 #' @inheritSection cacheManager Localisation
 #'
@@ -24,7 +15,6 @@ if (getRversion() >= "2.15.1") {
 #' where `TS` is temperature seasonality as defined in the Worldclim dataset (bioclimatic variable 4),
 #' `CWD` is the climatic water deficit (in mm/yr, see Chave et al. 2014) and `PS` is the
 #' precipitation seasonality as defined in the Worldclim dataset (bioclimatic variable 15).
-#'
 #'
 #' The E index is extracted from a raster file (2.5 arc-second resolution, or ca. 5 km) available
 #' at http://chave.ups-tlse.fr/pantropical_allometry.htm

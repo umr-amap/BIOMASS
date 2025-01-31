@@ -14,6 +14,7 @@
 #' @return file path of the resolved cached file.
 #' @importFrom utils download.file unzip
 #' @export 
+#' 
 cacheManager <- function(nameFile) {
   
   if(length(nameFile)>1) {
@@ -25,7 +26,7 @@ cacheManager <- function(nameFile) {
   }
   
   if (nameFile == "feldRegion.grd") {
-    return(system.file("external", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
+    return(system.file("extdata", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }
   
   url <- list(
@@ -108,9 +109,9 @@ cachePath <- function(...) {
 }
 
 #' Function used to create or activate a permanent cache.
-#' 
+#'
 #' Permanent cache is located by default in user data dir.
-#' 
+#'
 #' You can provide a custom path (that will be defined as a BIOMASS.cache option)
 #' but clearCache function will refuse to operate on it for security reasons.
 #' @param path Use a custom path to host cache
@@ -137,6 +138,7 @@ createCache <- function(path=NULL) {
 #' resulting in deactivating cache as a side effect
 #' @return No return value, called for side effects
 #' @importFrom utils askYesNo
+#' @export
 clearCache <- function(remove=FALSE) {
   basePath <- cachePath()
   

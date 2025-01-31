@@ -1,6 +1,6 @@
-#' Computing tree above-ground biomass (AGB)
+#' Computing tree above ground biomass (AGB)
 #'
-#' This function uses Chave et al. 2014's pantropical models to estimate the above-ground biomass of tropical trees.
+#' @description This function uses Chave et al. 2014's pantropical models to estimate the above ground biomass of tropical trees.
 #'
 #' @param D Tree diameter (in cm), either a vector or a single value.
 #' @param WD Wood density (in g/cm3), either a vector or a single value. If not available, see [getWoodDensity()].
@@ -14,7 +14,7 @@
 #' (all diameter below `Dlim` will have a 0 value in the output).
 #'
 #' @details
-#' This function uses two different ways of computing the above-ground biomass of a tree:
+#' This function uses two different ways of computing the above ground biomass of a tree:
 #'
 #' 1) If tree height data are available, the AGB is computed thanks to the following equation (Eq. 4 in Chave et al., 2014):
 #'  \deqn{AGB = 0.0673 * (WD * H * D^2)^0.976}
@@ -54,7 +54,7 @@
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
 #'
-#' @keywords AGB above-ground biomass forest carbon allometry
+#' @keywords AGB above ground biomass forest carbon allometry
 
 computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
 

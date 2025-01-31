@@ -1,4 +1,6 @@
-coord1 <- cbind(KarnatakaForest$long, KarnatakaForest$lat)
+data("NouraguesCoords")
+coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
+
 require(data.table)
 require(raster)
 require(tictoc)
@@ -58,10 +60,6 @@ computeE1 <- function(coord) {
 }
 
 
-
-
-
-
 res <- microbenchmark::microbenchmark("original" = computeE(coord1[1:10, ]), "modified" = computeE1(coord1[1:10, ]))
 plot(res)
 
@@ -117,8 +115,6 @@ r <- raster(ncol = 10, nrow = 10, xmn = 0, xmx = 10, ymn = 0, ymx = 10, crs = "+
 r[] <- 1:10
 r[sample(1:ncell(r), size = 25)] <- NA
 plot(r)
-
-
 
 
 
