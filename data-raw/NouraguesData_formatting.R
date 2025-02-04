@@ -29,6 +29,7 @@ pp_trees[ pp_trees$Family != pp_trees$FamilyFilled , ]
 pp_trees$Family <- NULL ; pp_trees$Genus <- NULL ; pp_trees$Species <- NULL
 pp_trees <- pp_trees %>% rename(Site = Plot, Plot = SubPlot, Family = FamilyFilled , Genus = GenusFilled, Species = SpeciesFilled)
 
+
 # ### Computing AGB in order to select the 4 most different plot in terms of AGB
 # taxo <- correctTaxo(genus = pp_trees$Genus, species = pp_trees$Species, useCache = TRUE, verbose = FALSE)
 # taxo$genusCorrected[taxo$genusCorrected != pp_trees$Genus] ; pp_trees$Genus[pp_trees$Genus != taxo$genusCorrected]
