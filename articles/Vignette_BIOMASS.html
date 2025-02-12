@@ -223,7 +223,8 @@ offline.</p>
 <code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Genus</span>, <span class="co"># genus also accepts the whole species name (genus + species) or (genus + species + author) </span></span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span>, </span>
-<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">Taxo</span>, file <span class="op">=</span> <span class="st">"saved_data/Taxo_vignette.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>The corrected genus and species of the trees can now be added to the
 data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -334,7 +335,7 @@ or to <strong>compute the desired H-D model</strong>.</p>
 <code class="sourceCode R"><span><span class="va">HD_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
 <span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, drawGraph <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Vignette_BIOMASS_files/figure-html/unnamed-chunk-12-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="va">HD_res</span><span class="op">)</span></span></code></pre></div>
@@ -552,7 +553,7 @@ nothing about the AGB at the plot level. To do this, you can use the
 <code><a href="../reference/summaryByPlot.html">summaryByPlot()</a></code> function:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGB_by_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span>AGB_val <span class="op">=</span> <span class="va">error_prop</span><span class="op">$</span><span class="va">AGB_simu</span>, plot <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span>, drawPlot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Vignette_BIOMASS_files/figure-html/unnamed-chunk-24-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_BIOMASS_files/figure-html/summaryByPlot-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Finally, the last element (<code>$AGB_simu</code>) of the
 <code><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo()</a></code> output is a matrix containing the simulated
 tree AGB values (in rows) for each iteration of the Monte Carlo
