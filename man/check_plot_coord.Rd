@@ -13,7 +13,6 @@ check_plot_coord(
   draw_plot = TRUE,
   tree_data = NULL,
   tree_coords = NULL,
-  corner_ID = NULL,
   max_dist = 10,
   rm_outliers = TRUE,
   plot_ID = NULL,
@@ -40,8 +39,6 @@ check_plot_coord(
 
 \item{tree_coords}{A character vector specifying the column names of the tree relative coordinates.}
 
-\item{corner_ID}{If dealing with repeated measurements of each corner : a character specifying the ID of the corners.}
-
 \item{max_dist}{If dealing with repeated measurements of each corner : the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m).}
 
 \item{rm_outliers}{If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.}
@@ -59,10 +56,10 @@ check_plot_coord(
 \value{
 Returns a list including :
 \itemize{
-\item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot
+\item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot
 \item \code{polygon}: a sf object containing plot's polygon(s)
 \item \code{tree_data}: if \code{tree_data} is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
-\item \code{outliers}: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers
+\item \code{outliers}: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
 \item \code{UTM_code}: if \code{longlat} is supplied, a character containing the UTM code of the GPS coordinates
 }
@@ -87,7 +84,7 @@ data("NouraguesPlot201")
 check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-  trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+  trust_GPS_corners = TRUE, draw_plot = FALSE)
 check_plot201$corner_coord
 \donttest{
   check_plot201$plot_design

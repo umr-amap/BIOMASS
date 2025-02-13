@@ -36,9 +36,7 @@ test_that("check_plot_coord error", {
   wrong_coords[1,"Xutm"] <- 0 ; wrong_coords[1,"Long"] <- NA
   expect_error(check_plot_coord(wrong_coords, longlat = c("Long","Lat"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T), "Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   
-  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present in corner_data, then the argument plot_ID is required. If multiple measurements of each corner have been recorded, then the argument corner_ID is required.")
-  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present in corner_data, then the argument plot_ID is required. If multiple measurements of each corner have been recorded, then the argument corner_ID is required.")
-  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, corner_ID = "a"),"is not found in corner_data column names.")
+  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present in corner_data, then the argument plot_ID is required.")
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "a"),"is not found in corner_data column names.")
   
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), "The argument tree_plot_ID is required if plot_ID is supplied.")
@@ -53,30 +51,30 @@ test_that("check_plot_coord error", {
 test_that("check_plot_coord outputs and outliers", {
   # with max dist equal 10
   expect_warning(
-    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, corner_ID = "CornerID", draw_plot = F, max_dist = 10),"Be carefull, you may have GNSS measurement outliers"
+    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, draw_plot = F, max_dist = 10),"Be carefull, you may have GNSS measurement outliers"
   )
-  outputs <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, max_dist = 10)
+  outputs <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   expect_is(outputs, "list")
   expect_length(outputs, 4)
   expect_equal(names(outputs), c("corner_coord", "polygon", "plot_design", "outlier_corners"))
   expect_is(outputs$corner_coord, "data.frame")
   expect_is(outputs$outlier_corners, "data.frame")
 
-  expect_equal(dim(outputs$outlier_corners), c(7,4))
-  expect_equal(dim(outputs$corner_coord), c(4, 5))
+  expect_equal(dim(outputs$outlier_corners), c(7,3))
+  expect_equal(dim(outputs$corner_coord), c(4, 4))
 
   # with max dist equal 25 there isn't outliers anymore
   expect_failure(expect_warning(
-    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, corner_ID = "CornerID", draw_plot = F, max_dist = 25),
+    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, draw_plot = F, max_dist = 25),
     "Be carefull, you may have GNSS measurement outliers"
   ))
 
   # with rm_outliers = TRUE
   expect_failure(expect_warning(
-    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, max_dist = 25),
+    check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 25),
     "Be carefull, you may have GNSS measurement outliers"
   ))
-  outputs_2 <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, max_dist = 15)
+  outputs_2 <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 15)
 
   expect_failure(expect_equal(outputs$corner_coord, outputs_2$corner_coord))
   expect_failure(expect_equal(outputs$polygon, outputs_2$polygon))
@@ -84,8 +82,8 @@ test_that("check_plot_coord outputs and outliers", {
 
 
 test_that("check_plot_coord in long lat", {
-  outputs_longlat <- check_plot_coord(NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, max_dist = 10)
-  outputs_proj_coord <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, corner_ID = "CornerID", draw_plot = F, max_dist = 10)
+  outputs_longlat <- check_plot_coord(NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
+  outputs_proj_coord <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   expect_is(outputs_longlat, "list")
   expect_length(outputs_longlat, 5)
   expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code"))
@@ -94,7 +92,7 @@ test_that("check_plot_coord in long lat", {
 
 test_that("check_plot_coord, trust_GPS_corners", {
   expect_warning(
-    check_plot_coord(NouraguesPlot201[-(1:7),], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, corner_ID = "CornerID", draw_plot = F),"At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE"
+    check_plot_coord(NouraguesPlot201[-(1:7),], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, draw_plot = F),"At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE"
   )
   
   res_trust_GPS_corners_T <- check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, draw_plot = F)
@@ -107,11 +105,11 @@ test_that("check_plot_coord, plot design", {
   
   vdiffr::expect_doppelganger("check-plot-201-trust-T", 
                               check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-                                               trust_GPS_corners = T, corner_ID = "CornerID", rm_outliers = T, draw_plot = F)$plot_design)
+                                               trust_GPS_corners = T, rm_outliers = T, draw_plot = F)$plot_design)
   
   vdiffr::expect_doppelganger("check-plot-201-trust-F", 
                               check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-                                               trust_GPS_corners = F, corner_ID = "CornerID", rm_outliers = T, draw_plot = F)$plot_design)
+                                               trust_GPS_corners = F, rm_outliers = T, draw_plot = F)$plot_design)
   
   vdiffr::expect_doppelganger("check-plot-204", 
                               check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
@@ -124,7 +122,7 @@ test_that("check_plot_coord, tree data and raster", {
   res <- suppressWarnings(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-      trust_GPS_corners = T, rm_outliers = T, corner_ID = "CornerID", draw_plot = F,
+      trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield")))
   
   expect_is(res$tree_data, "data.frame")
@@ -137,7 +135,7 @@ test_that("check_plot_coord, tree data and raster", {
   res_prop_raster <- suppressWarnings(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-      trust_GPS_corners = T, rm_outliers = T, corner_ID = "CornerID", draw_plot = F,
+      trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D",
       ref_raster = nouragues_raster))
   vdiffr::expect_doppelganger("check-plot-201-rast-prop", 

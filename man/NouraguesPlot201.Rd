@@ -5,7 +5,7 @@
 \alias{NouraguesPlot201}
 \title{Nouragues plot 201 coordinates}
 \format{
-A data frame with 40 (simulated GPS measurements) of the 9 following variables :
+A data frame with 40 (simulated GPS measurements) of the 8 following variables :
 \itemize{
 \item \code{Site}: Name of the site set up in the Nouragues forest
 \item \code{Plot}: Plot ID of the site
@@ -15,7 +15,6 @@ A data frame with 40 (simulated GPS measurements) of the 9 following variables :
 \item \code{Yutm}: Corner location on the y-axis in the UTM coordinate system
 \item \code{Long}: Corner longitude coordinate
 \item \code{Lat}: Corner latitude coordinate
-\item \code{CornerID} : IDs of the plot corners
 }
 }
 \usage{

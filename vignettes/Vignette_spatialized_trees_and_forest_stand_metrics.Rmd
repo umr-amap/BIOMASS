@@ -100,14 +100,14 @@ You can give either geographical coordinates with the 'longlat' argument or anot
 
 - When only **1 GPS measurement by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
-- When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), you will need to provide the corner names via the `corner_ID` argument. In this case, coordinates will be averaged by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the 'rm_outliers' and 'max_dist' arguments. 
+- When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), coordinates will be averaged by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the 'rm_outliers' and 'max_dist' arguments. 
 
 ```{r check_plot_trust_GPS, dpi=200, message=FALSE}
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
   longlat = c("Long", "Lat"),  # or proj_coord = c("Xutm", "Yutm"), 
   rel_coord = c("Xfield", "Yfield"),
-  trust_GPS_corners = T, corner_ID = "CornerID",
+  trust_GPS_corners = T,
   draw_plot = TRUE,
   max_dist = 10, rm_outliers = TRUE )
 ```
@@ -126,7 +126,7 @@ check_plot_trust_field <- check_plot_coord(
   corner_data = degraded_corner_coord,
   longlat = c("Long", "Lat"),  # or proj_coord = c("Xutm", "Yutm"), 
   rel_coord = c("Xfield", "Yfield"),
-  trust_GPS_corners = FALSE, corner_ID = "CornerID",
+  trust_GPS_corners = FALSE,
   draw_plot = TRUE, rm_outliers = FALSE)
 ```
 
@@ -158,7 +158,7 @@ plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
 
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
-  longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"), corner_ID = "CornerID",
+  longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE,
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
 ```
@@ -198,7 +198,7 @@ nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",pack
 
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
-  longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"), corner_ID = "CornerID",
+  longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE,
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"), prop_tree = "D", # here the treediameter
   ref_raster = nouraguesRaster)
