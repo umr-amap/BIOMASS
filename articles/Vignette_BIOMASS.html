@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Estimating stand BIOMASS • BIOMASS</title>
+<title>Estimating stand biomass • BIOMASS</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Estimating stand BIOMASS">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Estimating stand biomass">
 <meta name="description" content="Estimating above ground biomass with BIOMASS
 ">
 <meta property="og:description" content="Estimating above ground biomass with BIOMASS
@@ -43,8 +43,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand BIOMASS</a></li>
-    <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialized trees and forest stand metrics with BIOMASS</a></li>
+<li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
+    <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -66,8 +66,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Estimating stand BIOMASS</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Estimating stand biomass</h1>
+                        <h4 data-toc-skip class="author">Arthur
+Bailly</h4>
             
+            <h4 data-toc-skip class="date">2025-02-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -99,18 +102,20 @@ data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NouraguesTrees"</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <colgroup>
-<col width="16%">
+<col width="6%">
+<col width="15%">
 <col width="5%">
-<col width="8%">
-<col width="8%">
-<col width="16%">
-<col width="23%">
-<col width="14%">
+<col width="7%">
+<col width="7%">
+<col width="15%">
+<col width="22%">
+<col width="13%">
 <col width="5%">
 </colgroup>
 <thead><tr class="header">
+<th align="left"></th>
 <th align="left">Site</th>
 <th align="right">Plot</th>
 <th align="right">Xfield</th>
@@ -122,26 +127,7 @@ data.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">Petit_Plateau</td>
-<td align="right">201</td>
-<td align="right">-4.0</td>
-<td align="right">67.5</td>
-<td align="left">Euphorbiaceae</td>
-<td align="left">Conceveiba</td>
-<td align="left">guyanensis</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="even">
-<td align="left">Petit_Plateau</td>
-<td align="right">201</td>
-<td align="right">-3.5</td>
-<td align="right">41.5</td>
-<td align="left">Euphorbiaceae</td>
-<td align="left">Mabea</td>
-<td align="left">speciosa</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="odd">
+<td align="left">14</td>
 <td align="left">Petit_Plateau</td>
 <td align="right">201</td>
 <td align="right">0.0</td>
@@ -152,6 +138,7 @@ data.</p>
 <td align="right">11.0</td>
 </tr>
 <tr class="even">
+<td align="left">44</td>
 <td align="left">Petit_Plateau</td>
 <td align="right">201</td>
 <td align="right">0.1</td>
@@ -162,6 +149,7 @@ data.</p>
 <td align="right">74.4</td>
 </tr>
 <tr class="odd">
+<td align="left">13</td>
 <td align="left">Petit_Plateau</td>
 <td align="right">201</td>
 <td align="right">0.2</td>
@@ -172,6 +160,18 @@ data.</p>
 <td align="right">25.4</td>
 </tr>
 <tr class="even">
+<td align="left">2810</td>
+<td align="left">Petit_Plateau</td>
+<td align="right">201</td>
+<td align="right">-4.0</td>
+<td align="right">67.5</td>
+<td align="left">Euphorbiaceae</td>
+<td align="left">Conceveiba</td>
+<td align="left">guyanensis</td>
+<td align="right">10.0</td>
+</tr>
+<tr class="odd">
+<td align="left">24</td>
 <td align="left">Petit_Plateau</td>
 <td align="right">201</td>
 <td align="right">0.3</td>
@@ -180,6 +180,17 @@ data.</p>
 <td align="left">Protium</td>
 <td align="left">altissimum</td>
 <td align="right">18.9</td>
+</tr>
+<tr class="even">
+<td align="left">12100</td>
+<td align="left">Petit_Plateau</td>
+<td align="right">201</td>
+<td align="right">-3.5</td>
+<td align="right">41.5</td>
+<td align="left">Euphorbiaceae</td>
+<td align="left">Mabea</td>
+<td align="left">speciosa</td>
+<td align="right">10.0</td>
 </tr>
 </tbody>
 </table>
@@ -230,15 +241,15 @@ data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusCorrected</span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesCorrected</span></span></code></pre></div>
-<p>Here, as an example, the species name of the first tree (first row)
-has been corrected from “guyanensis” to “guianensis” (the first row of
+<p>Here, as an example, the species name of the fourth tree has been
+corrected from “guyanensis” to “guianensis” (the fourth row of
 correctTaxo() output has a TRUE value for the column nameModified) :</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "guyanensis"</span></span>
-<span><span class="va">Taxo</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span></span>
+<span><span class="va">Taxo</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt;   genusCorrected speciesCorrected nameModified</span></span>
-<span><span class="co">#&gt; 1     Conceveiba       guianensis         TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt; 4     Conceveiba       guianensis         TRUE</span></span></code></pre></div>
 <p>If you want (but this is optional for the rest), you can retrieve APG
 III families and orders from genus names.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -501,21 +512,27 @@ argument:</p>
 <p>The user can provide either a SD value or a vector of SD values
 associated with tree height measurement errors, using the
 <code>errH</code> argument.</p>
-<p><strong>If tree heights have been estimated via the “Feldspausch” or
+<ul>
+<li>
+<strong>If tree heights have been estimated via the “Feldspausch” or
 the “Chave” method</strong>, the user can provide the output of the
 <code><a href="../reference/retrieveH.html">retrieveH()</a></code> function for the <code>errH</code>
-argument:</p>
+argument:</li>
+</ul>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">H_feld_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, H <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_model</span>,</span>
 <span>  errH <span class="op">=</span> <span class="va">H_feldspausch</span><span class="op">$</span><span class="va">RSE</span>,</span>
 <span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><strong>If tree heights have been estimated via a local
+<ul>
+<li>
+<strong>If tree heights have been estimated via a local
 HD-model</strong>, instead of the <code>errH</code> and the
 <code>H</code> arguments, the user can provide the output of the
 <code><a href="../reference/modelHD.html">modelHD()</a></code> function using the <code>modelHD</code>
-argument.</p>
+argument.</li>
+</ul>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">H_model_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, <span class="co"># we do not provide H</span></span>
@@ -536,17 +553,17 @@ argument.</p>
 <span></span>
 <span><span class="va">error_prop</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $meanAGB</span></span>
-<span><span class="co">#&gt; [1] 1639.821</span></span>
+<span><span class="co">#&gt; [1] 1639.928</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $medAGB</span></span>
-<span><span class="co">#&gt; [1] 1638.131</span></span>
+<span><span class="co">#&gt; [1] 1638.563</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sdAGB</span></span>
-<span><span class="co">#&gt; [1] 45.21806</span></span>
+<span><span class="co">#&gt; [1] 45.1543</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $credibilityAGB</span></span>
 <span><span class="co">#&gt;     2.5%    97.5% </span></span>
-<span><span class="co">#&gt; 1554.328 1733.172</span></span></code></pre></div>
+<span><span class="co">#&gt; 1554.186 1734.259</span></span></code></pre></div>
 <p>The first 4 elements of the output contain the mean, median, standard
 deviation and credibility intervals of the total AGB of the dataset but
 nothing about the AGB at the plot level. To do this, you can use the
@@ -608,7 +625,7 @@ page</a>, or contact Dominique (<a href="mailto:dominique.lamonica@ird.fr" class
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Maxime Réjou-Méchain, Guillaume Cornu, Dominique Lamonica, Arthur Pere, Ariane Tanguy, Camille Piponiot, Bruno Hérault, Arthur Bailly.</p>
+  <p>Developed by Maxime Réjou-Méchain, Guillaume Cornu, Dominique Lamonica, Arthur Bailly, Arthur Pere, Ariane Tanguy, Camille Piponiot, Bruno Hérault.</p>
 </div>
 
 <div class="pkgdown-footer-right">
