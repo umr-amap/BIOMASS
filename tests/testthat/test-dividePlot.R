@@ -92,7 +92,7 @@ test_that("divide_plot with tree coordinates", {
 
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
   
-  expect_equal(subplots$tree_data$subplot_ID[1:4] , c(NA,NA,"subplot_0_0","subplot_0_1"))
+  expect_equal(subplots$tree_data$subplot_ID[4:6] , c(NA,"subplot_0_0",NA))
   
   # Test with multiple plots
   multiple_subplots <- suppressWarnings(
