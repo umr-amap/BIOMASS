@@ -141,8 +141,6 @@ sim_coords <- sim_coords %>% mutate(
 
 sim_coords[c("Long","Lat")] <- as.data.frame( proj4::project(sim_coords[c("Xutm","Yutm")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
 
-sim_coords$CornerID <- rep(c("NO","NE","SO","SE") , 10)
-
 sim_coords <- sim_coords %>% arrange(Xfield,Yfield)
 
 sim_coords %>% write.csv(file = "NouraguesPlot201Coords.csv", row.names = FALSE, fileEncoding = "UTF-8")

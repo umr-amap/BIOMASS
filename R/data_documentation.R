@@ -129,7 +129,7 @@
 #' @docType data
 #' @usage data(NouraguesPlot201)
 #' @format
-#' A data frame with 40 (simulated GPS measurements) of the 9 following variables :
+#' A data frame with 40 (simulated GPS measurements) of the 8 following variables :
 #'   - `Site`: Name of the site set up in the Nouragues forest
 #'   - `Plot`: Plot ID of the site
 #'   - `Xfield`: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot) 
@@ -138,7 +138,6 @@
 #'   - `Yutm`: Corner location on the y-axis in the UTM coordinate system
 #'   - `Long`: Corner longitude coordinate
 #'   - `Lat`: Corner latitude coordinate
-#'   - `CornerID` : IDs of the plot corners 
 #'
 #' @references
 #' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", [https://doi.org/10.18167/DVN1/HXKS4E](https://doi.org/10.18167/DVN1/HXKS4E), CIRAD Dataverse, V2

@@ -44,7 +44,7 @@ data("NouraguesTrees")
 check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-  trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+  trust_GPS_corners = TRUE, draw_plot = FALSE)
 subplots_201 <- suppressWarnings(
   divide_plot(
     corner_data = check_plot201$corner_coord, 

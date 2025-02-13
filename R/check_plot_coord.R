@@ -22,7 +22,6 @@
 #' @param draw_plot A logical indicating if the plot design should be displayed and returned.
 #' @param tree_data A data frame, data frame extension, containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics.
 #' @param tree_coords A character vector specifying the column names of the tree relative coordinates.
-#' @param corner_ID If dealing with repeated measurements of each corner : a character specifying the ID of the corners.
 #' @param max_dist If dealing with repeated measurements of each corner : the maximum distance (in meters) above which GPS measurements should be considered outliers (default 15 m).
 #' @param rm_outliers If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.
 #' @param plot_ID If dealing with multiple plots : a character indicating the variable name for corner plot IDs in corner_data.
@@ -34,10 +33,10 @@
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
 #' @return Returns a list including :
-#'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj), the relative coordinates (x_rel and y_rel), and the ID (if corner_ID is supplied) of the 4 corners of the plot 
+#'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot 
 #'    - `polygon`: a sf object containing plot's polygon(s)
 #'    - `tree_data`: if `tree_data` is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
-#'    - `outliers`: a data frame containing the projected coordinates, the ID (if corner_ID is supplied) and the row number of GPS measurements considered outliers 
+#'    - `outliers`: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers 
 #'    - `plot_design`: if `draw_plot` is TRUE, a ggplot object corresponding to the design of the plot
 #'    - `UTM_code`: if `longlat` is supplied, a character containing the UTM code of the GPS coordinates
 #'
@@ -56,7 +55,7 @@
 #' check_plot201 <- check_plot_coord(
 #'   corner_data = NouraguesPlot201,
 #'   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-#'   trust_GPS_corners = TRUE, corner_ID = "CornerID", draw_plot = FALSE)
+#'   trust_GPS_corners = TRUE, draw_plot = FALSE)
 #' check_plot201$corner_coord
 #' \donttest{
 #'   check_plot201$plot_design
@@ -92,7 +91,7 @@
 #'   check_plot_204$plot_design
 #' }
 
-check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, corner_ID = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, ask = T) {
+check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, ask = T) {
   
   ##### Checking arguments -----------------------------------------------------
   
@@ -144,14 +143,11 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if(!is.null(longlat) && sum(is.na(corner_dt[,..longlat]))!= 0) {
     stop("Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   }
-  if (nrow(corner_dt)!=4 & !(!is.null(plot_ID) | !is.null(corner_ID))) {
-    stop("If multiple plots are present in corner_data, then the argument plot_ID is required. If multiple measurements of each corner have been recorded, then the argument corner_ID is required.")
+  if (nrow(unique(corner_dt[,..rel_coord])) !=4 & is.null(plot_ID)) {
+    stop("If multiple plots are present in corner_data, then the argument plot_ID is required.")
   }
   if (!is.null(plot_ID) && !any(plot_ID==names(corner_dt))) {
     stop(paste(plot_ID,"is not found in corner_data column names."))
-  }
-  if (!is.null(corner_ID) && !any(corner_ID==names(corner_dt))) {
-    stop(paste(corner_ID,"is not found in corner_data column names."))
   }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
     stop("The argument tree_plot_ID is required if plot_ID is supplied.")
@@ -172,7 +168,6 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if(!is.null(longlat)) {
     setnames(corner_dt, old = longlat, new = c("long","lat"))
   }
-  if( !is.null(corner_ID) ) setnames(corner_dt, old = corner_ID, new = "corner_ID")
   
   if(!is.null(plot_ID)) {
     setnames(corner_dt, old = plot_ID, new = "plot_ID")
@@ -197,7 +192,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     }
   }
   
-  outliers <- data.table("plot_ID" = character(), "x_proj" = numeric(), "y_proj" = numeric(), "corner_ID" = character(), "row_number" = integer())
+  outliers <- data.table("plot_ID" = character(), "x_proj" = numeric(), "y_proj" = numeric(), "row_number" = integer())
   
   ##### Functions --------------------------------------------------------------
   
@@ -228,15 +223,12 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     if (nrow(unique(corner_dat[,c("x_rel","y_rel")])) != 4) {
       stop(paste(nrow(unique(corner_dat[,c("x_rel","y_rel")])), "unique corners are detected in",unique(corner_dat$plot_ID),"rel_coord (instead of 4)"))
     }
-    if (!is.null(corner_ID) && length(unique(corner_dat$corner_ID)) !=4) {
-      stop(paste(length((unique(corner_dat$corner_ID))),"unique corners are detected in",unique(corner_dat$plot_ID),"corner_ID (instead of 4)"))
-    }
     
     # Removing outliers when repeated corner measurements and formatting corner data 
     
     if(nrow(corner_dat) != 4) { # if multiple measurements of each corner
       
-      if (trust_GPS_corners && any(table(corner_dat$corner_ID) < 5)) {
+      if (trust_GPS_corners && any(table(corner_dat[,c("x_rel","y_rel")]) < 5)) {
         warning(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) ,
                  "At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE\n"))
@@ -244,7 +236,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       
       if(trust_GPS_corners == TRUE) { # if GPS corner locations are trusted, just average their locations
         
-        corner_dat[ , c("x_proj_mean", "y_proj_mean", "row_number") := list(mean(x_proj), mean(y_proj), .I) , by=corner_ID] 
+        corner_dat[ , c("x_proj_mean", "y_proj_mean", "row_number") := list(mean(x_proj), mean(y_proj), .I) , by=list(x_rel,y_rel)] 
         
       } else { # otherwise, apply the procrust analysis
         
@@ -277,13 +269,13 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       if( rm_outliers & sum(corner_dat$outlier)!=0 ) {
         
         # Remove the outlier corners and repeat the previous procedure
-        outliers_dat <- corner_dat[outlier==T , c("plot_ID","x_proj","y_proj","corner_ID","row_number")]
+        outliers_dat <- corner_dat[outlier==T , c("plot_ID","x_proj","y_proj","row_number")]
         corner_dat <- corner_dat[outlier==F ,]
         exist_outliers <- TRUE
         while(exist_outliers) {
           
           if(trust_GPS_corners == TRUE) {
-            corner_dat[ , c("x_proj_mean", "y_proj_mean") := list(mean(x_proj), mean(y_proj)) , by=corner_ID] 
+            corner_dat[ , c("x_proj_mean", "y_proj_mean") := list(mean(x_proj), mean(y_proj)) , by=list(x_rel,y_rel)] 
           } else {
             procrust_res <- procrust(corner_dat[, c("x_proj","y_proj")], corner_dat[, c("x_rel","y_rel")])
             procrust_coord <- as.matrix(corner_dat[, c("x_rel","y_rel")]) %*% procrust_res$rotation
@@ -296,14 +288,14 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
           if(sum(corner_dat$outlier) == 0) {
             exist_outliers <- FALSE
           } else {
-            outliers_dat <- rbind(outliers_dat , corner_dat[outlier==T , c("plot_ID","x_proj","y_proj","corner_ID","row_number")])
+            outliers_dat <- rbind(outliers_dat , corner_dat[outlier==T , c("plot_ID","x_proj","y_proj","row_number")])
             corner_dat <- corner_dat[outlier==F ,]
           }
         }
         outliers <<- rbindlist(list(outliers, outliers_dat))
       }
         
-      corner_dat <- unique(corner_dat[ , c("plot_ID","x_rel","y_rel","x_proj_mean","y_proj_mean","corner_ID")])
+      corner_dat <- unique(corner_dat[ , c("plot_ID","x_rel","y_rel","x_proj_mean","y_proj_mean")])
       setnames(corner_dat, old = c("x_proj_mean","y_proj_mean") , new = c("x_proj", "y_proj"))
       
        
@@ -322,12 +314,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
         corner_dat[ , c("x_proj","y_proj") := list(procrust_coord[,1], procrust_coord[,2]) ]
       } # if GPS corner locations are trusted, don't do anything
       
-      if(!is.null(corner_ID)) {
-        corner_dat <- corner_dat[ , c("plot_ID","x_rel","y_rel","x_proj","y_proj","corner_ID")]
-      } else {
-        corner_dat <- corner_dat[ , c("plot_ID","x_rel","y_rel","x_proj","y_proj")]
-      }
-      
+      corner_dat <- corner_dat[ , c("plot_ID","x_rel","y_rel","x_proj","y_proj")]
     }
     
     # Sort corner_coord rows in a counter-clockwise direction

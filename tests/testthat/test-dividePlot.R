@@ -4,7 +4,7 @@ data("NouraguesCoords")
 data("NouraguesPlot201")
 data("NouraguesTrees")
 
-corner_data <- suppressWarnings(check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, draw_plot = F, corner_ID = "CornerID"))$corner_coord
+corner_data <- suppressWarnings(check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, draw_plot = F))$corner_coord
 
 test_that("divide_plot error", {
   
