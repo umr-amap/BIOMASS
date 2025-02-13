@@ -80,8 +80,13 @@ pp_trees <- rbind(pp_trees, outside_trees)
 
 pp_trees <- pp_trees %>% arrange(Plot, Xfield, Yfield)
 
+# Put the 2 outside trees (in X axis) in 4th and 6th position (for vignette kables)
+pp_trees <- rbind( pp_trees[c(3:5,1,6,2),] , pp_trees[c(7:nrow(pp_trees)),] )
+
+
 pp_trees %>% write.csv(file="NouraguesTrees.csv", row.names = F, fileEncoding = "UTF-8")
 
+NouraguesTrees <- pp_trees
 usethis::use_data(NouraguesTrees, overwrite = TRUE)
 
 

@@ -7,14 +7,14 @@ Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
 	person("Dominique", "Lamonica", email = "dominique.lamonica@ird.fr", role = c("aut","cre")),
+	person("Arthur", "Bailly", email = "arthur.bailly@ird.fr ", role = c("aut")),
 	person("Arthur", "Pere", role = c("aut")),
 	person("Ariane", "Tanguy", role = c("aut")),
-	person("Camille", "Piponiot", role = c("aut")),
 	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
-	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc")),
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb")),
-	person("Arthur", "Bailly", email = "arthur.bailly@ird.fr ", role = c("aut"))
+	person("Camille", "Piponiot", role = c("aut")),
+	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut"))
   )
 Description: Contains functions to estimate aboveground biomass/carbon and its uncertainty in tropical forests. 
 	These functions allow to (1) retrieve and to correct taxonomy, (2) estimate wood density and its uncertainty, 

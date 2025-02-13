@@ -1,5 +1,5 @@
 ---
-title: "Spatialized trees and forest stand metrics with BIOMASS"
+title: "Spatialize trees and forest stand metrics with BIOMASS"
 author: "Arthur Bailly"
 date: "`r Sys.Date()`"
 output: 
@@ -8,9 +8,8 @@ output:
     toc: yes
     highlight: vignette
     self_contained: yes
-    theme: cayman
 vignette: >
-  %\VignetteIndexEntry{Spatialized trees and forest stand metrics with BIOMASS}
+  %\VignetteIndexEntry{Spatialize trees and forest stand metrics with BIOMASS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -34,7 +33,7 @@ BIOMASS enables users to manage their plots by:
 
 * visualising the plots
 
-* validating plot's corner and tree coordinates with LiDAR data
+* validating plot's corners and tree coordinates with LiDAR data
 
 * dividing plots into subplots
 
@@ -43,21 +42,21 @@ BIOMASS enables users to manage their plots by:
 
 # Required data
 
-Two data frames are required for the rest. One for the corner coordinates of the plot(s), and another for the trees coordinates. 
+Two data-frames are required for the rest. One for the corner of the plot(s), and one for the trees, containing at least their coordinates. 
 
-* The **corner coordinates data frame**, must contains at least:
-  - the name of the plots if there are several plots
-  - the coordinates of the plot's corners in the geographic or projected coordinate system (the GPS coordinates or another projected coordinates)
-  - the coordinates of the plot's corners in the relative coordinate system (the local or field coordinates)
+* The **corner data-frame** must contains at least:
+  - the names of the corresponding plots if there are several plots (below referred as to the 'Plot' column)
+  - the coordinates of the plot's corners in the **geographic or projected coordinate system** (the GPS coordinates, below referred as to the 'Xutm' and 'Yutm' columns)
+  - the coordinates of the plot's corners in the **plot's relative coordinate system** (the local or field coordinates, below referred as to the 'Xfield' and 'Yfield' columns)
 
-In this vignette, for educational purposes, we will not use only one but **two datasets of corner coordinates**, derived from permanent plots in the Nouragues forest (French Guiana): 
+In this vignette, for educational purposes, we will not use only one but **two datasets of corner coordinates**, derived from permanent plots in the [Nouragues forest](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) (French Guiana): 
 
   1. **NouraguesPlot201** which contains simulated corner coordinates of **one plot with repeated GPS measurements of each corner**: 
 
 ```{r}
 data("NouraguesPlot201")
 
-kable(head(NouraguesPlot201), digits = 5, row.names = FALSE, caption = "Head of NouraguesPLot201")
+kable(head(NouraguesPlot201), digits = 5, row.names = FALSE, caption = "Head of NouraguesPlot201")
 ```
 
   2. **NouraguesCoords** which contains corner coordinates of **four plots with a single GPS measurement of each corner**, also derived from Nouragues forest: 
@@ -68,9 +67,9 @@ data("NouraguesCoords")
 kable(head(NouraguesCoords), digits = 5, row.names = FALSE, caption = "Head of NouraguesCoords")
 ```
 
-* The **trees coordinates data frame**, must contains at least:
+* The data-set including the **tree coordinates**, must contain at least:
   - the name of the plots if there are several plots
-  - the tree coordinates in the relative coordinate system (the local/field one)
+  - the tree coordinates in the plot's relative coordinate system (the local/field one)
   - the desired information about trees, such as diameter, wood density, height, AGB, etc. (see BIOMASS vignette)
 
 ```{r}
@@ -79,15 +78,15 @@ data("NouraguesTrees")
 kable(head(NouraguesTrees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
 ```
 
-This dataset is also derived from the [2012 Nouragues forest dataset](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9), but for educational purposes, some virtual trees have been added in the data.
+This dataset is also derived from the [2012 Nouragues forest dataset](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9), but for educational purposes, some virtual trees with erroneous coordinates have been added in the data.
 
 # Checking plot's coordinates
 
 The user is faced with two situations: 
 
-* The **GPS coordinates** of the plot corners are considered **very accurate** or **enough measurements have been made** to be confident in the accuracy of their mean. In this case, the shape of the plot measured on the field will follow the GPS coordinates of the plot corners when projected into the projected/geographic coordinate system. See [3.1.1](#trustGSPcorner)
+* The **GPS coordinates** of the plot corners are considered **very accurate** or **enough measurements have been made** to be confident in the accuracy of their average. In this case, the shape of the plot measured on the field will follow the GPS coordinates of the plot corners when projected into the projected/geographic coordinate system. See [3.1.1](#trustGSPcorner)
 
-* **Too few measurements of the GPS coordinates** of plot corners have been taken and/or are **not reliable**. In this case, **the shape of the plot measured on the field is considered to be accurate** and the GPS corner coordinates will be recalculated to fit the shape and dimensions of the plot (the projected coordinates fit the relative coordinates).  See [3.1.2](#trustPlotShape)
+* **Too few measurements of the GPS coordinates** of plot corners have been taken and/or are **not reliable**. In this case, **the shape of the plot measured on the field is considered to be accurate** and the GPS corner coordinates will be recalculated to fit the shape and dimensions of the plot.  See [3.1.2](#trustPlotShape)
 
 In both cases, the use of the `check_plot_coord()` function is recommended as a first step.
 
@@ -95,15 +94,15 @@ In both cases, the use of the `check_plot_coord()` function is recommended as a 
 
 The `check_plot_coord()` function handles both situations using the `trust_GPS_corners` argument (= TRUE or FALSE).
 
-You can give either GPS coordinates (with the longlat argument) or another projected coordinates (with the proj_coord argument) for the corner coordinates. 
+You can give either geographical coordinates with the 'longlat' argument or another projected coordinates with the 'proj_coord' argument for the corner coordinates. 
 
-### If we rely on the GPS coordinates of the corners {#trustGSPcorner}
+### If we rely on the GPS coordinates of the corners: {#trustGSPcorner}
 
-When only **1 GPS measurement by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
+- When only **1 GPS measurement by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
-When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), you will need to provide the corner names via the `corner_ID` argument. In this case, each coordinates will be averaging by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the rm_outliers and max_dist arguments. 
+- When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), you will need to provide the corner names via the `corner_ID` argument. In this case, coordinates will be averaged by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the 'rm_outliers' and 'max_dist' arguments. 
 
-```{r dpi=200}
+```{r check_plot_trust_GPS, dpi=200, message=FALSE}
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
   longlat = c("Long", "Lat"),  # or proj_coord = c("Xutm", "Yutm"), 
@@ -113,10 +112,10 @@ check_plot_trust_GPS <- check_plot_coord(
   max_dist = 10, rm_outliers = TRUE )
 ```
 
-The two blue arrows represent the relative coordinate system when projected into the projected coordinate system. 
+The two blue arrows represent the origin of the plot's relative coordinate system. 
 
 
-### If we rely on the shape of the plot measured on the field {#trustPlotShape}
+### If we rely on the shape of the plot measured on the field: {#trustPlotShape}
 
 Let's degrade the data to simulate the fact that we only have 8 GPS coordinates that we don't trust.
 
@@ -152,10 +151,9 @@ For full details, the `$outlier_corners` output returns all the information abou
 
 ## Visualising and retrieving projected tree coordinates {#tree_coordinates}
 
-Tree coordinates are usually measured in the relative (local/field) coordinate system. To retrieve them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
+Tree coordinates are usually measured in the plot's relative coordinate system. To project them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
 
 ```{r}
-
 plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
 
 check_plot_trust_GPS <- check_plot_coord(
@@ -163,21 +161,14 @@ check_plot_trust_GPS <- check_plot_coord(
   longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"), corner_ID = "CornerID",
   trust_GPS_corners = TRUE,
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
-
-check_plot_trust_field <- check_plot_coord(
-  corner_data = NouraguesPlot201,
-  longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"), corner_ID = "CornerID",
-  trust_GPS_corners = FALSE,
-  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
 ```
 
-Note the differences in corner and tree positions between the two situations.
-
-The projected coordinates of the trees are added to the tree data frame and returned by the output `$tree_data` (columns x_proj and y_proj).
+The projected coordinates of the trees are added to the tree data-frame and returned by the output `$tree_data` (columns x_proj and y_proj).
 
 ```{r}
 plot201Trees[c("Xutm","Yutm")] <- check_plot_trust_GPS$tree_data[c("x_proj","y_proj")]
-kable(head(check_plot_trust_GPS$tree_data), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
+
+kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
 ```
 
 The output of the function also standardises the names of the relative tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot` column, indicating if a tree is in the plot or not.
@@ -228,11 +219,11 @@ multiple_checks <- check_plot_coord(
   ref_raster = nouraguesRaster, ask = FALSE)
 ```
 
-Be aware that by default, the function will ask you to type Enter between each plot (ask = TRUE).
+Be aware that by default, the function will ask you to type Enter between each plot (argument 'ask = TRUE').
 
 # Dividing plots
 
-Dividing plots into several rectangular sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid. Be aware that **the plot must be rectangular in the relative coordinates system**, ie, have 4 right angles:
+Dividing plots into several sub-plots is performed using the `divide_plot()` function. This function takes the relative coordinates of the 4 corners of the plot to divide it into a grid. Be aware that **the plot must be rectangular in the plot's relative coordinates system**, ie, have 4 right angles:
 
 ```{r divide_plot}
 subplots <- divide_plot(
@@ -245,7 +236,7 @@ subplots <- divide_plot(
 kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot() returns")
 ```
 
-If you don't have any projected coordinates, just let `proj_coord` = NULL.
+If you want to stay in the plot's relative coordinate system, just let `proj_coord` = NULL.
 
 The function also handles imperfect cuts with the arguments `centred_grid` and `grid_tol`. Here an example with a 40mx45m grid.
 
@@ -254,9 +245,38 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = c(40,45), 
-  centred_grid = T, # centre the grid in the middle of the plot
+  centred_grid = TRUE, # centre the grid in the middle of the plot
   grid_tol = 0.3 # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
   )
+```
+
+
+```{r imperfect_cuts_visualisation, echo=FALSE, fig.show="hold", out.width="50%", warning=FALSE}
+non_centred <- divide_plot(
+  corner_data = check_plot_trust_GPS$corner_coord, 
+  rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+  grid_size = c(40,45), 
+  centred_grid = FALSE,
+  grid_tol = 0.3)
+
+ggplot(data = subplots, mapping = aes(x=x_proj, y=y_proj)) + 
+  geom_point(data = check_plot_trust_GPS$corner_coord, 
+             mapping = aes(x=x_proj, y=y_proj),
+             shape = 15, size = 2) + 
+  geom_point(col="red") + 
+  coord_equal() + 
+  theme_bw() + 
+  labs(title = "subplot divisions with centred_grid = TRUE")
+
+ggplot(data = non_centred, mapping = aes(x=x_proj, y=y_proj)) + 
+  geom_point(data = check_plot_trust_GPS$corner_coord, 
+             mapping = aes(x=x_proj, y=y_proj),
+             shape = 15, size = 2.5) + 
+  geom_point(col="red") + 
+  coord_equal() + 
+  theme_bw() + 
+  labs(title = "subplot divisions with centred_grid = FALSE")
+
 ```
 
 For the purposes of summarising and representing subplots (coming in the next section), the function returns the coordinates of subplot corners but can also **assign to each tree its subplot** with the **`tree_data` and `tree_coords` arguments**:
@@ -282,7 +302,7 @@ The function now returns a list containing:
 * `tree_data`: the tree data-frame with the **subplot_ID added in last column**
 
 ```{r}
-kable(head(subplots$tree_data), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
+kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
 Last but not least, the function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
@@ -299,7 +319,7 @@ multiple_subplots <- divide_plot(
 
 # Summarising tree metrics at subplot level
 
-Once you've applied the `divide_plot()` function with a non-null `tree_data` argument, you can summarise any tree metric present in divide_plot()$tree_data at the subplot level with the `subplot_summary()` function.
+Once you've applied the `divide_plot()` function with a non-null `tree_data` argument, you can summarise any tree metric at the subplot level with the `subplot_summary()` function.
 
 ```{r subplot_summary}
 subplot_metric <- subplot_summary(
@@ -329,7 +349,9 @@ The output of the function is a list containing:
 The returned **polygons can be saved into a shapefile** like this: 
 ```{r, eval=FALSE}
 # Set the CRS of the polygons
-subplot_polygons <- sf::st_set_crs(subplot_metric$polygon , value = "EPSG:2972")
+subplot_polygons <- sf::st_set_crs(
+  subplot_metric$polygon ,
+  value = "EPSG:2972") # EPSG:2972 (corresponding to UTM Zone 22N) is the UTM coordinate system of Nouragues
 
 # Save the polygons in a shapefile
 sf::st_write(subplot_polygons, "your_directory/subplots_201.shp")
@@ -355,7 +377,7 @@ subplot_metric <- subplot_summary(subplots = subplots,
 custom_plot <- subplot_metric$plot_design
 # Change the title and legend:
 custom_plot + 
-  labs(title = "Nourragues plot" , fill="Sum of AGB per hectare")
+  labs(title = "Nouragues plot" , fill="Sum of AGB per hectare")
 # Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
   geom_point(data=plot201Trees, mapping = aes(x = Xutm, y = Yutm, size = D, alpha= D), shape=1,) +

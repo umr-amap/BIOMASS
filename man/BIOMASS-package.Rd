@@ -26,11 +26,11 @@ Authors:
 \itemize{
   \item Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
   \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
+  \item Arthur Bailly \email{arthur.bailly@ird.fr}
   \item Arthur Pere
   \item Ariane Tanguy
   \item Camille Piponiot
   \item Bruno Hérault \email{bruno.herault@cirad.fr}
-  \item Arthur Bailly \email{arthur.bailly@ird.fr}
 }
 
 Other contributors:

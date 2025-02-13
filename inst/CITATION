@@ -8,7 +8,7 @@ bibentry(
   number = "9",
   journal = "Methods in Ecology and Evolution",
   author = c(
-    person("Maxime", "Rejou-Mechain"),
+    person("Maxime", "Réjou-Méchain"),
     person("Ariane", "Tanguy"),
     person("Camille", "Piponiot"),
     person("Jerome", "Chave"),

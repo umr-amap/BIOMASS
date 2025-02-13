@@ -1,5 +1,7 @@
 ---
-title: 'Estimating stand BIOMASS'
+title: 'Estimating stand biomass'
+author: "Arthur Bailly"
+date: "`r Sys.Date()`"
 output:
   prettydoc::html_pretty: 
     number_sections: yes
@@ -82,11 +84,11 @@ NouraguesTrees$GenusCorrected <- Taxo$genusCorrected
 NouraguesTrees$SpeciesCorrected <- Taxo$speciesCorrected
 ```
 
-Here, as an example, the species name of the first tree (first row) has been corrected from "guyanensis" to "guianensis" (the first row of correctTaxo() output has a TRUE value for the column nameModified) : 
+Here, as an example, the species name of the fourth tree has been corrected from "guyanensis" to "guianensis" (the fourth row of correctTaxo() output has a TRUE value for the column nameModified) : 
 
 ```{r species_correction_example}
-NouraguesTrees$Species[1]
-Taxo[1,]
+NouraguesTrees$Species[4]
+Taxo[4,]
 ```
 
 If you want (but this is optional for the rest), you can retrieve APG III families and orders from genus names.
@@ -284,7 +286,7 @@ WD_error_prop <- AGBmonteCarlo(
 
 The user can provide either a SD value or a vector of SD values associated with tree height measurement errors, using the `errH` argument.
 
-**If tree heights have been estimated via the "Feldspausch" or the "Chave" method**, the user can provide the output of the `retrieveH()` function for the `errH` argument:
+- **If tree heights have been estimated via the "Feldspausch" or the "Chave" method**, the user can provide the output of the `retrieveH()` function for the `errH` argument:
 
 ```{r H_feld_error_prop, eval = FALSE}
 H_feld_error_prop <- AGBmonteCarlo(
@@ -294,7 +296,7 @@ H_feld_error_prop <- AGBmonteCarlo(
 )
 ```
 
-**If tree heights have been estimated via a local HD-model**, instead of the `errH` and the `H` arguments, the user can provide the output of the `modelHD()` function using the `modelHD` argument.
+- **If tree heights have been estimated via a local HD-model**, instead of the `errH` and the `H` arguments, the user can provide the output of the `modelHD()` function using the `modelHD` argument.
 
 ```{r H_model_error_prop}
 H_model_error_prop <- AGBmonteCarlo(
