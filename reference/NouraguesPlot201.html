@@ -47,7 +47,7 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A data frame with 40 (simulated GPS measurements) of the 9 following variables :</p><ul><li><p><code>Site</code>: Name of the site set up in the Nouragues forest</p></li>
+    <p>A data frame with 40 (simulated GPS measurements) of the 8 following variables :</p><ul><li><p><code>Site</code>: Name of the site set up in the Nouragues forest</p></li>
 <li><p><code>Plot</code>: Plot ID of the site</p></li>
 <li><p><code>Xfield</code>: Corner location on the x-axis in the local coordinate system (defined by the 4 corners of the plot)</p></li>
 <li><p><code>Yfield</code>: Corner location on the y-axis in the local coordinate system</p></li>
@@ -55,7 +55,6 @@
 <li><p><code>Yutm</code>: Corner location on the y-axis in the UTM coordinate system</p></li>
 <li><p><code>Long</code>: Corner longitude coordinate</p></li>
 <li><p><code>Lat</code>: Corner latitude coordinate</p></li>
-<li><p><code>CornerID</code> : IDs of the plot corners</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -66,16 +65,15 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">NouraguesPlot201</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">NouraguesPlot201</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	40 obs. of  9 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Site    : chr  "Petit_Plateau" "Petit_Plateau" "Petit_Plateau" "Petit_Plateau" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Plot    : int  201 201 201 201 201 201 201 201 201 201 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Xfield  : int  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Yfield  : int  0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Xutm    : num  313003 313008 313009 313003 313006 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Yutm    : num  451723 451721 451723 451726 451722 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Long    : num  -52.7 -52.7 -52.7 -52.7 -52.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Lat     : num  4.09 4.09 4.09 4.09 4.09 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CornerID: chr  "NO" "NO" "NO" "NO" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	40 obs. of  8 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Site  : chr  "Petit_Plateau" "Petit_Plateau" "Petit_Plateau" "Petit_Plateau" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Plot  : int  201 201 201 201 201 201 201 201 201 201 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Xfield: int  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Yfield: int  0 0 0 0 0 0 0 0 0 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Xutm  : num  313003 313008 313009 313003 313006 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Yutm  : num  451723 451721 451723 451726 451722 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Long  : num  -52.7 -52.7 -52.7 -52.7 -52.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Lat   : num  4.09 4.09 4.09 4.09 4.09 ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
