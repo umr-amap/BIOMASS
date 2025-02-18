@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-02-13</h4>
+            <h4 data-toc-skip class="date">2025-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
@@ -80,7 +80,7 @@ Bailly</h4>
 <ul>
 <li><p>calculating the projected/geographic coordinates of the plot’s
 corners and the trees from the relative coordinates (or local
-coordinates, ie, those of the field)</p></li>
+coordinates, <em>i.e.</em> those of the field)</p></li>
 <li><p>visualising the plots</p></li>
 <li><p>validating plot’s corners and tree coordinates with LiDAR
 data</p></li>
@@ -91,11 +91,11 @@ data</p></li>
 <div class="section level2">
 <h2 id="required-data">Required data<a class="anchor" aria-label="anchor" href="#required-data"></a>
 </h2>
-<p>Two data-frames are required for the rest. One for the corner of the
-plot(s), and one for the trees, containing at least their
-coordinates.</p>
+<p>Two data frames are required to perform the analysis. One for the
+corner of the plot(s), and one for the trees, which contains at least
+their coordinates.</p>
 <ul>
-<li>The <strong>corner data-frame</strong> must contains at least:
+<li>The <strong>corner data frame</strong> must contains at least:
 <ul>
 <li>the names of the corresponding plots if there are several plots
 (below referred as to the ‘Plot’ column)</li>
@@ -108,7 +108,7 @@ referred as to the ‘Xfield’ and ‘Yfield’ columns)</li>
 </ul>
 </li>
 </ul>
-<p>In this vignette, for educational purposes, we will not use only one
+<p>In this vignette, for educational purpose, we will not use only one
 but <strong>two datasets of corner coordinates</strong>, derived from
 permanent plots in the <a href="https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9" class="external-link">Nouragues
 forest</a> (French Guiana):</p>
@@ -303,7 +303,7 @@ corner</strong>, also derived from Nouragues forest:</li>
 </tbody>
 </table>
 <ul>
-<li>The data-set including the <strong>tree coordinates</strong>, must
+<li>The data frame including the <strong>tree coordinates</strong>, must
 contain at least:
 <ul>
 <li>the name of the plots if there are several plots</li>
@@ -404,13 +404,13 @@ height, AGB, etc. (see BIOMASS vignette)</li>
 </tbody>
 </table>
 <p>This dataset is also derived from the <a href="https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9" class="external-link">2012
-Nouragues forest dataset</a>, but for educational purposes, some virtual
+Nouragues forest dataset</a>, but for educational purpose, some virtual
 trees with erroneous coordinates have been added in the data.</p>
 </div>
 <div class="section level2">
 <h2 id="checking-plots-coordinates">Checking plot’s coordinates<a class="anchor" aria-label="anchor" href="#checking-plots-coordinates"></a>
 </h2>
-<p>The user is faced with two situations:</p>
+<p>Two situations may occur:</p>
 <ul>
 <li><p>The <strong>GPS coordinates</strong> of the plot corners are
 considered <strong>very accurate</strong> or <strong>enough measurements
@@ -419,10 +419,11 @@ average. In this case, the shape of the plot measured on the field will
 follow the GPS coordinates of the plot corners when projected into the
 projected/geographic coordinate system. See <a href="#trustGSPcorner">3.1.1</a></p></li>
 <li><p><strong>Too few measurements of the GPS coordinates</strong> of
-plot corners have been taken and/or are <strong>not reliable</strong>.
-In this case, <strong>the shape of the plot measured on the field is
-considered to be accurate</strong> and the GPS corner coordinates will
-be recalculated to fit the shape and dimensions of the plot. See <a href="#trustPlotShape">3.1.2</a></p></li>
+plot corners have been collected and/or are <strong>not
+reliable</strong>. In this case, <strong>the shape of the plot measured
+on the field is considered to be accurate</strong> and the GPS corner
+coordinates will be recalculated to fit the shape and dimensions of the
+plot. See <a href="#trustPlotShape">3.1.2</a></p></li>
 </ul>
 <p>In both cases, the use of the <code><a href="../reference/check_plot_coord.html">check_plot_coord()</a></code>
 function is recommended as a first step.</p>
@@ -465,8 +466,8 @@ coordinate system.</p>
 <div class="section level4">
 <h4 id="trustPlotShape">If we rely on the shape of the plot measured on the field:<a class="anchor" aria-label="anchor" href="#trustPlotShape"></a>
 </h4>
-<p>Let’s degrade the data to simulate the fact that we only have 8 GPS
-coordinates that we don’t trust.</p>
+<p>Let’s degrade the data to mimic the case where we only have 8
+unreliable GPS coordinates.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">degraded_corner_coord</span> <span class="op">&lt;-</span> <span class="va">NouraguesPlot201</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,<span class="fl">11</span><span class="op">:</span><span class="fl">12</span>,<span class="fl">21</span><span class="op">:</span><span class="fl">22</span>,<span class="fl">31</span><span class="op">:</span><span class="fl">32</span><span class="op">)</span>,<span class="op">]</span></span>
 <span></span>
@@ -479,7 +480,7 @@ coordinates that we don’t trust.</p>
 <span><span class="co">#&gt; Warning:  Be carefull, you may have GNSS measurement outliers. </span></span>
 <span><span class="co">#&gt;  Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments).</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-4-1.png" width="1458.33333333333" style="display: block; margin: auto;"></p>
-<p>We can see that the corners of the plot do not correspond to the GPS
+<p>We can see that the corners of the plot do not match the GPS
 measurements. In fact, they correspond to the best compromise between
 the shape and dimensions of the plot and the GPS measurements.</p>
 </div>
@@ -529,13 +530,13 @@ future data processing.</p>
 </tbody>
 </table>
 <p>The associated polygon is returned via the <code>$polygon</code>
-output and can be saved into a shapefile like this:</p>
+output and can be saved into a shapefile as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">polygon</span>, <span class="st">"your_directory/plot201.shp"</span><span class="op">)</span></span></code></pre></div>
 <p>For full details, the <code>$outlier_corners</code> output returns
 all the information about GPS outliers found by the function, and the
 <code>$UTM_code</code> output returns the UTM code calculated by the
-function if geographic coordinates have been supplied.</p>
+function if geographic coordinates have been provided.</p>
 </div>
 <div class="section level3">
 <h3 id="tree_coordinates">Visualising and retrieving projected tree coordinates<a class="anchor" aria-label="anchor" href="#tree_coordinates"></a>
@@ -650,7 +651,7 @@ x_proj and y_proj).</p>
 relative tree coordinates (to <code>x_rel</code> and <code>y_rel</code>)
 and adds the <code>is_in_plot</code> column, indicating if a tree is in
 the plot or not.</p>
-<p>You can also get and modify the plot via the
+<p>You can also access and modify the plot via the
 <code>$plot_design</code> output which is a ggplot object. For example,
 to change the plot title:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -658,7 +659,7 @@ to change the plot title:</p>
 <span><span class="va">plot_to_change</span> <span class="op">&lt;-</span> <span class="va">plot_to_change</span> <span class="op">+</span> <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"A custom title"</span><span class="op">)</span></span>
 <span><span class="va">plot_to_change</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-9-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>If you supplied longitude and latitude corner coordinates, you can
+<p>If you provided longitude and latitude corner coordinates, you can
 retrieve the GPS coordinates of the trees in a longitude/latitude format
 using this code:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -714,7 +715,7 @@ between each plot (argument ‘ask = TRUE’).</p>
 <code><a href="../reference/divide_plot.html">divide_plot()</a></code> function. This function takes the relative
 coordinates of the 4 corners of the plot to divide it into a grid. Be
 aware that <strong>the plot must be rectangular in the plot’s relative
-coordinates system</strong>, ie, have 4 right angles:</p>
+coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
@@ -807,7 +808,7 @@ coordinates system</strong>, ie, have 4 right angles:</p>
 </tbody>
 </table>
 <p>If you want to stay in the plot’s relative coordinate system, just
-let <code>proj_coord</code> = NULL.</p>
+set <code>proj_coord</code> = NULL.</p>
 <p>The function also handles imperfect cuts with the arguments
 <code>centred_grid</code> and <code>grid_tol</code>. Here an example
 with a 40mx45m grid.</p>
@@ -824,7 +825,7 @@ with a 40mx45m grid.</p>
 <span><span class="co">#&gt; Warning in divide_plot_fct(.SD, grid_size): </span></span>
 <span><span class="co">#&gt; The y-dimension of the plot is not a multiple of the y-dimension of the grid size</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-1.png" width="50%" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-2.png" width="50%" style="display: block; margin: auto;"></p>
-<p>For the purposes of summarising and representing subplots (coming in
+<p>For the purpose of summarising and representing subplots (coming in
 the next section), the function returns the coordinates of subplot
 corners but can also <strong>assign to each tree its subplot</strong>
 with the <strong><code>tree_data</code> and <code>tree_coords</code>
@@ -972,10 +973,10 @@ function.</p>
 <span>  per_ha <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary-1.png" width="700" style="display: block; margin: auto;"></p>
 <p><strong>By default, the function sums the metric per subplot</strong>
-and divide the result by the area of each subplot (to obtain a summary
-<strong>per hectare</strong>) , but you can request any valid function
-with the <code>fun</code> argument and choose between a raw or a per
-hectare summary with the <code>per_ha</code> argument.</p>
+and divides the result by the area of each subplot (to obtain a summary
+<strong>per hectare</strong>), but you can request any valid function
+using <code>fun</code> argument and choose between a raw or a per
+hectare summary using <code>per_ha</code> argument.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
@@ -1003,7 +1004,7 @@ like this:</p>
 <span><span class="co"># Save the polygons in a shapefile</span></span>
 <span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">subplot_polygons</span>, <span class="st">"your_directory/subplots_201.shp"</span><span class="op">)</span></span></code></pre></div>
 <p>And of course, the function can handle <strong>as many plots as
-supplied in divide_plot()</strong>:</p>
+provided in divide_plot()</strong>:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
