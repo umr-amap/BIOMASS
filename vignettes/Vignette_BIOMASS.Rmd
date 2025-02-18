@@ -26,32 +26,32 @@ require(BIOMASS)
 
 # General workflow and required data
 
-For the sake of clarity, and to be consistent with the BIOMASS paper ([Réjou-Méchain et al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)), this vignette will follow the same workflow as presented in the paper:
+For the sake of clarity, and to be consistent with the BIOMASS paper ([Réjou-Méchain et al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)), this vignette follows the same workflow as presented in the paper:
 
 ![](img/BIOMASS_workflow.png)
 
 As can be seen, the **estimate of the above ground biomass** (AGB) of a tree, and **its associated uncertainty**, is based on its **wood density**, **diameter**, and **height**.
 
-However, exhausted values of **wood density** and **height** are rarely available in forest inventory data. This is why the package proposes an estimate of these two parameters, based on more usual data.
+However, exhaustive values of **wood density** and **height** are rarely available in forest inventory data. This is why the package proposes an estimate of these two covariables, based on more usual data.
 
-In this vignette, we will use some of the data obtained in 2012 from a [forest inventory](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) conducted in 2012 in the Nouragues forest (French Guiana). For educational purposes, some virtual trees have been added in the data.
+In this vignette, we will use some of the data obtained in 2012 from a [forest inventory](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) conducted in 2012 in the Nouragues forest (French Guiana). For educational purposes, some virtual trees have been added to the data.
 
 ```{r load_NouraguesTrees}
 data("NouraguesTrees")
 knitr::kable(head(NouraguesTrees))
 ```
 
-These data do not contain any information on wood density or height of the trees. Only the diameter is known, as no estimate can be made without this parameter.
+These data do not contain any information on wood density or height of trees. Only diameter is known, as no estimate can be made without this information.
 
 # Wood density 
 
-**Wood density** is estimated **from tree taxonomy**, using the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) as a reference. So the first step might be to correct the taxonomy of the trees.
+**Wood density** is estimated **from tree taxonomy**, using the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) as a reference. So the first step might be to correct tree taxonomy.
 
 ## Checking and retrieving tree taxonomy
 
 This is done with the `correctTaxo()` function, but before calling it, let's speak about cache !
 
-When the function is called for the first time with the argument `useCache = TRUE`, a temporary file containing the request to [TNRS](https://tnrs.biendata.org/) will be automatically created in a usual existing folder. Once this has been done, during the current session **the use of `useCache = TRUE` will access the saved temporary file** in order to avoid time-consuming replication of server requests. But **by quitting the current R session, this temporary file will be removed**. So before calling `correctTaxo()`, we advise you to define a folder which will host the cache file permanently, enabling to work offline.
+When the function is called for the first time with the argument `useCache = TRUE`, a temporary file containing the request to [TNRS](https://tnrs.biendata.org/) will be automatically created in an existing folder. Once this has been done, during the current session **the use of `useCache = TRUE` will access the saved temporary file** in order to avoid time-consuming replication of server requests. But **by quitting the current R session, this temporary file will be removed**. So before calling `correctTaxo()`, we advise you to define a folder which will host the cache file permanently, enabling to work offline.
 
 ```{r, eval=FALSE}
 # By default
@@ -63,7 +63,7 @@ options("BIOMASS.cache" = "the_path_to_your_cache_folder")
 
 ```
 
-That said, let's continue with the call to the `correctTaxo()` function:
+That said, let's continue with the call to `correctTaxo()` function:
 
 ```{r save_correctTaxo, eval=FALSE}
 Taxo <- correctTaxo(
@@ -101,7 +101,7 @@ NouraguesTrees$orderAPG <- APG$order
 
 ## Getting wood density
 
-Wood densities are retrieved using the `getWoodDensity()` function. By default, the function assigns to each taxon a species- or genus-level average if at least one wood density value of the same species or genus is available in the reference database. For unidentified trees or if the genus is missing in the reference database, the stand-level mean wood density is assigned to the tree.
+Wood densities are retrieved using `getWoodDensity()` function. By default, this function assigns to each taxon a species- or genus-level average if at least one wood density value of the same species or genus is available in the reference database. For unidentified trees or if the genus is missing in the reference database, the stand-level mean wood density is assigned to the tree.
 
 ```{r getWoodDensity}
 wood_densities <- getWoodDensity(
@@ -113,7 +113,7 @@ wood_densities <- getWoodDensity(
 NouraguesTrees$WD <- wood_densities$meanWD
 ```
 
-For information, here are the number of wood density value estimated at the species, genus and plot level:
+For information, here are the number of wood density values estimated at the species, genus and plot level:
 ```{r wd_informations}
 # At species level
 sum(wood_densities$levelWD == "species")
@@ -123,7 +123,7 @@ sum(wood_densities$levelWD == "genus")
 sum(!wood_densities$levelWD %in% c("genus", "species"))
 ```
 
-The `family` argument also assigns to the trees a family-level wood density average, but it should be borne in mind that the taxon-average approach gives relatively poor estimates above the genus level (Flores & Coomes 2011).
+The `family` argument also assigns to the trees a family-level wood density average, but bear in mind that the taxon-average approach gives relatively poor estimates above the genus level (Flores & Coomes 2011).
 
 **Additional wood density values can be added** using the `addWoodDensityData` argument (here invented for the example):
 
@@ -144,7 +144,7 @@ add_wood_densities <- getWoodDensity(
 
 # Height
 
-As tree height measurements are rare, or rarely exhaustive, BIOMASS proposes 3 methods to estimate tree height: 
+As tree height measurements are rare, or rarely exhaustive, BIOMASS proposes three methods to estimate tree height: 
 
 If a subset of well-measured trees is available in the studied region: 
 
@@ -207,7 +207,7 @@ Available regions are listed in the documentation of the function.
 
 ## Using the generic H–D model based on a bioclimatic predictor (Chave)
 
-In the same way as for the previous model, the predictions of the model proposed by Chave et al. are directly retrieved by the `retrieveH()` function. It is the coordinates of the plot (or of the trees) in a longitude/latitude format that must be provided.
+In the same way as for the previous model, the predictions of the model proposed by Chave et al. are directly retrieved by the `retrieveH()` function. Coordinates of the plot (or trees) in a longitude/latitude format must be provided.
 
 ```{r retrieveH_chave, eval=FALSE}
 data("NouraguesCoords") #contains corner coordinates
@@ -250,7 +250,7 @@ NouraguesTrees$AGB_Chave <- computeAGB(
 
 The `AGBmonteCarlo()` function allows the user to propagate diﬀerent sources of error up to the ﬁnal AGB estimate.
 
-The error propagation due to the **uncertainty of the model parameters** of the AGB allometric equation (Chave et al. 2014) **is automatically performed** by the function. However, the propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parametrised by the user**.
+The error propagation due to the **uncertainty of the model parameters** of the AGB allometric equation (Chave et al. 2014) **is automatically performed** by the function. However, the propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parameterized by the user**.
 
 ## Diameter measurement error
 
@@ -320,7 +320,7 @@ error_prop <- AGBmonteCarlo(
 error_prop[(1:4)]
 ```
 
-The first 4 elements of the output contain the mean, median, standard deviation and credibility intervals of the total AGB of the dataset but nothing about the AGB at the plot level. To do this, you can use the `summaryByPlot()` function:
+The first four elements of the output contain the mean, median, standard deviation and credibility intervals of the total AGB of the dataset but nothing about the AGB at the plot level. To do this, you can use the `summaryByPlot()` function:
 
 
 ```{r summaryByPlot}
