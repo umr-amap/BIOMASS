@@ -34,7 +34,7 @@ As can be seen, the **estimate of the above ground biomass** (AGB) of a tree, an
 
 However, exhaustive values of **wood density** and **height** are rarely available in forest inventory data. This is why the package proposes an estimate of these two covariables, based on more usual data.
 
-In this vignette, we will use some of the data obtained in 2012 from a [forest inventory](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) conducted in 2012 in the Nouragues forest (French Guiana). For educational purposes, some virtual trees have been added to the data.
+In this vignette, we will use some of the data obtained in 2012 from a [forest inventory](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9) conducted in 2012 in the Nouragues forest (French Guiana). For educational purpose, some virtual trees have been added to the data.
 
 ```{r load_NouraguesTrees}
 data("NouraguesTrees")
