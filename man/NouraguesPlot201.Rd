@@ -28,6 +28,6 @@ data(NouraguesPlot201)
 str(NouraguesPlot201)
 }
 \references{
-Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", \url{https://doi.org/10.18167/DVN1/HXKS4E}, CIRAD Dataverse, V2
+Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", \doi{10.18167/DVN1/HXKS4E}, CIRAD Dataverse, V2
 }
 \keyword{datasets}

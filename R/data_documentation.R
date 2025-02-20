@@ -114,7 +114,7 @@
 #'   - `Lat`: Corner latitude coordinate
 #'
 #' @references
-#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", [https://doi.org/10.18167/DVN1/HXKS4E](https://doi.org/10.18167/DVN1/HXKS4E), CIRAD Dataverse, V2
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", \doi{10.18167/DVN1/HXKS4E}, CIRAD Dataverse, V2
 #' @examples
 #' data(NouraguesCoords)
 #' str(NouraguesCoords)
@@ -140,7 +140,7 @@
 #'   - `Lat`: Corner latitude coordinate
 #'
 #' @references
-#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", [https://doi.org/10.18167/DVN1/HXKS4E](https://doi.org/10.18167/DVN1/HXKS4E), CIRAD Dataverse, V2
+#' Jaouen, Gaëlle, 2023, "Nouragues forest permanent plots details", \doi{10.18167/DVN1/HXKS4E}, CIRAD Dataverse, V2
 #' @examples
 #' data(NouraguesPlot201)
 #' str(NouraguesPlot201)
