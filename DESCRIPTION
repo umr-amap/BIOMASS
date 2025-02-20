@@ -27,8 +27,8 @@ Encoding: UTF-8
 LazyData: true
 Depends: R(>= 3.6)
 Roxygen: list(markdown = TRUE)
-URL: https://umr-amap.github.io/BIOMASS, https://github.com/umr-amap/BIOMASS
-BugReports: https://github.com/umr-amap/BIOMASS/issues
+URL: https://umr-amap.github.io/BIOMASS/, https://github.com/umr-amap/BIOMASS/
+BugReports: https://github.com/umr-amap/BIOMASS/issues/
 Imports:
 	minpack.lm, 
 	jsonlite, 
