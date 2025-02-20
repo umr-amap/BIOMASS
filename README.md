@@ -37,6 +37,10 @@ To use it :
 library("BIOMASS")
 ```
 
+## Tutorials/Vignettes
+
+Two vignettes are available in the 'Articles' section of the following page : [https://umr-amap.github.io/BIOMASS/index.html](https://umr-amap.github.io/BIOMASS/index.html)
+
 ## Citation
 
 Please cite this package as:
