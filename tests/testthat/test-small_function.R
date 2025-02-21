@@ -19,7 +19,7 @@ skip_if_not_function <- function(name) {
 context("Function computeE")
 test_that("Compute E", {
   
-  skip_if_not_function("computeE")
+  skip_on_cran()
   
   coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
@@ -27,8 +27,6 @@ test_that("Compute E", {
 
   expect_is(E, "numeric")
   expect_length(E, 1)
-
-  skip_on_cran()
   
   expect_equal(computeE(cbind(12, 50)), 1.129928, tolerance = 0.1)
   expect_error(computeE(cbind(long = -20, lat = 4)), "coordinate")
