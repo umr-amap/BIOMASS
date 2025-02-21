@@ -13,9 +13,9 @@ Contains functions to estimate aboveground biomass/carbon and its uncertainty in
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://umr-amap.github.io/BIOMASS}
-  \item \url{https://github.com/umr-amap/BIOMASS}
-  \item Report bugs at \url{https://github.com/umr-amap/BIOMASS/issues}
+  \item \url{https://umr-amap.github.io/BIOMASS/}
+  \item \url{https://github.com/umr-amap/BIOMASS/}
+  \item Report bugs at \url{https://github.com/umr-amap/BIOMASS/issues/}
 }
 
 }
