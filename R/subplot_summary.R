@@ -51,19 +51,19 @@
 #'   
 #' 
 #' # Dealing with multiple plots
-#' data("NouraguesCoords")
-#' nouragues_subplots <- suppressWarnings(
-#'  divide_plot(
-#'    corner_data = NouraguesCoords,
-#'    rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
-#'    corner_plot_ID = "Plot",
-#'    grid_size = 50,
-#'    tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
-#'    tree_plot_ID = "Plot"))
-#' # Sum summary (by default)
-#' nouragues_sum <- subplot_summary(nouragues_subplots , value = "D", draw_plot = FALSE)
-#' nouragues_sum$tree_summary
-#' \donttest{
+#' \dontrun{
+#'   data("NouraguesCoords")
+#'   nouragues_subplots <- suppressWarnings(
+#'   divide_plot(
+#'      corner_data = NouraguesCoords,
+#'     rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
+#'     corner_plot_ID = "Plot",
+#'     grid_size = 50,
+#'     tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
+#'     tree_plot_ID = "Plot"))
+#'   # Sum summary (by default)
+#'   nouragues_sum <- subplot_summary(nouragues_subplots , value = "D", draw_plot = FALSE)
+#'   nouragues_sum$tree_summary
 #'   subplots_201_sum$plot_design
 #' }
 #'
