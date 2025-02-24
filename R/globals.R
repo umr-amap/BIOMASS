@@ -15,7 +15,7 @@ if(getRversion() >= "2.15.1") {
   utils::globalVariables(c("id"))
   
   # getWoodDensity
-  utils::globalVariables(c("regionId","i.family","family","wd","wd.x","wd.y","taxo","meanWDsp","nIndsp","meanWD'","meanWDgn",
+  utils::globalVariables(c("regionId","i.family","family","wd","wd.x","wd.y","taxo","meanWDsp","nIndsp","meanWD","meanWDgn",
                            "nInd","nIndgn","sdWD","sdWDsp","sdWDgn","levelWD",
                            "meanWDfm","nIndfm","sdWDfm","meanWDst","nIndst","sdWDst"))
   
