@@ -130,8 +130,8 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   # Plot the plot(s) -----------------------------------------------------------
   
   plot_list <- lapply(unique(tree_summary$plot_id), function(plot_id) {
-    
-    plot_design <- ggplot(sf_polygons[grep(plot_id,sf_polygons$subplot_ID),]) +
+    plot_expr <- paste(c("^", plot_id, "_[^:digit:]_[^:digit:]"),collapse = "")
+    plot_design <- ggplot(sf_polygons[grep(plot_expr,sf_polygons$subplot_ID),]) +
       geom_sf(mapping = aes(fill=.data[[names(sf_polygons)[ifelse(per_ha , 3, 2)]]])) +
       theme_minimal() + 
       scale_fill_gradientn(colours = rev(terrain.colors(20))) + 
