@@ -70,11 +70,11 @@
 
 
 <dt id="arg-proj-coord">proj_coord<a class="anchor" aria-label="anchor" href="#arg-proj-coord"></a></dt>
-<dd><p>(optional, if longlat is not supplied) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.</p></dd>
+<dd><p>(optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.</p></dd>
 
 
 <dt id="arg-longlat">longlat<a class="anchor" aria-label="anchor" href="#arg-longlat"></a></dt>
-<dd><p>(optional, if proj_coord is not supplied) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).</p></dd>
+<dd><p>(optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).</p></dd>
 
 
 <dt id="arg-rel-coord">rel_coord<a class="anchor" aria-label="anchor" href="#arg-rel-coord"></a></dt>
@@ -129,18 +129,18 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Returns a list including :</p><ul><li><p><code>corner_coord</code>: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot</p></li>
 <li><p><code>polygon</code>: a sf object containing plot's polygon(s)</p></li>
-<li><p><code>tree_data</code>: if <code>tree_data</code> is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).</p></li>
+<li><p><code>tree_data</code>: if <code>tree_data</code> is provided in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).</p></li>
 <li><p><code>outliers</code>: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers</p></li>
 <li><p><code>plot_design</code>: if <code>draw_plot</code> is TRUE, a ggplot object corresponding to the design of the plot</p></li>
-<li><p><code>UTM_code</code>: if <code>longlat</code> is supplied, a character containing the UTM code of the GPS coordinates</p></li>
+<li><p><code>UTM_code</code>: if <code>longlat</code> is provided, a character containing the UTM code of the GPS coordinates</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If trust_GPS_corners is TRUE, corner coordinates in the projected coordinate system are averaging by corner (if multiple measures) and outlier corners are identified sequentially using these averages and the max_dist argument. Then, projected coordinates of the trees are calculated from the local coordinates using a bilinear interpolation that follows the correspondence of the corners between these two coordinate systems. Be aware that this projection only works if the plot, in the relative coordinates system, is rectangular (ie, has 4 right angles).</p>
 <p>If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.</p>
-<p>If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).</p>
-<p>If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.</p>
-<p>When ref_raster is supplied, this raster is cropped for every plot contained in corner_data.</p>
+<p>If longlat is provided instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).</p>
+<p>If longlat and proj_coord are provided, only longitude/latitude coordinates will be considered.</p>
+<p>When ref_raster is provided, this raster is cropped for every plot contained in corner_data.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

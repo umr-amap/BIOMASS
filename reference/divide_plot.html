@@ -102,16 +102,16 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
+    <p>If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
 <li><p><code>subplot_ID</code>: The automatically generated subplot code, using the following rule : subplot_X_Y</p></li>
 <li><p><code>x_rel</code> and <code>y_rel</code> : the relative X-axis and Y-axis coordinates of subplots corners.</p></li>
-<li><p><code>x_proj</code> and <code>y_proj</code> :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners</p></li>
-</ul><p>If tree_data is supplied, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
+<li><p><code>x_proj</code> and <code>y_proj</code> :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners</p></li>
+</ul><p>If tree_data is provided, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
 <li><p>the tree_data data-frame with the subplot_ID of each tree in the last column</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).</p>
+    <p>If corner coordinates in the projected coordinate system are provided (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
