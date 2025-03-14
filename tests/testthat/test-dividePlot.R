@@ -9,21 +9,21 @@ corner_data <- suppressWarnings(check_plot_coord(NouraguesPlot201, proj_coord = 
 test_that("divide_plot error", {
   
   expect_error(divide_plot(rel_coord = corner_data[c("x_rel","y_rel")]),
-               "The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
+               "The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   expect_error(divide_plot(as.matrix(corner_data), c("x_rel","y_rel"), grid_size = 25), "corner_data must a data frame or a data frame extension")
-  expect_error(divide_plot(corner_data, rel_coord = c("Xfield","Yfield")), "column names supplied by rel_coord are not found in corner_data")
-  expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("Xutm","Yutm")), "column names supplied by proj_coord are not found in corner_data")
+  expect_error(divide_plot(corner_data, rel_coord = c("Xfield","Yfield")), "column names provided by rel_coord are not found in corner_data")
+  expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("Xutm","Yutm")), "column names provided by proj_coord are not found in corner_data")
   expect_error(divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield","Yfield"), grid_size = c(25,25,25)), "you must apply yourself the function for each plot")
   
-  expect_error(divide_plot(corner_data = NouraguesCoords, c("Xfield","Yfield"), grid_size = 25), "You must supply corner_plot_ID if you have more than one plot in your data")
+  expect_error(divide_plot(corner_data = NouraguesCoords, c("Xfield","Yfield"), grid_size = 25), "You must provide corner_plot_ID if you have more than one plot in your data")
   expect_error(divide_plot(corner_data = NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "a"), "is not found in corner_data column names.")
   expect_error(divide_plot(NouraguesPlot201, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot"), "corner_data does'nt contain exactly 4 corners by plot")
   
-  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = matrix()),"tree_data must a data frame or a data frame extension")
-  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees), "You must supply the column names of the relative coordinates of the trees using the tree_coords argument")
-  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("x_rel","y_rel")), "tree_coords are not found in tree_data colunm names")
+  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = matrix()),"tree_data must be a data frame or a data frame extension")
+  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees), "You must provide the column names of the relative coordinates of the trees using the tree_coords argument")
+  expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("x_rel","y_rel")), "column names provided by tree_coords are not found in tree_data colunm names")
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), 
-               "You must supply tree_plot_ID if you have more than one plot in your data")
+               "You must provide tree_plot_ID if you have more than one plot in your data")
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "a"),
                "is not found in tree_data column names.")
   
@@ -32,6 +32,8 @@ test_that("divide_plot error", {
   expect_warning(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = c(25,30)) , "The y-dimension of the plot is not a multiple of the y-dimension of the grid size")
   expect_error(suppressWarnings(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = c(40,40))) , "If you still want to divide the plot, please increase the value of the grid_tol argument.")
 
+  wrong_NouraguesTrees <- NouraguesTrees ; wrong_NouraguesTrees[1,"Plot"] <- 200
+  expect_warning(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = wrong_NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "(not in a subplot area)")
 
   # when the plot is not a rectangle
   rect_plot <- data.frame(x_rel=c(0,100,0,110),y_rel=c(0,0,100,100))

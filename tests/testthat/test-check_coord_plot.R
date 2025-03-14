@@ -7,24 +7,24 @@ data("NouraguesTrees")
 test_that("check_plot_coord error", {
 
   expect_error(check_plot_coord(proj_coord=NouraguesPlot201[c("Xutm","Yutm")], rel_coord=NouraguesPlot201[c("Xfield","Yfield")]),
-               "The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
+               "The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   expect_error(check_plot_coord(corner_data = as.matrix(NouraguesPlot201), rel_coord = c("Xfield","Yfield")),
                "corner_data must a data frame or a data frame extension")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, rel_coord = c("Xfield","Yfield")),
-               "You must supply the name of at least one set of coordinates : longlat or proj_coord")
+               "You must provide the name of at least one set of coordinates : longlat or proj_coord")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("x","y")),
-               "column names supplied by rel_coord are not found in corner_data")
+               "column names provided by rel_coord are not found in corner_data")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, proj_coord = c("xproj","yproj"), rel_coord = c("Xfield","Yfield")),
-               "column names supplied by proj_coord are not found in corner_data")
+               "column names provided by proj_coord are not found in corner_data")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, longlat = c("xproj","yproj"), rel_coord = c("Xfield","Yfield")),
-               "column names supplied by longlat are not found in corner_data")
+               "column names provided by longlat are not found in corner_data")
 
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield")), "The trust_GPS_corners argument must be set to TRUE or FALSE")
   
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = c(1,1)),"tree_data must a data frame or a data frame extension")
-  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees),"You must supply the column names corresponding to the relative coordinates of tree_data using the argument `tree_coords`")
-  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("a","b")),"column names supplied by tree_coords are not found in tree_data")
-  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), prop_tree = "a"), "column name supplied by prop_tree is not found in tree_data")
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees),"You must provide the column names corresponding to the relative coordinates of tree_data using the argument `tree_coords`")
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("a","b")),"column names provided by tree_coords are not found in tree_data")
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), prop_tree = "a"), "column name provided by prop_tree is not found in tree_data")
   
   
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, max_dist=c(10,20) ),"The max_dist argument must be of length 1")
@@ -39,7 +39,7 @@ test_that("check_plot_coord error", {
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present in corner_data, then the argument plot_ID is required.")
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "a"),"is not found in corner_data column names.")
   
-  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), "The argument tree_plot_ID is required if plot_ID is supplied.")
+  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), "The argument tree_plot_ID is required if plot_ID is provided.")
   
   expect_warning(check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "These ID's are found in tree_plot_ID but not in plot_ID : 201 213 223")
   

@@ -25,9 +25,9 @@ check_plot_coord(
 \arguments{
 \item{corner_data}{A data frame, data frame extension, containing the plot corner coordinates.}
 
-\item{proj_coord}{(optional, if longlat is not supplied) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
+\item{proj_coord}{(optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
 
-\item{longlat}{(optional, if proj_coord is not supplied) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).}
+\item{longlat}{(optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).}
 
 \item{rel_coord}{A character vector of length 2 specifying the column names (resp. x, y) of the corner relative coordinates (that of the field, ie, the local ones).}
 
@@ -58,10 +58,10 @@ Returns a list including :
 \itemize{
 \item \code{corner_coord}: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot
 \item \code{polygon}: a sf object containing plot's polygon(s)
-\item \code{tree_data}: if \code{tree_data} is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
+\item \code{tree_data}: if \code{tree_data} is provided in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 \item \code{outliers}: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
-\item \code{UTM_code}: if \code{longlat} is supplied, a character containing the UTM code of the GPS coordinates
+\item \code{UTM_code}: if \code{longlat} is provided, a character containing the UTM code of the GPS coordinates
 }
 }
 \description{
@@ -72,11 +72,11 @@ If trust_GPS_corners is TRUE, corner coordinates in the projected coordinate sys
 
 If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 
-If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
+If longlat is provided instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
 
-If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.
+If longlat and proj_coord are provided, only longitude/latitude coordinates will be considered.
 
-When ref_raster is supplied, this raster is cropped for every plot contained in corner_data.
+When ref_raster is provided, this raster is cropped for every plot contained in corner_data.
 }
 \examples{
 # One plot with repeated measurements of each corner

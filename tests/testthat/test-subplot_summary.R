@@ -17,11 +17,11 @@ test_that("subplot_summary error", {
   expect_message(subplot_summary(subplots, value = "D", draw_plot = F), "Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system", fixed=TRUE)
 
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
-  expect_error(subplot_summary(subplots, draw_plot = F) , "You must supply the tree variable to be summarised via the value argument.", fixed=TRUE)
+  expect_error(subplot_summary(subplots, draw_plot = F) , "You must provide the tree variable to be summarised via the value argument.", fixed=TRUE)
   expect_error(subplot_summary(subplots, value = "a", draw_plot = F) , "a is not a column name of subplots$tree_data", fixed=TRUE)
 
-  expect_error(subplot_summary(subplots, value = "D", draw_plot = F, fun = "quantile") , "the function supplied using `fun =` is not a function", fixed=TRUE)
-  expect_error(subplot_summary(subplots, value = "D", draw_plot = F, fun = quantile) , "the function supplied using `fun` must return a single value", fixed=TRUE)
+  expect_error(subplot_summary(subplots, value = "D", draw_plot = F, fun = "quantile") , "the function provided using `fun =` is not a function", fixed=TRUE)
+  expect_error(subplot_summary(subplots, value = "D", draw_plot = F, fun = quantile) , "the function provided using `fun` must return a single value", fixed=TRUE)
 })
 
 test_that("subplot_summary", {

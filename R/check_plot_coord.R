@@ -8,15 +8,15 @@
 #' 
 #' If trust_GPS_corners is FALSE, corner coordinates in the projected coordinate system are calculated by a procrust analysis that preserves the shape and dimensions of the plot in the local coordinate system. Outlier corners are also identified sequentially and projected coordinates of the trees are calculated by applying the resulting procrust analysis.
 #' 
-#' If longlat is supplied instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
+#' If longlat is provided instead of proj_coord, the function will first convert the long/lat coordinates into UTM coordinates. An error may result if the parcel is located right between two UTM zones. In this case, the user has to convert himself his long/lat coordinates into any projected coordinates which have the same dimension than his local coordinates (in meters most of the time).
 #' 
-#' If longlat and proj_coord are supplied, only longitude/latitude coordinates will be considered.
+#' If longlat and proj_coord are provided, only longitude/latitude coordinates will be considered.
 #' 
-#' When ref_raster is supplied, this raster is cropped for every plot contained in corner_data. 
+#' When ref_raster is provided, this raster is cropped for every plot contained in corner_data. 
 #'
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates.
-#' @param proj_coord (optional, if longlat is not supplied) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
-#' @param longlat (optional, if proj_coord is not supplied) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
+#' @param proj_coord (optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param longlat (optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
 #' @param rel_coord A character vector of length 2 specifying the column names (resp. x, y) of the corner relative coordinates (that of the field, ie, the local ones).
 #' @param trust_GPS_corners A logical indicating whether or not you trust the GPS coordinates of the plot's corners. See details.
 #' @param draw_plot A logical indicating if the plot design should be displayed and returned.
@@ -35,10 +35,10 @@
 #' @return Returns a list including :
 #'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot 
 #'    - `polygon`: a sf object containing plot's polygon(s)
-#'    - `tree_data`: if `tree_data` is supplied in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
+#'    - `tree_data`: if `tree_data` is provided in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 #'    - `outliers`: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers 
 #'    - `plot_design`: if `draw_plot` is TRUE, a ggplot object corresponding to the design of the plot
-#'    - `UTM_code`: if `longlat` is supplied, a character containing the UTM code of the GPS coordinates
+#'    - `UTM_code`: if `longlat` is provided, a character containing the UTM code of the GPS coordinates
 #'
 #' @export
 #'
@@ -96,7 +96,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   ##### Checking arguments -----------------------------------------------------
   
   if(missing(corner_data)) {
-    stop("The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
+    stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
     stop("corner_data must a data frame or a data frame extension")
@@ -105,16 +105,16 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   corner_dt <- data.table(corner_data)
   
   if (is.null(longlat) & is.null(proj_coord)) {
-    stop("You must supply the name of at least one set of coordinates : longlat or proj_coord")
+    stop("You must provide the name of at least one set of coordinates : longlat or proj_coord")
   }
   if (!is.null(proj_coord) && !any(proj_coord %in% names(corner_dt))) {
-    stop("column names supplied by proj_coord are not found in corner_data")
+    stop("column names provided by proj_coord are not found in corner_data")
   }
   if (!is.null(longlat) && !any(longlat %in% names(corner_dt))) {
-    stop("column names supplied by longlat are not found in corner_data")
+    stop("column names provided by longlat are not found in corner_data")
   }
   if (!any(rel_coord %in% names(corner_dt))) {
-    stop("column names supplied by rel_coord are not found in corner_data")
+    stop("column names provided by rel_coord are not found in corner_data")
   }
   if (missing(trust_GPS_corners)) {
     stop("The trust_GPS_corners argument must be set to TRUE or FALSE")
@@ -123,13 +123,13 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop("tree_data must a data frame or a data frame extension")
   }
   if (!is.null(tree_data) && is.null(tree_coords)) {
-    stop("You must supply the column names corresponding to the relative coordinates of tree_data using the argument `tree_coords`")
+    stop("You must provide the column names corresponding to the relative coordinates of tree_data using the argument `tree_coords`")
   }
   if (!is.null(tree_data) && !any(tree_coords %in% names(tree_data))) {
-    stop("column names supplied by tree_coords are not found in tree_data")
+    stop("column names provided by tree_coords are not found in tree_data")
   }
   if (!is.null(prop_tree) && !any(prop_tree == names(tree_data))) {
-    stop("column name supplied by prop_tree is not found in tree_data")
+    stop("column name provided by prop_tree is not found in tree_data")
   }
   if (length(max_dist) != 1) {
     stop("The max_dist argument must be of length 1")
@@ -150,7 +150,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop(paste(plot_ID,"is not found in corner_data column names."))
   }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
-    stop("The argument tree_plot_ID is required if plot_ID is supplied.")
+    stop("The argument tree_plot_ID is required if plot_ID is provided.")
   }
   if(!is.null(tree_data) && !is.null(tree_plot_ID) && any(! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])) ) {
     warning( paste( "These ID's are found in tree_plot_ID but not in plot_ID :" , paste(unique(tree_data[[tree_plot_ID]])[! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])] , collapse = " "),"\n") )
@@ -177,18 +177,18 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   # Formatting tree data 
   if(!is.null(tree_data)) {
-    if(!is.data.table(tree_data)) tree_data <- data.table(tree_data)
+    tree_dt <- data.table(tree_data)
       
-    setnames(tree_data, old = tree_coords, new = c("x_rel","y_rel"))
+    setnames(tree_dt, old = tree_coords, new = c("x_rel","y_rel"))
     
     if(!is.null(tree_plot_ID)) {
-      setnames(tree_data, old = tree_plot_ID, new = "plot_ID")
+      setnames(tree_dt, old = tree_plot_ID, new = "plot_ID")
     } else {
-      tree_data[, plot_ID := "" ]
+      tree_dt[, plot_ID := "" ]
     }
-    if(sum(is.na(tree_data[, c("x_rel","y_rel")])) != 0) {
+    if(sum(is.na(tree_dt[, c("x_rel","y_rel")])) != 0) {
       warning("Missing values are detected in the relative coordinates of the trees. These trees will be removed from the dataset.\n")
-      tree_data <- tree_data[ ! (is.na(x_rel) | is.na(y_rel))  , ]
+      tree_dt <- tree_dt[ ! (is.na(x_rel) | is.na(y_rel))  , ]
     }
   }
   
@@ -325,22 +325,22 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     # Calculate projected tree coordinates from relative tree coordinates
     if(!is.null(tree_data)) {
       if(trust_GPS_corners) {
-        tree_data[plot_ID %in% unique(corner_dat$plot_ID), 
+        tree_dt[plot_ID %in% unique(corner_dat$plot_ID), 
                   c("x_proj","y_proj") := as.list(bilinear_interpolation(
                     coord = .SD[, c("x_rel","y_rel")],
                     from_corner_coord = corner_dat[,c("x_rel","y_rel")],
                     to_corner_coord = corner_dat[,c("x_proj","y_proj")], 
                     ordered_corner = T)) ]
       } else {
-        tree_data[plot_ID %in% unique(corner_dat$plot_ID),
+        tree_dt[plot_ID %in% unique(corner_dat$plot_ID),
                   c("x_proj","y_proj") := as.list(
                     as.data.frame(
                       sweep(as.matrix(.SD[, c("x_rel","y_rel")]) %*% procrust_res$rotation, 2, procrust_res$translation, FUN = "+")))]
       }
       
       # Add a column telling if a tree is inside the plot or not 
-      tree_data[plot_ID %in% unique(corner_dat$plot_ID), is_in_plot := x_rel %between% range(corner_dat$x_rel) & y_rel %between% range(corner_dat$y_rel)]
-      if(any(! tree_data[plot_ID %in% unique(corner_dat$plot_ID) , ][["is_in_plot"]])) { 
+      tree_dt[plot_ID %in% unique(corner_dat$plot_ID), is_in_plot := x_rel %between% range(corner_dat$x_rel) & y_rel %between% range(corner_dat$y_rel)]
+      if(any(! tree_dt[plot_ID %in% unique(corner_dat$plot_ID) , ][["is_in_plot"]])) { 
         warning(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) , 
                  "Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)\n"))
@@ -444,26 +444,26 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       
       if(is.null(prop_tree)) { # if there is no proportional variable to display
         
-        tree_data[ plot_ID == current_plot_ID, tree_shape := ifelse(is_in_plot,1,13)]
-        tree_data[ plot_ID == current_plot_ID, tree_label := ifelse(is_in_plot," ","outside the plot")] # Tree labels for the legend
+        tree_dt[ plot_ID == current_plot_ID, tree_shape := ifelse(is_in_plot,1,13)]
+        tree_dt[ plot_ID == current_plot_ID, tree_label := ifelse(is_in_plot," ","outside the plot")] # Tree labels for the legend
         
         plot_design <- plot_design +
-          geom_point(data = tree_data[plot_ID == current_plot_ID, ],
+          geom_point(data = tree_dt[plot_ID == current_plot_ID, ],
                      mapping = aes(x = x_proj, y = y_proj, alpha = tree_label), # as color and shape are already in corner aes, we fake an alpha aes to get a proper legend
-                     shape = tree_data[plot_ID == current_plot_ID, ][["tree_shape"]],
+                     shape = tree_dt[plot_ID == current_plot_ID, ][["tree_shape"]],
                      col="grey25", size = 2) +
           scale_alpha_manual(values = c(" "=1,"outside the plot"=1)) + # set the alpha to 1
           guides( alpha = guide_legend(title = 'Trees', 
-                                       override.aes = list(shape = if(sum(!tree_data[plot_ID == current_plot_ID, "is_in_plot"])==0) c(1) else c(1,13) ) ) )
+                                       override.aes = list(shape = if(sum(!tree_dt[plot_ID == current_plot_ID, "is_in_plot"])==0) c(1) else c(1,13) ) ) )
         
-        tree_data[, tree_label := NULL]
-        tree_data[, tree_shape := NULL]
+        tree_dt[, tree_label := NULL]
+        tree_dt[, tree_shape := NULL]
         
       } else { # if there is a proportional variable to display
         
         plot_design <- plot_design +
           # Display the trees inside the plot
-          geom_point(data = tree_data[plot_ID == current_plot_ID & is_in_plot==T, ], 
+          geom_point(data = tree_dt[plot_ID == current_plot_ID & is_in_plot==T, ], 
                      mapping = aes(x = x_proj, y = y_proj,
                                    size = .data[[prop_tree]],
                                    alpha = .data[[prop_tree]]), 
@@ -473,7 +473,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
           guides( alpha = guide_legend(title = paste('Trees :', prop_tree), order = 2),
                   size = guide_legend(title = paste('Trees :', prop_tree), order = 2, override.aes = list(shape = 1) )) +
           # Display the trees outside the plot (but don't display them in the legend)
-          geom_point(data = tree_data[plot_ID == current_plot_ID & is_in_plot==F, ],
+          geom_point(data = tree_dt[plot_ID == current_plot_ID & is_in_plot==F, ],
                      mapping = aes(x = x_proj, y = y_proj),
                      shape = 13, size = 2)
       }
@@ -517,10 +517,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
   
   if (!is.null(tree_data)) {
-    if(all(tree_data[,plot_ID]=="")) {
-      tree_data[, plot_ID := NULL]
+    if(all(tree_dt[,plot_ID]=="")) {
+      tree_dt[, plot_ID := NULL]
     }
-    output$tree_data <- as.data.frame(tree_data)
+    output$tree_data <- as.data.frame(tree_dt)
   }
   
   return(output)

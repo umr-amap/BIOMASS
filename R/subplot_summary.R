@@ -81,13 +81,13 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
     message("Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system")
   }
   if(is.null(value)) {
-    stop("You must supply the tree variable to be summarised via the value argument.")
+    stop("You must provide the tree variable to be summarised via the value argument.")
   }
   if(!value %in% names(subplots$tree_data)) {
     stop(paste(value,"is not a column name of subplots$tree_data"))
   }
   if(!is.function(fun)) {
-    stop("the function supplied using `fun =` is not a function")
+    stop("the function provided using `fun =` is not a function")
   } else {
     fun <- match.fun(fun)
   }
@@ -96,7 +96,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   corner_dat <- data.table(subplots$sub_corner_coord)
   tree_summary <- data.table(subplots$tree_data)[!is.na(subplot_ID), fun(get(value), ...) , by=c("subplot_ID")]
   if(any(duplicated(tree_summary$subplot_ID))) {
-    stop("the function supplied using `fun` must return a single value")
+    stop("the function provided using `fun` must return a single value")
   }
   tree_summary[, plot_id:= #Add plot_id to be able to loop on it
                  sapply(strsplit(tree_summary$subplot_ID,"_"),

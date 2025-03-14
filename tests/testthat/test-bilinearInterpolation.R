@@ -18,7 +18,7 @@ test_that("bilinear_interpolation error", {
 
 test_that("bilinear_interpolation function", {
   
-  # Test when matrices are supplied and to_corner_coord colnames are not
+  # Test when matrices are provided and to_corner_coord colnames are not
   from_corner_coord <- as.matrix(expand.grid(X = c(0, 100), Y = c(0, 50)))
   rot_mat <- matrix(c(cos(-pi/6),sin(-pi/6),-sin(-pi/6),cos(-pi/6)),nrow=2)
   to_corner_coord <- as.matrix(from_corner_coord) %*% rot_mat
@@ -33,7 +33,7 @@ test_that("bilinear_interpolation function", {
   expect_equal(names(proj_coord), c("x_interp","y_interp"))
   expect_equal(proj_coord, data.frame(x_interp=c(59.15064,81.96152),y_interp=c(134.1506,164.6410)) , tolerance = 1e-6)
   
-  # Test when to_corner_coord colnames are supplied 
+  # Test when to_corner_coord colnames are provided 
   colnames(to_corner_coord) <- c("Xproj","Yproj")
   proj_coord = bilinear_interpolation(coord = coord, from_corner_coord = from_corner_coord, to_corner_coord = to_corner_coord)
   expect_equal(names(proj_coord), c("Xproj","Yproj"))
