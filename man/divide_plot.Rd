@@ -39,15 +39,15 @@ divide_plot(
 \item{centred_grid}{When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.}
 }
 \value{
-If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
 \item \code{x_rel} and \code{y_rel} : the relative X-axis and Y-axis coordinates of subplots corners.
-\item \code{x_proj} and \code{y_proj} :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
+\item \code{x_proj} and \code{y_proj} :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 }
 
-If tree_data is supplied, returns a list containing :
+If tree_data is provided, returns a list containing :
 \itemize{
 \item the previous data-frame
 \item the tree_data data-frame with the subplot_ID of each tree in the last column
@@ -57,7 +57,7 @@ If tree_data is supplied, returns a list containing :
 This function divides a plot (or several plots) into subplots in the relative coordinates system, and returns the coordinates of subplot corners.
 }
 \details{
-If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
+If corner coordinates in the projected coordinate system are provided (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
 }
 \examples{
 # One plot with repeated measurements of each corner

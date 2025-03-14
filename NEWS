@@ -1,4 +1,8 @@
 * version 2.2.3
+- Fixed an issue of overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot()  
+
+
+* version 2.2.3
 - Added 3 dataset to the package (NouraguesTrees, NouraguesCoords and NouraguesPlot201) and removed KarnatakaForest
 - Creation of 2 more educational vignettes (Vignette_BIOMASS and Vignette_spatialized_trees_and_forest_stand_metrics)
 - Updated pkgdown BIOMASS website
@@ -22,7 +26,7 @@
   - calculation of the projected coordinates of the trees is done, using tree_df and tree_coords arguments
 - Added divide_plot function which will replace cutPlot()
   - No corner numerotation is needed anymore, neither dimX and dimY (the dimensions of the plot)
-  - plot division is made on relative coordinates and then transformed in projected coordinates (if supplied) with a bilinear interpolation
+  - plot division is made on relative coordinates and then transformed in projected coordinates (if provided) with a bilinear interpolation
   - trees are attributed to each subplot using tree_df and tree_coords agruments
   - Message warning if the grid dimensions don't match the plot dimensions
   - Used of the argument grid_tol to control the plot area which is included in the grid

@@ -4,7 +4,7 @@
 #' This function divides a plot (or several plots) into subplots in the relative coordinates system, and returns the coordinates of subplot corners.
 #'
 #' @details
-#'  If corner coordinates in the projected coordinate system are supplied (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
+#'  If corner coordinates in the projected coordinate system are provided (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
 #' 
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates. Typically, the output `$corner_coord` of the [check_plot_coord()] function.
 #' @param rel_coord A character vector of length 2,  specifying the column names (resp. x, y) of the corner relative coordinates.
@@ -17,13 +17,13 @@
 #' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
 #' @param centred_grid When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.
 #'
-#' @return If tree_data isn't supplied, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#' @return If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `corner_plot_ID`: If dealing with multiple plots : the plot code
 #'   - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
 #'   - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
-#'   - `x_proj` and `y_proj` :  if proj_coord is supplied, the projected X-axis and Y-axis coordinates of subplots corners
+#'   - `x_proj` and `y_proj` :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 #'   
-#'   If tree_data is supplied, returns a list containing : 
+#'   If tree_data is provided, returns a list containing : 
 #'   - the previous data-frame 
 #'   - the tree_data data-frame with the subplot_ID of each tree in the last column 
 #'
@@ -83,22 +83,22 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   # Checking arguments ---------------------------------------------------------
   
   if(missing(corner_data)) {
-    stop("The way in which arguments are supplied to the function has changed since version 2.2.1. You now have to supply corner_data data frame and its associated coordinates variable names.")
+    stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
     stop("corner_data must a data frame or a data frame extension")
   }
   if (!any(rel_coord %in% names(corner_data))) {
-    stop("column names supplied by rel_coord are not found in corner_data")
+    stop("column names provided by rel_coord are not found in corner_data")
   }
   if (!is.null(proj_coord) && !any(proj_coord %in% names(corner_data))) {
-    stop("column names supplied by proj_coord are not found in corner_data")
+    stop("column names provided by proj_coord are not found in corner_data")
   }
   if(!length(grid_size) %in% c(1,2)) {
     stop("The length of grid_size must be equal to 1 or 2\nIf you want to divide several plots with different grid sizes, you must apply yourself the function for each plot")
   }
   if(nrow(corner_data)!=4 & is.null(corner_plot_ID)){
-    stop("You must supply corner_plot_ID if you have more than one plot in your data")
+    stop("You must provide corner_plot_ID if you have more than one plot in your data")
   }
   if (!is.null(corner_plot_ID) && !any(corner_plot_ID==names(corner_data))) {
     stop(paste(corner_plot_ID,"is not found in corner_data column names."))
@@ -107,16 +107,16 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     stop("corner_data does'nt contain exactly 4 corners by plot")
   }
   if(!is.null(tree_data) && !is.data.frame(tree_data)){
-    stop("tree_data must a data frame or a data frame extension")
+    stop("tree_data must be a data frame or a data frame extension")
   }
   if(!is.null(tree_data) && is.null(tree_coords)) {
-    stop("You must supply the column names of the relative coordinates of the trees using the tree_coords argument")
+    stop("You must provide the column names of the relative coordinates of the trees using the tree_coords argument")
   }
   if(!is.null(tree_data) && !any(tree_coords %in% names(tree_data))) {
-    stop("tree_coords are not found in tree_data colunm names")
+    stop("column names provided by tree_coords are not found in tree_data colunm names")
   }
   if(nrow(corner_data)!=4 & !is.null(tree_data) & is.null(tree_plot_ID)){
-    stop("You must supply tree_plot_ID if you have more than one plot in your data")
+    stop("You must provide tree_plot_ID if you have more than one plot in your data")
   }
   if (!is.null(tree_plot_ID) && !any(tree_plot_ID==names(tree_data))) {
     stop(paste(tree_plot_ID,"is not found in tree_data column names."))
@@ -191,7 +191,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     # Sorting rows 
     plot_grid <- plot_grid[, sort_rows(.SD), by=subplot_ID]
     
-    # Transformation of relative grid coordinates into projected coordinates if supplied
+    # Transformation of relative grid coordinates into projected coordinates if provided
     if(!is.null(proj_coord)) {
       plot_grid <- cbind(plot_grid,bilinear_interpolation(coord = plot_grid[,c("x_rel","y_rel")] , from_corner_coord = dat[,c("x_rel","y_rel")] , to_corner_coord = dat[,c("x_proj","y_proj")], ordered_corner = T))
     }
@@ -205,30 +205,35 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   
   if(!is.null(tree_data)) {
     
-    if(!is.data.table(tree_data)) tree_data <- data.table(tree_data)
+    tree_dt <- data.table(tree_data)
     
-    setnames(tree_data, old = tree_coords, new = c("x_rel","y_rel"))
+    setnames(tree_dt, old = tree_coords, new = c("x_rel","y_rel"))
     
     if(!is.null(tree_plot_ID)) {
-      setnames(tree_data, old = tree_plot_ID, new = "plot_ID")
+      setnames(tree_dt, old = tree_plot_ID, new = "plot_ID")
+      
+      if(any(! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["corner_plot_ID"]]))) {
+        warning( paste( "These ID's are found in tree_plot_ID but not in corner_data :" , paste(unique(tree_dt[["plot_ID"]])[! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["corner_plot_ID"]])] , collapse = " "),"\n") )
+      }
+      
     } else {
-      tree_data[, plot_ID := "" ]
+      tree_dt[, plot_ID := "" ]
     } 
     
     invisible(lapply(split(sub_corner_coord, by = "subplot_ID", keep.by = TRUE), function(dat) {
-      tree_data[ plot_ID == dat$corner_plot_ID[1] &
+      tree_dt[ plot_ID == dat$corner_plot_ID[1] &
                  x_rel %between% range(dat[["x_rel"]]) &
                  y_rel %between% range(dat[["y_rel"]]),
                subplot_ID := dat$subplot_ID[1]]
     }))
     
-    if (anyNA(tree_data[, subplot_ID])) {
+    if (anyNA(tree_dt[, subplot_ID])) {
       warning("One or more trees could not be assigned to a subplot (not in a subplot area)")
     }
 
     if(is.null(tree_plot_ID)) {
-      tree_data[ !is.na(subplot_ID) , subplot_ID := paste0("subplot",subplot_ID) ]
-      tree_data[ , plot_ID := NULL ]
+      tree_dt[ !is.na(subplot_ID) , subplot_ID := paste0("subplot",subplot_ID) ]
+      tree_dt[ , plot_ID := NULL ]
     } 
   }
   
@@ -242,7 +247,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     output <- data.frame(sub_corner_coord)
   } else {
     output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
-                   tree_data = data.frame(tree_data))
+                   tree_data = data.frame(tree_dt))
   }
 
   return(output)
