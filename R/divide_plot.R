@@ -8,7 +8,8 @@
 #' 
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates. Typically, the output `$corner_coord` of the [check_plot_coord()] function.
 #' @param rel_coord A character vector of length 2,  specifying the column names (resp. x, y) of the corner relative coordinates.
-#' @param proj_coord A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param proj_coord (optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param longlat (optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
 #' @param grid_size A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
 #' @param tree_data A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).
 #' @param tree_coords A character vector of length 2, specifying the column names of the relative coordinates of the trees.
@@ -78,7 +79,7 @@
 #' head(nouragues_subplots$sub_corner_coord)
 #' head(nouragues_subplots$tree_data)
  
-divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
+divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
   
   # Checking arguments ---------------------------------------------------------
   
@@ -93,6 +94,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   }
   if (!is.null(proj_coord) && !any(proj_coord %in% names(corner_data))) {
     stop("column names provided by proj_coord are not found in corner_data")
+  }
+  if (!is.null(longlat) && !any(longlat %in% names(corner_data))) {
+    stop("column names provided by longlat are not found in corner_data")
   }
   if(!length(grid_size) %in% c(1,2)) {
     stop("The length of grid_size must be equal to 1 or 2\nIf you want to divide several plots with different grid sizes, you must apply yourself the function for each plot")
@@ -133,6 +137,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   if(!is.null(proj_coord)) {
     setnames(corner_dt, old = proj_coord, new = c("x_proj","y_proj"))
   }
+  if(!is.null(longlat)) {
+    setnames(corner_dt, old = longlat, new = c("long","lat"))
+  }
   
   if(!is.null(corner_plot_ID)) {
     setnames(corner_dt, old = corner_plot_ID, new = "corner_plot_ID")
@@ -154,6 +161,23 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   
   corner_dt <- corner_dt[, sort_rows(.SD), by = corner_plot_ID]
 
+  
+  # Transform the geographic coordinates into UTM coordinates ------------------
+  
+  latlong2UTM_fct <- function(dat) { # dat = corner_dt
+    proj_coord <- latlong2UTM(dat[, c("long","lat")])
+    UTM_code <- unique(proj_coord[, "codeUTM"])
+    if(length(UTM_code)>1) {
+      stop(paste(unique(dat$plot_ID), "More than one UTM zone are detected. This may be due to an error in the long/lat coordinates, or if the parcel is located right between two UTM zones. In this case, please convert yourself your long/lat coordinates into any projected coordinates which have the same dimension than your local coordinates"))
+    }
+    corner_dt[corner_plot_ID %in% dat$corner_plot_ID, c("x_proj", "y_proj") := list(x_proj = proj_coord$X, y_proj = proj_coord$Y)]
+    return(data.frame(UTM_code = UTM_code))
+  }
+  # Apply latlong2UTM_fct to all plots if necessary
+  if(!is.null(longlat)) {
+    UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
+  }
+  
   
   # Dividing plots   -----------------------------------------------------------
   
@@ -192,7 +216,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     plot_grid <- plot_grid[, sort_rows(.SD), by=subplot_ID]
     
     # Transformation of relative grid coordinates into projected coordinates if provided
-    if(!is.null(proj_coord)) {
+    if(!is.null(proj_coord) | !is.null(longlat)) {
       plot_grid <- cbind(plot_grid,bilinear_interpolation(coord = plot_grid[,c("x_rel","y_rel")] , from_corner_coord = dat[,c("x_rel","y_rel")] , to_corner_coord = dat[,c("x_proj","y_proj")], ordered_corner = T))
     }
     return(plot_grid)

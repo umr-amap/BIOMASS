@@ -1,6 +1,6 @@
-* version 2.2.3
-- Fixed an issue of overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot()  
-
+* version 2.2.4
+- Fixed an issue about overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot()  
+- Added the 'longlat' argument to the divide_plot() function to allow the use of geographic coordinates (instead of projected coordinates)
 
 * version 2.2.3
 - Added 3 dataset to the package (NouraguesTrees, NouraguesCoords and NouraguesPlot201) and removed KarnatakaForest

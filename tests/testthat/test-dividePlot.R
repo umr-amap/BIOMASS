@@ -13,6 +13,7 @@ test_that("divide_plot error", {
   expect_error(divide_plot(as.matrix(corner_data), c("x_rel","y_rel"), grid_size = 25), "corner_data must a data frame or a data frame extension")
   expect_error(divide_plot(corner_data, rel_coord = c("Xfield","Yfield")), "column names provided by rel_coord are not found in corner_data")
   expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("Xutm","Yutm")), "column names provided by proj_coord are not found in corner_data")
+  expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("Xutm","Yutm")), "column names provided by longlat are not found in corner_data")
   expect_error(divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield","Yfield"), grid_size = c(25,25,25)), "you must apply yourself the function for each plot")
   
   expect_error(divide_plot(corner_data = NouraguesCoords, c("Xfield","Yfield"), grid_size = 25), "You must provide corner_plot_ID if you have more than one plot in your data")
@@ -79,6 +80,11 @@ test_that("divide_plot with projected coordinates", {
                                y_proj=c(451650.5,451606.4,451582.6,451624.2)),
                     tol = 1e-5)
 
+  # Test with longlat :
+  corner_data[c("long","lat")] <- as.data.frame( proj4::project(corner_data[c("x_proj","y_proj")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
+  subplots_longlat <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("long","lat"), grid_size = 50)
+  expect_equal(subplots, subplots_longlat)
+  
   # Test multiple plots
   multiple_subplots <- divide_plot(NouraguesCoords, rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), grid_size = 50, corner_plot_ID = "Plot")
   #ggplot(multiple_subplots,aes(x=x_proj,y=y_proj,label=subplot_ID)) + geom_point() + geom_text(position = position_jitter()) + coord_equal()
@@ -105,3 +111,4 @@ test_that("divide_plot with tree coordinates", {
 
 
 })
+

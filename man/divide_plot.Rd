@@ -8,6 +8,7 @@ divide_plot(
   corner_data,
   rel_coord,
   proj_coord = NULL,
+  longlat = NULL,
   grid_size,
   tree_data = NULL,
   tree_coords = NULL,
@@ -22,7 +23,9 @@ divide_plot(
 
 \item{rel_coord}{A character vector of length 2,  specifying the column names (resp. x, y) of the corner relative coordinates.}
 
-\item{proj_coord}{A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
+\item{proj_coord}{(optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
+
+\item{longlat}{(optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).}
 
 \item{grid_size}{A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
