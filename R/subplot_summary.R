@@ -105,7 +105,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   
   sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_ID"), function(dat) { #dat = split(corner_dat, by = "subplot_ID")[[1]]
     
-    # creating polygon
+    # creating polygon 
     mat <- dat[, .(x_proj, y_proj)]
     mat <- as.matrix(rbind(mat, mat[1, ]))
     subplot_polygon <- sf::st_polygon(list(mat))
