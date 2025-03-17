@@ -18,15 +18,20 @@
 #' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
 #' @param centred_grid When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.
 #'
-#' @return If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#' @return If `tree_data` isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `corner_plot_ID`: If dealing with multiple plots : the plot code
 #'   - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
 #'   - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
 #'   - `x_proj` and `y_proj` :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 #'   
-#'   If tree_data is provided, returns a list containing : 
+#'   If `tree_data` is provided, returns a list containing : 
 #'   - the previous data-frame 
 #'   - the tree_data data-frame with the subplot_ID of each tree in the last column 
+#'   
+#'   If `longlat` is provided, returns a list containing : 
+#'   - the previous data-frame/list 
+#'   - `UTM_code`: a data.frame containing the UTM code of the corner GPS coordinates for each plot
+#'   
 #'
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
@@ -225,7 +230,19 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   # Apply divide_plot_fct to all plots
   sub_corner_coord <- corner_dt[, divide_plot_fct(.SD, grid_size), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
   
-  # Assigning trees to subplots -------------------------------------------------------------
+  
+  # Retrieving geographic coordinates ------------------------------------------
+  if(!is.null(longlat)) {
+    GPS_coord_fct <- function(dat) { # dat = sub_corner_coord
+      gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$corner_plot_ID == unique(dat$corner_plot_ID)], inverse = TRUE) )
+      sub_corner_coord[corner_plot_ID %in% dat$corner_plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
+    }
+    sub_corner_coord[, GPS_coord_fct(.SD), by = corner_plot_ID, .SDcols = colnames(sub_corner_coord)]
+  }
+  
+  
+  
+  # Assigning trees to subplots ------------------------------------------------
   
   if(!is.null(tree_data)) {
     
@@ -267,12 +284,30 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     sub_corner_coord[ , c("subplot_ID","corner_plot_ID") := list(paste0("subplot",subplot_ID),NULL)]
   }
   
-  if(is.null(tree_data)) {
-    output <- data.frame(sub_corner_coord)
-  } else {
-    output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
-                   tree_data = data.frame(tree_dt))
+  if(is.null(tree_data)) { # tree_data absent
+    if (is.null(longlat)) { # geographic coordinates absent
+      output <- data.frame(sub_corner_coord)
+    } else { # geographic coordinates present
+      if(all(UTM_code[,corner_plot_ID]=="")) { # single plot
+        UTM_code$corner_plot_ID <- NULL
+      }
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     UTM_code = UTM_code)  
+    }
+  } else { # tree_data present
+    if (is.null(longlat)) { # geographic coordinates absent
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     tree_data = data.frame(tree_dt))
+    } else { # geographic coordinates present
+      if(all(UTM_code[,corner_plot_ID]=="")) { # single plot
+        UTM_code$corner_plot_ID <- NULL 
+      }
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     tree_data = data.frame(tree_dt),
+                     UTM_code = UTM_code)  
+    }
+    
   }
-
+  
   return(output)
 }
