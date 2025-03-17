@@ -42,7 +42,7 @@ divide_plot(
 \item{centred_grid}{When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.}
 }
 \value{
-If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+If \code{tree_data} isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
@@ -50,10 +50,16 @@ If tree_data isn't provided, returns a data-frame containing as many rows as the
 \item \code{x_proj} and \code{y_proj} :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 }
 
-If tree_data is provided, returns a list containing :
+If \code{tree_data} is provided, returns a list containing :
 \itemize{
 \item the previous data-frame
 \item the tree_data data-frame with the subplot_ID of each tree in the last column
+}
+
+If \code{longlat} is provided, returns a list containing :
+\itemize{
+\item the previous data-frame/list
+\item \code{UTM_code}: a data.frame containing the UTM code of the corner GPS coordinates for each plot
 }
 }
 \description{

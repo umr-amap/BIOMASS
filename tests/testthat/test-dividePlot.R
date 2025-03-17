@@ -83,7 +83,8 @@ test_that("divide_plot with projected coordinates", {
   # Test with longlat :
   corner_data[c("long","lat")] <- as.data.frame( proj4::project(corner_data[c("x_proj","y_proj")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
   subplots_longlat <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("long","lat"), grid_size = 50)
-  expect_equal(subplots, subplots_longlat)
+  expect_equal(subplots, subplots_longlat$sub_corner_coord[,1:5])
+  expect_equal(subplots_longlat$sub_corner_coord[1,6:7] , data.frame(long = -52.68448, lat = 4.08504), tolerance = 1e-06)
   
   # Test multiple plots
   multiple_subplots <- divide_plot(NouraguesCoords, rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), grid_size = 50, corner_plot_ID = "Plot")
