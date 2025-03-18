@@ -8,7 +8,8 @@
 #' 
 #' @param corner_data A data frame, data frame extension, containing the plot corner coordinates. Typically, the output `$corner_coord` of the [check_plot_coord()] function.
 #' @param rel_coord A character vector of length 2,  specifying the column names (resp. x, y) of the corner relative coordinates.
-#' @param proj_coord A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param proj_coord (optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
+#' @param longlat (optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
 #' @param grid_size A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
 #' @param tree_data A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).
 #' @param tree_coords A character vector of length 2, specifying the column names of the relative coordinates of the trees.
@@ -17,15 +18,20 @@
 #' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
 #' @param centred_grid When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.
 #'
-#' @return If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#' @return If `tree_data` isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `corner_plot_ID`: If dealing with multiple plots : the plot code
 #'   - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
 #'   - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
 #'   - `x_proj` and `y_proj` :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 #'   
-#'   If tree_data is provided, returns a list containing : 
+#'   If `tree_data` is provided, returns a list containing : 
 #'   - the previous data-frame 
 #'   - the tree_data data-frame with the subplot_ID of each tree in the last column 
+#'   
+#'   If `longlat` is provided, returns a list containing : 
+#'   - the previous data-frame/list 
+#'   - `UTM_code`: a data.frame containing the UTM code of the corner GPS coordinates for each plot
+#'   
 #'
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
@@ -78,7 +84,7 @@
 #' head(nouragues_subplots$sub_corner_coord)
 #' head(nouragues_subplots$tree_data)
  
-divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
+divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
   
   # Checking arguments ---------------------------------------------------------
   
@@ -93,6 +99,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   }
   if (!is.null(proj_coord) && !any(proj_coord %in% names(corner_data))) {
     stop("column names provided by proj_coord are not found in corner_data")
+  }
+  if (!is.null(longlat) && !any(longlat %in% names(corner_data))) {
+    stop("column names provided by longlat are not found in corner_data")
   }
   if(!length(grid_size) %in% c(1,2)) {
     stop("The length of grid_size must be equal to 1 or 2\nIf you want to divide several plots with different grid sizes, you must apply yourself the function for each plot")
@@ -133,6 +142,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   if(!is.null(proj_coord)) {
     setnames(corner_dt, old = proj_coord, new = c("x_proj","y_proj"))
   }
+  if(!is.null(longlat)) {
+    setnames(corner_dt, old = longlat, new = c("long","lat"))
+  }
   
   if(!is.null(corner_plot_ID)) {
     setnames(corner_dt, old = corner_plot_ID, new = "corner_plot_ID")
@@ -154,6 +166,23 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   
   corner_dt <- corner_dt[, sort_rows(.SD), by = corner_plot_ID]
 
+  
+  # Transform the geographic coordinates into UTM coordinates ------------------
+  
+  latlong2UTM_fct <- function(dat) { # dat = corner_dt
+    proj_coord <- latlong2UTM(dat[, c("long","lat")])
+    UTM_code <- unique(proj_coord[, "codeUTM"])
+    if(length(UTM_code)>1) {
+      stop(paste(unique(dat$plot_ID), "More than one UTM zone are detected. This may be due to an error in the long/lat coordinates, or if the parcel is located right between two UTM zones. In this case, please convert yourself your long/lat coordinates into any projected coordinates which have the same dimension than your local coordinates"))
+    }
+    corner_dt[corner_plot_ID %in% dat$corner_plot_ID, c("x_proj", "y_proj") := list(x_proj = proj_coord$X, y_proj = proj_coord$Y)]
+    return(data.frame(UTM_code = UTM_code))
+  }
+  # Apply latlong2UTM_fct to all plots if necessary
+  if(!is.null(longlat)) {
+    UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
+  }
+  
   
   # Dividing plots   -----------------------------------------------------------
   
@@ -192,7 +221,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     plot_grid <- plot_grid[, sort_rows(.SD), by=subplot_ID]
     
     # Transformation of relative grid coordinates into projected coordinates if provided
-    if(!is.null(proj_coord)) {
+    if(!is.null(proj_coord) | !is.null(longlat)) {
       plot_grid <- cbind(plot_grid,bilinear_interpolation(coord = plot_grid[,c("x_rel","y_rel")] , from_corner_coord = dat[,c("x_rel","y_rel")] , to_corner_coord = dat[,c("x_proj","y_proj")], ordered_corner = T))
     }
     return(plot_grid)
@@ -201,7 +230,19 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
   # Apply divide_plot_fct to all plots
   sub_corner_coord <- corner_dt[, divide_plot_fct(.SD, grid_size), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
   
-  # Assigning trees to subplots -------------------------------------------------------------
+  
+  # Retrieving geographic coordinates ------------------------------------------
+  if(!is.null(longlat)) {
+    GPS_coord_fct <- function(dat) { # dat = sub_corner_coord
+      gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$corner_plot_ID == unique(dat$corner_plot_ID)], inverse = TRUE) )
+      sub_corner_coord[corner_plot_ID %in% dat$corner_plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
+    }
+    sub_corner_coord[, GPS_coord_fct(.SD), by = corner_plot_ID, .SDcols = colnames(sub_corner_coord)]
+  }
+  
+  
+  
+  # Assigning trees to subplots ------------------------------------------------
   
   if(!is.null(tree_data)) {
     
@@ -243,12 +284,30 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, grid_size, tr
     sub_corner_coord[ , c("subplot_ID","corner_plot_ID") := list(paste0("subplot",subplot_ID),NULL)]
   }
   
-  if(is.null(tree_data)) {
-    output <- data.frame(sub_corner_coord)
-  } else {
-    output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
-                   tree_data = data.frame(tree_dt))
+  if(is.null(tree_data)) { # tree_data absent
+    if (is.null(longlat)) { # geographic coordinates absent
+      output <- data.frame(sub_corner_coord)
+    } else { # geographic coordinates present
+      if(all(UTM_code[,corner_plot_ID]=="")) { # single plot
+        UTM_code$corner_plot_ID <- NULL
+      }
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     UTM_code = UTM_code)  
+    }
+  } else { # tree_data present
+    if (is.null(longlat)) { # geographic coordinates absent
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     tree_data = data.frame(tree_dt))
+    } else { # geographic coordinates present
+      if(all(UTM_code[,corner_plot_ID]=="")) { # single plot
+        UTM_code$corner_plot_ID <- NULL 
+      }
+      output <- list(sub_corner_coord = data.frame(sub_corner_coord), 
+                     tree_data = data.frame(tree_dt),
+                     UTM_code = UTM_code)  
+    }
+    
   }
-
+  
   return(output)
 }

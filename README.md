@@ -9,12 +9,12 @@ The `BIOMASS` package allows users to estimate above ground biomass/carbon and i
 The main implemented steps are as follows :
 
 1.  retrieving and correcting tree taxonomy;
-2.  estimating the wood density and its uncertainty;
-3.  constructing height-diameter models;
-4.  estimating the above ground biomass/carbon at the stand level with the associated uncertainty;
+2.  estimating wood density and its uncertainty;
+3.  building height-diameter models;
+4.  estimating above ground biomass/carbon at stand level with associated uncertainty;
 5.  managing tree and plot coordinates.
 
-For more information, see the [paper of Réjou-Méchain et al. (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
+For more information, see [Réjou-Méchain et al. (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
 
 ## Install BIOMASS
 

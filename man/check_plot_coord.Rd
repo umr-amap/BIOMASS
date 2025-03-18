@@ -61,7 +61,7 @@ Returns a list including :
 \item \code{tree_data}: if \code{tree_data} is provided in the arguments of the function, a data frame corresponding to tree_data for which the projected coordinates of the trees (x_proj and y_proj) are added, and also a variable telling if the trees are inside the plot (is_in_plot). The name of the relative tree coordinates are also standardised and renamed to (x_rel and y_rel).
 \item \code{outliers}: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
-\item \code{UTM_code}: if \code{longlat} is provided, a character containing the UTM code of the GPS coordinates
+\item \code{UTM_code}: if \code{longlat} is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
 }
 }
 \description{

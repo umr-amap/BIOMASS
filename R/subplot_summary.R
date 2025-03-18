@@ -73,7 +73,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   if(is.data.frame(subplots)) {
     stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
   }
-  if (is.list(subplots) && (is.null(names(subplots)) || any(names(subplots)!=c("sub_corner_coord","tree_data")))) {
+  if (is.list(subplots) && ( is.null(names(subplots)) || (!"tree_data" %in% names(subplots)) ) ) {
     stop("subplots argument must be the output of the divide_plot_function, with a non-null tree_data argument")
   }
   if(any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
@@ -95,6 +95,7 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   # Data processing ------------------------------------------------------------
   corner_dat <- data.table(subplots$sub_corner_coord)
   tree_summary <- data.table(subplots$tree_data)[!is.na(subplot_ID), fun(get(value), ...) , by=c("subplot_ID")]
+
   if(any(duplicated(tree_summary$subplot_ID))) {
     stop("the function provided using `fun` must return a single value")
   }
@@ -102,9 +103,9 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
                  sapply(strsplit(tree_summary$subplot_ID,"_"),
                         function(x) paste(x[-((length(x)-1) : length(x))],collapse="_"))] # instead of function(x) x[1] in case plot_id contains any "_"
   
-  sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_ID"), function(dat) {
+  sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_ID"), function(dat) { #dat = split(corner_dat, by = "subplot_ID")[[1]]
     
-    # creating polygon
+    # creating polygon 
     mat <- dat[, .(x_proj, y_proj)]
     mat <- as.matrix(rbind(mat, mat[1, ]))
     subplot_polygon <- sf::st_polygon(list(mat))
@@ -121,7 +122,25 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
                            paste(value, "summary", sep = "_"),
                            paste(value, "summary_per_ha", sep = "_"))
     
+    # replacing projected coordinates with geographic coordinates if exist
+    if( !is.null(subplots$UTM_code) ) {
+      mat <- dat[, .(long, lat)]
+      mat <- as.matrix(rbind(mat, mat[1, ]))
+      subplot_polygon <- sf::st_polygon(list(mat))
+    }
+    
+    # converting subplot_polygon from a POLYGON to a simple feature collection of 1 POLYGON
     sf_polygon <- sf::st_sf(list(subplot_polygon),df_polygon)
+    
+    # Setting CRS if geographic coordinates
+    if( !is.null(subplots$UTM_code) ) {
+      if(is.null(subplots$UTM_code$corner_plot_ID) ) { # if one plot with no plot ID
+        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code
+      } else { # if plot IDs
+        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code[subplots$UTM_code$corner_plot_ID == unique(dat$corner_plot_ID)]
+      }
+    }
+    
     sf::st_geometry(sf_polygon) <- "sf_subplot_polygon"
     sf_polygon
   }))
