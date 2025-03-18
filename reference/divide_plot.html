@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,7 @@
 <span>  <span class="va">corner_data</span>,</span>
 <span>  <span class="va">rel_coord</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  longlat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">grid_size</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_coords <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -69,7 +70,11 @@
 
 
 <dt id="arg-proj-coord">proj_coord<a class="anchor" aria-label="anchor" href="#arg-proj-coord"></a></dt>
-<dd><p>A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.</p></dd>
+<dd><p>(optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.</p></dd>
+
+
+<dt id="arg-longlat">longlat<a class="anchor" aria-label="anchor" href="#arg-longlat"></a></dt>
+<dd><p>(optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).</p></dd>
 
 
 <dt id="arg-grid-size">grid_size<a class="anchor" aria-label="anchor" href="#arg-grid-size"></a></dt>
@@ -102,12 +107,14 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If tree_data isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
+    <p>If <code>tree_data</code> isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :</p><ul><li><p><code>corner_plot_ID</code>: If dealing with multiple plots : the plot code</p></li>
 <li><p><code>subplot_ID</code>: The automatically generated subplot code, using the following rule : subplot_X_Y</p></li>
 <li><p><code>x_rel</code> and <code>y_rel</code> : the relative X-axis and Y-axis coordinates of subplots corners.</p></li>
 <li><p><code>x_proj</code> and <code>y_proj</code> :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners</p></li>
-</ul><p>If tree_data is provided, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
+</ul><p>If <code>tree_data</code> is provided, returns a list containing :</p><ul><li><p>the previous data-frame</p></li>
 <li><p>the tree_data data-frame with the subplot_ID of each tree in the last column</p></li>
+</ul><p>If <code>longlat</code> is provided, returns a list containing :</p><ul><li><p>the previous data-frame/list</p></li>
+<li><p><code>UTM_code</code>: a data.frame containing the UTM code of the corner GPS coordinates for each plot</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
