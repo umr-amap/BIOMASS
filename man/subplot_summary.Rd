@@ -16,18 +16,18 @@ subplot_summary(
 \arguments{
 \item{subplots}{output of the \code{\link[=divide_plot]{divide_plot()}} function}
 
-\item{value}{a character indicating the column in subplots$tree_data (a tree metric) to be summarised}
+\item{value}{a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)}
 
 \item{draw_plot}{a logical indicating whether the plot design should be displayed}
 
-\item{per_ha}{a logical indicating whether the metric summary should be per hectare}
+\item{per_ha}{a logical indicating whether the metric summary should be per hectare (or, if summarising several metrics at once: a logical vector corresponding to each metric (see examples))}
 
-\item{fun}{the function to be applied}
+\item{fun}{the function to be applied (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))}
 
 \item{...}{optional arguments to fun}
 }
 \value{
-a list containg the following elements :
+a list containing the following elements :
 \itemize{
 \item \code{tree_summary} : a summary of the metric per subplot
 \item \code{polygon} : an sf object : simple feature collection of the subplot's polygon
@@ -78,7 +78,29 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
   # Sum summary (by default)
   nouragues_sum <- subplot_summary(nouragues_subplots , value = "D", draw_plot = FALSE)
   nouragues_sum$tree_summary
-  subplots_201_sum$plot_design
+  nouragues_sum$plot_design
+}
+
+\dontrun{
+  data("NouraguesCoords")
+  nouragues_subplots <- suppressWarnings(
+  divide_plot(
+     corner_data = NouraguesCoords,
+    rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
+    corner_plot_ID = "Plot",
+    grid_size = 50,
+    tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
+    tree_plot_ID = "Plot"))
+  # Sum summary (by default)
+  nouragues_mult <- subplot_summary(nouragues_subplots , 
+                                   value = c("D","D","x_rel"),
+                                   fun = list(D=sum,D=mean,x_rel=mean),
+                                   per_ha = c(T,F,F),
+                                   draw_plot = FALSE)
+  nouragues_mult$tree_summary
+  nouragues_mult$plot_design$`201`[[1]]
+  nouragues_mult$plot_design$`201`[[2]]
+  nouragues_mult$plot_design$`201`[[3]]
 }
 
 }
