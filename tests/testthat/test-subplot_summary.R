@@ -44,8 +44,9 @@ test_that("subplot_summary", {
   corner_data[c("long","lat")] <- as.data.frame( proj4::project(corner_data[c("x_proj","y_proj")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
   subplots_longlat <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("long","lat"), grid_size = 25, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
   res <- suppressMessages(subplot_summary(subplots_longlat, value = "D", draw_plot = F))
-  vdiffr::expect_doppelganger("subplot-summary-geographic-coords", res$plot_design)
-
+  # vdiffr::expect_doppelganger("subplot-summary-geographic-coords", res$plot_design) # this test works for ubuntu checks but not for windows and MAC
+  expect_equivalent(res$polygon$sf_subplot_polygon[[1]][[1]][1:4,], as.matrix(subplots_longlat$sub_corner_coord[1:4,c("long","lat")]) )
+  
   # Test when there isn't a tree in a subplot
   subplots_less_trees <- subplots
   subplots_less_trees$tree_data <- subplots_less_trees$tree_data[subplots_less_trees$tree_data$subplot_ID != "subplot_0_1",]
