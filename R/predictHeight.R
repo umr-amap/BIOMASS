@@ -24,14 +24,28 @@
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   ### From the diameter and the model, compute (with or without error) the height
 
-  method <- model$method
+  if(!is.null(plot)) { # if 'plot' is provided 
+
+    if(! "method" %in% names(model[[1]]) ) { # Check that model is a list containing each stand-specific model
+      stop("The 'plot' argument is used to create stand-specific local H-D models but your 'model' argument contains only one model.")
+    }
+    
+    if( any( ! names(model) %in% unique(plot) ) ) { # stop if 'plot' does'nt contain all stand-specific HD models
+      stop(paste("The 'model' argument contains the following stand specific HD models which are not present in the 'plot' argument:", paste(names(model)[! names(model) %in% unique(plot)], collapse = ", ")))
+    }
+    # get the method used to build the models
+    method <- unique(sapply(model, function(x) x$method))
+  } else { # if plot is not provided
+    method <- model$method
+  }
+  
   logmod <- any(grepl("log", method))
 
-  if (is.null(plot) && length(model[[1]]) != 2) {
+  if (is.null(plot) && "method" %in% names(model[[1]]) ) {
     stop("The argument model contains different HD models, use the argument plot to assign a given model to the trees")
   }
 
-  if (!is.null(plot) && length(model[[1]]) != 2) {
+  if (!is.null(plot) && "method" %in% names(model[[1]]) ) {
     if (length(plot) == 1) {
       plot <- rep(plot, length(D))
     }
@@ -42,14 +56,14 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
 
     if (any(!plot %in% names(model))) {
       stop(
-        "Cannot find a HD model corresponding to ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", ")
+        paste("Cannot find a HD model corresponding to ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", "))
       )
     }
 
 
-    data <- data.table(D = D, plot = plot)
+    data <- data.table(D = D, plot = as.character(plot))
 
-    data[, H := predictHeight(D, model[[unique(plot)]], err), by = plot]
+    data[, H := predictHeight(D, model = model[[unique(plot)]], err), by = plot]
 
     return(data[, H])
   }

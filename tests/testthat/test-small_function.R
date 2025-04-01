@@ -158,7 +158,7 @@ test_that("predictHeigth with plot argument", {
     useWeight = TRUE
   )
 
-  expect_failure(expect_error(predictHeight(D, HDmodel, plot = "Plot1")))
+  expect_error(predictHeight(D, HDmodel, plot = "Plot1"), "The 'plot' argument is used to create stand-specific local H-D models but your 'model' argument contains only one model.")
 
   HDmodel <- modelHD(
     D = NouraguesHD$D,
@@ -169,22 +169,21 @@ test_that("predictHeigth with plot argument", {
   )
 
   expect_error(predictHeight(D, HDmodel), "model")
-  expect_length(predictHeight(D, HDmodel, plot = "Plot1"), length(D))
-  expect_failure(expect_equal(
-    predictHeight(D, HDmodel, plot = "Plot1"),
-    predictHeight(D, HDmodel, plot = "Plot2")
-  ))
-  expect_error(predictHeight(D, HDmodel, plot = "AAA"), "Cannot")
+  
+  expect_error(predictHeight(D, HDmodel, plot = "Plot1"), "The 'model' argument contains the following stand specific HD models which are not present in the 'plot' argument: Plot2")
+  
   expect_error(predictHeight(D, HDmodel, plot = c("Plot1", "Plot2")), "length")
 
   plot <- rep(c("Plot1", "Plot2"), length.out = length(D))
 
-  Res <- predictHeight(D, HDmodel, plot = plot)
-  expect_failure(expect_equal(Res, predictHeight(D, HDmodel, plot = "Plot1")))
-  expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot1"])
-  expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot2"])
-  expect_failure(expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot1"]))
-  expect_failure(expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot2"]))
+  Res <- predictHeight(D = NouraguesHD$D, model = HDmodel, plot =  NouraguesHD$plotId)
+  expect_equal(Res[1:2], c(15.40687,15.49727), tolerance = 1e-5)
+  
+  #expect_failure(expect_equal(Res, predictHeight(D, HDmodel, plot = "Plot1")))
+  # expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot1"])
+  # expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot2"])
+  # expect_failure(expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot1"]))
+  # expect_failure(expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot2"]))
 })
 
 

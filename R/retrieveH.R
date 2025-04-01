@@ -85,7 +85,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
   # the length of the plot is tested in predictHeight
   # the names of the plot and the names of the model is tested in predictHeight
   if (!is.null(plot) && is.null(model)) {
-    stop("The 'plot' vector must be with 'model' argument")
+    stop("The 'plot' argument is used to create stand-specific local H-D models. So it must be used in association with the 'model' argument.")
   }
 
 

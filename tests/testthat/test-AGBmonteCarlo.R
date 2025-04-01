@@ -289,13 +289,6 @@ test_that("With the plot value", {
   AGB <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = NouraguesHD$plotId)
   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
 
-  set.seed(2)
-  AGB_plot1 <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot1")
-  expect_failure(expect_equal(AGB_plot1, AGB))
+  expect_error(AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot1"), "The 'model' argument contains the following stand specific HD models which are not present in the 'plot' argument: Plot2")
 
-  set.seed(2)
-  AGB_plot2 <- AGBmonteCarlo(D, WD$meanWD, WD$sdWD, HDmodel = HDmodel, n = nIter, plot = "Plot2")
-  expect_failure(expect_equal(AGB_plot2, AGB))
-
-  expect_failure(expect_equal(AGB_plot1, AGB_plot2))
 })
