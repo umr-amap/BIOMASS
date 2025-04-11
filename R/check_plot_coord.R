@@ -146,11 +146,11 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if (nrow(unique(corner_dt[,..rel_coord])) !=4 & is.null(plot_ID)) {
     stop("If multiple plots are present in corner_data, then the argument plot_ID is required.")
   }
-  if (!is.null(plot_ID) && !any(plot_ID==names(corner_dt))) {
-    stop(paste(plot_ID,"is not found in corner_data column names."))
-  }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
     stop("The argument tree_plot_ID is required if plot_ID is provided.")
+  }
+  if (!is.null(plot_ID) && !any(plot_ID==names(corner_dt))) {
+    stop(paste(plot_ID,"is not found in corner_data column names."))
   }
   if(!is.null(tree_data) && !is.null(tree_plot_ID) && any(! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])) ) {
     warning( paste( "These ID's are found in tree_plot_ID but not in plot_ID :" , paste(unique(tree_data[[tree_plot_ID]])[! unique(tree_data[[tree_plot_ID]]) %in% unique(corner_dt[[plot_ID]])] , collapse = " "),"\n") )

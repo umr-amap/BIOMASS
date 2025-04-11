@@ -93,14 +93,12 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
 
   ### function summary --------------------------------------------------------
 
-  mySummary <- function(x, matrix) {
+  mySummary <- function(x, matrix) { # x = row numbers of the trees for the current plot ; matrix = AGB_val
     
-    # deal with plots with only one tree individual
-    if(!is.null(nrow(matrix[x, ]))){
-    resAGB <- colSums(matrix[x, ], na.rm = TRUE)
-    }else{
-      resAGB <-matrix[x, ]
-    }
+    current_plot_matrix <- as.matrix(matrix[x,]) # when summaryByPlot is called with AGB_val = computeAGB(), matrix is not a matrix anymore but a vector and we want a one-column matrix (instead of 1000 columns when AGB_val = AGBmonteCarlo()$AGB_simu)
+    
+    resAGB <- colSums(current_plot_matrix, na.rm = TRUE)
+    
     
     # if there is trees without label
     if (nrow(indice_tree) != 0) {
@@ -131,7 +129,7 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
       geom_point(size=2) + 
       geom_errorbar(aes(ymin=Cred_2.5, ymax=Cred_97.5), width=.2) +
       labs(x = "", title = "AGB by plot") +
-      scale_x_discrete(breaks = AGB_plot$i, labels = AGB_plot$plot, ) +
+      scale_x_discrete(breaks = AGB_plot$i, labels = AGB_plot$plot) +
       theme_minimal())
     AGB_plot$i <- NULL
     
