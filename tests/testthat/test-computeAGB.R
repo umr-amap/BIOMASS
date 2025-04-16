@@ -16,12 +16,11 @@ test_that("ComputeAGB", {
   H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE))
   
   expect_error(computeAGB(D, WD$meanWD[1:65]), "different lenghts")
-
   expect_error(computeAGB(D, WD$meanWD), "You need to provide either H or coord")
-
   expect_length(computeAGB(D, WD$meanWD, H = H$H), 100)
-
   expect_error(computeAGB(D, WD$meanWD, H$H[1:50]))
+  expect_error(computeAGB(D, WD$meanWD, H$H, coord = coord), "Both height and coordinates are providen.")
+  expect_error(computeAGB(D, WD$meanWD, coord = "blop"), "coord should be either")
 
   H1 <- H$H
   H1[1] <- NA
