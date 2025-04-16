@@ -45,6 +45,16 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
   }
 }
 
+test_that("errors and warnings", {
+  expect_error(modelHD(D, 1:100) , "do not have the same length")
+  expect_error(modelHD(D, 1:10) , "(less than 15 non NA)")
+  expect_error(modelHD(D, H, method = "toto") , "Chose your method among those ones")
+  expect_error(modelHD(D, H, useWeight = "") , "UseWeight argument must be a boolean")
+  expect_error(modelHD(D, H, drawGraph = "") , "drawGraph argument must be a boolean")
+  expect_error(modelHD(D, H, drawGraph = "") , "drawGraph argument must be a boolean")
+  expect_warning(suppressMessages(modelHD(c(1,2,rep(3,13)), rnorm(15,10))) , "Be careful, your diameter values are not evenly distributed.")
+})
+
 test_that("NA characters", {
   #skip_on_cran()
   H1 <- H
@@ -105,3 +115,7 @@ test_that("With the plot arguments", {
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
 })
 
+test_that("snapshot of plot", {
+  toto <- modelHD(D, H, method = "log2", useWeight = T, drawGraph = T)
+  vdiffr::expect_doppelganger("plot_modelHD", modelHD(D, H, method = "log2", useWeight = T, drawGraph = FALSE)$fitPlot )
+})

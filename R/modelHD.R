@@ -188,15 +188,15 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
 
 
-  # function to draw the beining of the graph
+  # function to draw the base of the graph
   drawPlotBegin <- function(givenMethod = FALSE, plotId) {
     main_title <- ifelse(givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod))
     
     starting_plot <- ggplot(data = Hdata, mapping = aes(x=D, y=H)) + 
       geom_point(col="grey50") + 
       labs(title = main_title, x="D (cm)", y="H (m)") + 
-      #coord_trans(x = "log", y = "log") + theme_minimal()
-      scale_x_continuous(transform = "log10", n.breaks = 8, )+ scale_y_continuous(transform = "log10", n.breaks = 8) + 
+      scale_x_continuous(transform = "log10", n.breaks = 8, ) +
+      scale_y_continuous(transform = "log10", n.breaks = 8) + 
       theme_minimal() + theme(plot.title = element_text(hjust = 0.5))
     return(starting_plot)
   }
@@ -207,8 +207,16 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   Hdata <- na.omit(Hdata) # Remove NA values
   weight <- NULL
 
+  # Warn if there is less than 2 diameter values in the following quantile intervals : [0-0.5], ]0.5;0.75] and ]0.75,1]
+  if ( any( table(findInterval(D, c(-1, quantile(D, probs = c(0.5, 0.75)), max(D) + 1))) < 3 ) ) {
+    if(is.null(plot)) {
+      warning("Be careful, your diameter values are not evenly distributed. You should check their distribution.")
+    } else {
+      warning(paste("Be careful, in plot", unique(plot), "your diameter values are not evenly distributed. You should check their distribution."))
+    }
+  }
+  
   # Vector of diameter used only for visualisation purpose
-  #D_Plot <- data.frame(D = Hdata[, seq(floor(min(D)), ceiling(max(D)), 0.5)])
   D_Plot <- data.frame(D = Hdata[, 10^seq(log10(floor(min(D))), log10(ceiling(max(D))), l=100 )])
   
   # If the measures need to be weighted
