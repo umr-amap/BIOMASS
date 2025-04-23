@@ -25,7 +25,7 @@ test_that("summary by plot", {
 
   expect_error(
     summaryByPlot(as.data.frame(resultMC$AGB_simu), plot),
-    "The AGB_val must be a matrix you have for the result of the function 'AGBmonteCarlo', or just the result of the function."
+    "AGB_val must be either the output of AGBmonteCarlo()"
   )
   expect_error(
     summaryByPlot(resultMC$AGB_simu, c(1,2)),

@@ -53,12 +53,15 @@ summaryByPlot <- function(AGB_val, plot, drawPlot = FALSE) {
 
   ##### Checking arguments -----------------------------------------------------
   if (is.list(AGB_val)) {
-    AGB_val <- AGB_val$AGB_simu
+    if(!is.null(AGB_val$AGB_simu)) { # if AGB_val is the output of AGBmonterCarlo
+      AGB_val <- AGB_val$AGB_simu
+    } else if (!is.null(AGB_val$AGB_pred)) { # in BiomassApp: AGB_val can be a list of 1 element named 'AGB_pred' and containing the output of compute_AGB() in a matrix form
+      AGB_val <- AGB_val$AGB_pred
+    }
   }
   if (!is.matrix(AGB_val) && !is.vector(AGB_val)) {
     stop(
-      "The AGB_val must be a matrix you have for the result of the function ",
-      "'AGBmonteCarlo', or just the result of the function. "
+      "AGB_val must be either the output of AGBmonteCarlo() or a matrix containing individual AGB (one row per tree)."
     )
   }
   if (length(plot) != ifelse(is.matrix(AGB_val), nrow(AGB_val), length(AGB_val))) {
