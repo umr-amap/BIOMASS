@@ -70,7 +70,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-04-16</h4>
+            <h4 data-toc-skip class="date">2025-04-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -513,29 +513,41 @@ associated with tree height measurement errors, using the
 <code>errH</code> argument.</p>
 <ul>
 <li>
-<strong>If tree heights have been estimated via the “Feldspausch” or
-the “Chave” method</strong>, the user can provide the output of the
-<code><a href="../reference/retrieveH.html">retrieveH()</a></code> function for the <code>errH</code>
+<strong>If tree heights have been estimated via a local
+HD-model</strong>, instead of the providing <code>errH</code> and
+<code>H</code> arguments, the user has to provide the output of the
+<code><a href="../reference/modelHD.html">modelHD()</a></code> function using the <code>modelHD</code>
 argument:</li>
 </ul>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">H_feld_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
-<span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, H <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_model</span>,</span>
-<span>  errH <span class="op">=</span> <span class="va">H_feldspausch</span><span class="op">$</span><span class="va">RSE</span>,</span>
+<code class="sourceCode R"><span><span class="va">H_model_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
+<span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, <span class="co"># we do not provide H</span></span>
+<span>  HDmodel <span class="op">=</span> <span class="va">HDmodel</span>, <span class="co"># but we provide HDmodel</span></span>
 <span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <ul>
 <li>
-<strong>If tree heights have been estimated via a local
-HD-model</strong>, instead of the <code>errH</code> and the
-<code>H</code> arguments, the user can provide the output of the
-<code><a href="../reference/modelHD.html">modelHD()</a></code> function using the <code>modelHD</code>
-argument.</li>
+<strong>If tree heights have been estimated via the “Feldspausch”
+method</strong>, the user has to provide the output of the
+<code><a href="../reference/retrieveH.html">retrieveH()</a></code> function for the <code>errH</code>
+argument:</li>
 </ul>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">H_model_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">H_feld_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
+<span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>,</span>
+<span>  H <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_feldspausch</span>, errH <span class="op">=</span> <span class="va">H_feldspausch</span><span class="op">$</span><span class="va">RSE</span>, <span class="co"># we provide H and errH</span></span>
+<span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>
+<strong>If tree heights have been estimated via the “Chave”
+method</strong>, the user has to provide the coordinates of the area (or
+of the trees) using the <code>coord</code> argument:</li>
+</ul>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">H_chave_error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, <span class="co"># we do not provide H</span></span>
-<span>  HDmodel <span class="op">=</span> <span class="va">HDmodel</span>, <span class="co"># but we provide HDmodel</span></span>
+<span>  coord <span class="op">=</span> <span class="va">coords</span>, <span class="co"># but we provide the vector of median coordinates of the plots</span></span>
 <span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -543,7 +555,7 @@ argument.</li>
 <h3 id="all-together-and-agb-visualisation-of-plots">All together and AGB visualisation of plots<a class="anchor" aria-label="anchor" href="#all-together-and-agb-visualisation-of-plots"></a>
 </h3>
 <p>Let’s propagate all sources of errors using the HD-model:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">error_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>, <span class="co"># we do not provide H</span></span>
 <span>  HDmodel <span class="op">=</span> <span class="va">HDmodel</span>, <span class="co"># but we provide HDmodel</span></span>
@@ -567,7 +579,7 @@ argument.</li>
 standard deviation and credibility intervals of the total AGB of the
 dataset but nothing about the AGB at the plot level. To do this, you can
 use the <code><a href="../reference/summaryByPlot.html">summaryByPlot()</a></code> function:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AGB_by_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summaryByPlot.html">summaryByPlot</a></span><span class="op">(</span>AGB_val <span class="op">=</span> <span class="va">error_prop</span><span class="op">$</span><span class="va">AGB_simu</span>, plot <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span>, drawPlot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_BIOMASS_files/figure-html/summaryByPlot-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Finally, the last element (<code>$AGB_simu</code>) of the
@@ -588,7 +600,7 @@ ones, you can proceed as follows:</p>
 <li>Build a vector of H and RSE where we assume an error of 0.5 m on
 directly measured trees</li>
 </ol>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># NouraguesHD contains 163 trees that were not measured</span></span>
 <span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">Hmix</span> <span class="op">&lt;-</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span></span>
 <span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">RSEmix</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
@@ -600,7 +612,7 @@ directly measured trees</li>
 errors (which depend on whether the trees were directly measured or
 estimated)</li>
 </ol>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span><span class="va">NouraguesHD</span><span class="op">$</span><span class="va">genus</span>, <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">species</span><span class="op">)</span></span>
 <span><span class="va">resultMC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">wd</span><span class="op">$</span><span class="va">meanWD</span>, errWD <span class="op">=</span> <span class="va">wd</span><span class="op">$</span><span class="va">sdWD</span>,</span>
