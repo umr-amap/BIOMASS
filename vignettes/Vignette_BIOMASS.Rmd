@@ -286,17 +286,7 @@ WD_error_prop <- AGBmonteCarlo(
 
 The user can provide either a SD value or a vector of SD values associated with tree height measurement errors, using the `errH` argument.
 
-- **If tree heights have been estimated via the "Feldspausch" or the "Chave" method**, the user can provide the output of the `retrieveH()` function for the `errH` argument:
-
-```{r H_feld_error_prop, eval = FALSE}
-H_feld_error_prop <- AGBmonteCarlo(
-  D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
-  errH = H_feldspausch$RSE,
-  Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees)) # no error propagation on D and WD here
-)
-```
-
-- **If tree heights have been estimated via a local HD-model**, instead of the `errH` and the `H` arguments, the user can provide the output of the `modelHD()` function using the `modelHD` argument.
+- **If tree heights have been estimated via a local HD-model**, instead of the providing `errH` and `H` arguments, the user has to provide the output of the `modelHD()` function using the `modelHD` argument: 
 
 ```{r H_model_error_prop}
 H_model_error_prop <- AGBmonteCarlo(
@@ -305,6 +295,27 @@ H_model_error_prop <- AGBmonteCarlo(
   Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees)) # no error propagation on D and WD here
 )
 ```
+
+- **If tree heights have been estimated via the "Feldspausch" method**, the user has to provide the output of the `retrieveH()` function for the `errH` argument:
+
+```{r H_feld_error_prop, eval = FALSE}
+H_feld_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD,
+  H = NouraguesTrees$H_feldspausch, errH = H_feldspausch$RSE, # we provide H and errH
+  Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees)) # no error propagation on D and WD here
+)
+```
+
+- **If tree heights have been estimated via the "Chave" method**, the user has to provide the coordinates of the area (or of the trees) using the `coord` argument:
+
+```{r H_chave_error_prop, eval = FALSE}
+H_chave_error_prop <- AGBmonteCarlo(
+  D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
+  coord = coords, # but we provide the vector of median coordinates of the plots
+  Dpropag = 0 , errWD = rep(0,nrow(NouraguesTrees)) # no error propagation on D and WD here
+)
+```
+
 
 ## All together and AGB visualisation of plots
 
