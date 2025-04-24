@@ -40,7 +40,7 @@ test_that("With the coordinates", {
   expect_is(H, "list")
   expect_length(H, 2)
   expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
+  expect_equal(H$RSE, NA)
   expect_length(H$H, length(D))
   expect_length(H$RSE, 1)
 
