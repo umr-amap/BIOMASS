@@ -1,0 +1,104 @@
+# Workflow derived from https://github.com/r-wasm/actions/tree/v1/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    # Only build on main or master branch
+    branches: [main, master]
+  # Or when triggered manually
+  workflow_dispatch: {}
+
+name: R WASM & {pkgdown} deploy
+
+jobs:
+  rwasmbuild:
+    # Only restrict concurrency for non-PR jobs
+    concurrency:
+      group: r-wasm-${{ github.event_name != 'pull_request' || github.run_id }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      # Build the local R package and structure the CRAN repository
+      - name: Build WASM R packages
+        uses: r-wasm/actions/build-rwasm@v1
+        with:
+          packages: "."
+          repo-path: "_site"
+      
+      # Upload the CRAN repository for use in the next step
+      # Make sure to set a retention day to avoid running into a cap
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rwasmrepo
+          path: |
+            _site
+          retention-days: 1
+
+  pkgdown:
+    runs-on: ubuntu-latest
+    # Add a dependency on the prior job completing
+    needs: rwasmbuild
+    # Required for the gh-pages deployment action
+    environment:
+      name: github-pages
+    # Only restrict concurrency for non-PR jobs
+    concurrency:
+      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      # To download GitHub Packages within action
+      repository-projects: read
+      # For publishing to pages environment
+      pages: write
+      id-token: write
+    steps:
+      # Usual steps for generating a pkgdown website
+      - uses: actions/checkout@v3
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, local::.
+          needs: website
+      # Change the build directory from `docs` to `_site`
+      # For parity with where the R WASM package repository is setup
+      - name: Build site
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, dest_dir = "_site")
+        shell: Rscript {0}
+        
+      # New material ---
+      
+      # Download the built R WASM CRAN repository from the prior step.
+      # Extract it into the `_site` directory
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: rwasmrepo
+          path: _site
+      
+      # Upload a tar file that will work with GitHub Pages
+      # Make sure to set a retention day to avoid running into a cap
+      # This artifact shouldn't be required after deployment onto pages was a success.
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with: 
+          retention-days: 1
+      
+      # Use an Action deploy to push the artifact onto GitHub Pages
+      # This requires the `Action` tab being structured to allow for deployment
+      # instead of using `docs/` or the `gh-pages` branch of the repository
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
