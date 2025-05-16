@@ -1,0 +1,38 @@
+# Workflow derived from https://github.com/r-wasm/actions/tree/v1/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    # Only build on main or master branch
+    branches: [main, master]
+  # Or when triggered manually
+  workflow_dispatch: {}
+
+name: Build WASM R package and Repo
+
+jobs:
+  deploy-cran-repo:
+    # Only restrict concurrency for non-PR jobs
+    concurrency:
+      group: r-wasm-${{ github.event_name != 'pull_request' || github.run_id }}
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build WASM R packages
+        uses: r-wasm/actions/build-rwasm@v1
+        with:
+          packages: "."
+          repo-path: "_site"
+
+      - name: Deploy wasm R packages to GitHub pages 🚀
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          clean: false
+          branch: gh-pages
+          folder: _site
