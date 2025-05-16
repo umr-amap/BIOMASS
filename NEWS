@@ -3,6 +3,8 @@
 - Added the 'longlat' argument to the divide_plot() function to allow the use of geographic coordinates (instead of projected coordinates)
 - Modification of subplot_summary() to enable several metrics to be summarised according to a list of functions
 - Fixed an issue in predictHeight() when the function was called with stand-specific HD models and a non-null plot argument
+- RSE output for Chave's method in retrieveH() now returns NA's instead of 0.243 (which was the RSE of log(H))
+- This version is fully compatible with the shiny application of the package (BIOMASSApp)
 
 * version 2.2.3
 - Added 3 dataset to the package (NouraguesTrees, NouraguesCoords and NouraguesPlot201) and removed KarnatakaForest
