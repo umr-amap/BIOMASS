@@ -33,7 +33,7 @@ jobs:
       # Upload the CRAN repository for use in the next step
       # Make sure to set a retention day to avoid running into a cap
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: rwasmrepo
           path: |
