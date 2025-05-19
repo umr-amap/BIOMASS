@@ -45,7 +45,7 @@ These data do not contain any information on wood density or height of trees. On
 
 # Wood density 
 
-**Wood density** is estimated **from tree taxonomy**, using the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) as a reference. So the first step might be to correct tree taxonomy.
+**Wood density** is estimated **from tree taxonomy**, using the [global wood density database](https://datadryad.org/dataset/doi:10.5061/dryad.234) as a reference. So the first step might be to correct tree taxonomy.
 
 ## Checking and retrieving tree taxonomy
 
@@ -270,7 +270,7 @@ D_error_prop <- AGBmonteCarlo(
 
 ## Wood density error
 
-The `getWoodDensity()` function returns prior standard deviation values associated with each tree wood density using the mean standard deviation of the [global wood density database](https://datadryad.org/stash/dataset/doi:10.5061/dryad.234) at the species, genus and family levels.
+The `getWoodDensity()` function returns prior standard deviation values associated with each tree wood density using the mean standard deviation of the [global wood density database](https://datadryad.org/dataset/doi:10.5061/dryad.234) at the species, genus and family levels.
 
 This output can be provided through the `errWD` argument:
 
