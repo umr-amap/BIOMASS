@@ -157,7 +157,7 @@ If not:
 
 ## Building a local H-D model
 
-As no height was measured in our dataset, we will use the `NouraguesHD` dataset, which contains the height and diameter measurements of two 1-ha plots from the Nouragues forest.
+As no height measurements is available in the `NouraguesTrees` dataset, we will use the `NouraguesHD` dataset which contains the height and diameter measurements of two 1-ha plots from the Nouragues forest. 
 
 ```{r load_NouraguesHD}
 data("NouraguesHD")
@@ -189,7 +189,7 @@ H_model <- retrieveH(
 NouraguesTrees$H_model <-  H_model$H
 ```
 
-Note that we could have created a model for each stand present in NouraguesHD data using the `plot` argument.
+Note that if some of the trees' heights had been measured in the `NouraguesTrees` dataset, we could have provided these heights to `modelHD()`. In this case, we could also have created a model for each stand/sub-region present in `NouraguesTrees` using the `plot` argument. But keep in mind that even for well-measured trees, `retrieveH()` gives you the predicted height.
 
 ## Using the continent- or region-speciﬁc H–D model (Feldpausch)
 
