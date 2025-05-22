@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-05-19</h4>
+            <h4 data-toc-skip class="date">2025-05-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -331,8 +331,9 @@ et al. 2014</a>)</li>
 <div class="section level3">
 <h3 id="building-a-local-h-d-model">Building a local H-D model<a class="anchor" aria-label="anchor" href="#building-a-local-h-d-model"></a>
 </h3>
-<p>As no height was measured in our dataset, we will use the
-<code>NouraguesHD</code> dataset, which contains the height and diameter
+<p>As no height measurements is available in the
+<code>NouraguesTrees</code> dataset, we will use the
+<code>NouraguesHD</code> dataset which contains the height and diameter
 measurements of two 1-ha plots from the Nouragues forest.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NouraguesHD"</span><span class="op">)</span></span></code></pre></div>
@@ -395,8 +396,13 @@ the <code><a href="../reference/retrieveH.html">retrieveH()</a></code> function:
 <span>  model <span class="op">=</span> <span class="va">HDmodel</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_model</span> <span class="op">&lt;-</span>  <span class="va">H_model</span><span class="op">$</span><span class="va">H</span></span></code></pre></div>
-<p>Note that we could have created a model for each stand present in
-NouraguesHD data using the <code>plot</code> argument.</p>
+<p>Note that if some of the trees’ heights had been measured in the
+<code>NouraguesTrees</code> dataset, we could have provided these
+heights to <code><a href="../reference/modelHD.html">modelHD()</a></code>. In this case, we could also have
+created a model for each stand/sub-region present in
+<code>NouraguesTrees</code> using the <code>plot</code> argument. But
+keep in mind that even for well-measured trees, <code><a href="../reference/retrieveH.html">retrieveH()</a></code>
+gives you the predicted height.</p>
 </div>
 <div class="section level3">
 <h3 id="using-the-continent--or-region-speciﬁc-hd-model-feldpausch">Using the continent- or region-speciﬁc H–D model (Feldpausch)<a class="anchor" aria-label="anchor" href="#using-the-continent--or-region-speci%EF%AC%81c-hd-model-feldpausch"></a>
