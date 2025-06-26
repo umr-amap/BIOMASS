@@ -9,14 +9,12 @@ weibullFunction <- function(data, weight = NULL) {
   H <- data$H
   D <- data$D
 
-  Hmax <- quantile(H, probs = 0.90, na.rm = TRUE)
+  Hmax <- quantile(H, probs = 0.90, na.rm = TRUE) # sans na.omit = 31
   init <- list(a = as.double(Hmax), b = 24.9, c = 0.8)
 
   count <- 1
   maxIter <- 50
   converge <- FALSE
-
-  if (anyNA(weight)) weight <- NULL
 
   while (converge == FALSE && count <= 10) {
     tt <- tryCatch({

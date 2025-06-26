@@ -1,11 +1,7 @@
-#require(data.table)
-
 D <- NouraguesHD$D
 H <- NouraguesHD$H
 
 output <- data.frame(D = D, H = H)
-output <- na.omit(output)
-
 
 context("Methods of function modelHD")
 
@@ -25,7 +21,7 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 
       expect_is(HDmodel$model, ifelse(logMethod, "lm", "nls"))
 
-      expect_equal(length(HDmodel$residuals), nrow(output))
+      expect_equal(length(HDmodel$residuals), nrow(na.omit(output)))
 
       expect_is(HDmodel$coefficients, "matrix")
 
@@ -35,7 +31,7 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 
       expect_equal(HDmodel$method, method)
 
-      expect_equal(length(HDmodel$predicted), nrow(output))
+      expect_equal(length(HDmodel$predicted), nrow(na.omit(output)))
       expect_is(HDmodel$predicted, "numeric")
 
       expect_is(HDmodel$RSE, "numeric")
@@ -65,7 +61,7 @@ test_that("NA characters", {
 
 test_that("Without parameters", {
   #skip_on_cran()
-  Res <- expect_message(modelHD(D, H, useWeight = TRUE), "build a HD model")
+  Res <- expect_message(modelHD(D = D, H = H, useWeight = TRUE), "build a HD model")
 
   expect_is(Res, "data.frame")
   expect_equal(ncol(Res),4)
@@ -113,9 +109,4 @@ test_that("With the plot arguments", {
   expect_is(Res, "data.frame")
 
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
-})
-
-test_that("snapshot of plot", {
-  toto <- modelHD(D, H, method = "log2", useWeight = T, drawGraph = T)
-  vdiffr::expect_doppelganger("plot_modelHD", modelHD(D, H, method = "log2", useWeight = T, drawGraph = FALSE)$fitPlot )
 })

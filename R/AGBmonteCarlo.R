@@ -20,8 +20,6 @@
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
-#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
-#' stand-specific HD models.
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
@@ -93,7 +91,7 @@
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL, plot = NULL) {
+                          Carbon = FALSE, Dlim = NULL) {
   len <- length(D)
 
   # parameters verification -------------------------------------------------
@@ -150,15 +148,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              having the same number of rows as the number of trees (length(D))")
   }
 
-  # the length of the plot is tested in predictHeight
-  # the names of the plot and the names of the model is tested in predictHeight
-  if (!is.null(plot) && is.null(HDmodel)) {
-    stop("The 'plot' argument is used to create stand-specific local H-D models. So it must be used in association with the 'model' argument.")
-  }
 
-
-
-  # function truncated random gausien law -----------------------------------
+  # function truncated random gausian law -----------------------------------
   myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
     qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
   }
@@ -203,8 +194,16 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   # if there is data for H
   if (!is.null(HDmodel) | !is.null(H)) {
     if (!is.null(HDmodel)) {
-      # Propagation of the error thanks to the local model of H
-      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE, plot = plot))
+      # Propagation of the error thanks to the H-D local model
+      
+      # If HDmodel is a list of stand-specific hd-models, get back the plotID vector
+      if (!identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "coefficients"))) {
+        plotID <- do.call(c , lapply(names(HDmodel), function(x) {
+          rep(x , length(HDmodel[[x]]$input$D))
+        }))
+      } else plotID <- NULL
+      
+      H_simu <- apply(D_simu, 2, function(x) predictHeight(x, model = HDmodel, err = TRUE, plot = plotID))
     } else {
       # Propagation of the error using the errH value(s)
       upper <- max(H, na.rm = TRUE) + 15
