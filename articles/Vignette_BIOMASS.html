@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-05-22</h4>
+            <h4 data-toc-skip class="date">2025-06-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -344,7 +344,9 @@ or to <strong>compute the desired H-D model</strong>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HD_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
-<span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, drawGraph <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, drawGraph <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 163 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span></code></pre></div>
 <p><img src="Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -645,7 +647,7 @@ page</a>, or contact Dominique (<a href="mailto:dominique.lamonica@ird.fr" class
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
