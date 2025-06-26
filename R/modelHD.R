@@ -115,9 +115,6 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   if (!is.null(plot) && !length(plot) %in% c(1, length(D))) {
     stop("The length of the 'plot' vector must be either 1 or the length of D")
   }
-  # if (!is.null(plot)) { 
-  #   drawGraph <- FALSE
-  # }
   
   
   # Multiple plots managment ---------------------------------------------------
@@ -164,7 +161,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       ######### The others HD models
       mod <- switch(method,
         michaelis = michaelisFunction(Hdata, weight), # Michaelis-Menten function
-        weibull = weibullFunction(Hdata, weight) # Weibull 3 parameters
+        weibull = weibullFunction(data = Hdata, weight =  weight) # Weibull 3 parameters
       )
 
       output$Hpredict <- predict(mod)
@@ -176,11 +173,11 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     }
 
     names(output$Hpredict) <- NULL
-    res <- Hdata$H - output$Hpredict
+    res <- na.omit(Hdata$H) - output$Hpredict 
 
     output$method <- method
     output$RSE <- sqrt(sum(res^2) / summary(mod)$df[2]) # Residual standard error
-    output$Average_bias <- (mean(output$Hpredict) - mean(Hdata$H)) / mean(Hdata$H)
+    output$Average_bias <- (mean(output$Hpredict) - mean(Hdata$H, na.rm = TRUE)) / mean(Hdata$H, na.rm = TRUE)
     output$residuals <- res
     output$mod <- mod
 
@@ -204,7 +201,6 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
 
   # Data processing ---------------------------------------------------------
   Hdata <- data.table(H = H, D = D)
-  Hdata <- na.omit(Hdata) # Remove NA values
   weight <- NULL
 
   # Warn if there is less than 2 diameter values in the following quantile intervals : [0-0.5], ]0.5;0.75] and ]0.75,1]

@@ -13,8 +13,6 @@ michaelisFunction <- function(data, weight = NULL) {
   maxIter <- 50
   converge <- FALSE
 
-  if (anyNA(weight)) weight <- NULL
-
   while (converge == FALSE && count <= 10) {
     tt <- tryCatch({
       if (is.null(weight)) {
