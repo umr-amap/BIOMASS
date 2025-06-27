@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,8 @@
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  per_ha <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fun <span class="op">=</span> <span class="va">sum</span>,</span>
+<span>  ref_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  raster_fun <span class="op">=</span> <span class="va">mean</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -73,7 +75,15 @@
 
 
 <dt id="arg-fun">fun<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
-<dd><p>the function to be applied (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))</p></dd>
+<dd><p>the function to be applied on tree metric of each subplot (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))</p></dd>
+
+
+<dt id="arg-ref-raster">ref_raster<a class="anchor" aria-label="anchor" href="#arg-ref-raster"></a></dt>
+<dd><p>A SpatRaster object from terra package, typically a chm raster created from LiDAR data. Note that in the case of a multiple attributes raster, only the first variable "z" will be summarised.</p></dd>
+
+
+<dt id="arg-raster-fun">raster_fun<a class="anchor" aria-label="anchor" href="#arg-raster-fun"></a></dt>
+<dd><p>the function (or a list of functions) to be applied on raster values of each subplot.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
