@@ -34,7 +34,7 @@ if(getRversion() >= "2.15.1") {
   utils::globalVariables(c("subplot_id","plot_id","subplot_ID","plot_ID","V1","st_crs","..col_names"))
   
   # summaryByPlot
-  utils::globalVariables(c("indice_line","indice_col","Cred_2.5","Cred_97.5"))
+  utils::globalVariables(c("indice_line","indice_col","Cred_2.5","Cred_97.5","..raster_value_fun_name","fraction"))
   
   
 }
