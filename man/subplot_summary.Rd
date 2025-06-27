@@ -10,6 +10,8 @@ subplot_summary(
   draw_plot = TRUE,
   per_ha = TRUE,
   fun = sum,
+  ref_raster = NULL,
+  raster_fun = mean,
   ...
 )
 }
@@ -22,7 +24,11 @@ subplot_summary(
 
 \item{per_ha}{a logical indicating whether the metric summary should be per hectare (or, if summarising several metrics at once: a logical vector corresponding to each metric (see examples))}
 
-\item{fun}{the function to be applied (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))}
+\item{fun}{the function to be applied on tree metric of each subplot (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))}
+
+\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data. Note that in the case of a multiple attributes raster, only the first variable "z" will be summarised.}
+
+\item{raster_fun}{the function (or a list of functions) to be applied on raster values of each subplot.}
 
 \item{...}{optional arguments to fun}
 }

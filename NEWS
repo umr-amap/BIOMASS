@@ -1,3 +1,7 @@
+* version 2.2.5
+- Removed the 'plot' argument of AGBmonteCarlo() (is case of stand-specific local H-D model, the ploID vector is automatically build by catching the corresponding plotID of modelHD)
+- Add the ref_raster and raster_fun arguments to the subplot_summary() function to summarise a reference raster attribute/variable (typically the height of a chm) by subplots. 
+
 * version 2.2.4
 - Fixed an issue about overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot()  
 - Added the 'longlat' argument to the divide_plot() function to allow the use of geographic coordinates (instead of projected coordinates)
