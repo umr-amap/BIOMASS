@@ -25,6 +25,10 @@ cacheManager <- function(nameFile) {
     return(cachePath("correctTaxo.log"))
   }
   
+  if (nameFile %in% c("log1_weights_F_model.rds","log1_weights_T_model.rds","log2_weights_F_model.rds","log2_weights_T_model.rds","michaelis_weights_F_model.rds","michaelis_weights_T_model.rds","weibull_weights_F_model.rds","weibull_weights_T_model.rds")) {
+    return(cachePath(nameFile))
+  }
+  
   if (nameFile == "feldRegion.grd") {
     return(system.file("extdata", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }

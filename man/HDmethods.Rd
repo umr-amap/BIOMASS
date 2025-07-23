@@ -8,28 +8,59 @@
 \alias{weibullFunction}
 \title{HDmethods}
 \usage{
-loglogFunction(data, method)
+loglogFunction(
+  data,
+  weight = NULL,
+  method,
+  bayesian,
+  useCache,
+  chains,
+  thin,
+  iter,
+  warmup,
+  ...
+)
 
-michaelisFunction(data, weight = NULL)
+michaelisFunction(
+  data,
+  weight = NULL,
+  bayesian,
+  useCache,
+  chains,
+  thin,
+  iter,
+  warmup,
+  ...
+)
 
-weibullFunction(data, weight = NULL)
+weibullFunction(
+  data,
+  weight = NULL,
+  bayesian,
+  useCache,
+  chains,
+  thin,
+  iter,
+  warmup,
+  ...
+)
 }
 \arguments{
 \item{data}{Dataset with the informations of height (H) and diameter (D)}
 
-\item{method}{In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.}
-
 \item{weight}{(optional) Vector indicating observation weights in the model.}
+
+\item{method}{In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.}
 }
 \value{
 All the functions give an output similar to the one given by \code{\link[stats:lm]{stats::lm()}}, obtained for
 \code{michaelisFunction} and \code{weibullFunction} from \link[minpack.lm:nlsLM]{minpack.lm::nlsLM}).
 
-Result of a model (lm object)
+Result of a model (lm object if bayesian = FALSE, brm object if bayesian = TRUE)
 
-Result of a model (nlsM object)
+Result of a model (nlsM object if bayesian = FALSE, brm object if bayesian = TRUE)
 
-Result of a model (nlsM object)
+Result of a model (nlsM object if bayesian = FALSE, brm object if bayesian = TRUE)
 }
 \description{
 Methods used for modeling height-diameter relationship

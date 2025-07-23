@@ -7,14 +7,11 @@
 predictHeight(D, model, err = FALSE, plot = NULL)
 }
 \arguments{
-\item{D}{Vector of diameter (in cm).}
+\item{D}{a n x m matrix containing tree diameters (in cm), where n is the number of trees and m is the number of Monte Carlo simulations (m = 1 if no error propagation).}
 
-\item{model}{A height-diameter model output by the function \code{\link[=modelHD]{modelHD()}}}
+\item{model}{A height-diameter model output by the function \code{\link[=modelHD]{modelHD()}}.}
 
-\item{err}{If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of
-zero and a standard deviation equalled to the residual standard error of the model (RSE). Only used
-for the Monte Carlo approach (see \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}), otherwise it should be
-let as \code{FALSE}, the default case.}
+\item{err}{If \code{TRUE}, An error is taken randomly from a normal distribution with a mean of zero and a standard deviation equaled to the residual standard error of the model (RSE). Only used for the Monte Carlo approach (see \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}), otherwise it should be let as \code{FALSE}, the default case.}
 
 \item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 stand-specific HD models.}
@@ -33,6 +30,6 @@ Baskerville correction, a bias correction factor used to get unbiased backtransf
 \code{\link[minpack.lm:nlsLM]{minpack.lm::nlsLM()}}
 }
 \author{
-Maxime REJOU-MECHAIN, Ariane TANGUY, Arthur PERE
+Arthur BAILLY
 }
 \keyword{Internal}
