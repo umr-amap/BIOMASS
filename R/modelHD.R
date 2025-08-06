@@ -16,8 +16,7 @@
 #' @param useWeight If weight is `TRUE`, model weights will be \eqn{(D^2)*H} (i.e. weights are proportional to tree
 #' volume, so that larger trees have a stronger influence during the construction of the model).
 #' @param drawGraph If `TRUE`, a graphic will illustrate the relationship between H and D. Only if argument `plot` is null.
-#' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
-#' stand-specific HD models.
+#' @param plot (optional) a vector of character containing the plot ID's of the trees (linked to D and H). Must be either one value, or a vector of the same length as D. This argument is used to build stand-specific HD models.
 #' @param bayesian a logical. If FALSE (by default) the model is estimated using a frequentist framework (lm or nls). If TRUE, the model is estimated in a Bayesian framework using the brms package.
 #' @param useCache a logical. If bayesian = TRUE, determine wether to use the cache when building a Bayesian model (see Details).
 #' @param chains (only relevant if bayesian = TRUE): Number of Markov chains (defaults to 3), see [brms::brm()]
@@ -93,14 +92,19 @@
 #' plot(HDmodel$model) }
 #'   
 #' ### Using weibull bayesian model (time consuming)
-#' # As the algorithm is likely to find numerous local minima, defining priors is strongly recommended (see "Some tricks" part in the vignette)
-#' # Also, since  model parameters and chain iterations are strongly correlated, an increase of 'thin', 'iter' and 'warmup' may be required.
+#' # As the algorithm is likely to find numerous local minima,
+#' # defining priors is strongly recommended (see "Some tricks" part in the vignette)
+#' # Also, since  model parameters and chain iterations are strongly correlated,
+#' # an increase of 'thin', 'iter' and 'warmup' may be required.
 #' \donttest{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
-#'   method = "weibull", bayesian = TRUE, useCache = TRUE,
-#'   thin = 20, iter = 12000, warmup = 2000,
-#'   prior = c(set_prior(prior = "uniform(0,80)", lb = 0, ub = 80, class = "b", nlpar = "a"),
-#'             set_prior(prior = "uniform(0,100)", lb = 0, ub = 100, class = "b", nlpar = "b"),
-#'             set_prior(prior = "uniform(0.1,0.9)", lb = 0.1, ub = 0.9, class = "b", nlpar = "c"))) }
+#'  method = "weibull", bayesian = TRUE, useCache = TRUE,
+#'  thin = 20, iter = 12000, warmup = 2000,
+#'  prior = c(brms::set_prior(prior = "uniform(0,80)",
+#'                            lb = 0, ub = 80, class = "b", nlpar = "a"),
+#'            brms::set_prior(prior = "uniform(0,100)",
+#'                            lb = 0, ub = 100, class = "b", nlpar = "b"),
+#'            brms::set_prior(prior = "uniform(0.1,0.9)",
+#'                            lb = 0.1, ub = 0.9, class = "b", nlpar = "c"))) }
 #' 
 #' @importFrom graphics legend lines par plot grid axis
 #' @importFrom stats SSmicmen lm median na.omit quantile rnorm sd predict coef
@@ -136,9 +140,16 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   if (!is.null(plot) && !length(plot) %in% c(1, length(D))) {
     stop("The length of the 'plot' vector must be either 1 or the length of D")
   }
+  # Check if package brms is available
+  if (!requireNamespace("brms", quietly = TRUE)) {
+    warning(
+      'To build bayesian models, you must install the "brms" library \n\n',
+      '\t\tinstall.packages("brms")'
+    )
+    return(invisible(NULL))
+  }
   
-  
-  # Multiple plots managment ---------------------------------------------------
+  # Multiple plots management ---------------------------------------------------
   
   # if there is multiple plots in the plot vector
   if (!is.null(plot) && length(unique(plot)) != 1) {
@@ -244,7 +255,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   drawPlotBegin <- function(givenMethod = FALSE, plotId) {
     main_title <- ifelse(givenMethod == FALSE, "Model comparison", paste("Selected model : ", givenMethod))
     
-    starting_plot <- ggplot(data = Hdata, mapping = aes(x=D, y=H)) + 
+    starting_plot <- ggplot(data = na.omit(Hdata), mapping = aes(x=D, y=H)) + 
       geom_point(col="grey50") + 
       labs(title = main_title, x="D (cm)", y="H (m)") + 
       scale_x_continuous(transform = "log10", n.breaks = 8, ) +

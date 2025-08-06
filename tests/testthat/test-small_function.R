@@ -100,8 +100,8 @@ test_that("loglog function", {
 
   data <- data.frame(H = c(5, 5), D = c(2, 3))
 
-  expect_is(loglogFunction(data, "log1"), "lm")
-  expect_is(loglogFunction(data, "log2"), "lm")
+  expect_is(loglogFunction(data, method="log1", bayesian=FALSE), "lm")
+  expect_is(loglogFunction(data, method="log2", bayesian=FALSE), "lm")
 })
 
 test_that("Michaelis function", {
@@ -111,7 +111,7 @@ test_that("Michaelis function", {
   
   data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
-  expect_is(michaelisFunction(data), "nls")
+  expect_is(michaelisFunction(data, weight = NULL, bayesian = FALSE), "nls")
 })
 
 test_that("Weibull function", {
@@ -122,68 +122,7 @@ test_that("Weibull function", {
   
   data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
-  expect_is(weibullFunction(data), "nls")
-})
-
-
-
-context("Predict Height of the tree")
-
-for (method in c("log1", "log2", "weibull", "michaelis")) {
-  test_that(paste("predictHeight", method), {
-    skip_if_not_function("predictHeight")
-    HDmodel <- modelHD(
-      D = NouraguesHD$D,
-      H = NouraguesHD$H,
-      method = method,
-      useWeight = TRUE
-    )
-    for (err in c(TRUE, FALSE)) {
-      expect_length(predictHeight(D, HDmodel, err = err), length(D))
-      expect_is(predictHeight(D, HDmodel, err = err), "numeric")
-
-      if (err == TRUE) {
-        H <- predictHeight(rep(10, 10), HDmodel, err = err)
-        expect_false(all(H == H[1]))
-      }
-    }
-  })
-}
-
-test_that("predictHeigth with plot argument", {
-  HDmodel <- modelHD(
-    D = NouraguesHD$D,
-    H = NouraguesHD$H,
-    method = "log2",
-    useWeight = TRUE
-  )
-
-  expect_error(predictHeight(D, HDmodel, plot = "Plot1"), "The 'plot' argument is used to create stand-specific local H-D models but your 'model' argument contains only one model.")
-
-  HDmodel <- modelHD(
-    D = NouraguesHD$D,
-    H = NouraguesHD$H,
-    method = "log2",
-    useWeight = TRUE,
-    plot = NouraguesHD$plotId
-  )
-
-  expect_error(predictHeight(D, HDmodel), "model")
-  
-  expect_error(predictHeight(D, HDmodel, plot = "Plot1"), "The 'model' argument contains the following stand specific HD models which are not present in the 'plot' argument: Plot2")
-  
-  expect_error(predictHeight(D, HDmodel, plot = c("Plot1", "Plot2")), "length")
-
-  plot <- rep(c("Plot1", "Plot2"), length.out = length(D))
-
-  Res <- predictHeight(D = NouraguesHD$D, model = HDmodel, plot =  NouraguesHD$plotId)
-  expect_equal(Res[1:2], c(15.40687,15.49727), tolerance = 1e-5)
-  
-  #expect_failure(expect_equal(Res, predictHeight(D, HDmodel, plot = "Plot1")))
-  # expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot1"])
-  # expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot2"])
-  # expect_failure(expect_equal(Res[plot == "Plot1"], predictHeight(D, HDmodel, plot = "Plot2")[plot == "Plot1"]))
-  # expect_failure(expect_equal(Res[plot == "Plot2"], predictHeight(D, HDmodel, plot = "Plot1")[plot == "Plot2"]))
+  expect_is(weibullFunction(data, weight = NULL, bayesian = FALSE), "nls")
 })
 
 

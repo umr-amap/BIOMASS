@@ -2,8 +2,7 @@
 #' @return Result of a model (nlsM object if bayesian = FALSE, brm object if bayesian = TRUE)
 #' @importFrom minpack.lm nlsLM nls.lm.control
 #' @importFrom methods is
-#' @importFrom stats update
-#' @importFrom brms brm brmsformula
+#' @importFrom stats update gaussian
 
 weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thin, iter, warmup, ...) {
   
@@ -13,11 +12,11 @@ weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thi
     
     if (is.null(weight)) {
       cache_path <- cacheManager(nameFile = "weibull_weights_F_model.rds")
-      bf_formula <- brmsformula(H ~ (a * (1-exp(-(D/b)^c))), a + b + c ~ 1, nl = TRUE)
+      bf_formula <- brms::brmsformula(H ~ (a * (1-exp(-(D/b)^c))), a + b + c ~ 1, nl = TRUE)
     } else {
       cache_path <- cacheManager(nameFile = "weibull_weights_T_model.rds")
       data$weight <- data$D^2 * data$H
-      bf_formula <- brmsformula( H | weights(weight, scale = TRUE) ~ a * (1-exp(-(D/b)^c)), a + b + c ~ 1, nl=TRUE)
+      bf_formula <- brms::brmsformula( H | weights(weight, scale = TRUE) ~ a * (1-exp(-(D/b)^c)), a + b + c ~ 1, nl=TRUE)
     }
     
     if( is.null(useCache) ) { # if useCache = NULL -> remove cache
@@ -29,7 +28,7 @@ weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thi
       
       message("Loading Weibull model using the cache...")
       mod <- readRDS(cache_path)
-      mod <- update(mod, newdata = data, refresh=0, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+      mod <- update(mod, newdata = data, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
       
     } else { # else, build the model (and save it as .rds if useCache = TRUE)
       
@@ -38,13 +37,15 @@ weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thi
       if(!useCache) {
         cache_path <- NULL
       }
-      mod <- brm(data = data,
-                 family = gaussian(link = "identity"),
-                 formula = bf_formula,
-                 file = cache_path,
-                 chains = chains, thin = thin, iter = iter, warmup = warmup,
-                 ...)
+      mod <- brms::brm(data = data,
+                       family = gaussian(link = "identity"),
+                       formula = bf_formula,
+                       file = cache_path,
+                       chains = chains, thin = thin, iter = iter, warmup = warmup,
+                       ...)
     }
+    
+    
     
   } else { # using nlsLM
     

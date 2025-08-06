@@ -44,8 +44,7 @@ volume, so that larger trees have a stronger influence during the construction o
 
 \item{drawGraph}{If \code{TRUE}, a graphic will illustrate the relationship between H and D. Only if argument \code{plot} is null.}
 
-\item{plot}{(optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
-stand-specific HD models.}
+\item{plot}{(optional) a vector of character containing the plot ID's of the trees (linked to D and H). Must be either one value, or a vector of the same length as D. This argument is used to build stand-specific HD models.}
 
 \item{bayesian}{a logical. If FALSE (by default) the model is estimated using a frequentist framework (lm or nls). If TRUE, the model is estimated in a Bayesian framework using the brms package.}
 
@@ -128,14 +127,19 @@ HDmodel <- modelHD(
 plot(HDmodel$model) }
   
 ### Using weibull bayesian model (time consuming)
-# As the algorithm is likely to find numerous local minima, defining priors is strongly recommended (see "Some tricks" part in the vignette)
-# Also, since  model parameters and chain iterations are strongly correlated, an increase of 'thin', 'iter' and 'warmup' may be required.
+# As the algorithm is likely to find numerous local minima,
+# defining priors is strongly recommended (see "Some tricks" part in the vignette)
+# Also, since  model parameters and chain iterations are strongly correlated,
+# an increase of 'thin', 'iter' and 'warmup' may be required.
 \donttest{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
-  method = "weibull", bayesian = TRUE, useCache = TRUE,
-  thin = 20, iter = 12000, warmup = 2000,
-  prior = c(set_prior(prior = "uniform(0,80)", lb = 0, ub = 80, class = "b", nlpar = "a"),
-            set_prior(prior = "uniform(0,100)", lb = 0, ub = 100, class = "b", nlpar = "b"),
-            set_prior(prior = "uniform(0.1,0.9)", lb = 0.1, ub = 0.9, class = "b", nlpar = "c"))) }
+ method = "weibull", bayesian = TRUE, useCache = TRUE,
+ thin = 20, iter = 12000, warmup = 2000,
+ prior = c(brms::set_prior(prior = "uniform(0,80)",
+                           lb = 0, ub = 80, class = "b", nlpar = "a"),
+           brms::set_prior(prior = "uniform(0,100)",
+                           lb = 0, ub = 100, class = "b", nlpar = "b"),
+           brms::set_prior(prior = "uniform(0.1,0.9)",
+                           lb = 0.1, ub = 0.9, class = "b", nlpar = "c"))) }
 
 }
 \seealso{

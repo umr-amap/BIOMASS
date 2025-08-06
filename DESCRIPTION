@@ -48,5 +48,6 @@ Suggests:
 	geodata,
 	httr2,
 	pkgdown,
-	dplyr
+	dplyr,
+	brms
 RoxygenNote: 7.3.2

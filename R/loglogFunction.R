@@ -1,7 +1,6 @@
 #' @rdname HDmethods
 #' @return Result of a model (lm object if bayesian = FALSE, brm object if bayesian = TRUE)
-#' @importFrom stats formula as.formula update
-#' @importFrom brms brm
+#' @importFrom stats formula as.formula update gaussian
 
 loglogFunction <- function(data, weight = NULL, method, bayesian, useCache, chains, thin, iter, warmup, ...) {
   ### Compute the loglog model of the H-D relationship
@@ -50,12 +49,12 @@ loglogFunction <- function(data, weight = NULL, method, bayesian, useCache, chai
       if(!useCache) {
         cache_path <- NULL
       }
-      mod <- brm(data = data,
-                 family = gaussian(link = "identity"),
-                 formula = formula,
-                 file = cache_path,
-                 chains = chains, thin = thin, iter = iter, warmup = warmup,
-                 ...
+      mod <- brms::brm(data = data,
+                       family = gaussian(link = "identity"),
+                       formula = formula,
+                       file = cache_path,
+                       chains = chains, thin = thin, iter = iter, warmup = warmup,
+                       ...
       )
     }
   } else {

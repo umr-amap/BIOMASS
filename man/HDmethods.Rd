@@ -51,6 +51,20 @@ weibullFunction(
 \item{weight}{(optional) Vector indicating observation weights in the model.}
 
 \item{method}{In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.}
+
+\item{bayesian}{a logical. If FALSE (by default) the model is estimated using a frequentist framework (lm or nls). If TRUE, the model is estimated in a Bayesian framework using the brms package.}
+
+\item{useCache}{a logical. If bayesian = TRUE, determine wether to use the cache when building a Bayesian model (see Details).}
+
+\item{chains}{(only relevant if bayesian = TRUE): Number of Markov chains (defaults to 3), see \code{\link[brms:brm]{brms::brm()}}}
+
+\item{thin}{(only relevant if bayesian = TRUE): Thinning rate, see \code{\link[brms:brm]{brms::brm()}}}
+
+\item{iter}{(only relevant if bayesian = TRUE): number of total iterations per chain (including warmup; defaults to 5000), see \code{\link[brms:brm]{brms::brm()}}}
+
+\item{warmup}{(only relevant if bayesian = TRUE): number of warmup (aka burnin) iterations (defaults to 1000), see \code{\link[brms:brm]{brms::brm()}}}
+
+\item{...}{Further arguments passed to \code{brm()}, e.g: prior, cores, etc. See \code{\link[brms:brm]{brms::brm()}}}
 }
 \value{
 All the functions give an output similar to the one given by \code{\link[stats:lm]{stats::lm()}}, obtained for

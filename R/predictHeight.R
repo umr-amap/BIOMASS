@@ -1,9 +1,9 @@
 #' Tree height predictions
 #'
 #' The function predicts height from diameter based on a fitted model.
-#'
+#' As the predict() function for brms models takes ~10 minutes to run, predictions are calculated using the coefficients from the models directly.
 #' @param D a n x m matrix containing tree diameters (in cm), where n is the number of trees and m is the number of Monte Carlo simulations (m = 1 if no error propagation).
-#' @param model A height-diameter model output by the function [modelHD()].
+#' @param model The output of the [modelHD()] function.
 #' @param err If `TRUE`, An error is taken randomly from a normal distribution with a mean of zero and a standard deviation equaled to the residual standard error of the model (RSE). Only used for the Monte Carlo approach (see [AGBmonteCarlo()]), otherwise it should be let as `FALSE`, the default case.
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
@@ -17,23 +17,34 @@
 #'
 #' @export
 #' @importFrom data.table data.table
-#' @importFrom brms is.brmsfit as_draws_df
 #' @keywords Internal
+#' 
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
   
-  # Naming D rows to keep the order in case of multiple disordered plots
-  rownames(D) <- 1:nrow(D)
-  
   # If 'model' contains only one model, put model in a list of one element to keep the same structure as when there are several plots
-  if(is.null(plot)) {
-    if( all.equal(names(model)[1:4],c("input","model","residuals","method")) ) {
-      model <- list(single_plot = model)
-    } else {
-      stop("The argument model contains different HD models, use the argument plot to assign the corresponding stand-specific model to each tree.")
-    }
+  if( names(model)[1] == "input") {
+    model <- list(single_plot = model)
   }
   
   ### Checks 
+  # D must be a n x m matrix containing tree diameters
+  if(!is.matrix(D)) {
+    stop("`D` must be a n x m matrix containing tree diameters (in cm), where n is the number of trees and m is the number of Monte Carlo simulations (m = 1 if no error propagation).")
+  } else {
+    # Naming D rows to keep the order in case of multiple disordered plots
+    rownames(D) <- 1:nrow(D)  
+  }
+  
+  # model must be the output of modelHD
+  if(all.equal(names(model[[1]])[1:2],c("input","model")) != TRUE ) {
+    stop("`model` must be the output of the `modelHD()` function")
+  }
+  
+  if(is.null(plot)) {
+    if( names(model)[1]!="single_plot" ) {
+      stop("The 'model' argument contains several stand-specific HD models, use the `plot` argument to assign the corresponding stand-specific model to each tree.")
+    }
+  }
   if(!is.null(plot)) {
     if (length(plot) != nrow(D)) stop("The argument plot and D have not the same length")
     # Check that 'model' is a list containing each stand-specific model
@@ -41,12 +52,12 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
       warning("The 'plot' argument will be ignored because it is used to create stand-specific local H-D models, but your 'model' argument contains only one model.")
     }
     # Check that 'plot' contains all the plots included in 'model'
-    if( any( ! names(model) %in% unique(plot) ) ) { # stop if 'plot' does'nt contain all stand-specific HD models
+    if( names(model)[1]!="single_plot" && any(! names(model) %in% unique(plot) ) ) { # stop if 'plot' does'nt contain all stand-specific HD models
       stop(paste("The 'model' argument contains the following stand specific HD models which are not present in the 'plot' argument:", paste(names(model)[! names(model) %in% unique(plot)], collapse = ", ")))
     }
     # Check that 'model' contains all the plots defined in 'plot'
-    if (any(!plot %in% names(model))) {
-      stop( paste("Cannot find a HD model corresponding to ", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", ")) )
+    if (names(model)[1]!="single_plot" && any(!plot %in% names(model))) {
+      stop( paste("Cannot find a HD model corresponding to", paste(unique(plot[ !plot %in% names(model) ]), collapse = ", ")) )
     }
   }
   
@@ -63,8 +74,8 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
     # See man/figures/predictHeight_help.pdf for details 
     
     # If model is a brmsfit model, sample posterior parameters in brm draws
-    if(is.brmsfit(mod$model)) {
-      param_draws <- as.data.frame(as_draws_df(mod$model))
+    if(brms::is.brmsfit(mod$model)) {
+      param_draws <- as.data.frame(brms::as_draws_df(mod$model))
       n_draws <- nrow(param_draws)
       n_trees <- nrow(D_stand)
       
@@ -120,7 +131,8 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
       }
     }
     
-    # Calculating predictions
+    ### Calculating predictions
+    # the predict() function takes ~10 minutes to run for brm models
     if( mod$method == "log1") { # log(H) ~ a + b * log(D)
       H_simu <- exp(param_draws[[1]] + param_draws[[2]] * log(D_stand) + e ) 
     } else if(mod$method == "log2") { # log(H) ~ a + b * log(D) + c * log(D)²
@@ -131,7 +143,7 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
       H_simu <- param_draws[[1]] * ( 1 - exp( -(D_stand / param_draws[[2]]) ^ param_draws[[3]]) ) + e
     }
     # if bayesian model without error propagation, get the median of all estimates
-    if(is.brmsfit(mod$model) && !err) H_simu <- as.matrix(apply(H_simu , 1, median, na.rm=TRUE))
+    if(brms::is.brmsfit(mod$model) && !err) H_simu <- as.matrix(apply(H_simu , 1, median, na.rm=TRUE))
     as.matrix(H_simu)
   }))
   
