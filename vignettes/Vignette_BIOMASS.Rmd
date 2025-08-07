@@ -298,6 +298,8 @@ H_model_error_prop <- AGBmonteCarlo(
 )
 ```
 
+Note that when HDmodel is not a bayesian model, uncertainties of the  are not propagated during the error propagation of the AGBmonteCarlo() function.
+
 - **If tree heights have been estimated via the "Feldspausch" method**, the user has to provide the output of the `retrieveH()` function for the `errH` argument:
 
 ```{r H_feld_error_prop, eval = FALSE}
@@ -443,3 +445,4 @@ Posterior distributions look better but the right-skewed distributions are not y
 ## Add your tricks
 
 If you would like to share a code that might be useful to users (code authorship will be respected), you can create a new issue on the [BIOMASS github page](https://github.com/umr-amap/BIOMASS/issues), or contact Dominique (dominique.lamonica@ird.fr).
+
