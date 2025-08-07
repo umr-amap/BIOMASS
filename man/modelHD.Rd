@@ -94,7 +94,7 @@ All the back transformations for log-log models are done using the Baskerville c
 where RSE is the Residual Standard Error).
 
 If useCache = TRUE and this is the first time the model is being built, the model will be saved as a .rds file in the defined cache path (see \code{\link[=createCache]{createCache()}}).
-If useCache = TRUE and the model has already been built using the user cache, the model will load and update to avoid wasting time re-compiling it.
+If useCache = TRUE and the model has already been built using the user cache, the model will be loaded and updated to avoid wasting time re-compiling it.
 If useCache = NULL, the cache is first cleared before building the model.
 }
 \examples{
