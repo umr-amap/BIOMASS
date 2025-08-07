@@ -21,6 +21,7 @@ Returns a vector of total tree height (in m).
 }
 \description{
 The function predicts height from diameter based on a fitted model.
+As the predict() function for brms models takes ~10 minutes to run, predictions are calculated using the coefficients from the models directly.
 }
 \details{
 In the case where the error is \code{FALSE} and the model is a log-log model, we use the
