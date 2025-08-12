@@ -16,8 +16,8 @@
 #' @param corner_plot_ID If dealing with multiple plots : a vector indicating plot IDs for corners.
 #' @param tree_plot_ID If dealing with multiple plots : a vector indicating tree plot IDs.
 #' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
-#' @param centred_grid When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.
-#'
+#' @param origin Alignment of subplots relative to the corners of the plot, based on relative plot coordinates. Options: `bottomleft` (default, min_x, min_y), `bottomright` (max_x, min_y), `topright` (max_x, max_y), `topleft` (min_x, max_y), `centre` (centred in the middle of the plot, useful when `grid_size` doesn't match exactly plot dimensions.
+#' 
 #' @return If `tree_data` isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `corner_plot_ID`: If dealing with multiple plots : the plot code
 #'   - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
@@ -68,7 +68,7 @@
 #'     corner_data = check_plot201$corner_coord, 
 #'     rel_coord = c("x_rel","y_rel"),
 #'     grid_size = c(41,41),
-#'     grid_tol = 0.4, centred_grid = TRUE)
+#'     grid_tol = 0.4, origin = "centre")
 #' }
 #' 
 #' # Dealing with multiple plots
@@ -83,8 +83,8 @@
 #'     tree_plot_ID = "Plot"))
 #' head(nouragues_subplots$sub_corner_coord)
 #' head(nouragues_subplots$tree_data)
- 
-divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = F) {
+
+divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, origin = "bottomleft") {
   
   # Checking arguments ---------------------------------------------------------
   
@@ -129,6 +129,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   if (!is.null(tree_plot_ID) && !any(tree_plot_ID==names(tree_data))) {
     stop(paste(tree_plot_ID,"is not found in tree_data column names."))
+  }
+  if (!origin %in% c("bottomleft", "bottomright", "topright", "topleft", "centre")) { 
+    stop("origin must be one of: 'bottomleft', 'bottomright', 'topright', 'topleft', 'centre'")
   }
   
   # Data processing ------------------------------------------------------------
@@ -199,13 +202,34 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     if( x_not_in_grid * y_plot_length + y_not_in_grid * x_plot_length - x_not_in_grid * y_not_in_grid > grid_tol * x_plot_length * y_plot_length ) {
       stop(paste("More than",grid_tol*100,"% of the plot area is not included in the sub-plot grid. If you still want to divide the plot, please increase the value of the grid_tol argument."))
     }
-    x_not_in_grid <- ifelse(centred_grid, x_not_in_grid, 0)
-    y_not_in_grid <- ifelse(centred_grid, y_not_in_grid, 0)
-    
-    plot_grid <- data.table(as.matrix(expand.grid(
-      x_rel = seq(min(dat[["x_rel"]]) + x_not_in_grid/2, max(dat[["x_rel"]]), by = grid_size[1]),
-      y_rel = seq(min(dat[["y_rel"]]) + y_not_in_grid/2, max(dat[["y_rel"]]), by = grid_size[2])
-    )))
+    # Create grid coordinates
+    xmin <- min(dat[["x_rel"]])
+    xmax <- max(dat[["x_rel"]])
+    ymin <- min(dat[["y_rel"]])
+    ymax <- max(dat[["y_rel"]])
+
+    width  <- xmax - xmin
+    height <- ymax - ymin
+
+    xoff <- 0
+    if (origin %in% c("bottomright", "topright")) {
+      xoff <- width %% grid_size[1]
+    }
+
+    yoff <- 0
+    if (origin %in% c("topleft", "topright")) {
+      yoff <- height %% grid_size[2]
+    }
+    if (origin == "centre") {
+      xoff <- (width/2) %% grid_size[1]
+      yoff <- (height/2) %% grid_size[2]
+    }
+      
+    xseq <- seq(xmin + xoff, xmax, by = grid_size[1])
+    yseq <- seq(ymin + yoff, ymax, by = grid_size[2])
+      
+    # Create grid intersection points
+    plot_grid <- data.table(expand.grid(x_rel = xseq, y_rel = yseq))
     plot_grid[,corner_plot_ID:=unique(dat$corner_plot_ID)]
     
     # Attributing subplots names to each corner and adding shared subplot corners
@@ -311,3 +335,4 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   return(output)
 }
+
