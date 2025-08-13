@@ -21,10 +21,6 @@ cacheManager <- function(nameFile) {
     stop("Only one file at a time please!")
   }
   
-  if (nameFile == "correctTaxo.log") {
-    return(cachePath("correctTaxo.log"))
-  }
-  
   if (nameFile == "feldRegion.grd") {
     return(system.file("extdata", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }
@@ -33,7 +29,8 @@ cacheManager <- function(nameFile) {
     E.bil     = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/E.zip",
     CWD.bil   = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/CWD.zip",
     bio4.bil  = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip",
-    bio15.bil = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip"
+    bio15.bil = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip",
+    classification.csv = WFO_url()
   )
   url <- url[[nameFile]]
   
@@ -46,7 +43,7 @@ cacheManager <- function(nameFile) {
   
   req <- httr2::request(url)
   req <- httr2::req_error(req, function(response) FALSE)
-  qryResult <- httr2::req_perform(req)
+  qryResult <- httr2::req_perform_connection(req)
   
   if (httr2::resp_is_error(qryResult)) {
     message("There appears to be a problem reaching the directory.")
