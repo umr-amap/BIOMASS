@@ -8,9 +8,6 @@ if(getRversion() >= "2.15.1") {
   utils::globalVariables(c("x","y","x_rel","y_rel","x_proj","y_proj","i"))
   
   
-  # correctTaxo
-  utils::globalVariables(c("query","from"))
-  
   # getTaxonomy
   utils::globalVariables(c("id"))
   
