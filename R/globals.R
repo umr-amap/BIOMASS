@@ -36,5 +36,8 @@ if(getRversion() >= "2.15.1") {
   # summaryByPlot
   utils::globalVariables(c("indice_line","indice_col","Cred_2.5","Cred_97.5","..raster_value_fun_name","fraction"))
   
+  # model functions
+  utils::globalVariables(c("loglogFunction","michaelisFunction","weibullFunction"))
+  
   
 }
