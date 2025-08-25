@@ -49,5 +49,6 @@ Suggests:
 	httr2,
 	pkgdown,
 	dplyr,
-	brms
+	brms,
+	BH
 RoxygenNote: 7.3.2
