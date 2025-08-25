@@ -50,5 +50,6 @@ Suggests:
 	pkgdown,
 	dplyr,
 	brms,
-	BH
+	BH,
+	RcppEigen
 RoxygenNote: 7.3.2
