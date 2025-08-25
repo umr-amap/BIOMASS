@@ -122,7 +122,7 @@ HDmodel <- modelHD(
   plot = NouraguesHD$plotId, drawGraph = TRUE)
 
 ### Using log2 bayesian model
-\donttest{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
+\dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
   method = "log2", bayesian = TRUE, useCache = TRUE)
 plot(HDmodel$model) }
   
@@ -131,7 +131,7 @@ plot(HDmodel$model) }
 # defining priors is strongly recommended (see "Some tricks" part in the vignette)
 # Also, since  model parameters and chain iterations are strongly correlated,
 # an increase of 'thin', 'iter' and 'warmup' may be required.
-\donttest{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
+\dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
  method = "weibull", bayesian = TRUE, useCache = TRUE,
  thin = 20, iter = 12000, warmup = 2000,
  prior = c(brms::set_prior(prior = "uniform(0,80)",
