@@ -1,1 +1,2 @@
 *.html
+.github/workflows/webr-pkgdown-build-and-deploy.yml
