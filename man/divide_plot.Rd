@@ -15,7 +15,9 @@ divide_plot(
   corner_plot_ID = NULL,
   tree_plot_ID = NULL,
   grid_tol = 0.1,
-  centred_grid = F
+  centred_grid = FALSE,
+  sd_coord = NULL,
+  n = 1000
 )
 }
 \arguments{
@@ -25,7 +27,7 @@ divide_plot(
 
 \item{proj_coord}{(optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.}
 
-\item{longlat}{(optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).}
+\item{longlat}{(optional, if proj_coord is not provided) A character vector of length 2, specifying the column names of the corner geographic coordinates (long,lat).}
 
 \item{grid_size}{A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
@@ -33,16 +35,20 @@ divide_plot(
 
 \item{tree_coords}{A character vector of length 2, specifying the column names of the relative coordinates of the trees.}
 
-\item{corner_plot_ID}{If dealing with multiple plots : a vector indicating plot IDs for corners.}
+\item{corner_plot_ID}{If dealing with several plots: a vector indicating plot IDs for corners.}
 
-\item{tree_plot_ID}{If dealing with multiple plots : a vector indicating tree plot IDs.}
+\item{tree_plot_ID}{If dealing with several plots: a vector indicating tree plot IDs.}
 
 \item{grid_tol}{A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
 
 \item{centred_grid}{When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.}
+
+\item{sd_coord}{used to propagate GPS measurements uncertainties to the subplot polygon areas and the ref_raster footprint in \code{\link[=subplot_summary]{subplot_summary()}}. See Details.}
+
+\item{n}{used to propagate GPS measurements uncertainties: the number of iterations to be used (as in \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}). Cannot be smaller than 50 or larger than 1000.}
 }
 \value{
-If \code{tree_data} isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
+If \code{tree_data} isn't provided, returns a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
@@ -67,6 +73,8 @@ This function divides a plot (or several plots) into subplots in the relative co
 }
 \details{
 If corner coordinates in the projected coordinate system are provided (proj_coord), projected coordinates of subplot corners are calculated by a bilinear interpolation in relation with relative coordinates of plot corners. Be aware that this bilinear interpolation only works if the plot in the relative coordinates system is rectangular (ie, has 4 right angles).
+
+In order to propagate GPS measurement uncertainties, the \code{sd_coord} argument has to be provided and must contains the average standard deviation of the GPS measurements for each corner on the X and Y axes (typically, the output $sd_coord of the \code{\link[=check_plot_coord]{check_plot_coord()}} function). If corner_data contains only one plot, \code{sd_coord} must be a numeric. If dealing with several plot, \code{sd_coord} must be a data frame of two columns named 'plot_ID' and 'sd_coord' containing respectively the plot IDs and the previous metric (again, see the output $sd_coord of the \code{\link[=check_plot_coord]{check_plot_coord()}} function).
 }
 \examples{
 # One plot with repeated measurements of each corner

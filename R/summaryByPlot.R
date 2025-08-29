@@ -1,13 +1,13 @@
 #' Summarise by plot the posterior distribution of AGB values
 #'
 #' @description
-#' This function summarizes the matrix `AGB_val` given by the function [AGBmonteCarlo()] by plot.
+#' This function summarises the matrix `AGB_val` given by the function [AGBmonteCarlo()] by plot.
 #'
 #' @details
 #' If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned
 #' to a plot at each iteration of the AGB monte Carlo approach.
 #'
-#' @param AGB_val Matrix resulting from the [AGBmonteCarlo()] function (AGB_val element of the list), or just the output of the [AGBmonteCarlo()] function.
+#' @param AGB_val Either the matrix resulting from the [AGBmonteCarlo()] function (AGB_simu element of the list), or simply the output of the [AGBmonteCarlo()] function itself.
 #' @param plot Vector corresponding to the plots code (plots ID)
 #' @param drawPlot A logic indicating whether the graphic should be displayed or not
 #'
