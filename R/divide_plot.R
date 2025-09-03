@@ -160,17 +160,22 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     setnames(corner_dt, old = proj_coord, new = c("x_proj","y_proj"))
   }
   if(!is.null(longlat)) {
-    setnames(corner_dt, old = longlat, new = c("long","lat"))
+    if(!is.null(proj_coord)) {
+      message("As the 'proj_coord' argument has been provided, the 'longlat' argument will be ignored.")
+      longlat <- NULL
+    } else {
+      setnames(corner_dt, old = longlat, new = c("long","lat"))
+    }
   }
   
   if(!is.null(corner_plot_ID)) {
-    setnames(corner_dt, old = corner_plot_ID, new = "corner_plot_ID")
+    setnames(corner_dt, old = corner_plot_ID, new = "plot_ID")
   } else {
-    corner_dt[, corner_plot_ID := "subplot" ]
+    corner_dt[, plot_ID := "subplot" ]
   }
   
   if(!is.null(sd_coord) && !is.data.frame(sd_coord)) {
-    sd_coord <- data.frame(plot_ID = unique(corner_dt$corner_plot_ID), sd_coord = sd_coord)
+    sd_coord <- data.frame(plot_ID = unique(corner_dt$plot_ID), sd_coord = sd_coord)
   }
 
   # Sorting rows in a counter-clockwise direction and check for non-rectangular plot
@@ -185,7 +190,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     return(dat)
   }
   
-  corner_dt <- corner_dt[, sort_rows(.SD), by = corner_plot_ID]
+  corner_dt <- corner_dt[, sort_rows(.SD), by = plot_ID]
 
   
   # Transform the geographic coordinates into UTM coordinates ------------------
@@ -196,19 +201,19 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     if(length(UTM_code)>1) {
       stop(paste(unique(dat$plot_ID), "More than one UTM zone are detected. This may be due to an error in the long/lat coordinates, or if the parcel is located right between two UTM zones. In this case, please convert yourself your long/lat coordinates into any projected coordinates which have the same dimension than your local coordinates"))
     }
-    corner_dt[corner_plot_ID %in% dat$corner_plot_ID, c("x_proj", "y_proj") := list(x_proj = proj_coord$X, y_proj = proj_coord$Y)]
+    corner_dt[plot_ID %in% dat$plot_ID, c("x_proj", "y_proj") := list(x_proj = proj_coord$X, y_proj = proj_coord$Y)]
     return(data.frame(UTM_code = UTM_code))
   }
   # Apply latlong2UTM_fct to all plots if necessary
   if(!is.null(longlat)) {
-    UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
+    UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
   }
   
   
   # Dividing plots   -----------------------------------------------------------
   
-  # Grids the plot in the relative coordinates system
-  divide_plot_rel_coord_fct <- function(dat, grid_size) { # dat = corner_dt
+  ### Grids the plot in the relative coordinates system
+  divide_plot_rel_coord_fct <- function(dat, grid_size) { #dat = corner_dt[plot_ID==201,]
     
     # Check that grid dimensions match plot dimensions
     x_plot_length <- diff(range(dat[["x_rel"]]))
@@ -227,7 +232,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
       x_rel = seq(min(dat[["x_rel"]]) + x_not_in_grid/2, max(dat[["x_rel"]]), by = grid_size[1]),
       y_rel = seq(min(dat[["y_rel"]]) + y_not_in_grid/2, max(dat[["y_rel"]]), by = grid_size[2])
     )))
-    plot_grid[,corner_plot_ID:=unique(dat$corner_plot_ID)]
+    plot_grid[,plot_ID:=unique(dat$plot_ID)]
     
     # Attributing subplots names to each corner and adding shared subplot corners
     plot_grid <- rbindlist(apply(plot_grid[x_rel < max(x_rel) & y_rel < max(y_rel),], 1, function(grid_dat) {
@@ -235,7 +240,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
       Y <- as.numeric(grid_dat[["y_rel"]])
       plot_grid[
         (x_rel == X & y_rel == Y) | (x_rel == X + grid_size[1] & y_rel == Y) | (x_rel == X + grid_size[1] & y_rel == Y + grid_size[2]) | (x_rel == X & y_rel == Y + grid_size[2]),
-        .(subplot_ID = paste(corner_plot_ID, (X-min(plot_grid$x_rel)) / grid_size[1], (Y-min(plot_grid$y_rel)) / grid_size[2], sep = "_"),x_rel, y_rel)]
+        .(subplot_ID = paste(plot_ID, (X-min(plot_grid$x_rel)) / grid_size[1], (Y-min(plot_grid$y_rel)) / grid_size[2], sep = "_"),x_rel, y_rel)]
     }))
     
     # Sorting rows 
@@ -243,18 +248,26 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   # Apply divide_plot_rel_coord_fct to all plots
-  plot_grid <- corner_dt[, divide_plot_rel_coord_fct(.SD, grid_size), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
+  plot_grid <- corner_dt[, divide_plot_rel_coord_fct(.SD, grid_size), by = plot_ID, .SDcols = colnames(corner_dt)]
+  # if just one plot, replace "subplot" by "" for the plot_ID column (before it goes in a list when coordinates uncertainties)
+  if (length(unique(corner_dt$plot_ID)) == 1) {
+    corner_dt[, plot_ID := ""]
+    plot_grid[, plot_ID := ""]
+    sd_coord$plot_ID <- ""
+  }
   
-  # Calculates the projected coordinates of the grid points 
-  project_coord_fct <- function(dat, plot_grid) { # dat = corner_dt
+  
+  ### Calculates the projected coordinates of the grid points 
+  project_coord_fct <- function(dat, plot_grid) { # dat = corner_dt[plot_ID==201,]
   
     # Adding a random error on GPS measurements:
     if(!is.null(sd_coord)) {
-      dat <- merge(dat, sd_coord, by.x = "corner_plot_ID", by.y = "plot_ID")
+      dat <- merge(dat, sd_coord)
       dat[, c("x_proj","y_proj") := list(x_proj = x_proj + rnorm(4,0,sd_coord), y_proj = y_proj + rnorm(4,0,sd_coord))]
     }
     
     # Transformation of relative grid coordinates into projected coordinates if provided
+    plot_grid <- plot_grid[plot_ID == unique(dat$plot_ID)]
     if(!is.null(proj_coord) | !is.null(longlat)) {
       plot_grid <- cbind(plot_grid,bilinear_interpolation(coord = plot_grid[,c("x_rel","y_rel")] , from_corner_coord = dat[,c("x_rel","y_rel")] , to_corner_coord = dat[,c("x_proj","y_proj")], ordered_corner = T))
     }
@@ -264,19 +277,19 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   # Apply project_coord_fct to all plots
   if(is.null(sd_coord)) {
-    sub_corner_coord <- corner_dt[, project_coord_fct(.SD, plot_grid), by = corner_plot_ID, .SDcols = colnames(corner_dt)][,-1]
+    sub_corner_coord <- corner_dt[, project_coord_fct(.SD, plot_grid), by = plot_ID, .SDcols = colnames(corner_dt)][,-1]
   } else { # if error propagation on coordinates: return a list of length n
-    sub_corner_coord <- lapply(1:n, function(x) corner_dt[, project_coord_fct(.SD, plot_grid), by = corner_plot_ID, .SDcols = colnames(corner_dt), ][,-1])
+    sub_corner_coord <- lapply(1:n, function(x) corner_dt[, project_coord_fct(.SD, plot_grid), by = plot_ID, .SDcols = colnames(corner_dt), ][,-1])
   }
   
   
   # Retrieving geographic coordinates (if no error propagation) ----------------
   if(!is.null(longlat) && is.null(sd_coor)) {
     GPS_coord_fct <- function(dat) { # dat = sub_corner_coord
-      gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$corner_plot_ID == unique(dat$corner_plot_ID)], inverse = TRUE) )
-      sub_corner_coord[corner_plot_ID %in% dat$corner_plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
+      gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$plot_ID == unique(dat$plot_ID)], inverse = TRUE) )
+      sub_corner_coord[plot_ID %in% dat$plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
     }
-    sub_corner_coord[, GPS_coord_fct(.SD), by = corner_plot_ID, .SDcols = colnames(sub_corner_coord)]
+    sub_corner_coord[, GPS_coord_fct(.SD), by = plot_ID, .SDcols = colnames(sub_corner_coord)]
   }
   
   
@@ -291,12 +304,12 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     if(!is.null(tree_plot_ID)) {
       setnames(tree_dt, old = tree_plot_ID, new = "plot_ID")
       
-      if(any(! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["corner_plot_ID"]]))) {
-        warning( paste( "These ID's are found in tree_plot_ID but not in corner_data :" , paste(unique(tree_dt[["plot_ID"]])[! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["corner_plot_ID"]])] , collapse = " "),"\n") )
+      if(any(! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["plot_ID"]]))) {
+        warning( paste( "These ID's are found in tree_plot_ID but not in corner_data :" , paste(unique(tree_dt[["plot_ID"]])[! unique(tree_dt[["plot_ID"]]) %in% unique(corner_dt[["plot_ID"]])] , collapse = " "),"\n") )
       }
       
     } else {
-      tree_dt[, plot_ID := "subplot" ]
+      tree_dt[, plot_ID := "" ]
     } 
     
     if(!is.data.frame(sub_corner_coord)) {
@@ -305,7 +318,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
       sub_corner_coord_ref <- sub_corner_coord
     }
     invisible(lapply(split(sub_corner_coord_ref, by = "subplot_ID", keep.by = TRUE), function(dat) {
-      tree_dt[ plot_ID == dat$corner_plot_ID[1] &
+      tree_dt[ plot_ID == dat$plot_ID[1] &
                  x_rel %between% range(dat[["x_rel"]]) &
                  y_rel %between% range(dat[["y_rel"]]),
                subplot_ID := dat$subplot_ID[1]]
@@ -317,9 +330,6 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   # Returns --------------------------------------------------------------------
-  
-  # if one plot: remove corner_plot_ID column
-  if(is.null(corner_plot_ID) && is.data.frame(sub_corner_coord)) sub_corner_coord[ , corner_plot_ID := NULL]
   
   output <- list()
   
@@ -334,7 +344,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   if(!is.null(longlat)) {
-    if(all(UTM_code$corner_plot_ID=="subplot")) UTM_code$corner_plot_ID <- NULL # single plot
+    if(all(UTM_code$plot_ID=="subplot")) UTM_code$plot_ID <- NULL # single plot
     output$UTM_code <- UTM_code
   }
   

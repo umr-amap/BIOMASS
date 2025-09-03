@@ -50,7 +50,7 @@ divide_plot(
 \value{
 If \code{tree_data} isn't provided, returns a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
-\item \code{corner_plot_ID}: If dealing with multiple plots : the plot code
+\item \code{plot_ID}: If dealing with multiple plots: the plot code, else, a column containing the character "subplot"
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
 \item \code{x_rel} and \code{y_rel} : the relative X-axis and Y-axis coordinates of subplots corners.
 \item \code{x_proj} and \code{y_proj} :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners

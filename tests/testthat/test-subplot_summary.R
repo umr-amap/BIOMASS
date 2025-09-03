@@ -10,14 +10,16 @@ test_that("subplot_summary error", {
   subplots <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50)
 
   expect_error(subplot_summary(subplots), "subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
-  expect_error(subplot_summary(subplots = list(subplots)), "subplots argument must be the output of the divide_plot_function, with a non-null tree_data argument")
-  expect_error(subplot_summary(subplots = list(sub_corner_coord = subplots)), "subplots argument must be the output of the divide_plot_function, with a non-null tree_data argument")
 
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
+  
+  expect_error(subplot_summary(subplots = subplots, value = "D", AGB_simu = matrix()), "You must provide either 'value' or 'AGB_simu'")
   expect_message(subplot_summary(subplots, value = "D", draw_plot = F), "Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system", fixed=TRUE)
 
+  expect_error(suppressMessages(subplot_summary(subplots = subplots, AGB_simu = matrix(1:4))), "The rows in 'subplots$tree_data' must match the rows in 'AGB_simu'", fixed = TRUE)
+  
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
-  expect_error(subplot_summary(subplots, draw_plot = F) , "You must provide the tree variable to be summarised via the value argument.", fixed=TRUE)
+  
   expect_error(subplot_summary(subplots, value = "a", draw_plot = F) , "a is not a column name of subplots$tree_data", fixed=TRUE)
 
   expect_error(subplot_summary(subplots, value = "D", draw_plot = F, fun = "quantile") , "the function provided using `fun =` is not a function", fixed=TRUE)
@@ -79,7 +81,14 @@ test_that("subplot_summary_raster", {
                                                     grid_size = 25, corner_plot_ID = "Plot",
                                                     tree_data = NouraguesTrees , tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"))
   
+  expect_error(subplot_summary(subplots = multiple_subplots, value = c("D","D"), draw_plot = FALSE, fun = list(mean,sd), ref_raster = "toto", raster_fun = list(mean,sd)) , "ref_raster is not recognised as a SpatRaster of terra package")
+  
   nouragues_raster <- terra::rast( system.file("extdata", "NouraguesRaster.tif", package = "BIOMASS", mustWork = TRUE))
+  
+  expect_error(subplot_summary(multiple_subplots, value = "D", draw_plot = F, raster_fun = "quantile") , "the function provided using `raster_fun =` is not a function", fixed=TRUE)
+  expect_error(subplot_summary(multiple_subplots, value = c("D","D"), draw_plot = F, raster_fun = list(D="quantile",D=mean)) , "not a function")
+  expect_error(subplot_summary(multiple_subplots, value = "D", draw_plot = F, fun = quantile) , "the function provided using `fun` must return a single value", fixed=TRUE)
+  
   
   res_multiple <- subplot_summary(multiple_subplots, value = c("D","D"), draw_plot = FALSE, fun = list(mean,sd), ref_raster = nouragues_raster, raster_fun = list(mean,sd))
   rownames(res_multiple$tree_summary) <- NULL

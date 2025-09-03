@@ -7,6 +7,7 @@
 subplot_summary(
   subplots,
   value = NULL,
+  AGB_simu = NULL,
   draw_plot = TRUE,
   per_ha = TRUE,
   fun = sum,
@@ -18,7 +19,9 @@ subplot_summary(
 \arguments{
 \item{subplots}{output of the \code{\link[=divide_plot]{divide_plot()}} function}
 
-\item{value}{a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)}
+\item{value}{(if AGB_simu is not provided) a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)}
+
+\item{AGB_simu}{(if value is not provided) a n x m matrix containing individual AGB where n is the number of tree and m is the number of monte carlo simulation. Typically, the output '$AGB_simu' of the AGBmonteCarlo() function.}
 
 \item{draw_plot}{a logical indicating whether the plot design should be displayed}
 

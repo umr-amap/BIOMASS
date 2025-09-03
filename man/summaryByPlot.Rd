@@ -7,7 +7,7 @@
 summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 }
 \arguments{
-\item{AGB_val}{Matrix resulting from the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function (AGB_val element of the list), or just the output of the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function.}
+\item{AGB_val}{Either the matrix resulting from the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function (AGB_simu element of the list), or simply the output of the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function itself.}
 
 \item{plot}{Vector corresponding to the plots code (plots ID)}
 
@@ -23,7 +23,7 @@ a data frame where:
 }
 }
 \description{
-This function summarizes the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot.
+This function summarises the matrix \code{AGB_val} given by the function \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} by plot.
 }
 \details{
 If some trees belong to an unknown plot (i.e. NA value in the plot arguments), their AGB values are randomly assigned

@@ -4,7 +4,8 @@
 #' After applying the [divide_plot()] function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
 #'
 #' @param subplots output of the [divide_plot()] function
-#' @param value a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)
+#' @param value (if AGB_simu is not provided) a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)
+#' @param AGB_simu (if value is not provided) a n x m matrix containing individual AGB where n is the number of tree and m is the number of monte carlo simulation. Typically, the output '$AGB_simu' of the AGBmonteCarlo() function.
 #' @param draw_plot a logical indicating whether the plot design should be displayed
 #' @param per_ha a logical indicating whether the metric summary should be per hectare (or, if summarising several metrics at once: a logical vector corresponding to each metric (see examples))
 #' @param fun the function to be applied on tree metric of each subplot (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))
@@ -23,7 +24,7 @@
 #'
 #' @importFrom data.table data.table := set
 #' @importFrom grDevices terrain.colors
-#' @importFrom ggplot2 ggplot aes geom_sf theme_minimal scale_fill_gradientn theme ggtitle
+#' @importFrom ggplot2 ggplot aes geom_sf theme_minimal scale_fill_gradientn theme ggtitle lims
 #' @importFrom terra extract
 #' 
 #' @examples
@@ -70,7 +71,7 @@
 #'   nouragues_sum$plot_design
 #' }
 #'
- # Dealing with multiple plots and metrics
+# Dealing with multiple plots and metrics
 #' \dontrun{
 #'   data("NouraguesCoords")
 #'   nouragues_subplots <- suppressWarnings(
@@ -93,24 +94,34 @@
 #'   nouragues_mult$plot_design$`201`[[3]]
 #' }
 #'
-subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ref_raster = NULL, raster_fun = mean, ...) {
-
+subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ref_raster = NULL, raster_fun = mean, ...) {
+  
   # Checking parameters --------------------------------------------------------
-  if(is.data.frame(subplots)) {
+  if(is.null(subplots$tree_data)) {
     stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
   }
-  if (is.list(subplots) && ( is.null(names(subplots)) || (!"tree_data" %in% names(subplots)) ) ) {
-    stop("subplots argument must be the output of the divide_plot_function, with a non-null tree_data argument")
+  if ((is.null(value) & is.null(AGB_simu)) | (!is.null(value) & !is.null(AGB_simu)) )  {
+    stop("You must provide either 'value' or 'AGB_simu'")
   }
-  if(any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
+  if(is.data.frame(subplots$sub_corner_coord) && any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
     subplots$sub_corner_coord[,c("x_proj","y_proj")] <- subplots$sub_corner_coord[,c("x_rel","y_rel")]
     message("Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system")
   }
-  if(is.null(value)) {
-    stop("You must provide the tree variable to be summarised via the value argument.")
-  }
-  if(!any(value %in% names(subplots$tree_data))) {
+  if(!is.null(value) && !any(value %in% names(subplots$tree_data))) {
     stop(paste(value,"is not a column name of subplots$tree_data"))
+  }
+  if (!is.null(AGB_simu) && !is.matrix(AGB_simu)) stop("'AGB_simu' must be a matrix containing individual AGB (one row per tree), typically, the output '$AGB_simu' of the AGBmonteCarlo() function.")
+  
+  if (!is.null(AGB_simu) && nrow(AGB_simu) != nrow(subplots$tree_data) ) {
+    stop("The rows in 'subplots$tree_data' must match the rows in 'AGB_simu'")
+  }
+  if (!is.null(AGB_simu) && is.list(subplots$sub_corner_coord) && ncol(AGB_simu) != length(subplots$sub_corner_coord)) {
+    warning("The number of simulations 'n' differs between AGBmonteCarlo() (the number of column in AGB_simu) and divide_plot() (the length of the subplots$sub_corner_coord list). The resulting n value will be the smaller of the two.")
+    if( ncol(AGB_simu) < length(subplots$sub_corner_coord) ) {
+      subplots$sub_corner_coord <- subplots$sub_corner_coord[[1:ncol(AGB_simu)]]
+    } else {
+      AGB_simu <- AGB_simu[,1:length(subplots$sub_corner_coord)]
+    }
   }
   
   # Get the name of the function(s) (before the evaluation of fun, otherwise we will get the function and not the name of the argument)
@@ -140,18 +151,20 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
       fun <- lapply(fun , match.fun)
     }
   }
-  if( length(value) > 1 && length(per_ha) == 1 ) {
-    per_ha = rep(per_ha, length(value))
-  }
-  if( is.list(fun) && length(value) != length(fun) ) {
-    stop("the lengths of 'value' and 'fun' are not the same")
-  }
-  if( is.list(fun) && length(value) != length(per_ha) ) {
-    stop("the lengths of 'value' and 'per_ha' are not the same")
+  if(!is.null(value)) {
+    if( length(value) > 1 && length(per_ha) == 1 ) {
+      per_ha = rep(per_ha, length(value))
+    }
+    if( is.list(fun) && length(value) != length(fun) ) {
+      stop("the lengths of 'value' and 'fun' are not the same")
+    }
+    if( is.list(fun) && length(value) != length(per_ha) ) {
+      stop("the lengths of 'value' and 'per_ha' are not the same")
+    }
   }
   
   # Check is ref_raster is a SpatRaster
-  if(!is.null(ref_raster) && is(ref_raster) != "SpatRaster") {
+  if(!is.null(ref_raster) && class(ref_raster) != "SpatRaster") {
     stop("ref_raster is not recognised as a SpatRaster of terra package")
   }
   # Check if raster_fun is a function or a list of function
@@ -169,27 +182,49 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
       raster_fun <- lapply(raster_fun , match.fun)
     }
   }
-
+  
   # Data processing ------------------------------------------------------------
   value_fun_name <- paste(value, fun_name, sep = "_")
   
-  corner_dat <- data.table(subplots$sub_corner_coord)
-  # If just one plot, add an empty character plot_ID column (used for ggploting)
-  if( is.null(corner_dat$corner_plot_ID) ) {
-    corner_dat[ , plot_ID := ""]
-  } else{ # if several plots, rename corner_plot_ID by plot_ID
-    setnames(corner_dat, "corner_plot_ID", "plot_ID")
+  if(is.data.frame(subplots$sub_corner_coord)) {
+    corner_dat <- data.table(subplots$sub_corner_coord)
+  } else { # if n simulations of corner coordinates (GPS measurement uncertainties)
+    if(is.null(AGB_simu)) {
+      stop("Propagating GPS measurement uncertainties of corners without propagating AGB uncertainties makes no sense. Use the argument 'AGB_simu' instead of 'value' to provide AGB uncertainties.")
+    } else {
+      corner_dat <- do.call(rbind,lapply(1:length(subplots$sub_corner_coord), function(n_simu) { # n_simu = 1
+        cor_dat <- data.table(subplots$sub_corner_coord[[n_simu]])
+        cor_dat[, subplot_ID := paste0(subplot_ID , "_N_" , n_simu)]
+        cor_dat
+      }))
+    }
   }
   
   tree_summary <- data.table(subplots$tree_data)
   
+  # Adding AGB simulated values to tree_summary
+  if(!is.null(AGB_simu)) {
+    tree_summary <- cbind(tree_summary, AGB_simu)
+    value <- paste0("V",1:ncol(AGB_simu))
+    value_fun_name <- paste0(value,"_sum")
+    fun = lapply(1:ncol(AGB_simu), function(x) sum)
+  }
+  
   # Adding metric(s) summary to tree_summary at subplot level
-  if(length(value) == 1) {
-    tree_summary <- tree_summary[!is.na(subplot_ID), fun(get(value), ...) , by=c("subplot_ID")]
-    setnames(tree_summary, "V1", value_fun_name)
-  } else { # Apply functions to values by subplot
-    tree_summary <- tree_summary[!is.na(subplot_ID), lapply( 1:length(value), function(i) fun[[i]](get(value[i]), ...) ) , by=c("subplot_ID")]
-    setnames(tree_summary, 2:(length(value)+1), value_fun_name)
+  if(!is.null(value)) {
+    if(length(value) == 1) {
+      tree_summary <- tree_summary[!is.na(subplot_ID), fun(get(value), ...) , by=c("subplot_ID")]
+      setnames(tree_summary, "V1", value_fun_name)
+    } else { # Apply functions to values by subplot
+      tree_summary <- tree_summary[!is.na(subplot_ID), lapply( 1:length(value), function(i) fun[[i]](get(value[i]), ...) ) , by=c("subplot_ID")]
+      setnames(tree_summary, 2:(length(value)+1), value_fun_name)
+    }
+  }
+  if(!is.null(AGB_simu)) { # Reshape to a long format tree_summary to include the simulation number in subplot_ID
+    tree_summary <- reshape(tree_summary, varying = value_fun_name , direction = "long", v.names = "AGB_sum", ids = NULL)
+    tree_summary[ , subplot_ID := paste0(subplot_ID , "_N_" , time)][ , time := NULL]
+    value <- "AGB"
+    value_fun_name <- "AGB_sum"
   }
   
   # Check function(s) that would returned more than one value
@@ -204,9 +239,9 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
   corner_dat <- corner_dat[tree_summary[.(unique_keys), on="subplot_ID"]] # Full Outer Join
   for (j in value_fun_name) data.table::set(corner_dat,which(is.na(corner_dat[[j]])),j,0) # replace NA by 0 (when no tree in a subplot)
   
-  # Creating sf_polygons that will be the $polygon output of the function (a simple feature collection of the subplot's polygon)
-  sf_polygons <- do.call(rbind,lapply(split(corner_dat, by = "subplot_ID"), function(dat) { #dat = split(corner_dat, by = "subplot_ID")[[1]]
-    # For each subplot: 
+  # Function to create sf_polygons that will be the $polygon output of the function (a simple feature collection of the subplot's polygon)
+  print("Creating sf_polygons for each subplot...")
+  create_polygon_fct <- function(dat) { # dat = corner_dat[ 1:4 , ]
     
     # Create the associated polygon
     mat <- dat[, .(x_proj, y_proj)]
@@ -237,23 +272,26 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
     
     # Setting CRS if geographic coordinates
     if( !is.null(subplots$UTM_code) ) {
-      if(is.null(subplots$UTM_code$corner_plot_ID) ) { # if one plot with no plot ID
+      if(is.null(subplots$UTM_code$plot_ID_ID) ) { # if one plot with no plot ID
         sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code
       } else { # if several plots with IDs
-        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code[subplots$UTM_code$corner_plot_ID == unique(dat$plot_ID)]
+        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code[subplots$UTM_code$plot_ID_ID == unique(dat$plot_ID)]
       }
     }
     
     sf::st_geometry(sf_polygon) <- "sf_subplot_polygon" #rename last column
-    sf_polygon
-  }))
+    return(sf_polygon)
+  }
+  
+  
+  sf_polygons <- corner_dat[ , create_polygon_fct(.SD) , by = "subplot_ID", .SDcols = colnames(corner_dat)][,-1]
   sf_polygons <- sf_polygons[order(sf_polygons$subplot_ID),]
   
-  
   ### Extract raster values of sf_polygons (use of extract just once instead of multiple time if it was done during the sf_polygons creation)
-  # unlist(sapply(sf_polygons$sf_subplot_polygon , function(x) terra::global(terra::crop(ref_raster, x), "mean")))
   if( !is.null(ref_raster)) {  
+    print("Extracting raster metric for each subplot...")
     extract_rast_val <- extract(x = ref_raster, y = vect(sf_polygons$sf_subplot_polygon), exact = TRUE)
+    print("Extracting raster metric done.")
     # keeping raster values whose fraction are > 0.5
     extract_rast_val = data.table(extract_rast_val)[ fraction >0.5,]
     rast_val_name <- names(extract_rast_val)[2]
@@ -274,46 +312,66 @@ subplot_summary <- function(subplots, value = NULL, draw_plot = TRUE, per_ha = T
     # Adding raster metric(s) summary to sf_polygons
     sf_polygons <- cbind(sf_polygons, tree_summary[,..raster_value_fun_name])
   }
-
+  
   
   # Plot the plot(s) -----------------------------------------------------------
   
-  plot_list <- lapply( split(sf_polygons , sf_polygons$plot_ID) , function(sf_pol) { # sf_pol = split(sf_polygons , sf_polygons$plot_ID)[[2]]
+  if(is.null(AGB_simu)) {
     
-    plot_design <- lapply(names(sf_pol)[! names(sf_pol) %in% c("plot_ID","subplot_ID","sf_subplot_polygon")] , function(metric_name) {
-      ggplot(data = sf_pol) +
-        geom_sf(mapping = aes(fill=.data[[metric_name]])) +
-        theme_minimal() + 
-        scale_fill_gradientn(colours = rev(terrain.colors(20))) + 
-        theme(legend.position="bottom", #legend.title = element_blank(),
-              legend.key.size = unit(0.8,"cm"), 
-              axis.title = element_blank(),
-              axis.text.x = element_text(angle = 45, hjust=1)
-              ) + 
-        ggtitle( paste( ifelse(unique(sf_pol$plot_ID) == "" , "" , paste(unique(sf_pol$plot_ID) , ":")),
-                        gsub("_",replacement = " ", metric_name)) )
+    plot_list <- lapply( split(sf_polygons , sf_polygons$plot_ID) , function(sf_pol) { # sf_pol = split(sf_polygons , sf_polygons$plot_ID)[[1]]
+      
+      plot_design <- lapply(names(sf_pol)[! names(sf_pol) %in% c("plot_ID","subplot_ID","sf_subplot_polygon")] , function(metric_name) {
+        pol_bbox <- sapply(sf_pol$sf_subplot_polygon, sf::st_bbox)
+        ggplot(data = sf_pol) +
+          geom_sf(mapping = aes(fill=.data[[metric_name]], geometry = sf_subplot_polygon)) +
+          theme_minimal() + 
+          scale_fill_gradientn(colours = rev(terrain.colors(20))) +
+          lims(x = c(min(pol_bbox["xmin",]), max(pol_bbox["xmax",])), 
+               y = c(min(pol_bbox["ymin",]), max(pol_bbox["ymax",]))) +
+          theme(legend.position="bottom", #legend.title = element_blank(),
+                legend.key.size = unit(0.8,"cm"), 
+                axis.title = element_blank(),
+                axis.text.x = element_text(angle = 45, hjust=1)
+          ) + 
+          ggtitle( paste( ifelse(unique(sf_pol$plot_ID) == "" , "" , paste(unique(sf_pol$plot_ID) , ":")),
+                          gsub("_",replacement = " ", metric_name)) )
+        
+      })
+      
+      
+      
+      if(draw_plot) print(plot_design)
+      
+      return(invisible(plot_design))
       
     })
-    
-    if(draw_plot) print(plot_design)
-    
-    return(invisible(plot_design))
-    
-  })
-
+  }
+  
   # Outputs --------------------------------------------------------------------
   
   # Organize the ggplots outputs :
-  if( length(unique(sf_polygons$plot_ID)) == 1 ) { # If just one plot :
-    sf_polygons$plot_ID <- NULL # delete plot_id column
-    if(length(value)==1) { # If one metric :
-      plot_list <- plot_list[[1]][[1]] # double unlist the output
-    } else {
-      plot_list <- plot_list[[1]] # unlist the output
+  if(is.null(AGB_simu)) {
+    if( length(unique(sf_polygons$plot_ID)) == 1 ) { # If just one plot :
+      sf_polygons$plot_ID <- NULL # delete plot_id column
+      if(length(value)==1) { # If one metric :
+        plot_list <- plot_list[[1]][[1]] # double unlist the output
+      } else {
+        plot_list <- plot_list[[1]] # unlist the output
+      }
+    } # If several plots, all is OK
+    output <- list(tree_summary = sf::st_drop_geometry(sf_polygons), polygon = sf_polygons, plot_design = plot_list)
+  } else {
+    if( length(unique(sf_polygons$plot_ID)) == 1 ) { # If just one plot :
+      sf_polygons[,plot_ID:=NULL] # delete plot_id column
     }
-  } # If several plots, all is OK
+    sf_polygons[,sf_subplot_polygon:=NULL]
+    
+    sf_polygons[,N_simu := as.numeric(tstrsplit(subplot_ID, split = "_N_", keep = 2)[[1]])]
+    sf_polygons[,subplot_ID := gsub("_N_\\d+","",subplot_ID)]
+    data.table::setorder(sf_polygons,subplot_ID,N_simu)
+    output <- sf_polygons
+  }
   
-  output <- list(tree_summary = sf::st_drop_geometry(sf_polygons), polygon = sf_polygons, plot_design = plot_list)
   
   return(output)
 }
