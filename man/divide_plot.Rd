@@ -17,7 +17,7 @@ divide_plot(
   grid_tol = 0.1,
   centred_grid = FALSE,
   sd_coord = NULL,
-  n = 1000
+  n = 100
 )
 }
 \arguments{
@@ -48,24 +48,17 @@ divide_plot(
 \item{n}{used to propagate GPS measurements uncertainties: the number of iterations to be used (as in \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}}). Cannot be smaller than 50 or larger than 1000.}
 }
 \value{
-If \code{tree_data} isn't provided, returns a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
+Returns a list containing:
 \itemize{
-\item \code{plot_ID}: If dealing with multiple plots: the plot code, else, a column containing the character "subplot"
+\item $sub_corner_coord: a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
+\itemize{
+\item \code{plot_ID}: If dealing with multiple plots: the plot code, else, a column containing an empty character
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
 \item \code{x_rel} and \code{y_rel} : the relative X-axis and Y-axis coordinates of subplots corners.
-\item \code{x_proj} and \code{y_proj} :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
+\item \code{x_proj} and \code{y_proj} : if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
 }
-
-If \code{tree_data} is provided, returns a list containing :
-\itemize{
-\item the previous data-frame
-\item the tree_data data-frame with the subplot_ID of each tree in the last column
-}
-
-If \code{longlat} is provided, returns a list containing :
-\itemize{
-\item the previous data-frame/list
-\item \code{UTM_code}: a data.frame containing the UTM code of the corner GPS coordinates for each plot
+\item $tree_data: the tree_data argument with the subplot_ID of each tree in the last column
+\item $UTM_code: if 'longlat' is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
 }
 }
 \description{

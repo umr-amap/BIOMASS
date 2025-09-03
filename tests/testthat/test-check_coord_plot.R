@@ -55,10 +55,11 @@ test_that("check_plot_coord outputs and outliers", {
   )
   outputs <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   expect_is(outputs, "list")
-  expect_length(outputs, 4)
-  expect_equal(names(outputs), c("corner_coord", "polygon", "plot_design", "outlier_corners"))
+  expect_length(outputs, 5)
+  expect_equal(names(outputs), c("corner_coord", "polygon", "plot_design", "outlier_corners","sd_coord"))
   expect_is(outputs$corner_coord, "data.frame")
   expect_is(outputs$outlier_corners, "data.frame")
+  expect_is(outputs$sd_coord, "numeric")
 
   expect_equal(dim(outputs$outlier_corners), c(7,3))
   expect_equal(dim(outputs$corner_coord), c(4, 4))
@@ -85,8 +86,7 @@ test_that("check_plot_coord in long lat", {
   outputs_longlat <- check_plot_coord(NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   outputs_proj_coord <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   expect_is(outputs_longlat, "list")
-  expect_length(outputs_longlat, 5)
-  expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code"))
+  expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code","sd_coord"))
   expect_equal(outputs_longlat[c(1,4)], outputs_proj_coord[c(1,4)])
 })
 
@@ -141,5 +141,17 @@ test_that("check_plot_coord, tree data and raster", {
   vdiffr::expect_doppelganger("check-plot-201-rast-prop", 
                               res_prop_raster$plot_design)
   
+  
+})
+
+test_that("check_plot_coord, sd_coord", {
+  controled_sd <- as.data.table(rbind(NouraguesPlot201,NouraguesPlot201,NouraguesPlot201,NouraguesPlot201))
+  controled_sd[, c("Xutm","Yutm") := list(mean(Xutm, na.rm=TRUE) + rnorm(40,0,5), mean(Yutm, na.rm=TRUE) + rnorm(40,0,5)) , by = list(Xfield, Yfield) ]
+  res <- suppressWarnings(
+    check_plot_coord(
+      controled_sd, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+      trust_GPS_corners = T, rm_outliers = FALSE, draw_plot = F))
+  
+  expect_equal(res$sd_coord, 5, tolerance = 0.3)
   
 })

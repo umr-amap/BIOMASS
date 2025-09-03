@@ -22,19 +22,16 @@
 #' @param sd_coord used to propagate GPS measurements uncertainties to the subplot polygon areas and the ref_raster footprint in [subplot_summary()]. See Details.
 #' @param n used to propagate GPS measurements uncertainties: the number of iterations to be used (as in [AGBmonteCarlo()]). Cannot be smaller than 50 or larger than 1000.
 #'
-#' @return If `tree_data` isn't provided, returns a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
-#'   - `plot_ID`: If dealing with multiple plots: the plot code, else, a column containing the character "subplot"
-#'   - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
-#'   - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
-#'   - `x_proj` and `y_proj` :  if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
+#' @return Returns a list containing:
+#'   - $sub_corner_coord: a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#'     - `plot_ID`: If dealing with multiple plots: the plot code, else, a column containing an empty character
+#'     - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
+#'     - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
+#'     - `x_proj` and `y_proj` : if proj_coord is provided, the projected X-axis and Y-axis coordinates of subplots corners
+#'     
+#'  - $tree_data: the tree_data argument with the subplot_ID of each tree in the last column 
 #'   
-#'   If `tree_data` is provided, returns a list containing : 
-#'   - the previous data-frame 
-#'   - the tree_data data-frame with the subplot_ID of each tree in the last column 
-#'   
-#'   If `longlat` is provided, returns a list containing : 
-#'   - the previous data-frame/list 
-#'   - `UTM_code`: a data.frame containing the UTM code of the corner GPS coordinates for each plot
+#'  - $UTM_code: if 'longlat' is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
 #'   
 #'
 #' @export
@@ -88,7 +85,7 @@
 #' head(nouragues_subplots$sub_corner_coord)
 #' head(nouragues_subplots$tree_data)
  
-divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = FALSE, sd_coord = NULL, n = 1000) {
+divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, centred_grid = FALSE, sd_coord = NULL, n = 100) {
   
   # Checking arguments ---------------------------------------------------------
   
@@ -142,7 +139,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
       
     } else { # if sd_coord is a data frame
       if(is.null(corner_plot_ID)) stop("You must provide corner_plot_ID if you have more than one plot in sd_coord")
-      if(!all.equal(names(sd_coord),c("plot_ID","sd_coord"))) stop("Column names of sd_coord must be 'plot_ID' and 'sd_coord'")
+      if(all.equal(names(sd_coord),c("plot_ID","sd_coord")) != TRUE) stop("Column names of sd_coord must be 'plot_ID' and 'sd_coord'")
       if( sum(!unique(corner_data[,corner_plot_ID]) %in% sort(sd_coord$plot_ID)) != 0 ) stop("Plot IDs in corner_data and sd_coord don't match.") 
       if(sum(is.na(sd_coord$sd_coord))!=0) stop("sd_coord must not contain NA value.")
     } 
@@ -207,6 +204,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   # Apply latlong2UTM_fct to all plots if necessary
   if(!is.null(longlat)) {
     UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
+    if(length(UTM_code$plot_ID) == 1) UTM_code$plot_ID <- ""
   }
   
   
@@ -253,7 +251,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   if (length(unique(corner_dt$plot_ID)) == 1) {
     corner_dt[, plot_ID := ""]
     plot_grid[, plot_ID := ""]
-    sd_coord$plot_ID <- ""
+    if(!is.null(sd_coord)) {
+      sd_coord$plot_ID <- ""
+    }
   }
   
   
@@ -284,7 +284,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   
   # Retrieving geographic coordinates (if no error propagation) ----------------
-  if(!is.null(longlat) && is.null(sd_coor)) {
+  if(!is.null(longlat) && is.null(sd_coord)) {
     GPS_coord_fct <- function(dat) { # dat = sub_corner_coord
       gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$plot_ID == unique(dat$plot_ID)], inverse = TRUE) )
       sub_corner_coord[plot_ID %in% dat$plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
