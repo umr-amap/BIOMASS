@@ -9,7 +9,7 @@ test_that("check_plot_coord error", {
   expect_error(check_plot_coord(proj_coord=NouraguesPlot201[c("Xutm","Yutm")], rel_coord=NouraguesPlot201[c("Xfield","Yfield")]),
                "The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   expect_error(check_plot_coord(corner_data = as.matrix(NouraguesPlot201), rel_coord = c("Xfield","Yfield")),
-               "corner_data must a data frame or a data frame extension")
+               "corner_data must be a data frame or a data frame extension")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, rel_coord = c("Xfield","Yfield")),
                "You must provide the name of at least one set of coordinates : longlat or proj_coord")
   expect_error(check_plot_coord(corner_data = NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("x","y")),
@@ -28,6 +28,7 @@ test_that("check_plot_coord error", {
   
   
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, max_dist=c(10,20) ),"The max_dist argument must be of length 1")
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", draw_plot = F, max_dist = 0.1) , "increasing the distance")
 
   wrong_coords <- NouraguesPlot201 ; wrong_coords[1,"Xfield"] <- NA
   expect_error(check_plot_coord(wrong_coords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T), "Missing values are detected in corner relative coordinates. Please remove them and call the function again")
@@ -36,10 +37,14 @@ test_that("check_plot_coord error", {
   wrong_coords[1,"Xutm"] <- 0 ; wrong_coords[1,"Long"] <- NA
   expect_error(check_plot_coord(wrong_coords, longlat = c("Long","Lat"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T), "Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   
-  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present in corner_data, then the argument plot_ID is required.")
+  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present, then the argument plot_ID is required.")
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "a"),"is not found in corner_data column names.")
   
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), "The argument tree_plot_ID is required if plot_ID is provided.")
+  wrong_coords <- NouraguesCoords 
+  wrong_coords <- rbind(wrong_coords[1,], wrong_coords)
+  wrong_coords[1,"Xfield"] <- 1
+  expect_error(check_plot_coord(wrong_coords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot"), "5 unique corners are detected in 201 rel_coord (instead of 4)", fixed = TRUE)
   
   expect_warning(check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "These ID's are found in tree_plot_ID but not in plot_ID : 201 213 223")
   
@@ -127,9 +132,19 @@ test_that("check_plot_coord, tree data and raster", {
   
   expect_is(res$tree_data, "data.frame")
   expect_equal(dim(res$tree_data), c(nrow(NouraguesTrees[NouraguesTrees$Plot=="201",]), ncol(NouraguesTrees)+3))
+  expect_equal(sum(!res$tree_data$is_in_plot),3)
   
   vdiffr::expect_doppelganger("check-plot-201-trees", 
                               res$plot_design)
+  
+  res_trust_F <- suppressWarnings(
+    check_plot_coord(
+      NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+      trust_GPS_corners = FALSE, rm_outliers = T, draw_plot = F,
+      tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield")))
+  vdiffr::expect_doppelganger("check-plot-201-trees-dont-trust-GPS", 
+                              res_trust_F$plot_design)
+  
   
   nouragues_raster <- terra::rast(system.file("extdata", "NouraguesRaster.tif", package = "BIOMASS", mustWork = TRUE))
   res_prop_raster <- suppressWarnings(

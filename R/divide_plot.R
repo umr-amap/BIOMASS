@@ -93,7 +93,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
-    stop("corner_data must a data frame or a data frame extension")
+    stop("corner_data must be a data frame or a data frame extension")
   }
   if (!any(rel_coord %in% names(corner_data))) {
     stop("column names provided by rel_coord are not found in corner_data")
@@ -138,7 +138,6 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
       if(!is.null(corner_plot_ID)) warning("The value of sd_coord will be used for every plot contained in 'corner_data'.")
       
     } else { # if sd_coord is a data frame
-      if(is.null(corner_plot_ID)) stop("You must provide corner_plot_ID if you have more than one plot in sd_coord")
       if(all.equal(names(sd_coord),c("plot_ID","sd_coord")) != TRUE) stop("Column names of sd_coord must be 'plot_ID' and 'sd_coord'")
       if( sum(!unique(corner_data[,corner_plot_ID]) %in% sort(sd_coord$plot_ID)) != 0 ) stop("Plot IDs in corner_data and sd_coord don't match.") 
       if(sum(is.na(sd_coord$sd_coord))!=0) stop("sd_coord must not contain NA value.")
@@ -344,7 +343,6 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   if(!is.null(longlat)) {
-    if(all(UTM_code$plot_ID=="subplot")) UTM_code$plot_ID <- NULL # single plot
     output$UTM_code <- UTM_code
   }
   

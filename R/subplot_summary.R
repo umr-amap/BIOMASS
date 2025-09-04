@@ -272,11 +272,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     
     # Setting CRS if geographic coordinates
     if( !is.null(subplots$UTM_code) ) {
-      if(is.null(subplots$UTM_code$plot_ID_ID) ) { # if one plot with no plot ID
-        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code
-      } else { # if several plots with IDs
-        sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code[subplots$UTM_code$plot_ID_ID == unique(dat$plot_ID)]
-      }
+      sf::st_crs(sf_polygon) <- subplots$UTM_code$UTM_code[subplots$UTM_code$plot_ID == unique(dat$plot_ID)]
     }
     
     sf::st_geometry(sf_polygon) <- "sf_subplot_polygon" #rename last column
@@ -359,7 +355,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
         plot_list <- plot_list[[1]] # unlist the output
       }
     } # If several plots, all is OK
-    output <- list(tree_summary = sf::st_drop_geometry(sf_polygons), polygon = sf_polygons, plot_design = plot_list)
+    output <- list(tree_summary = as.data.frame(sf_polygons)[,-match("sf_subplot_polygon",names(sf_polygons))], polygon = sf_polygons, plot_design = plot_list)
   } else {
     if( length(unique(sf_polygons$plot_ID)) == 1 ) { # If just one plot :
       sf_polygons[,plot_ID:=NULL] # delete plot_id column

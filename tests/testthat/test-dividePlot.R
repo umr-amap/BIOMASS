@@ -10,7 +10,7 @@ test_that("divide_plot error", {
   
   expect_error(divide_plot(rel_coord = corner_data[c("x_rel","y_rel")]),
                "The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
-  expect_error(divide_plot(as.matrix(corner_data), c("x_rel","y_rel"), grid_size = 25), "corner_data must a data frame or a data frame extension")
+  expect_error(divide_plot(as.matrix(corner_data), c("x_rel","y_rel"), grid_size = 25), "corner_data must be a data frame or a data frame extension")
   expect_error(divide_plot(corner_data, rel_coord = c("Xfield","Yfield")), "column names provided by rel_coord are not found in corner_data")
   expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("Xutm","Yutm")), "column names provided by proj_coord are not found in corner_data")
   expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("Xutm","Yutm")), "column names provided by longlat are not found in corner_data")

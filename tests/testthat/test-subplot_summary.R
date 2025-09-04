@@ -43,9 +43,10 @@ test_that("subplot_summary", {
   vdiffr::expect_doppelganger("subplot-summary-proj-coords", res$plot_design)
 
   # Test with longlat
+  longlat_corner_data <- suppressWarnings(check_plot_coord(NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, draw_plot = F))
   corner_data[c("long","lat")] <- as.data.frame( proj4::project(corner_data[c("x_proj","y_proj")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
   subplots_longlat <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), longlat = c("long","lat"), grid_size = 25, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
-  res <- suppressMessages(subplot_summary(subplots_longlat, value = "D", draw_plot = F))
+  res <- subplot_summary(subplots = subplots_longlat, value = "D", draw_plot = F)
   # vdiffr::expect_doppelganger("subplot-summary-geographic-coords", res$plot_design) # this test works for ubuntu checks but not for windows and MAC
   expect_equivalent(res$polygon$sf_subplot_polygon[[1]][[1]][1:4,], as.matrix(subplots_longlat$sub_corner_coord[1:4,c("long","lat")]) )
   
@@ -93,7 +94,7 @@ test_that("subplot_summary_raster", {
   res_multiple <- subplot_summary(multiple_subplots, value = c("D","D"), draw_plot = FALSE, fun = list(mean,sd), ref_raster = nouragues_raster, raster_fun = list(mean,sd))
   rownames(res_multiple$tree_summary) <- NULL
   
-  expect_equal(res_multiple$tree_summary[1,] ,
+  expect_equal(as.data.frame(res_multiple$tree_summary[1,]) ,
                    data.frame(plot_ID=201, subplot_ID="201_0_0",
                               D_mean_per_ha=409.8663, D_sd_per_ha=313.5045,
                               z2012_mean=24.26298,z2012_sd=11.45732), 
@@ -107,4 +108,27 @@ test_that("subplot_summary_raster", {
   expect_equal(res_multiple$tree_summary[1:16, c(3,5)] , res_unique$tree_summary[,c(2,3)], tol=1e-5)
   
 })
+
+test_that("subplot_summary_AGB_and_coord_uncertainties", {
+  set.seed(0)
+  trees_201 <- NouraguesTrees[NouraguesTrees$Plot==201 & NouraguesTrees$Xfield>0 & NouraguesTrees$Yfield>0,]
+  subplots <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 25,
+                          tree_data = trees_201, tree_coords = c("Xfield","Yfield"),
+                          sd_coord = 5, n = 50)
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+  NouraguesWD <- suppressMessages(getWoodDensity(trees_201$Genus, trees_201$Species))
+  error_prop <- AGBmonteCarlo(
+    D = trees_201$D, WD = NouraguesWD$meanWD, # we do not provide H
+    HDmodel = HDmodel, # but we provide HDmodel
+    Dpropag = "chave2004",
+    errWD = NouraguesWD$sdWD, n = 50)
+  
+  expect_error(subplot_summary(subplots = subplots, AGB_simu = error_prop), "'AGB_simu' must be a matrix containing individual AGB (one row per tree), typically, the output '$AGB_simu' of the AGBmonteCarlo() function.", fixed=TRUE)
+  expect_error(subplot_summary(subplots = subplots, value = "D"), "Use the argument 'AGB_simu' instead of 'value' to provide AGB uncertainties.", fixed=TRUE)
+  res <- subplot_summary(subplots = subplots, AGB_simu = error_prop$AGB_simu)
+  expect_equal(res[1,] , data.table(subplot_ID = "subplot_0_0",AGB_sum_per_ha=267.301,N_simu=1), tolerance = 1e-3)
+  
+})
+  
+  
 

@@ -100,7 +100,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
-    stop("corner_data must a data frame or a data frame extension")
+    stop("corner_data must be a data frame or a data frame extension")
   }
   
   corner_dt <- data.table(corner_data)
@@ -144,8 +144,8 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if(!is.null(longlat) && sum(is.na(corner_dt[,..longlat]))!= 0) {
     stop("Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   }
-  if (nrow(unique(corner_dt[,..rel_coord])) !=4 & is.null(plot_ID)) {
-    stop("If multiple plots are present in corner_data, then the argument plot_ID is required.")
+  if (nrow(unique(corner_dt[,..rel_coord])) > 4 & is.null(plot_ID)) {
+    stop("The number of corners in 'corner_data' is not 4. If multiple plots are present, then the argument plot_ID is required.")
   }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
     stop("The argument tree_plot_ID is required if plot_ID is provided.")
