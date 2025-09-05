@@ -39,6 +39,7 @@
 #'    - `outliers`: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers 
 #'    - `plot_design`: if `draw_plot` is TRUE, a ggplot object corresponding to the design of the plot
 #'    - `UTM_code`: if `longlat` is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
+#'    - `sd_coord`: a data frame containing (for each plot) the average standard deviation of the GPS measurements for each corner on the X and Y axes.
 #'
 #' @export
 #'
@@ -99,7 +100,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
   }
   if(!is.data.frame(corner_data)){
-    stop("corner_data must a data frame or a data frame extension")
+    stop("corner_data must be a data frame or a data frame extension")
   }
   
   corner_dt <- data.table(corner_data)
@@ -143,8 +144,8 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if(!is.null(longlat) && sum(is.na(corner_dt[,..longlat]))!= 0) {
     stop("Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   }
-  if (nrow(unique(corner_dt[,..rel_coord])) !=4 & is.null(plot_ID)) {
-    stop("If multiple plots are present in corner_data, then the argument plot_ID is required.")
+  if (nrow(unique(corner_dt[,..rel_coord])) > 4 & is.null(plot_ID)) {
+    stop("The number of corners in 'corner_data' is not 4. If multiple plots are present, then the argument plot_ID is required.")
   }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
     stop("The argument tree_plot_ID is required if plot_ID is provided.")
@@ -194,8 +195,6 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   outliers <- data.table("plot_ID" = character(), "x_proj" = numeric(), "y_proj" = numeric(), "row_number" = integer())
   
-  ##### Functions --------------------------------------------------------------
-  
   ### Transform the geographic coordinates into UTM coordinates ----------------
   
   latlong2UTM_fct <- function(dat) { # dat = corner_dt
@@ -212,6 +211,14 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   if(!is.null(longlat)) {
     UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
   }
+  
+  ### Calculating sd_coord: the mean of the standard deviation of each corner (along x and y) ----
+  sd_coord <- copy(corner_dt)
+  sd_coord <- sd_coord[ , c("sd_coord_x","sd_coord_y") := list(sd(x_proj, na.rm=TRUE), sd(y_proj, na.rm=TRUE)) , by = list(x_rel, y_rel, plot_ID) ]
+  sd_coord <- unique(sd_coord[,c("plot_ID","sd_coord_x","sd_coord_y")])
+  sd_coord <- reshape(sd_coord, dir = "long", varying = c("sd_coord_x","sd_coord_y"),
+                      v.names = "sd_coord", timevar = NULL, ids = NULL)
+  sd_coord <- unique(sd_coord[ , sd_coord := mean(sd_coord) , by = plot_ID ])
   
   ### Check corner coordinates and calculate tree projected coordinates --------
   
@@ -521,6 +528,12 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       tree_dt[, plot_ID := NULL]
     }
     output$tree_data <- as.data.frame(tree_dt)
+  }
+  
+  if(nrow(sd_coord) == 1 ) {
+    output$sd_coord <- sd_coord$sd_coord
+  } else {
+    output$sd_coord <- sd_coord
   }
   
   return(output)

@@ -1,12 +1,15 @@
+* version 2.2.7
+- The propagation of uncertainties in the coordinates of plot corners is now performed by divide_plot() using the arguments ‘sd_coord’ and ‘n’. These uncertainties are handled by subplot_summary(), which can also handle AGB uncertainties using the argument 'AGB_simu' given by AGBmonteCarlo()$AGB_simu.
+
 * version 2.2.6
-- modelHD() can now be called with the 'bayesian' and 'useCache' arguments to build H-D models in a bayesian framework using brms library. This will results in propagating parameters uncertainties during the error propagation of the AGBmonteCarlo() function.
+- modelHD() can now be called with the 'bayesian' and 'useCache' arguments to build H-D models in a bayesian framework using brms library. This will results in propagating parameters uncertainties of the bayesian model during the error propagation of the AGBmonteCarlo() function.
 
 * version 2.2.5
 - Removed the 'plot' argument of AGBmonteCarlo() (is case of stand-specific local H-D model, the ploID vector is automatically build by catching the corresponding plotID of modelHD)
 - Add the ref_raster and raster_fun arguments to the subplot_summary() function to summarise a reference raster attribute/variable (typically the height of a chm) by subplots. 
 
 * version 2.2.4
-- Fixed an issue about overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot()  
+- Fixed an issue about overwritting user data when a data.table was provided with the tree_data agrument to check_plot_coord() or divide_plot() 
 - Added the 'longlat' argument to the divide_plot() function to allow the use of geographic coordinates (instead of projected coordinates)
 - Modification of subplot_summary() to enable several metrics to be summarised according to a list of functions
 - Fixed an issue in predictHeight() when the function was called with stand-specific HD models and a non-null plot argument

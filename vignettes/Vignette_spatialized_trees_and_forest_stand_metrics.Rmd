@@ -233,7 +233,7 @@ subplots <- divide_plot(
   grid_size = 25 # or c(25,25)
   )
 
-kable(head(subplots, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot() returns")
+kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$sub_corner_coord output.")
 ```
 
 If you want to stay in the plot's relative coordinate system, just set `proj_coord` = NULL.
@@ -259,7 +259,7 @@ non_centred <- divide_plot(
   centred_grid = FALSE,
   grid_tol = 0.3)
 
-ggplot(data = subplots, mapping = aes(x=x_proj, y=y_proj)) + 
+ggplot(data = subplots$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
   geom_point(data = check_plot_trust_GPS$corner_coord, 
              mapping = aes(x=x_proj, y=y_proj),
              shape = 15, size = 2) + 
@@ -268,7 +268,7 @@ ggplot(data = subplots, mapping = aes(x=x_proj, y=y_proj)) +
   theme_bw() + 
   labs(title = "subplot divisions with centred_grid = TRUE")
 
-ggplot(data = non_centred, mapping = aes(x=x_proj, y=y_proj)) + 
+ggplot(data = non_centred$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
   geom_point(data = check_plot_trust_GPS$corner_coord, 
              mapping = aes(x=x_proj, y=y_proj),
              shape = 15, size = 2.5) + 

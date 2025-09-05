@@ -56,7 +56,6 @@ test_that("NA characters", {
 })
 
 test_that("Without parameters", {
-  #skip_on_cran()
   Res <- expect_message(modelHD(D = D, H = H, useWeight = FALSE), "build a HD model")
 
   expect_is(Res, "data.frame")
@@ -68,8 +67,6 @@ log2  4.222718 0.2215495  0.003121671
 weibull 4.220562        NA  3.973461e-05
 michaelis 4.235974        NA  -1.219911e-03
 "
-
-
   expect_equal(Res, fread(res, data.table = FALSE), tolerance = 10^-6)
 })
 
