@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-08-26</h4>
+            <h4 data-toc-skip class="date">2025-09-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -683,12 +683,11 @@ examine the meanings of the Weibull parameters:</p>
 <ul>
 <li>
 <code>a</code> can be considered as the hypothetical maximum height,
-so defining a non-informative (uniform) prior between 0 and 80m seems
-realistic.</li>
+so defining a uniform prior between 0 and 80m seems realistic.</li>
 <li>
-<code>b</code> is the scaling parameter, so defining a
-non-informative (uniform) prior between 0 and a high value of D makes
-sens</li>
+<code>b</code> is the scaling parameter, so defining a uniform prior
+between 0 and a high value of D (e.g. the 90th percentile) makes
+sense.</li>
 <li>
 <code>c</code> is the shape parameter which must be between 0 and
 1</li>
@@ -716,9 +715,9 @@ provided to <code><a href="../reference/modelHD.html">modelHD()</a></code>:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">brm_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/weibull_plot_2.png"></p>
 <p>Posterior distributions look better but the right-skewed
-distributions are not yet satisfactory. So we recommend using the log2
-method when the RSE given by lm and nls models (when bayesian = FALSE)
-are close.</p>
+distributions are not yet satisfactory. So <strong>we recommend using
+the log2 method when the RSE given by lm and nls models (when bayesian =
+FALSE) are close</strong>.</p>
 </div>
 <div class="section level3">
 <h3 id="add-your-tricks">Add your tricks<a class="anchor" aria-label="anchor" href="#add-your-tricks"></a>

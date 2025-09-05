@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-08-26</h4>
+            <h4 data-toc-skip class="date">2025-09-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
@@ -723,10 +723,11 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <span>  grid_size <span class="op">=</span> <span class="fl">25</span> <span class="co"># or c(25,25)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots</span>, <span class="fl">10</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the divide_plot() returns"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots</span><span class="op">$</span><span class="va">sub_corner_coord</span>, <span class="fl">10</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the divide_plot()$sub_corner_coord output."</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<caption>Head of the divide_plot() returns</caption>
+<caption>Head of the divide_plot()$sub_corner_coord output.</caption>
 <thead><tr class="header">
+<th align="left">plot_ID</th>
 <th align="left">subplot_ID</th>
 <th align="right">x_rel</th>
 <th align="right">y_rel</th>
@@ -735,6 +736,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td align="left"></td>
 <td align="left">subplot_0_0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -742,6 +744,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451723.2</td>
 </tr>
 <tr class="even">
+<td align="left"></td>
 <td align="left">subplot_0_0</td>
 <td align="right">25</td>
 <td align="right">0</td>
@@ -749,6 +752,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451699.9</td>
 </tr>
 <tr class="odd">
+<td align="left"></td>
 <td align="left">subplot_0_0</td>
 <td align="right">25</td>
 <td align="right">25</td>
@@ -756,6 +760,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451686.2</td>
 </tr>
 <tr class="even">
+<td align="left"></td>
 <td align="left">subplot_0_0</td>
 <td align="right">0</td>
 <td align="right">25</td>
@@ -763,6 +768,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451708.9</td>
 </tr>
 <tr class="odd">
+<td align="left"></td>
 <td align="left">subplot_1_0</td>
 <td align="right">25</td>
 <td align="right">0</td>
@@ -770,6 +776,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451699.9</td>
 </tr>
 <tr class="even">
+<td align="left"></td>
 <td align="left">subplot_1_0</td>
 <td align="right">50</td>
 <td align="right">0</td>
@@ -777,6 +784,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451676.7</td>
 </tr>
 <tr class="odd">
+<td align="left"></td>
 <td align="left">subplot_1_0</td>
 <td align="right">50</td>
 <td align="right">25</td>
@@ -784,6 +792,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451663.6</td>
 </tr>
 <tr class="even">
+<td align="left"></td>
 <td align="left">subplot_1_0</td>
 <td align="right">25</td>
 <td align="right">25</td>
@@ -791,6 +800,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451686.2</td>
 </tr>
 <tr class="odd">
+<td align="left"></td>
 <td align="left">subplot_2_0</td>
 <td align="right">50</td>
 <td align="right">0</td>
@@ -798,6 +808,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <td align="right">451676.7</td>
 </tr>
 <tr class="even">
+<td align="left"></td>
 <td align="left">subplot_2_0</td>
 <td align="right">75</td>
 <td align="right">0</td>
@@ -819,9 +830,9 @@ with a 40mx45m grid.</p>
 <span>  centred_grid <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># centre the grid in the middle of the plot</span></span>
 <span>  grid_tol <span class="op">=</span> <span class="fl">0.3</span> <span class="co"># by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in divide_plot_fct(.SD, grid_size): </span></span>
+<span><span class="co">#&gt; Warning in divide_plot_rel_coord_fct(.SD, grid_size): </span></span>
 <span><span class="co">#&gt; The x-dimension of the plot is not a multiple of the x-dimension of the grid size</span></span>
-<span><span class="co">#&gt; Warning in divide_plot_fct(.SD, grid_size): </span></span>
+<span><span class="co">#&gt; Warning in divide_plot_rel_coord_fct(.SD, grid_size): </span></span>
 <span><span class="co">#&gt; The y-dimension of the plot is not a multiple of the y-dimension of the grid size</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-1.png" width="50%" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-2.png" width="50%" style="display: block; margin: auto;"></p>
 <p>For the purpose of summarising and representing subplots (coming in
@@ -852,18 +863,19 @@ previously</p></li>
 </ul>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the divide_plot()$tree_data returns"</span><span class="op">)</span></span></code></pre></div>
-<table style="width:100%;" class="table">
+<table class="table">
 <caption>Head of the divide_plot()$tree_data returns</caption>
 <colgroup>
 <col width="6%">
 <col width="5%">
-<col width="15%">
-<col width="21%">
-<col width="13%">
+<col width="14%">
+<col width="20%">
+<col width="12%">
 <col width="9%">
 <col width="9%">
 <col width="4%">
-<col width="13%">
+<col width="8%">
+<col width="12%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">x_rel</th>
@@ -874,6 +886,7 @@ previously</p></li>
 <th align="right">Xutm</th>
 <th align="right">Yutm</th>
 <th align="right">AGB</th>
+<th align="left">plot_ID</th>
 <th align="left">subplot_ID</th>
 </tr></thead>
 <tbody>
@@ -886,6 +899,7 @@ previously</p></li>
 <td align="right">313046.8</td>
 <td align="right">451702.5</td>
 <td align="right">0.1</td>
+<td align="left"></td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -897,6 +911,7 @@ previously</p></li>
 <td align="right">313071.7</td>
 <td align="right">451688.0</td>
 <td align="right">0.0</td>
+<td align="left"></td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -908,6 +923,7 @@ previously</p></li>
 <td align="right">313035.6</td>
 <td align="right">451705.1</td>
 <td align="right">0.1</td>
+<td align="left"></td>
 <td align="left">subplot_0_1</td>
 </tr>
 <tr class="even">
@@ -919,6 +935,7 @@ previously</p></li>
 <td align="right">313077.0</td>
 <td align="right">451680.0</td>
 <td align="right">4.7</td>
+<td align="left"></td>
 <td align="left">subplot_0_3</td>
 </tr>
 <tr class="odd">
@@ -930,6 +947,7 @@ previously</p></li>
 <td align="right">313031.8</td>
 <td align="right">451707.2</td>
 <td align="right">0.6</td>
+<td align="left"></td>
 <td align="left">subplot_0_1</td>
 </tr>
 <tr class="even">
@@ -941,6 +959,7 @@ previously</p></li>
 <td align="right">313043.4</td>
 <td align="right">451700.1</td>
 <td align="right">0.2</td>
+<td align="left"></td>
 <td align="left">subplot_0_1</td>
 </tr>
 </tbody>
@@ -970,6 +989,7 @@ function.</p>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>, <span class="co"># AGB was added before applying divide_plot()</span></span>
 <span>  per_ha <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; [1] "Creating sf_polygons for each subplot..."</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary-1.png" width="700" style="display: block; margin: auto;"></p>
 <p><strong>By default, the function sums the metric per subplot</strong>
@@ -983,6 +1003,7 @@ hectare summary using <code>per_ha</code> argument.</p>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>,</span>
 <span>  fun <span class="op">=</span> <span class="va">quantile</span>, probs <span class="op">=</span> <span class="fl">0.5</span>, <span class="co"># yes, it is the median</span></span>
 <span>  per_ha <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Creating sf_polygons for each subplot..."</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_quantile-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>The output of the function is a list containing:</p>
@@ -1010,6 +1031,7 @@ provided in divide_plot()</strong>:</p>
 <code class="sourceCode R"><span><span class="va">multiple_subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">mean</span>, per_ha <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Creating sf_polygons for each subplot..."</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_display_trees-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
@@ -1029,6 +1051,7 @@ provided in divide_plot()</strong>:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span>subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>                                  value <span class="op">=</span> <span class="st">"AGB"</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; [1] "Creating sf_polygons for each subplot..."</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-1.png" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">

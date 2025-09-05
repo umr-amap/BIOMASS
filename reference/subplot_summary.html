@@ -45,6 +45,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">subplot_summary</span><span class="op">(</span></span>
 <span>  <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  AGB_simu <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  per_ha <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  fun <span class="op">=</span> <span class="va">sum</span>,</span>
@@ -63,7 +64,11 @@
 
 
 <dt id="arg-value">value<a class="anchor" aria-label="anchor" href="#arg-value"></a></dt>
-<dd><p>a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)</p></dd>
+<dd><p>(if AGB_simu is not provided) a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)</p></dd>
+
+
+<dt id="arg-agb-simu">AGB_simu<a class="anchor" aria-label="anchor" href="#arg-agb-simu"></a></dt>
+<dd><p>(if value is not provided) a n x m matrix containing individual AGB where n is the number of tree and m is the number of monte carlo simulation. Typically, the output '$AGB_simu' of the AGBmonteCarlo() function.</p></dd>
 
 
 <dt id="arg-draw-plot">draw_plot<a class="anchor" aria-label="anchor" href="#arg-draw-plot"></a></dt>
@@ -92,10 +97,11 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a list containing the following elements :</p><ul><li><p><code>tree_summary</code> : a summary of the metric per subplot</p></li>
+    <p>If 'value' is provided, a list containing the following elements:</p><ul><li><p><code>tree_summary</code> : a summary of the metric per subplot</p></li>
 <li><p><code>polygon</code> : an sf object : simple feature collection of the subplot's polygon</p></li>
 <li><p><code>plot_design</code> : a ggplot object (or a list of ggplot objects) that can easily be modified</p></li>
-</ul></div>
+</ul><p>If 'AGB_simu' is provided, a data.table containing a summary of the metric(s) per subplot and per simulation.</p>
+    </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
     <p>Arthur Bailly</p>
@@ -119,23 +125,21 @@
 <span class="r-in"><span>    tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Sum summary (by default) of diameter</span></span></span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span> <span class="op">&lt;-</span> <span class="fu">subplot_summary</span><span class="op">(</span><span class="va">subplots_201</span> , value <span class="op">=</span> <span class="st">"D"</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Creating sf_polygons for each subplot..."</span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">tree_summary</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              subplot_ID D_sum_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0     10656.19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1     10708.82</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0     12103.82</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1     12972.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    subplot_ID D_sum_per_ha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 subplot_0_0     10656.19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 subplot_0_1     10708.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 subplot_1_0     12103.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 subplot_1_1     12972.33</span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">polygon</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 4 features and 2 fields</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: POLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: 312956.9 ymin: 451582.6 xmax: 313100.5 ymax: 451723.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> CRS:           NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              subplot_ID D_sum_per_ha             sf_subplot_polygon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_0 subplot_0_0     10656.19 POLYGON ((313005.7 451723.2...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_0_1 subplot_0_1     10708.82 POLYGON ((313053.1 451694.5...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_0 subplot_1_0     12103.82 POLYGON ((312981.3 451676.7...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> subplot_1_1 subplot_1_1     12972.33 POLYGON ((313028.4 451650.5...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Key: &lt;subplot_ID&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     subplot_ID D_sum_per_ha             sf_subplot_polygon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;        &lt;num&gt;                  &lt;sfc_POLYGON&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1: subplot_0_0     10656.19 POLYGON ((313005.7 451723.2...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2: subplot_0_1     10708.82 POLYGON ((313053.1 451694.5...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3: subplot_1_0     12103.82 POLYGON ((312981.3 451676.7...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4: subplot_1_1     12972.33 POLYGON ((313028.4 451650.5...</span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">plot_design</span></span></span>
 <span class="r-plt img"><img src="subplot_summary-1.png" alt="" width="700" height="433"></span>
@@ -143,6 +147,7 @@
 <span class="r-in"><span><span class="co"># 9th quantile summary (for example) of diameter</span></span></span>
 <span class="r-in"><span><span class="va">subplots_201_quant</span> <span class="op">&lt;-</span> <span class="fu">subplot_summary</span><span class="op">(</span><span class="va">subplots_201</span> , value <span class="op">=</span> <span class="st">"D"</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                                      fun <span class="op">=</span> <span class="va">quantile</span>, probs<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Creating sf_polygons for each subplot..."</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dealing with multiple plots</span></span></span>
