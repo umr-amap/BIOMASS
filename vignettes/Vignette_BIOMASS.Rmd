@@ -412,8 +412,8 @@ plot(brm_model$model)
 
 As one can see, the two first parameters a and b (resp. called `b_a_Intercept` and `b_b_Intercept`) of the Weibull equation: $$H=a  \cdot (1-exp(-(D/b)^c))$$ are strongly correlated. Therefore, it is strongly recommended to define priors that do not allow for unrealistic values. To do this, we need to examine the meanings of the Weibull parameters:
 
-- `a` can be considered as the hypothetical maximum height, so defining a non-informative (uniform) prior between 0 and 80m seems realistic.
-- `b` is the scaling parameter, so defining a non-informative (uniform) prior between 0 and a high value of D makes sens
+- `a` can be considered as the hypothetical maximum height, so defining a uniform prior between 0 and 80m seems realistic.
+- `b` is the scaling parameter, so defining a uniform prior between 0 and a high value of D (e.g. the 90th percentile) makes sense.
 - `c` is the shape parameter which must be between 0 and 1
 
 Besides, since model parameters and chain iterations are strongly correlated, an increase of `thin`, `iter` and `warmup` is required (see the help of brms::brm() and [this page](https://mc-stan.org/learn-stan/diagnostics-warnings.html) for more details).
@@ -439,7 +439,7 @@ plot(brm_model$model)
 
 ![](img/weibull_plot_2.png)
 
-Posterior distributions look better but the right-skewed distributions are not yet satisfactory. So we recommend using the log2 method when the RSE given by lm and nls models (when bayesian = FALSE) are close.
+Posterior distributions look better but the right-skewed distributions are not yet satisfactory. So **we recommend using the log2 method when the RSE given by lm and nls models (when bayesian = FALSE) are close**.
 
 
 ## Add your tricks

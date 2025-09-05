@@ -36,12 +36,14 @@ subplot_summary(
 \item{...}{optional arguments to fun}
 }
 \value{
-a list containing the following elements :
+If 'value' is provided, a list containing the following elements:
 \itemize{
 \item \code{tree_summary} : a summary of the metric per subplot
 \item \code{polygon} : an sf object : simple feature collection of the subplot's polygon
 \item \code{plot_design} : a ggplot object (or a list of ggplot objects) that can easily be modified
 }
+
+If 'AGB_simu' is provided, a data.table containing a summary of the metric(s) per subplot and per simulation.
 }
 \description{
 After applying the \code{\link[=divide_plot]{divide_plot()}} function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.

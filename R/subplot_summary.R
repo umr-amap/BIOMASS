@@ -13,10 +13,12 @@
 #' @param raster_fun the function (or a list of functions) to be applied on raster values of each subplot.
 #' @param ... optional arguments to fun
 #'
-#' @return a list containing the following elements :
+#' @return If 'value' is provided, a list containing the following elements:
 #'  - `tree_summary` : a summary of the metric per subplot 
 #'  - `polygon` : an sf object : simple feature collection of the subplot's polygon
 #'  - `plot_design` : a ggplot object (or a list of ggplot objects) that can easily be modified
+#'  
+#'  If 'AGB_simu' is provided, a data.table containing a summary of the metric(s) per subplot and per simulation.
 #'
 #' @export
 #' 
@@ -115,12 +117,20 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   if (!is.null(AGB_simu) && nrow(AGB_simu) != nrow(subplots$tree_data) ) {
     stop("The rows in 'subplots$tree_data' must match the rows in 'AGB_simu'")
   }
-  if (!is.null(AGB_simu) && is.list(subplots$sub_corner_coord) && ncol(AGB_simu) != length(subplots$sub_corner_coord)) {
-    warning("The number of simulations 'n' differs between AGBmonteCarlo() (the number of column in AGB_simu) and divide_plot() (the length of the subplots$sub_corner_coord list). The resulting n value will be the smaller of the two.")
-    if( ncol(AGB_simu) < length(subplots$sub_corner_coord) ) {
-      subplots$sub_corner_coord <- subplots$sub_corner_coord[[1:ncol(AGB_simu)]]
-    } else {
-      AGB_simu <- AGB_simu[,1:length(subplots$sub_corner_coord)]
+  if (!is.null(AGB_simu)) {
+    if(is.data.frame(subplots$sub_corner_coord)) {
+      stop("Propagating AGB uncertainties without propagating GPS measurement uncertainties of corners is not advised. If you want to do, provide 'sd_coord = 0' in divide_plot().")
+    } else if (ncol(AGB_simu) != length(subplots$sub_corner_coord)) {
+      if( ncol(AGB_simu) < length(subplots$sub_corner_coord) ) {
+        message(paste("As the 'AGB_simu' matrix only contains", ncol(AGB_simu),"simulations, the first", ncol(AGB_simu),"simulations contained in 'subplots' will be considered."))
+        subplots$sub_corner_coord <- subplots$sub_corner_coord[[1:ncol(AGB_simu)]]
+      } else {
+        message(paste("As 'AGB_simu' contains", ncol(AGB_simu),"simulations, and 'subplots' contains", length(subplots$sub_corner_coord),"simulations,", ncol(AGB_simu)-length(subplots$sub_corner_coord),"simulations will be resampled in 'subplots'."))
+        subplots$sub_corner_coord <- c(subplots$sub_corner_coord ,
+                                       lapply(1:(ncol(AGB_simu)-length(subplots$sub_corner_coord)), function(x) {
+                                         subplots$sub_corner_coord[[sample(x = 1:length(subplots$sub_corner_coord), size = 1, replace = TRUE)]]
+                                       }) )
+      }
     }
   }
   
@@ -195,7 +205,8 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
       corner_dat <- do.call(rbind,lapply(1:length(subplots$sub_corner_coord), function(n_simu) { # n_simu = 1
         cor_dat <- data.table(subplots$sub_corner_coord[[n_simu]])
         cor_dat[, subplot_ID := paste0(subplot_ID , "_N_" , n_simu)]
-        cor_dat
+        # Adding subplot centre coordinates
+        cor_dat[ , c("x_center","y_center") := list(mean(x_proj),mean(y_proj)) , by = subplot_ID]
       }))
     }
   }
@@ -361,6 +372,9 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
       sf_polygons[,plot_ID:=NULL] # delete plot_id column
     }
     sf_polygons[,sf_subplot_polygon:=NULL]
+    
+    # Joined center coordinates
+    sf_polygons <- sf_polygons[unique(corner_dat[,c("subplot_ID","x_center","y_center")]),,on="subplot_ID"]
     
     sf_polygons[,N_simu := as.numeric(tstrsplit(subplot_ID, split = "_N_", keep = 2)[[1]])]
     sf_polygons[,subplot_ID := gsub("_N_\\d+","",subplot_ID)]
