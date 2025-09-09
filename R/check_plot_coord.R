@@ -44,6 +44,7 @@
 #' @export
 #'
 #' @importFrom data.table data.table := setnames %between% copy
+#' @importFrom stats reshape
 #' @importFrom sf st_multipoint st_polygon st_sfc st_as_sf
 #' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text geom_raster scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank guides guide_legend scale_alpha scale_alpha_manual scale_size
 #' @importFrom terra vect crop as.data.frame

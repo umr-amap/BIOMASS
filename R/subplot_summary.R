@@ -25,6 +25,7 @@
 #' @author Arthur Bailly
 #'
 #' @importFrom data.table data.table := set
+#' @importFrom stats reshape
 #' @importFrom grDevices terrain.colors
 #' @importFrom ggplot2 ggplot aes geom_sf theme_minimal scale_fill_gradientn theme ggtitle lims
 #' @importFrom terra extract
@@ -174,7 +175,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   }
   
   # Check is ref_raster is a SpatRaster
-  if(!is.null(ref_raster) && class(ref_raster) != "SpatRaster") {
+  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster")) {
     stop("ref_raster is not recognised as a SpatRaster of terra package")
   }
   # Check if raster_fun is a function or a list of function
