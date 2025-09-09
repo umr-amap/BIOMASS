@@ -175,7 +175,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   }
   
   # Check is ref_raster is a SpatRaster
-  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster")) {
+  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster") ) {
     stop("ref_raster is not recognised as a SpatRaster of terra package")
   }
   # Check if raster_fun is a function or a list of function
