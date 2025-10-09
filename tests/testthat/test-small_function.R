@@ -35,6 +35,8 @@ test_that("Compute E", {
 context("Function getBioclimParam")
 test_that("getBioclimParam", {
   
+  skip_on_cran()
+  
   skip_if_not_function("getBioclimParam")
   
   coord <- NouraguesCoords[c("Long","Lat")]
@@ -97,6 +99,7 @@ test_that("With finding the order", {
 context("Internal function of HD model ")
 test_that("loglog function", {
   skip_if_not_function("loglogFunction")
+  skip_on_cran()
 
   data <- data.frame(H = c(5, 5), D = c(2, 3))
 
@@ -106,6 +109,7 @@ test_that("loglog function", {
 
 test_that("Michaelis function", {
   skip_if_not_function("michaelisFunction")
+  skip_on_cran()
   
   coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
   
@@ -117,6 +121,7 @@ test_that("Michaelis function", {
 test_that("Weibull function", {
   
   skip_if_not_function("weibullFunction")
+  skip_on_cran()
   
   coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
   
@@ -132,6 +137,8 @@ context("Predict Height of the tree")
 for (method in c("log1", "log2", "weibull", "michaelis")) {
   test_that(paste("predictHeight", method), {
     skip_if_not_function("predictHeight")
+    skip_on_cran()
+    
     HDmodel <- modelHD(
       D = NouraguesHD$D,
       H = NouraguesHD$H,
@@ -151,6 +158,9 @@ for (method in c("log1", "log2", "weibull", "michaelis")) {
 }
 
 test_that("predictHeigth with plot argument", {
+  
+  skip_on_cran()
+  
   HDmodel <- modelHD(
     D = NouraguesHD$D,
     H = NouraguesHD$H,
