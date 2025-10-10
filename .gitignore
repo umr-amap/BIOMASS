@@ -32,6 +32,7 @@ data-raw/genList_tpl\.csv
 data-raw/dupGenusToSub\.csv
 data-raw/climate_variable/wc2-5/
 vignettes/BIOMASS_cache/html/
+*.svg
 
 \.~*\#
 
