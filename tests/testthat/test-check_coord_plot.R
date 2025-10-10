@@ -103,6 +103,8 @@ test_that("check_plot_coord, trust_GPS_corners", {
 
 test_that("check_plot_coord, plot design", {
   
+  skip_on_cran()
+  
   vdiffr::expect_doppelganger("check-plot-201-trust-T", 
                               check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
                                                trust_GPS_corners = T, rm_outliers = T, draw_plot = F)$plot_design)
@@ -118,6 +120,8 @@ test_that("check_plot_coord, plot design", {
 
 
 test_that("check_plot_coord, tree data and raster", {
+  
+  skip_on_cran()
   
   res <- suppressWarnings(
     check_plot_coord(

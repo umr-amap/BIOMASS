@@ -30,6 +30,8 @@ test_that("subplot_summary error", {
 })
 
 test_that("subplot_summary", {
+  
+  skip_on_cran()
 
   # Test without proj_coord
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))

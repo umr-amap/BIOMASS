@@ -116,6 +116,9 @@ test_that("With the plot arguments", {
 })
 
 test_that("snapshot of plot", {
+  
+  skip_on_cran()
+  
   toto <- modelHD(D, H, method = "log2", useWeight = T, drawGraph = T)
   vdiffr::expect_doppelganger("plot_modelHD", modelHD(D, H, method = "log2", useWeight = T, drawGraph = FALSE)$fitPlot )
 })
