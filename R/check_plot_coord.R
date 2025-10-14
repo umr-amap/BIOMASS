@@ -217,7 +217,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   sd_coord <- copy(corner_dt)
   sd_coord <- sd_coord[ , c("sd_coord_x","sd_coord_y") := list(sd(x_proj, na.rm=TRUE), sd(y_proj, na.rm=TRUE)) , by = list(x_rel, y_rel, plot_ID) ]
   sd_coord <- unique(sd_coord[,c("plot_ID","sd_coord_x","sd_coord_y")])
-  sd_coord <- reshape(sd_coord, dir = "long", varying = c("sd_coord_x","sd_coord_y"),
+  sd_coord <- reshape(sd_coord, direction = "long", varying = c("sd_coord_x","sd_coord_y"),
                       v.names = "sd_coord", timevar = NULL, ids = NULL)
   sd_coord <- unique(sd_coord[ , sd_coord := mean(sd_coord) , by = plot_ID ])
   
