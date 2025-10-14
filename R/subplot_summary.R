@@ -135,34 +135,107 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     }
   }
   
-  # Get the name of the function(s) (before the evaluation of fun, otherwise we will get the function and not the name of the argument)
-  if( length(value) > 1) {
-    fun_name <- as.character(substitute(fun))[-1]
-  } else {
-    fun_name <- as.character(substitute(fun))
-  }
-  if( length(raster_fun) > 1) {
-    raster_fun_name <- as.character(substitute(raster_fun))[-1]
-  } else {
-    raster_fun_name <- as.character(substitute(raster_fun))
+  ### Getting function's name ---
+  # the issue was in BIOMASSapp when calling the function as follows: 
+  # arg_fun <- available_functions[[input$sel_user_function]]
+  # subplot_summary(..., fun = arg_fun)
+  # it returned column names like "AGB_arg_fun_per_ha"
+  # code generated with Claude AI
+  
+  # Helper function to find original function name
+  find_function_name <- function(func) {
+    search_packages <- c(".GlobalEnv", search())
+    for (env_name in search_packages) {
+      env <- tryCatch(as.environment(env_name), error = function(e) NULL)
+      if (is.null(env)) next
+      
+      obj_names <- ls(envir = env, all.names = FALSE)
+      
+      for (obj_name in obj_names) {
+        obj <- tryCatch(get(obj_name, envir = env, inherits = FALSE), error = function(e) NULL)
+        if (!is.null(obj) && is.function(obj) && identical(obj, func)) {
+          return(obj_name)
+        }
+      }
+    }
+    return(NULL)
   }
   
-  # Check if fun is a function or a list of functions
-  if( !is.list(fun) ) {
-    if( !is.function(fun) ) {
-      stop("the function provided using `fun =` is not a function")
-    } else {
-      fun <- match.fun(fun)
-    }
+  ### retrieve the name(s) of the function(s) as character(s)
+  fun_name_raw <- if (length(value) > 1) {
+    as.character(substitute(fun))[-1]
+  } else {
+    deparse(substitute(fun))
   }
-  if( is.list(fun) ) {
-    if( any(!sapply(fun , is.function)) ) {
-      stop(paste("incorrect", fun_name[!sapply(fun , is.function)], "function(s) provided in `fun` (not a function)"))
-    } else {
-      fun <- lapply(fun , match.fun)
+  # Evaluate the function in the parent frame
+  fun_eval <- eval(substitute(fun), envir = parent.frame())
+  # Get the name(s) of the function(s)
+  if (is.list(fun_eval)) { # if multiple functions provided in a list, loop on fun_eval
+    fun_name <- sapply(seq_along(fun_eval), function(i) {
+      if (!is.function(fun_eval[[i]])) { # if not a correct function
+        stop(paste("the function", fun_name_raw[i], "provided in `fun =` is not a function"))
+      } else {
+        found_name <- find_function_name(fun_eval[[i]])
+        if(!is.null(found_name)) { # if the name has been found, return it
+          return(found_name)
+        } else { # else, return the fun_name_raw
+          return(fun_name_raw[i])
+        } 
+      }
+    })
+  } else if (is.function(fun_eval)) { # if only one function
+    found_name <- find_function_name(fun_eval)
+    if(!is.null(found_name)) { # if the name has been found, return it
+      fun_name <- found_name
+    } else { # else, return the fun_name_raw
+      fun_name <- fun_name_raw
     }
+  } else {
+    stop("the function provided using `fun =` is not a function")
   }
+  
+  ### The same for raster_fun
+  # Check is ref_raster is a SpatRaster
+  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster") ) {
+    stop("ref_raster is not recognised as a SpatRaster of terra package")
+  }
+  # retrieve the name(s) of the function(s) as character(s)
+  raster_fun_name_raw <- if (length(raster_fun) > 1) {
+    as.character(substitute(raster_fun))[-1]
+  } else {
+    deparse(substitute(raster_fun))
+  }
+  # Evaluate the function in the parent frame
+  raster_fun_eval <- eval(substitute(raster_fun), envir = parent.frame())
+  # Get the name(s) of the function(s)
+  if (is.list(raster_fun_eval)) { # if multiple functions provided in a list, loop on fun_eval
+    raster_fun_name <- sapply(seq_along(raster_fun_eval), function(i) {
+      if (!is.function(raster_fun_eval[[i]])) { # if not a correct function
+        stop(paste("the function", raster_fun_name_raw[i], "provided in `raster_fun =` is not a function"))
+      } else {
+        found_name <- find_function_name(raster_fun_eval[[i]])
+        if(!is.null(found_name)) { # if the name has been found, return it
+          return(found_name)
+        } else { # else, return the fun_name_raw
+          return(raster_fun_name_raw[i])
+        } 
+      }
+    })
+  } else if (is.function(raster_fun_eval)) { # if only one function
+    found_name <- find_function_name(raster_fun_eval)
+    if(!is.null(found_name)) { # if the name has been found, return it
+      raster_fun_name <- found_name
+    } else { # else, return the fun_name_raw
+      raster_fun_name <- fun_name_raw
+    }
+  } else {
+    stop("the function provided using `raster_fun =` is not a function")
+  }
+  
+  
+  # Check parameter length
   if(!is.null(value)) {
+    # Replicate per_ha if needed
     if( length(value) > 1 && length(per_ha) == 1 ) {
       per_ha = rep(per_ha, length(value))
     }
@@ -174,25 +247,6 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     }
   }
   
-  # Check is ref_raster is a SpatRaster
-  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster") ) {
-    stop("ref_raster is not recognised as a SpatRaster of terra package")
-  }
-  # Check if raster_fun is a function or a list of function
-  if( !is.list(raster_fun) ) {
-    if( !is.function(raster_fun) ) {
-      stop("the function provided using `raster_fun =` is not a function")
-    } else {
-      raster_fun <- match.fun(raster_fun)
-    }
-  }
-  if( is.list(raster_fun) ) {
-    if( any(!sapply(raster_fun , is.function)) ) {
-      stop(paste("incorrect", raster_fun_name[!sapply(raster_fun , is.function)], "function(s) provided in raster_fun (not a function)"))
-    } else {
-      raster_fun <- lapply(raster_fun , match.fun)
-    }
-  }
   
   # Data processing ------------------------------------------------------------
   value_fun_name <- paste(value, fun_name, sep = "_")
