@@ -32,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Summarise and display tree information by subplot</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/subplot_summary.R" class="external-link"><code>R/subplot_summary.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/adapt_subplot_summary/R/subplot_summary.R" class="external-link"><code>R/subplot_summary.R</code></a></small>
       <div class="d-none name"><code>subplot_summary.Rd</code></div>
     </div>
 
@@ -125,29 +125,30 @@
 <span class="r-in"><span>    tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Sum summary (by default) of diameter</span></span></span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span> <span class="op">&lt;-</span> <span class="fu">subplot_summary</span><span class="op">(</span><span class="va">subplots_201</span> , value <span class="op">=</span> <span class="st">"D"</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Creating sf_polygons for each subplot..."</span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">tree_summary</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    subplot_ID D_sum_per_ha</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 subplot_0_0     10656.19</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 subplot_0_1     10708.82</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 subplot_1_0     12103.82</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 subplot_1_1     12972.33</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   plot_ID  subplot_ID D_sum_per_ha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         subplot_0_0     10656.19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         subplot_1_0     12103.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         subplot_0_1     10708.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         subplot_1_1     12972.33</span>
 <span class="r-in"><span><span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">polygon</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Key: &lt;subplot_ID&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     subplot_ID D_sum_per_ha             sf_subplot_polygon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;char&gt;        &lt;num&gt;                  &lt;sfc_POLYGON&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1: subplot_0_0     10656.19 POLYGON ((313005.7 451723.2...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2: subplot_0_1     10708.82 POLYGON ((313053.1 451694.5...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3: subplot_1_0     12103.82 POLYGON ((312981.3 451676.7...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4: subplot_1_1     12972.33 POLYGON ((313028.4 451650.5...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    plot_ID  subplot_ID             sf_subplot_polygon D_sum_per_ha</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;char&gt;      &lt;char&gt;                  &lt;sfc_POLYGON&gt;        &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:         subplot_0_0 POLYGON ((313005.7 451723.2...     10656.19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         subplot_1_0 POLYGON ((312981.3 451676.7...     12103.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3:         subplot_0_1 POLYGON ((313053.1 451694.5...     10708.82</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4:         subplot_1_1 POLYGON ((313028.4 451650.5...     12972.33</span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="va">subplots_201_sum</span><span class="op">$</span><span class="va">plot_design</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [[1]][[1]]</span>
 <span class="r-plt img"><img src="subplot_summary-1.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="co"># 9th quantile summary (for example) of diameter</span></span></span>
 <span class="r-in"><span><span class="va">subplots_201_quant</span> <span class="op">&lt;-</span> <span class="fu">subplot_summary</span><span class="op">(</span><span class="va">subplots_201</span> , value <span class="op">=</span> <span class="st">"D"</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                                      fun <span class="op">=</span> <span class="va">quantile</span>, probs<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Creating sf_polygons for each subplot..."</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dealing with multiple plots</span></span></span>
