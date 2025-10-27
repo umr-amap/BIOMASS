@@ -23,7 +23,7 @@
 #' @param n used to propagate GPS measurements uncertainties: the number of iterations to be used (as in [AGBmonteCarlo()]). Cannot be smaller than 50 or larger than 1000.
 #'
 #' @return Returns a list containing:
-#'   - $sub_corner_coord: a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
+#'   - $sub_corner_coord: a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'     - `plot_ID`: If dealing with multiple plots: the plot code, else, a column containing an empty character
 #'     - `subplot_ID`: The automatically generated subplot code, using the following rule : subplot_X_Y 
 #'     - `x_rel` and `y_rel` : the relative X-axis and Y-axis coordinates of subplots corners. 
@@ -33,6 +33,7 @@
 #'   
 #'  - $UTM_code: if 'longlat' is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
 #'   
+#'  - $simu_coord: if sd_coord is provided, a list of n data-tables containing the simulated coordinates 
 #'
 #' @export
 #' @author Arthur PERE, Arthur BAILLY
@@ -257,10 +258,10 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   
   ### Calculates the projected coordinates of the grid points 
-  project_coord_fct <- function(dat, plot_grid) { # dat = corner_dt[plot_ID==201,]
+  project_coord_fct <- function(dat, plot_grid, uncertainty) { # dat = corner_dt[plot_ID==201,]
   
     # Adding a random error on GPS measurements:
-    if(!is.null(sd_coord)) {
+    if(uncertainty) {
       dat <- merge(dat, sd_coord)
       dat[, c("x_proj","y_proj") := list(x_proj = x_proj + rnorm(4,0,sd_coord), y_proj = y_proj + rnorm(4,0,sd_coord))]
     }
@@ -275,15 +276,15 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   # Apply project_coord_fct to all plots
-  if(is.null(sd_coord)) {
-    sub_corner_coord <- corner_dt[, project_coord_fct(.SD, plot_grid), by = plot_ID, .SDcols = colnames(corner_dt)][,-1]
-  } else { # if error propagation on coordinates: return a list of length n
-    sub_corner_coord <- lapply(1:n, function(x) corner_dt[, project_coord_fct(.SD, plot_grid), by = plot_ID, .SDcols = colnames(corner_dt), ][,-1])
+  sub_corner_coord <- corner_dt[, project_coord_fct(.SD, plot_grid, uncertainty = FALSE), by = plot_ID, .SDcols = colnames(corner_dt)][,-1]
+  # if error propagation on coordinates: create the simu_coord output (a list of length n)
+  if(!is.null(sd_coord)) { 
+    simu_coord <- lapply(1:n, function(x) corner_dt[, project_coord_fct(.SD, plot_grid, uncertainty = TRUE), by = plot_ID, .SDcols = colnames(corner_dt), ][,-1])
   }
   
   
   # Retrieving geographic coordinates (if no error propagation) ----------------
-  if(!is.null(longlat) && is.null(sd_coord)) {
+  if(!is.null(longlat)) {
     GPS_coord_fct <- function(dat) { # dat = sub_corner_coord
       gps_coord <- as.data.frame( proj4::project(dat[,c("x_proj","y_proj")], proj = UTM_code$UTM_code[UTM_code$plot_ID == unique(dat$plot_ID)], inverse = TRUE) )
       sub_corner_coord[plot_ID %in% dat$plot_ID, c("long", "lat") := list(long = gps_coord$x, lat = gps_coord$y)]
@@ -332,18 +333,16 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   output <- list()
   
-  if(is.null(sd_coord)) { # no error propagation
-    output$sub_corner_coord <- data.frame(sub_corner_coord)
-  } else { # error propagation
-    output$sub_corner_coord <- sub_corner_coord
-  }
+  output$sub_corner_coord <- data.frame(sub_corner_coord)
   
   if(!is.null(tree_data)) { # tree_data present
     output$tree_data <- data.frame(tree_dt)
   }
-  
   if(!is.null(longlat)) {
     output$UTM_code <- UTM_code
+  }
+  if(!is.null(sd_coord)) {
+    output$simu_coord <- simu_coord
   }
   
   return(output)
