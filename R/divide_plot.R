@@ -11,12 +11,12 @@
 #' @param proj_coord (optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
 #' @param longlat (optional, if proj_coord is not provided) A character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
 #' @param grid_size A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
+#' @param origin Alignment of the subplot grid, based on relative coordinates. If NULL (default), the grid is aligned to the origin corner [0,0] of the relative coordinates. Alternatively provide a numeric vector of length 2, specifying the relative coordinates to which the grid should be aligned. This option is especially useful when `grid_size` doesn't match exactly plot dimensions.
+#' @param grid_tol A numeric between (0;1) corresponding to the proportion of the plot area allowed to be excluded from the plot division (when grid_size and origin don't match exactly plot dimensions).
 #' @param tree_data A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).
 #' @param tree_coords A character vector of length 2, specifying the column names of the relative coordinates of the trees.
 #' @param corner_plot_ID If dealing with multiple plots : a vector indicating plot IDs for corners.
 #' @param tree_plot_ID If dealing with multiple plots : a vector indicating tree plot IDs.
-#' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
-#' @param origin Alignment of subplots relative to the corners of the plot, based on relative plot coordinates. Options: `bottomleft` (default, min_x, min_y), `bottomright` (max_x, min_y), `topright` (max_x, max_y), `topleft` (min_x, max_y), `centre` (centred in the middle of the plot, useful when `grid_size` doesn't match exactly plot dimensions.
 #' 
 #' @return If `tree_data` isn't provided, returns a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 #'   - `corner_plot_ID`: If dealing with multiple plots : the plot code
@@ -34,7 +34,7 @@
 #'   
 #'
 #' @export
-#' @author Arthur PERE, Arthur BAILLY
+#' @author Arthur PERE, Arthur BAILLY, John L. GODLEE
 #' @importFrom data.table data.table := setcolorder 
 #' @importFrom stats dist
 #' @examples
@@ -83,8 +83,8 @@
 #'     tree_plot_ID = "Plot"))
 #' head(nouragues_subplots$sub_corner_coord)
 #' head(nouragues_subplots$tree_data)
-
-divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL, grid_tol = 0.1, origin = "bottomleft") {
+#' 
+divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NULL, grid_size, grid_tol = 0.1, origin = NULL, tree_data = NULL, tree_coords = NULL, corner_plot_ID = NULL, tree_plot_ID = NULL) {
   
   # Checking arguments ---------------------------------------------------------
   
@@ -130,11 +130,15 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   if (!is.null(tree_plot_ID) && !any(tree_plot_ID==names(tree_data))) {
     stop(paste(tree_plot_ID,"is not found in tree_data column names."))
   }
-  if (!origin %in% c("bottomleft", "bottomright", "topright", "topleft", "centre")) { 
-    stop("origin must be one of: 'bottomleft', 'bottomright', 'topright', 'topleft', 'centre'")
+  if (!is.null(origin) && !(is.numeric(origin) && length(origin) == 2)) {
+    stop("If provided, origin must be a numeric vector of length 2")
   }
   
   # Data processing ------------------------------------------------------------
+
+  if (is.null(origin)) { 
+    origin <- c(0, 0)
+  }
   
   if(length(grid_size)!=2) grid_size = rep(grid_size,2)
   
@@ -190,44 +194,33 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   # Dividing plots   -----------------------------------------------------------
   
   # Grids the plot from the relative coordinates and calculates the projected coordinates of the grid points.
-  divide_plot_fct <- function(dat, grid_size) { # dat = corner_dt
+  divide_plot_fct <- function(dat, grid_size, origin) { # dat = corner_dt
     
     # Check that grid dimensions match plot dimensions
     x_plot_length <- diff(range(dat[["x_rel"]]))
     y_plot_length <- diff(range(dat[["y_rel"]]))
-    x_not_in_grid <- x_plot_length %% grid_size[1]
-    y_not_in_grid <- y_plot_length %% grid_size[2]
-    if( x_not_in_grid != 0 ) warning("\nThe x-dimension of the plot is not a multiple of the x-dimension of the grid size")
-    if( y_not_in_grid != 0 ) warning("\nThe y-dimension of the plot is not a multiple of the y-dimension of the grid size")
-    if( x_not_in_grid * y_plot_length + y_not_in_grid * x_plot_length - x_not_in_grid * y_not_in_grid > grid_tol * x_plot_length * y_plot_length ) {
-      stop(paste("More than",grid_tol*100,"% of the plot area is not included in the sub-plot grid. If you still want to divide the plot, please increase the value of the grid_tol argument."))
-    }
-    # Create grid coordinates
+
     xmin <- min(dat[["x_rel"]])
     xmax <- max(dat[["x_rel"]])
     ymin <- min(dat[["y_rel"]])
     ymax <- max(dat[["y_rel"]])
 
-    width  <- xmax - xmin
-    height <- ymax - ymin
+    # Effective offset of grid start within plot
+    x_offset <- (origin[1] - xmin) %% grid_size[1]
+    y_offset <- (origin[2] - ymin) %% grid_size[2]
 
-    xoff <- 0
-    if (origin %in% c("bottomright", "topright")) {
-      xoff <- width %% grid_size[1]
+    x_not_in_grid <- (x_plot_length - x_offset) %% grid_size[1]
+    y_not_in_grid <- (y_plot_length - y_offset) %% grid_size[2]
+
+    if( x_not_in_grid != 0 ) warning("\nThe x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset")
+    if( y_not_in_grid != 0 ) warning("\nThe y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset")
+    if( x_not_in_grid * y_plot_length + y_not_in_grid * x_plot_length - x_not_in_grid * y_not_in_grid > grid_tol * x_plot_length * y_plot_length ) {
+      stop(paste("More than",grid_tol*100,"% of the plot area is not included in the sub-plot grid. If you still want to divide the plot, please increase the value of the grid_tol argument, adjust grid size and/or origin."))
     }
 
-    yoff <- 0
-    if (origin %in% c("topleft", "topright")) {
-      yoff <- height %% grid_size[2]
-    }
-    if (origin == "centre") {
-      xoff <- (width/2) %% grid_size[1]
-      yoff <- (height/2) %% grid_size[2]
-    }
-      
-    xseq <- seq(xmin + xoff, xmax, by = grid_size[1])
-    yseq <- seq(ymin + yoff, ymax, by = grid_size[2])
-      
+    xseq <- seq(xmin + x_offset, xmax, by = grid_size[1])
+    yseq <- seq(ymin + y_offset, ymax, by = grid_size[2])
+
     # Create grid intersection points
     plot_grid <- data.table(expand.grid(x_rel = xseq, y_rel = yseq))
     plot_grid[,corner_plot_ID:=unique(dat$corner_plot_ID)]
@@ -248,12 +241,12 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     if(!is.null(proj_coord) | !is.null(longlat)) {
       plot_grid <- cbind(plot_grid,bilinear_interpolation(coord = plot_grid[,c("x_rel","y_rel")] , from_corner_coord = dat[,c("x_rel","y_rel")] , to_corner_coord = dat[,c("x_proj","y_proj")], ordered_corner = T))
     }
+
     return(plot_grid)
   }
   
   # Apply divide_plot_fct to all plots
-  sub_corner_coord <- corner_dt[, divide_plot_fct(.SD, grid_size), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
-  
+  sub_corner_coord <- corner_dt[, divide_plot_fct(.SD, grid_size, origin), by = corner_plot_ID, .SDcols = colnames(corner_dt)]
   
   # Retrieving geographic coordinates ------------------------------------------
   if(!is.null(longlat)) {
@@ -263,8 +256,6 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     }
     sub_corner_coord[, GPS_coord_fct(.SD), by = corner_plot_ID, .SDcols = colnames(sub_corner_coord)]
   }
-  
-  
   
   # Assigning trees to subplots ------------------------------------------------
   
