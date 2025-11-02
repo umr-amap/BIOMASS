@@ -70,6 +70,19 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
     }
   }
 
+  # Load cache
+  if (useCache) {
+    if (!(exists("wfo_cache", envir = .GlobalEnv) && 
+      is.environment(get("wfo_cache", envir = .GlobalEnv)))) {
+      # Create wfo_cache in the global environment
+      assign("wfo_cache", new.env(parent = emptyenv()), envir = .GlobalEnv)
+      wfo_cache$names <- list()
+    }
+    cachePath <- cacheManager("correctTaxo.rds")
+    wfo_cache$names <- readRDS(cachePath)
+    message(sprintf("Cached taxonomic names loaded from '%s'", cachePath))
+  }
+
   # Extract unique names 
   xun <- sort(unique(x))
   xlen <- length(xun)
@@ -156,6 +169,12 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
 
     # Match row order of dataframe to x
     out <- out[match(x, out$taxon_name_subm),]
+  }
+
+  # Optionally write cache to file
+  if (useCache) {
+    saveRDS(wfo_cache, cachePath)
+    message(sprintf("Cached taxonomic names saved to '%s'", cachePath))
   }
 
   # Return
