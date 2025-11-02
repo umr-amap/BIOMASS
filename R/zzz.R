@@ -1,5 +1,14 @@
 .onLoad <- function(libname, pkgname) {
+  # Set WFO GraphQL API URI if not already set
+  if( !"wfo.api_uri" %in% names(options()) ){
+    options("wfo.api_uri" = c("https://list.worldfloraonline.org/gql.php"))
+  }
   
+}
+
+.onUnload <- function(libname, pkgname){
+  Unset the WFO GraphQL API URI
+  options("wfo.api_uri" = NULL)
 }
 
 .onAttach <- function(libname, pkgname) {
@@ -21,7 +30,9 @@
   if(attr(basePath, "source")=="data") {
     packageStartupMessage(
       "Using user data cache ", basePath,
-      "\n  To clear or remove cache see function clearCache()."
+      "\n  To clear or remove cache see function clearCache().",
+      "\n\n",
+      "WFO API URI set: ", options("wfo.api_uri")
     )
   }
 }
