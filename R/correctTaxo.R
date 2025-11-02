@@ -1,5 +1,15 @@
 #' Correct and match taxonomic names to the World Flora Online database
 #'
+#' @description
+#' This function matches taxonomic names using the World Flora Online database,
+#'     via their GraphQL API
+#'
+#' This function create a file named correctTaxo.rds (see Localisation), this
+#' file holds all previous API requests, to avoid the replication of
+#' time-consuming server requests.
+#'
+#' @inheritSection cacheManager Localisation
+#'
 #' @param x vector of taxonomic names
 #' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
 #'     if no species-level match is available
@@ -22,6 +32,13 @@
 #'
 #' @return data.frame containing taxonomic name information with rows matching
 #'     names in `x`, or a list containing unique values in `x` if raw = TRUE
+#'
+#' @references Borsch, T. et al. (2020).
+#' _World Flora Online: Placing taxonomists at the heart of a definitive and
+#' comprehensive global resource on the world's plants_. TAXON, 69, 6.
+#' doi10.1002/tax.12373:
+#'
+#' @author John L. Godlee
 #' 
 #' @export
 #'
