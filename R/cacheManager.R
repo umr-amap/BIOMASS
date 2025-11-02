@@ -29,8 +29,7 @@ cacheManager <- function(nameFile) {
     E.bil     = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/E.zip",
     CWD.bil   = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/CWD.zip",
     bio4.bil  = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip",
-    bio15.bil = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip",
-    classification.csv = WFO_url()
+    bio15.bil = "https://github.com/umr-amap/BIOMASS/raw/master/data-raw/climate_variable/wc2-5.zip"
   )
   url <- url[[nameFile]]
   
