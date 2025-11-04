@@ -25,6 +25,8 @@ test_that("divide_plot error", {
   expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("x_rel","y_rel")), "column names provided by tree_coords are not found in tree_data colunm names")
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), 
                "You must provide tree_plot_ID if you have more than one plot in your data")
+  expect_error(divide_plot(NouraguesPlot201[c(1,11,21,31),], c("Xfield","Yfield"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), 
+               "The argument corner_plot_ID is required if tree_plot_ID is provided (it means that 'corner_data' contains several plots).", fixed=TRUE)
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "a"),
                "is not found in tree_data column names.")
   

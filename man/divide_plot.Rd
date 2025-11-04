@@ -50,7 +50,7 @@ divide_plot(
 \value{
 Returns a list containing:
 \itemize{
-\item $sub_corner_coord: a data-frame (or a list of data.table if sd_coord is provided) containing as many rows as there are corners corresponding to the subplots, and the following columns :
+\item $sub_corner_coord: a data-frame containing as many rows as there are corners corresponding to the subplots, and the following columns :
 \itemize{
 \item \code{plot_ID}: If dealing with multiple plots: the plot code, else, a column containing an empty character
 \item \code{subplot_ID}: The automatically generated subplot code, using the following rule : subplot_X_Y
@@ -59,6 +59,7 @@ Returns a list containing:
 }
 \item $tree_data: the tree_data argument with the subplot_ID of each tree in the last column
 \item $UTM_code: if 'longlat' is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
+\item $simu_coord: if sd_coord is provided, a list of n data-tables containing the simulated coordinates
 }
 }
 \description{

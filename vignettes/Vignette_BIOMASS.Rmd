@@ -334,6 +334,12 @@ error_prop <- AGBmonteCarlo(
 
 error_prop[(1:4)]
 ```
+```{r, include=FALSE, eval=FALSE}
+# saving error_prop for the other vignette
+error_prop$AGB_simu <- error_prop$AGB_simu[NouraguesTrees$Plot==201,1:200]
+saveRDS(error_prop, file = "saved_data/error_prop.rds")
+```
+
 
 The first four elements of the output contain the mean, median, standard deviation and credibility intervals of the total AGB of the dataset but nothing about the AGB at the plot level. To do this, you can use the `summaryByPlot()` function:
 

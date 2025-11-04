@@ -39,7 +39,7 @@ test_that("subplot_summary_value", {
   subplots_rel_coord <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 25,
                                                      tree_data = NouraguesTrees201, tree_coords = c("Xfield","Yfield")))
   res_rel_coord <- suppressMessages(subplot_summary(subplots_rel_coord, value = "D", draw_plot = F))
-  expect_equal(res_rel_coord$tree_summary[1,3], as.data.table(subplots_rel_coord$tree_data)[subplot_ID=="subplot_0_0", sum(D)] * 16)
+  expect_equivalent(res_rel_coord$tree_summary[1,2], as.data.table(subplots_rel_coord$tree_data)[subplot_ID=="subplot_0_0", sum(D)] * 16)
   
   
   # Test with proj_coord
@@ -73,11 +73,11 @@ test_that("subplot_summary_value", {
   
   res_multiple <- subplot_summary(subplots = multiple_subplots, value = "D", fun=mean, draw_plot = F, per_ha = FALSE)
   res_mean_D <- as.data.table(multiple_subplots$tree_data)[!is.na(subplot_ID), mean(D), by=subplot_ID]
-  expect_equal(res_multiple$tree_summary[order(res_multiple$tree_summary$subplot_ID),"D_mean"], res_mean_D[order(res_mean_D$subplot_ID),V1])
+  expect_equivalent(res_multiple$tree_summary[order(res_multiple$tree_summary$subplot_ID),"D_mean"], res_mean_D[order(res_mean_D$subplot_ID),V1])
   
   # Test with multiple metrics
   res_metrics <- subplot_summary(subplots = multiple_subplots, value = c("D","x_rel"), fun = list(D=sum,x_rel=mean), per_ha = c(T,F) , draw_plot = F)
-  expect_equal(names(res_metrics$tree_summary), c("plot_ID","subplot_ID","x_rel_mean","D_sum_per_ha"))
+  expect_equal(names(res_metrics$tree_summary), c("subplot_ID","x_rel_mean","D_sum_per_ha"))
   
 })
 
@@ -98,7 +98,7 @@ test_that("subplot_summary_raster", {
   rownames(res_multiple$tree_summary) <- NULL
   
   expect_equal(as.data.frame(res_multiple$tree_summary[1,]) ,
-               data.frame(plot_ID=201, subplot_ID="201_0_0",
+               data.frame(subplot_ID="201_0_0",
                           D_mean_per_ha=409.8663, D_sd_per_ha=313.5045,
                           z2012_mean=24.26298,z2012_sd=11.45732), 
                tolerance = 1e-2)
@@ -108,7 +108,7 @@ test_that("subplot_summary_raster", {
   res_unique <- subplot_summary(subplots, value = "D", draw_plot = FALSE, fun = mean, ref_raster = nouragues_raster, raster_fun = mean)
   rownames(res_unique$tree_summary) <- NULL
   
-  expect_equal(res_multiple$tree_summary[1:16, c(3,5)] , res_unique$tree_summary[,c(3,4)], tol=1e-2)
+  expect_equal(res_multiple$tree_summary[1:16, c(2,4)] , res_unique$tree_summary[,c(2,3)], tol=1e-2)
   
 })
 
@@ -143,9 +143,9 @@ test_that("subplot_summary_AGB_uncertainties", {
   # check $tree_summary
   expect_equal(names(res$tree_summary), c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5"))
   # check $long_AGB_simu
-  expect_equal(dim(res$long_AGB_simu), c(800, 5))
+  expect_equal(dim(res$long_AGB_simu), c(800, 6))
   expect_equal(length(unique(res$long_AGB_simu$x_center)), 16)
-  expect_equal(names(res$long_AGB_simu), c("subplot_ID","N_simu","x_center","y_center","AGBD"))
+  expect_equal(names(res$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD"))
   # Check by hand of the AGBD calculation
   AGB_simu_201 <- data.table(error_prop_201)
   AGB_simu_201$subplot_ID <- subplots$tree_data$subplot_ID
@@ -163,7 +163,7 @@ test_that("subplot_summary_AGB_uncertainties", {
   # check $tree_summary
   expect_equal(names(res_w_values$tree_summary), c("subplot_ID","x_rel_mean","D_sum_per_ha","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5"))
   # check $plot_design
-  expect_equal(length(res_w_values$plot_design[[1]]), 3) # plot AGBD_median and the 2 metrics
+  expect_equal(length(res_w_values$plot_design), 3) # plot AGBD_median and the 2 metrics
   
   ### multiple plots:
   res_mult <- suppressMessages(subplot_summary(subplots = multiple_subplots, AGB_simu = error_prop$AGB_simu, draw_plot = FALSE))
@@ -194,8 +194,8 @@ test_that("subplot_summary_coord_uncertainties", {
   expect_warning(res_coord <- subplot_summary(subplots = subplots, value = "D", draw_plot = FALSE), "the following results will not take into account the uncertainty of corner coordinates.")
   
   res_coord <- subplot_summary(subplots = subplots, value = "D", ref_raster = nouragues_raster, draw_plot = FALSE)
-  expect_equal(names(res_coord$tree_summary), c("plot_ID","subplot_ID","D_sum_per_ha","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
-  expect_equal(length(res_coord$plot_design[[1]]), 2 ) # D_sum_per_ha and z2012_median
+  expect_equal(names(res_coord$tree_summary), c("subplot_ID","D_sum_per_ha","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
+  expect_equal(length(res_coord$plot_design), 2 ) # D_sum_per_ha and z2012_median
   
   # multiple plot
   multiple_subplots <- suppressWarnings(divide_plot(corner_data = NouraguesCoords,
@@ -204,7 +204,7 @@ test_that("subplot_summary_coord_uncertainties", {
                                                     tree_data = NouraguesTrees , tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot",
                                                     sd_coord = 3, n = 10))
   res_coord_mult <- subplot_summary(subplots = multiple_subplots, value = "D", ref_raster = nouragues_raster, draw_plot = FALSE)
-  expect_equal(names(res_coord_mult$tree_summary), c("plot_ID","subplot_ID","D_sum_per_ha","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
+  expect_equal(names(res_coord_mult$tree_summary), c("subplot_ID","D_sum_per_ha","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
   expect_equal(length(res_coord_mult$plot_design), 4 ) # 4 plots
   expect_equal(length(res_coord_mult$plot_design[[1]]), 2 ) # D_mean_per_ha and z2012_median
   
@@ -216,9 +216,8 @@ test_that("subplot_summary_coord_uncertainties", {
     "40 simulations will be resampled in 'subplots'.")
   
   expect_equal(names(res_coord$tree_summary), c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
-  expect_equal(res_coord$tree_summary, res_coord$polygon[,c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5")])
-  expect_equal(dim(res_coord$long_AGB_simu), c(50*4,6))
-  expect_equal(names(res_coord$long_AGB_simu), c("subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
+  expect_equal(dim(res_coord$long_AGB_simu), c(50*4,7))
+  expect_equal(names(res_coord$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
   expect_equal(length(unique(res_coord$long_AGB_simu$z2012_mean)) , 4 * 10)
   
   # multiple plots: 
@@ -231,9 +230,8 @@ test_that("subplot_summary_coord_uncertainties", {
     "the first 50 simulations contained in 'subplots$simu_coord' will be considered.", fixed=TRUE)
   
   expect_equal(names(res_coord_mult$tree_summary), c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
-  expect_equal(res_coord_mult$tree_summary, res_coord_mult$polygon[,c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5")])
-  expect_equal(dim(res_coord_mult$long_AGB_simu), c(50*4*4,6))
-  expect_equal(names(res_coord_mult$long_AGB_simu), c("subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
+  expect_equal(dim(res_coord_mult$long_AGB_simu), c(50*4*4,7))
+  expect_equal(names(res_coord_mult$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
   expect_equal(length(unique(res_coord_mult$long_AGB_simu$z2012_mean)) , 4*50*4)
   
   

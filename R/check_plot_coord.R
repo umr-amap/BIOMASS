@@ -149,7 +149,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     stop("The number of corners in 'corner_data' is not 4. If multiple plots are present, then the argument plot_ID is required.")
   }
   if(!is.null(tree_data) && !is.null(plot_ID) && is.null(tree_plot_ID)) {
-    stop("The argument tree_plot_ID is required if plot_ID is provided.")
+    stop("The argument tree_plot_ID is required if plot_ID is provided (it means that 'corner_data' contains several plots).")
+  }
+  if(!is.null(tree_data) && is.null(plot_ID) && !is.null(tree_plot_ID)) {
+    stop("The argument plot_ID is required if tree_plot_ID is provided (it means that 'corner_data' contains several plots).")
   }
   if (!is.null(plot_ID) && !any(plot_ID==names(corner_dt))) {
     stop(paste(plot_ID,"is not found in corner_data column names."))
@@ -518,9 +521,6 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
 
   if (!is.null(longlat)) {
-    if(all(UTM_code[,plot_ID]=="")) {
-      UTM_code$plot_ID <- NULL
-    }
     output$UTM_code <- UTM_code
   }
   

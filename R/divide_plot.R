@@ -129,6 +129,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   if(nrow(corner_data)!=4 & !is.null(tree_data) & is.null(tree_plot_ID)){
     stop("You must provide tree_plot_ID if you have more than one plot in your data")
   }
+  if(!is.null(tree_data) && is.null(corner_plot_ID) && !is.null(tree_plot_ID)) {
+    stop("The argument corner_plot_ID is required if tree_plot_ID is provided (it means that 'corner_data' contains several plots).")
+  }
   if (!is.null(tree_plot_ID) && !any(tree_plot_ID==names(tree_data))) {
     stop(paste(tree_plot_ID,"is not found in tree_data column names."))
   }

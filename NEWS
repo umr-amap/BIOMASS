@@ -6,7 +6,7 @@
 - modelHD() can now be called with the 'bayesian' and 'useCache' arguments to build H-D models in a bayesian framework using brms library. This will results in propagating parameters uncertainties of the bayesian model during the error propagation of the AGBmonteCarlo() function.
 
 * version 2.2.5
-- Removed the 'plot' argument of AGBmonteCarlo() (is case of stand-specific local H-D model, the ploID vector is automatically build by catching the corresponding plotID of modelHD)
+- Removed the 'plot' argument of AGBmonteCarlo() (if stand-specific local H-D model: the ploID vector is automatically build by catching the corresponding plotID of modelHD)
 - Add the ref_raster and raster_fun arguments to the subplot_summary() function to summarise a reference raster attribute/variable (typically the height of a chm) by subplots. 
 
 * version 2.2.4
