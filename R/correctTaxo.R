@@ -4,7 +4,7 @@
 #' This function matches taxonomic names using the World Flora Online database,
 #'     via their GraphQL API
 #'
-#' This function create a file named correctTaxo.rds (see Localisation), this
+#' This function creates a file named correctTaxo.rds (see Localisation), this
 #' file holds all previous API requests, to avoid the replication of
 #' time-consuming server requests.
 #'
@@ -20,6 +20,9 @@
 #'     there are other names with the same words but different author strings
 #' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
 #'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
+#'     found, and if there is only one candidate is an "accepted" name,
+#'     automatically choose that name
 #' @param interactive logical, if TRUE (default) user will be prompted to pick
 #'     names from a list where multiple ambiguous matches are found, otherwise
 #'     names with multiple ambiguous matches will be skipped
@@ -54,8 +57,8 @@
 #' correctTaxo(x, interactive = FALSE)
 #'
 correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0, interactive = TRUE, 
-  useCache = FALSE, useAPI = TRUE, raw = FALSE) {
+  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE,
+   interactive = TRUE, useCache = FALSE, useAPI = TRUE, raw = FALSE) {
 
   if (!useCache & !useAPI) {
     stop("Either useCache or useAPI must be TRUE")
@@ -117,6 +120,7 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
         checkRank = checkRank,
         checkHomonyms = checkHomonyms,
         fuzzyNameParts = fuzzyNameParts,
+        preferAccepted = preferAccepted,
         useCache = useCache,
         useAPI = useAPI,
         interactive = interactive))
@@ -145,6 +149,7 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
           checkRank = null2na(i$checkRank),
           checkHomonyms = null2na(i$checkHomonyms),
           fuzzyNameParts = null2na(i$fuzzyNameParts),
+          preferAccepted = null2na(i$preferAccepted),
           taxon_wfo_syn = null2na(i$id),
           taxon_name_syn = null2na(i$fullNameStringNoAuthorsPlain),
           taxon_auth_syn = null2na(i$authorsString),
@@ -167,6 +172,7 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
           checkRank = i$checkRank,
           checkHomonyms = i$checkHomonyms,
           fuzzyNameParts = i$fuzzyNameParts,
+          preferAccepted = i$preferAccepted,
           taxon_wfo_syn = NA_character_,
           taxon_name_syn = NA_character_,
           taxon_auth_syn = NA_character_,
@@ -310,6 +316,9 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
 #'     there are other names with the same words but different author strings
 #' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
 #'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
+#'     found, and if there is only one candidate is an "accepted" name,
+#'     automatically choose that name
 #' @param interactive logical, if TRUE (default) user will be prompted to pick
 #'     names from a list where multiple ambiguous matches are found, otherwise
 #'     names with multiple ambiguous matches will be skipped
@@ -325,8 +334,8 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
 #' matchWFOName("Burkea africana")
 #' 
 matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0, useCache = FALSE, useAPI = TRUE,
-  interactive = TRUE) {
+  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
+  useCache = FALSE, useAPI = TRUE, interactive = TRUE) {
 
   # Search cache for name 
   if (useCache && x %in% names(wfo_cache$names) ) {
@@ -342,8 +351,18 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
       fuzzyNameParts = fuzzyNameParts)
 
     # If interactive and name not found
-    if (is.null(response$data$taxonNameMatch$match) & interactive) {
-      match <- pickWFOName(x, response$data$taxonNameMatch$candidates)
+    cand_roles <- unlist(lapply(response$data$taxonNameMatch$candidates, "[[", "role")) 
+    if (is.null(response$data$taxonNameMatch$match)) {
+      if (preferAccepted && sum(cand_roles == "accepted") == 1) {
+        match <- response$data$taxonNameMatch$candidates[[which(cand_roles == "accepted")]]
+        match$method <- "AUTO ACC"
+      } else if (interactive) {
+        match <- pickWFOName(x, response$data$taxonNameMatch$candidates)
+      } else {
+        cat(sprintf("No cached name for: %s\n", x))
+        match <- list()
+        match$method <- "EMPTY"
+      }
     } else {
       match <- response$data$taxonNameMatch$match
       match$method <- "AUTO"
@@ -359,6 +378,7 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
   match$checkRank <- checkRank
   match$checkHomonyms <- checkHomonyms
   match$fuzzyNameParts <- fuzzyNameParts 
+  match$preferAccepted <- preferAccepted 
 
   # Store result in cache
   if (match$method %in% c("AUTO", "MANUAL") & 
