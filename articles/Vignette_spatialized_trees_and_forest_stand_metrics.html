@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-10-27</h4>
+            <h4 data-toc-skip class="date">2025-11-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
@@ -445,7 +445,7 @@ yourself, you can supply these 4 GPS coordinates to the
 function.</p></li>
 <li><p>When <strong>enough coordinates have been recorded for each
 corner</strong> (for more information, see the <a href="https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf" class="external-link">CEOS
-good practices protocol, section A.1.3.1</a> ), coordinates will be
+good practices protocol, section A.1.3.1</a> ), the coordinates will be
 averaged by corner, resulting in 4 reference coordinates. The function
 can also detect and remove GPS outliers using the ‘rm_outliers’ and
 ‘max_dist’ arguments.</p></li>
@@ -533,9 +533,11 @@ output and can be saved into a shapefile as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">polygon</span>, <span class="st">"your_directory/plot201.shp"</span><span class="op">)</span></span></code></pre></div>
 <p>For full details, the <code>$outlier_corners</code> output returns
-all the information about GPS outliers found by the function, and the
+all the information about GPS outliers found by the function, the
 <code>$UTM_code</code> output returns the UTM code calculated by the
-function if geographic coordinates have been provided.</p>
+function if geographic coordinates have been provided, and the
+<code>$sd_coord</code> output returns the average standard deviation of
+the GPS measurements for each corner on the X and Y axes.</p>
 </div>
 <div class="section level3">
 <h3 id="tree_coordinates">Visualising and retrieving projected tree coordinates<a class="anchor" aria-label="anchor" href="#tree_coordinates"></a>
@@ -843,7 +845,7 @@ arguments</strong>:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add AGB predictions (calculated in Vignette BIOMASS) to plot201Trees</span></span>
 <span><span class="va">AGB_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"saved_data/NouraguesTreesAGB.rds"</span><span class="op">)</span></span>
-<span><span class="va">plot201Trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">plot201Trees</span> , <span class="va">AGB_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span>,<span class="st">"D"</span>,<span class="st">"AGB"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">plot201Trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">plot201Trees</span> , <span class="va">AGB_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span>,<span class="st">"D"</span>,<span class="st">"AGB"</span><span class="op">)</span><span class="op">]</span>, sort<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>, </span>
@@ -891,30 +893,6 @@ previously</p></li>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">-3.5</td>
-<td align="right">201</td>
-<td align="left">Euphorbiaceae</td>
-<td align="left">Mabea</td>
-<td align="left">speciosa</td>
-<td align="right">313046.8</td>
-<td align="right">451702.5</td>
-<td align="right">0.1</td>
-<td align="left"></td>
-<td align="left">NA</td>
-</tr>
-<tr class="even">
-<td align="right">-4.0</td>
-<td align="right">201</td>
-<td align="left">Euphorbiaceae</td>
-<td align="left">Conceveiba</td>
-<td align="left">guyanensis</td>
-<td align="right">313071.7</td>
-<td align="right">451688.0</td>
-<td align="right">0.0</td>
-<td align="left"></td>
-<td align="left">NA</td>
-</tr>
-<tr class="odd">
 <td align="right">0.0</td>
 <td align="right">201</td>
 <td align="left">Burseraceae</td>
@@ -951,6 +929,18 @@ previously</p></li>
 <td align="left">subplot_0_1</td>
 </tr>
 <tr class="even">
+<td align="right">-4.0</td>
+<td align="right">201</td>
+<td align="left">Euphorbiaceae</td>
+<td align="left">Conceveiba</td>
+<td align="left">guyanensis</td>
+<td align="right">313071.7</td>
+<td align="right">451688.0</td>
+<td align="right">0.0</td>
+<td align="left"></td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
 <td align="right">0.3</td>
 <td align="right">201</td>
 <td align="left">Burseraceae</td>
@@ -962,29 +952,61 @@ previously</p></li>
 <td align="left"></td>
 <td align="left">subplot_0_1</td>
 </tr>
+<tr class="even">
+<td align="right">-3.5</td>
+<td align="right">201</td>
+<td align="left">Euphorbiaceae</td>
+<td align="left">Mabea</td>
+<td align="left">speciosa</td>
+<td align="right">313046.8</td>
+<td align="right">451702.5</td>
+<td align="right">0.1</td>
+<td align="left"></td>
+<td align="left">NA</td>
+</tr>
 </tbody>
 </table>
-<p>Last but not least, the function can handle as many plots as you
-want, using the <code>corner_plot_ID</code> and
-<code>tree_plot_ID</code> arguments:</p>
+<p>Of course, the function can handle as many plots as you want, using
+the <code>corner_plot_ID</code> and <code>tree_plot_ID</code>
+arguments:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, corner_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, </span>
 <span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield", :</span></span>
 <span><span class="co">#&gt; One or more trees could not be assigned to a subplot (not in a subplot area)</span></span></code></pre></div>
+<p>Last but not least, the function can account for uncertainty in the
+corner coordinates using the <code>sd_coord</code> and <code>n</code>
+arguments. In this case, <code>n</code> simulations of corner
+positioning will be drawn and returned via the <code>$simu_coord</code>
+output list. The uncertainty (sd) on each corner position along the X-
+and Y- axis will be equal to the value of sd_coord:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sd_coord_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
+<span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
+<span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
+<span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
+<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, <span class="co"># or c(25,25)</span></span>
+<span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span>
+<span>  sd_coord <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">sd_coord</span>, n <span class="op">=</span> <span class="fl">50</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in divide_plot(corner_data = check_plot_trust_GPS$corner_coord, : One</span></span>
+<span><span class="co">#&gt; or more trees could not be assigned to a subplot (not in a subplot area)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="summarising-tree-metrics-at-subplot-level">Summarising tree metrics at subplot level<a class="anchor" aria-label="anchor" href="#summarising-tree-metrics-at-subplot-level"></a>
+<h2 id="summarising-metrics-at-subplot-level">Summarising metrics at subplot level<a class="anchor" aria-label="anchor" href="#summarising-metrics-at-subplot-level"></a>
 </h2>
+<div class="section level3">
+<h3 id="summarising-tree-metrics">Summarising tree metrics<a class="anchor" aria-label="anchor" href="#summarising-tree-metrics"></a>
+</h3>
 <p>Once you’ve applied the <code><a href="../reference/divide_plot.html">divide_plot()</a></code> function with a
 non-null <code>tree_data</code> argument, you can summarise any tree
 metric at the subplot level with the <code><a href="../reference/subplot_summary.html">subplot_summary()</a></code>
 function.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>, <span class="co"># AGB was added before applying divide_plot()</span></span>
@@ -996,7 +1018,7 @@ and divides the result by the area of each subplot (to obtain a summary
 <strong>per hectare</strong>), but you can request any valid function
 using <code>fun</code> argument and choose between a raw or a per
 hectare summary using <code>per_ha</code> argument.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>,</span>
@@ -1008,14 +1030,14 @@ hectare summary using <code>per_ha</code> argument.</p>
 <ul>
 <li><p><code>$tree_summary</code>: a summary of the metric per
 subplot</p></li>
-<li><p><code>$polygon</code>: an object of the class <code>sf</code>
-containing a simple feature collection of the subplot’s polygon</p></li>
+<li><p><code>$polygon</code>: a simple feature collection of the
+summarised subplot’s polygons</p></li>
 <li><p><code>$plot_design</code>: a ggplot object that can easily be
 modified</p></li>
 </ul>
 <p>The returned <strong>polygons can be saved into a shapefile</strong>
 like this:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set the CRS of the polygons</span></span>
 <span><span class="va">subplot_polygons</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span></span>
 <span>  <span class="va">subplot_metric</span><span class="op">$</span><span class="va">polygon</span> ,</span>
@@ -1025,46 +1047,101 @@ like this:</p>
 <span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">subplot_polygons</span>, <span class="st">"your_directory/subplots_201.shp"</span><span class="op">)</span></span></code></pre></div>
 <p>And of course, the function can handle <strong>as many plots as
 provided in divide_plot()</strong>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
-<span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
-<span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">mean</span>, per_ha <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">mean</span>, per_ha <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="summarising-the-agbd-and-its-uncertainties">Summarising the AGBD and its uncertainties<a class="anchor" aria-label="anchor" href="#summarising-the-agbd-and-its-uncertainties"></a>
+</h3>
+<p>If you have obtained the <strong>AGB estimates and their uncertainty
+using the ‘AGBmonteCarlo()’</strong> function (see the <a href="https://umr-amap.github.io/BIOMASS/articles/Vignette_BIOMASS.html#some-tricks">Estimating
+stand biomass vignette</a>, you can provide the output matrix of this
+function using the <code>AGB_simu</code> argument.<br>
+The function also handles uncertainty in corner coordinates if the
+<code>subplots</code> argument provided has been created using the
+<code>sd_coord</code> argument (optional):</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">subplot_AGBD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">sd_coord_subplots</span>,</span>
+<span>  AGB_simu <span class="op">=</span> <span class="va">error_prop</span><span class="op">$</span><span class="va">AGB_simu</span> <span class="co"># error_prop has been created in the previous vignette</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; As 'AGB_simu' contains 200 simulations, and 'subplots$simu_coord' contains 50 simulations, 150 simulations will be resampled in 'subplots'.</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_display_trees-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png" width="700" style="display: block; margin: auto;"></p>
+<p>The simulated AGBs are therefore summarised in <strong>AGBD</strong>
+(i.e. AGB per hectare), and the function returns an additional output
+containing all the simulations performed:
+<code>$long_AGB_simu</code>.</p>
+</div>
+<div class="section level3">
+<h3 id="summarising-lidar-metrics">Summarising LiDAR metrics<a class="anchor" aria-label="anchor" href="#summarising-lidar-metrics"></a>
+</h3>
+<p><code><a href="../reference/subplot_summary.html">subplot_summary()</a></code> can also <strong>summarise the metric
+contained in a raster</strong> (typically a CHM raster obtained from
+LiDAR data) by providing the <code>ref_raster</code> and the
+<code>raster_fun</code> arguments:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">raster_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>, raster_fun <span class="op">=</span> <span class="va">median</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Extracting raster metric...Extracting raster metric done.[[1]]</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png" width="700" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="all-at-once">All at once<a class="anchor" aria-label="anchor" href="#all-at-once"></a>
+</h3>
+<p>Let us consider the uncertainty in the coordinates of the plot
+corners and summarise the following information:</p>
+<ul>
+<li>the standard deviation of diameter</li>
+<li>the AGB and its uncertainty</li>
+<li>the mean raster values</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">sd_coord_subplots</span>,</span>
+<span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">sd</span>, per_ha <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  AGB_simu <span class="op">=</span> <span class="va">error_prop</span><span class="op">$</span><span class="va">AGB_simu</span>, </span>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span> <span class="co"># by default, the associated function is the mean function</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; As 'AGB_simu' contains 200 simulations, and 'subplots$simu_coord' contains 50 simulations, 150 simulations will be resampled in 'subplots'.</span></span>
+<span><span class="co">#&gt; Extracting raster metric...Extracting raster metric done.[[1]]</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-1.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_display_trees-2.png" width="700" style="display: block; margin: auto;"></p>
+<span><span class="co">#&gt; [[2]]</span></span></code></pre>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-2.png" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_display_trees-3.png" width="700" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]</span></span></code></pre>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/subplot_summary_display_trees-4.png" width="700" style="display: block; margin: auto;"></p>
+<span><span class="co">#&gt; [[3]]</span></span></code></pre>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-3.png" width="700" style="display: block; margin: auto;"></p>
+</div>
 <div class="section level3">
 <h3 id="customizing-the-ggplot">Customizing the ggplot<a class="anchor" aria-label="anchor" href="#customizing-the-ggplot"></a>
 </h3>
 <p>Here are some examples to custom the ggplot of the
 <code><a href="../reference/subplot_summary.html">subplot_summary()</a></code> function:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span>subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>                                  value <span class="op">=</span> <span class="st">"AGB"</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-1.png" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">custom_plot</span> <span class="op">&lt;-</span> <span class="va">subplot_metric</span><span class="op">$</span><span class="va">plot_design</span></span>
 <span><span class="co"># Change the title and legend:</span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Nouragues plot"</span> , fill<span class="op">=</span><span class="st">"Sum of AGB per hectare"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span><span class="co"># Display trees with diameter as size and transparency (and a smaller legend on the right): </span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Nouragues plot"</span> , fill<span class="op">=</span><span class="st">"Sum of AGB per hectare"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-2.png" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Display trees with diameter as size and transparency (and a smaller legend on the right): </span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
 <span>  <span class="fu">geom_point</span><span class="op">(</span>data<span class="op">=</span><span class="va">plot201Trees</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xutm</span>, y <span class="op">=</span> <span class="va">Yutm</span>, size <span class="op">=</span> <span class="va">D</span>, alpha<span class="op">=</span> <span class="va">D</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span>,<span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Sum of AGB per hectare"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span>,</span>
 <span>         size <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span>, legend.key.size <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.5</span>, <span class="st">'cm'</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span>, legend.key.size <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.5</span>, <span class="st">'cm'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-3.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
