@@ -393,7 +393,7 @@ error_prop <- readRDS("saved_data/error_prop.rds")
 ```{r}
 subplot_AGBD <- subplot_summary(
   subplots = sd_coord_subplots,
-  AGB_simu = error_prop$AGB_simu[NouraguesTrees$Plot==201,] # error_prop has been created in the previous vignette
+  AGB_simu = error_prop$AGB_simu # error_prop has been created in the previous vignette
 )
 ```
 
@@ -421,7 +421,7 @@ Let us consider the uncertainty in the coordinates of the plot corners and summa
 subplot_metric <- subplot_summary(
   subplots = sd_coord_subplots,
   value = "D", fun = sd, per_ha = TRUE,
-  AGB_simu = error_prop$AGB_simu[NouraguesTrees$Plot==201,], 
+  AGB_simu = error_prop$AGB_simu, 
   ref_raster = nouraguesRaster # by default, the associated function is the mean function
   )
 ```
