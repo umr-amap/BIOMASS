@@ -10,12 +10,12 @@ divide_plot(
   proj_coord = NULL,
   longlat = NULL,
   grid_size,
+  grid_tol = 0.1,
+  origin = NULL,
   tree_data = NULL,
   tree_coords = NULL,
   corner_plot_ID = NULL,
   tree_plot_ID = NULL,
-  grid_tol = 0.1,
-  centred_grid = FALSE,
   sd_coord = NULL,
   n = 100
 )
@@ -31,6 +31,10 @@ divide_plot(
 
 \item{grid_size}{A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.}
 
+\item{grid_tol}{A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
+
+\item{origin}{Alignment of the subplot grid, based on relative coordinates. If NULL (default), the grid is aligned to the origin corner of the relative coordinates. Alternatively provide a numeric vector of length 2, specifying the relative coordinates to which the grid should be aligned. This option is especially useful when \code{grid_size} doesn't match exactly plot dimensions.}
+
 \item{tree_data}{A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).}
 
 \item{tree_coords}{A character vector of length 2, specifying the column names of the relative coordinates of the trees.}
@@ -38,10 +42,6 @@ divide_plot(
 \item{corner_plot_ID}{If dealing with several plots: a vector indicating plot IDs for corners.}
 
 \item{tree_plot_ID}{If dealing with several plots: a vector indicating tree plot IDs.}
-
-\item{grid_tol}{A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).}
-
-\item{centred_grid}{When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.}
 
 \item{sd_coord}{used to propagate GPS measurements uncertainties to the subplot polygon areas and the ref_raster footprint in \code{\link[=subplot_summary]{subplot_summary()}}. See Details.}
 
@@ -95,13 +95,16 @@ subplots_201 <- suppressWarnings(
 head(subplots_201$sub_corner_coord)
 head(subplots_201$tree_data)
 
-# When grid dimensions don't fit perfectly plot dimensions
+# When grid dimensions (40m x 40m) don't fit perfectly plot dimensions
+# an origin at (10 ; 10) will center the grid
 \donttest{
   divide_plot(
     corner_data = check_plot201$corner_coord, 
     rel_coord = c("x_rel","y_rel"),
-    grid_size = c(41,41),
-    grid_tol = 0.4, centred_grid = TRUE)
+    grid_size = c(40,40),
+    grid_tol = 0.4,
+    origin = c(10,10)
+ )
 }
 
 # Dealing with multiple plots
@@ -116,7 +119,8 @@ nouragues_subplots <- suppressWarnings(
     tree_plot_ID = "Plot"))
 head(nouragues_subplots$sub_corner_coord)
 head(nouragues_subplots$tree_data)
+
 }
 \author{
-Arthur PERE, Arthur BAILLY
+Arthur PERE, Arthur BAILLY, John L. GODLEE
 }

@@ -13,14 +13,13 @@
 #' @param proj_coord (optional, if longlat is not provided) A character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
 #' @param longlat (optional, if proj_coord is not provided) A character vector of length 2, specifying the column names of the corner geographic coordinates (long,lat).
 #' @param grid_size A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.
-#' @param origin Alignment of the subplot grid, based on relative coordinates. If NULL (default), the grid is aligned to the origin corner [0,0] of the relative coordinates. Alternatively provide a numeric vector of length 2, specifying the relative coordinates to which the grid should be aligned. This option is especially useful when `grid_size` doesn't match exactly plot dimensions.
+#' @param origin Alignment of the subplot grid, based on relative coordinates. If NULL (default), the grid is aligned to the origin corner of the relative coordinates. Alternatively provide a numeric vector of length 2, specifying the relative coordinates to which the grid should be aligned. This option is especially useful when `grid_size` doesn't match exactly plot dimensions.
 #' @param grid_tol A numeric between (0;1) corresponding to the proportion of the plot area allowed to be excluded from the plot division (when grid_size and origin don't match exactly plot dimensions).
 #' @param tree_data A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).
 #' @param tree_coords A character vector of length 2, specifying the column names of the relative coordinates of the trees.
 #' @param corner_plot_ID If dealing with several plots: a vector indicating plot IDs for corners.
 #' @param tree_plot_ID If dealing with several plots: a vector indicating tree plot IDs.
 #' @param grid_tol A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).
-#' @param centred_grid When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.
 #' @param sd_coord used to propagate GPS measurements uncertainties to the subplot polygon areas and the ref_raster footprint in [subplot_summary()]. See Details.
 #' @param n used to propagate GPS measurements uncertainties: the number of iterations to be used (as in [AGBmonteCarlo()]). Cannot be smaller than 50 or larger than 1000.
 #'
@@ -66,13 +65,16 @@
 #' head(subplots_201$sub_corner_coord)
 #' head(subplots_201$tree_data)
 #' 
-#' # When grid dimensions don't fit perfectly plot dimensions
+#' # When grid dimensions (40m x 40m) don't fit perfectly plot dimensions
+#' # an origin at (10 ; 10) will center the grid
 #' \donttest{
 #'   divide_plot(
 #'     corner_data = check_plot201$corner_coord, 
 #'     rel_coord = c("x_rel","y_rel"),
-#'     grid_size = c(41,41),
-#'     grid_tol = 0.4, origin = "centre")
+#'     grid_size = c(40,40),
+#'     grid_tol = 0.4,
+#'     origin = c(10,10)
+#'  )
 #' }
 #' 
 #' # Dealing with multiple plots
@@ -268,7 +270,7 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   }
   
   # Apply divide_plot_fct to all plots
-  plot_grid <- corner_dt[, divide_plot_fct(.SD, grid_size), by = plot_ID, .SDcols = colnames(corner_dt)]
+  plot_grid <- corner_dt[, divide_plot_fct(.SD, grid_size, origin), by = plot_ID, .SDcols = colnames(corner_dt)]
   # if just one plot, replace "subplot" by "" for the plot_ID column (before it goes in a list when coordinates uncertainties)
   if (length(unique(corner_dt$plot_ID)) == 1) {
     corner_dt[, plot_ID := ""]
