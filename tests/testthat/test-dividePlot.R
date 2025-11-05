@@ -41,6 +41,9 @@ test_that("divide_plot error", {
   # when the plot is not a rectangle
   rect_plot <- data.frame(x_rel=c(0,100,0,110),y_rel=c(0,0,100,100))
   expect_error(divide_plot(rect_plot, c("x_rel","y_rel"), grid_size = 25) , "BIOMASS package can't deal with non-rectangular plot")
+  
+  # origin argument 
+  expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 25, origin = 2) , "If provided, origin must be a numeric vector of length 2")
 })
 
 test_that("divide_plot on relative coordinates only", {
@@ -68,8 +71,13 @@ test_that("divide_plot on relative coordinates only", {
   expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)))
   
   # Test non-adjusted grid
-  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3, centred_grid = T))
-  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,95,95,50), y=c(0,0,20,20)))
+  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3))
+  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4), x_rel=c(45,90,90,45), y_rel=c(0,0,20,20)))
+  
+  # Test origin
+  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3, origin = c(10,10)))
+  expect_equivalent(subplots$sub_corner_coord[1:4,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_0_0",4), x_rel=c(10,55,55,10), y_rel=c(10,10,30,30)))
+  
 })
 
 test_that("divide_plot with projected coordinates", {

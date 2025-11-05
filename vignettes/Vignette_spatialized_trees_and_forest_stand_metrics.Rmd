@@ -238,15 +238,15 @@ kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, captio
 
 If you want to stay in the plot's relative coordinate system, just set `proj_coord` = NULL.
 
-The function also handles imperfect cuts with the arguments `centred_grid` and `grid_tol`. Here an example with a 40mx45m grid.
+The function also handles imperfect cuts with the `origin` and `grid_tol` arguments. Here an example with a 40mx45m grid and origin coordinates set at (10 ; 5).
 
 ```{r}
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = c(40,45), 
-  centred_grid = TRUE, # centre the grid in the middle of the plot
-  grid_tol = 0.3 # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
+  grid_tol = 0.3, # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
+  origin = c(10,5)
   )
 ```
 
@@ -256,7 +256,6 @@ non_centred <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = c(40,45), 
-  centred_grid = FALSE,
   grid_tol = 0.3)
 
 ggplot(data = subplots$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
@@ -266,7 +265,7 @@ ggplot(data = subplots$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) +
   geom_point(col="red") + 
   coord_equal() + 
   theme_bw() + 
-  labs(title = "subplot divisions with centred_grid = TRUE")
+  labs(title = "subplot divisions with origin at (10,5)")
 
 ggplot(data = non_centred$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
   geom_point(data = check_plot_trust_GPS$corner_coord, 
@@ -275,7 +274,7 @@ ggplot(data = non_centred$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) +
   geom_point(col="red") + 
   coord_equal() + 
   theme_bw() + 
-  labs(title = "subplot divisions with centred_grid = FALSE")
+  labs(title = "subplot divisions with origin at (0,0) by default")
 
 ```
 
