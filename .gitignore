@@ -37,3 +37,6 @@ vignettes/BIOMASS_cache/html/
 
 # Web site
 docs
+
+# Build R WASM package
+.github/workflows/webr-pkgdown-build-and-deploy.yml

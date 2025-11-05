@@ -17,7 +17,7 @@ D <- NouraguesTrees$D
 data("NouraguesCoords")
 coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
-H <- predictHeight(D, HDmodel)
+H <- predictHeight(as.matrix(D), HDmodel)
 
 WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
 
