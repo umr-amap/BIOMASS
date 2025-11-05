@@ -66,7 +66,7 @@ Bailly</h4>
             
             <h4 data-toc-skip class="date">2025-11-05</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/fix_divide_plot_origin/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
     </div>
 
@@ -821,21 +821,21 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 </table>
 <p>If you want to stay in the plot’s relative coordinate system, just
 set <code>proj_coord</code> = NULL.</p>
-<p>The function also handles imperfect cuts with the arguments
-<code>centred_grid</code> and <code>grid_tol</code>. Here an example
-with a 40mx45m grid.</p>
+<p>The function also handles imperfect cuts with the <code>origin</code>
+and <code>grid_tol</code> arguments. Here an example with a 40mx45m grid
+and origin coordinates set at (10 ; 5).</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>, </span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
 <span>  grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>,<span class="fl">45</span><span class="op">)</span>, </span>
-<span>  centred_grid <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co"># centre the grid in the middle of the plot</span></span>
-<span>  grid_tol <span class="op">=</span> <span class="fl">0.3</span> <span class="co"># by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error</span></span>
+<span>  grid_tol <span class="op">=</span> <span class="fl">0.3</span>, <span class="co"># by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error</span></span>
+<span>  origin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">5</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in divide_plot_rel_coord_fct(.SD, grid_size): </span></span>
-<span><span class="co">#&gt; The x-dimension of the plot is not a multiple of the x-dimension of the grid size</span></span>
-<span><span class="co">#&gt; Warning in divide_plot_rel_coord_fct(.SD, grid_size): </span></span>
-<span><span class="co">#&gt; The y-dimension of the plot is not a multiple of the y-dimension of the grid size</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning in divide_plot_fct(.SD, grid_size, origin): </span></span>
+<span><span class="co">#&gt; The x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset</span></span>
+<span><span class="co">#&gt; Warning in divide_plot_fct(.SD, grid_size, origin): </span></span>
+<span><span class="co">#&gt; The y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-1.png" width="50%" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/imperfect_cuts_visualisation-2.png" width="50%" style="display: block; margin: auto;"></p>
 <p>For the purpose of summarising and representing subplots (coming in
 the next section), the function returns the coordinates of subplot

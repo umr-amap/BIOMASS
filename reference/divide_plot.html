@@ -32,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Divides one ore more plots into subplots</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/divide_plot.R" class="external-link"><code>R/divide_plot.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/fix_divide_plot_origin/R/divide_plot.R" class="external-link"><code>R/divide_plot.R</code></a></small>
       <div class="d-none name"><code>divide_plot.Rd</code></div>
     </div>
 
@@ -48,12 +48,12 @@
 <span>  proj_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  longlat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">grid_size</span>,</span>
+<span>  grid_tol <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  origin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_coords <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  corner_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  grid_tol <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  centred_grid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sd_coord <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">100</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -83,6 +83,14 @@
 <dd><p>A vector indicating the dimensions of grid cells (resp. X and Y dimensions). If only one value is given, grid cells will be considered as squares.</p></dd>
 
 
+<dt id="arg-grid-tol">grid_tol<a class="anchor" aria-label="anchor" href="#arg-grid-tol"></a></dt>
+<dd><p>A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).</p></dd>
+
+
+<dt id="arg-origin">origin<a class="anchor" aria-label="anchor" href="#arg-origin"></a></dt>
+<dd><p>Alignment of the subplot grid, based on relative coordinates. If NULL (default), the grid is aligned to the origin corner 0,0 of the relative coordinates. Alternatively provide a numeric vector of length 2, specifying the relative coordinates to which the grid should be aligned. This option is especially useful when <code>grid_size</code> doesn't match exactly plot dimensions.</p></dd>
+
+
 <dt id="arg-tree-data">tree_data<a class="anchor" aria-label="anchor" href="#arg-tree-data"></a></dt>
 <dd><p>A data frame containing tree relative coordinates and other optional tree metrics (one row per tree).</p></dd>
 
@@ -97,14 +105,6 @@
 
 <dt id="arg-tree-plot-id">tree_plot_ID<a class="anchor" aria-label="anchor" href="#arg-tree-plot-id"></a></dt>
 <dd><p>If dealing with several plots: a vector indicating tree plot IDs.</p></dd>
-
-
-<dt id="arg-grid-tol">grid_tol<a class="anchor" aria-label="anchor" href="#arg-grid-tol"></a></dt>
-<dd><p>A numeric between (0;1) corresponding to the percentage of the plot area allowed to be excluded from the plot division (when grid_size doesn't match exactly plot dimensions).</p></dd>
-
-
-<dt id="arg-centred-grid">centred_grid<a class="anchor" aria-label="anchor" href="#arg-centred-grid"></a></dt>
-<dd><p>When grid_size doesn't match exactly plot dimensions, a logical indicating if the subplot grid should be centered on the plot.</p></dd>
 
 
 <dt id="arg-sd-coord">sd_coord<a class="anchor" aria-label="anchor" href="#arg-sd-coord"></a></dt>
@@ -133,7 +133,7 @@
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>Arthur PERE, Arthur BAILLY</p>
+    <p>Arthur PERE, Arthur BAILLY, John L. GODLEE</p>
     </div>
 
     <div class="section level2">
@@ -202,35 +202,38 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.9         subplot_0_0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 10.0                &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># When grid dimensions don't fit perfectly plot dimensions</span></span></span>
+<span class="r-in"><span><span class="co"># When grid dimensions (40m x 40m) don't fit perfectly plot dimensions</span></span></span>
+<span class="r-in"><span><span class="co"># an origin at (10 ; 10) will center the grid</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="fu">divide_plot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    corner_data <span class="op">=</span> <span class="va">check_plot201</span><span class="op">$</span><span class="va">corner_coord</span>, </span></span>
 <span class="r-in"><span>    rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">41</span>,<span class="fl">41</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    grid_tol <span class="op">=</span> <span class="fl">0.4</span>, centred_grid <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    grid_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>,<span class="fl">40</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    grid_tol <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>    origin <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> The x-dimension of the plot is not a multiple of the x-dimension of the grid size</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> The x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> The y-dimension of the plot is not a multiple of the y-dimension of the grid size</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> The y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sub_corner_coord</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    plot_ID  subplot_ID x_rel y_rel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          subplot_0_0     9     9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          subplot_0_0    50     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          subplot_0_0    10    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          subplot_0_0    50    10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3          subplot_0_0    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          subplot_0_0     9    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          subplot_1_0    50     9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          subplot_1_0    91     9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          subplot_1_0    91    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          subplot_0_0    10    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          subplot_1_0    50    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          subplot_1_0    90    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          subplot_1_0    90    50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8          subplot_1_0    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          subplot_0_1     9    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          subplot_0_1    10    50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10         subplot_0_1    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11         subplot_0_1    50    91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12         subplot_0_1     9    91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         subplot_0_1    50    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         subplot_0_1    10    90</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13         subplot_1_1    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14         subplot_1_1    91    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15         subplot_1_1    91    91</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16         subplot_1_1    50    91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14         subplot_1_1    90    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15         subplot_1_1    90    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16         subplot_1_1    50    90</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
@@ -267,6 +270,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  guyanensis 10.0       &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  altissimum 18.9    201_0_0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6    speciosa 10.0       &lt;NA&gt;</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
