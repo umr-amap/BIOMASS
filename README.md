@@ -3,7 +3,7 @@ BIOMASS
 
 [![test-coverage.yaml](https://github.com/umr-amap/BIOMASS/actions/workflows/test-coverage.yml/badge.svg?branch=master)](https://github.com/umr-amap/BIOMASS/actions/workflows/test-coverage.yml)
 [![R-CMD-check](https://github.com/umr-amap/BIOMASS/actions/workflows/check-standard.yml/badge.svg?branch=master)](https://github.com/umr-amap/BIOMASS/actions/workflows/check-standard.yml)
-[![pkgdown](https://github.com/umr-amap/BIOMASS/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/umr-amap/BIOMASS/actions/workflows/pkgdown.yml)
+[![pkgdown](https://github.com/umr-amap/BIOMASS/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/umr-amap/BIOMASS/actions/workflows/pkgdown.yaml)
 ![CRAN/METACRAN Version](https://img.shields.io/cran/v/BIOMASS)
 
 ## The package

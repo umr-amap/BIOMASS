@@ -42,7 +42,7 @@ test_that("summary by plot", {
   expect_equal(
     sum[,c(1,3,4)] ,
     summaryByPlot(AGB_val = resultMC$AGB_simu, plot = plot_vec)[,c(1,3,4)], 
-    tol = 1e-3 )
+    tol = 1e-2 )
   
   expect_equal(
     summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot),

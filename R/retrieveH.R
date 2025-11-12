@@ -56,42 +56,44 @@
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
 retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL) {
-
-
+  
+  
   # parameters verification -------------------------------------------------
-
+  
   if (is.null(model) & is.null(region) & is.null(coord)) {
     stop("Either model, region, coord should be given")
   }
-
+  
   if (!is.null(region) && length(region) != 1 && length(region) != length(D)) {
     stop("The number of region does not match the number of trees")
   }
-
+  
   if (!is.null(coord) && ((is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != length(D)))) {
     stop("coord should be either
              - a vector (e.g. c(longitude, latitude))
              - a matrix with two columns (longitude and latitude)
              having the same number of rows as the number of trees (length(D))")
   }
-
+  
   if ((!is.null(model) && !is.null(coord)) || (!is.null(model) && !is.null(region)) || (!is.null(coord) && !is.null(region))) {
     stop("Too many input, choose one input among those arguments:
               - H and Herr
               - HDmodel
               - coord")
   }
-
-  # the length of the plot is tested in predictHeight
+  
+  if (!is.null(plot) && length(plot) == 1) {
+    plot <- rep(plot, length(D))
+  }
   # the names of the plot and the names of the model is tested in predictHeight
   if (!is.null(plot) && is.null(model)) {
     stop("The 'plot' argument is used to create stand-specific local H-D models. So it must be used in association with the 'model' argument.")
   }
-
-
+  
+  
   # First case : with a model fitted with HDfunction
   if (!is.null(model)) {
-    H <- predictHeight(D, model, plot = plot)
+    H <- predictHeight(D = as.matrix(D), model = model, plot = plot)
     RSE <- if (!is.null(plot)) {
       sapply(model, function(x) x$RSE)
     } else if (length(model[[1]]) != 2) {
@@ -106,15 +108,15 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
       if (is.null(dim(coord))) {
         coord <- as.matrix(t(coord))
       }
-
+      
       E <- computeE(coord) # E = environmental index in Chave et al. 2014
-
+      
       if (length(E) == 1) {
         E <- rep(E, length(D))
       }
-
+      
       logD <- log(D)
-
+      
       # eq 6a Chave et al. 2014
       logH <- 0.893 - E + 0.760 * logD - 0.0340 * I(logD^2)
       RSE <- 0.243
@@ -123,7 +125,7 @@ retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
     }
     else {
       # Third case : with the region, use the weibull parameters from Feldpaush et al. 2012 Biogeosciences
-
+      
       feldCoef <- BIOMASS::feldCoef
       a <- feldCoef[region, "a"]
       b <- feldCoef[region, "b"]

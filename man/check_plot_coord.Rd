@@ -62,6 +62,7 @@ Returns a list including :
 \item \code{outliers}: a data frame containing the projected coordinates and the row number of GPS measurements considered outliers
 \item \code{plot_design}: if \code{draw_plot} is TRUE, a ggplot object corresponding to the design of the plot
 \item \code{UTM_code}: if \code{longlat} is provided, a data.frame containing the UTM code of the corner GPS coordinates for each plot
+\item \code{sd_coord}: a data frame containing (for each plot) the average standard deviation of the GPS measurements for each corner on the X and Y axes.
 }
 }
 \description{

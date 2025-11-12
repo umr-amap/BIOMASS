@@ -306,10 +306,16 @@
 #' __weibullFunction__
 #' Construct a three parameter Weibull model of the form: \deqn{H = a*(1-exp(-(D/b)^c))} (a, b, c are the model parameters to be estimated)
 #'
-#'
 #' @param data Dataset with the informations of height (H) and diameter (D)
 #' @param method In the case of the loglogFunction, the model is to be chosen between log1, log2 or log3.
 #' @param weight (optional) Vector indicating observation weights in the model.
+#' @param bayesian a logical. If FALSE (by default) the model is estimated using a frequentist framework (lm or nls). If TRUE, the model is estimated in a Bayesian framework using the brms package.
+#' @param useCache a logical. If bayesian = TRUE, determine wether to use the cache when building a Bayesian model (see Details).
+#' @param chains (only relevant if bayesian = TRUE): Number of Markov chains (defaults to 3), see [brms::brm()]
+#' @param thin (only relevant if bayesian = TRUE): Thinning rate, see [brms::brm()]
+#' @param iter (only relevant if bayesian = TRUE): number of total iterations per chain (including warmup; defaults to 5000), see [brms::brm()]
+#' @param warmup (only relevant if bayesian = TRUE): number of warmup (aka burnin) iterations (defaults to 1000), see [brms::brm()]
+#' @param ... Further arguments passed to `brm()`, e.g: prior, cores, etc. See [brms::brm()]
 #'
 #' @return All the functions give an output similar to the one given by [stats::lm()], obtained for
 #' `michaelisFunction` and `weibullFunction` from [minpack.lm::nlsLM]).
