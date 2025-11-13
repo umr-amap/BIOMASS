@@ -7,7 +7,7 @@
 }
 
 .onUnload <- function(libname, pkgname){
-  Unset the WFO GraphQL API URI
+  # Unset the WFO GraphQL API URI
   options("wfo.api_uri" = NULL)
 }
 
