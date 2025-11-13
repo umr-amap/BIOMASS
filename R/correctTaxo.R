@@ -290,13 +290,13 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
       valid <- TRUE
     } else if (tolower(input) == "n") {
       if (end_page < length(cand)) {
-        return(pickWFOName(x, cand, offset + page_size, page_size))
+        return(pickWFOName(x, cand, offset + page_size, page_size, delay = delay))
       } else {
         cat("Already on last page.\n")
       }
     } else if (tolower(input) == "p") {
       if (start_page > 1) {
-        return(pickWFOName(x, cand, offset - page_size, page_size))
+        return(pickWFOName(x, cand, offset - page_size, page_size, delay = delay))
       } else {
         cat("Already on first page.\n")
       }
