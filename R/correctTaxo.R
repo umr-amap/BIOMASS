@@ -80,8 +80,8 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
   }
 
   # Check if WFO API is reachable 
-  if (!checkURL(options("wfo.api_uri")$wfo.api_uri)) {
-    w <- paste("WFO API unreachable:", options("wfo.api_uri")$wfo.api_uri)
+  if (!checkURL(getOption("wfo.api_uri")) {
+    w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
     if (useCache) {
       warning(w, "\nOnly cached names will be filled")
       useAPI <- FALSE
@@ -419,7 +419,7 @@ callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE,
   checkHomonyms = FALSE, fuzzyNameParts = 0) {
 
   # Create request 
-  req <- httr2::request(paste(unlist(options("wfo.api_uri"))))
+  req <- httr2::request(getOption("wfo.api_uri"))
 
   # prepare the body
   variables <- list(
