@@ -32,6 +32,8 @@
 #' @param useAPI logical, if TRUE (default) allow API calls
 #' @param raw logical, if TRUE raw a nested list is returned, otherwise a
 #'     dataframe
+#' @param delay number of seconds to pause between API calls. Used to
+#'     rate-limit repeated API calls
 #'
 #' @return data.frame containing taxonomic name information with rows matching
 #'     names in `x`, or a list containing unique values in `x` if raw = TRUE
@@ -56,9 +58,10 @@
 #' correctTaxo(x, fallbackToGenus = TRUE)
 #' correctTaxo(x, interactive = FALSE)
 #'
-correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE,
-   interactive = TRUE, useCache = FALSE, useAPI = TRUE, raw = FALSE) {
+correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
+  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
+  interactive = TRUE, useCache = FALSE, useAPI = TRUE, raw = FALSE, 
+  delay = 0.5) {
 
   if (!useCache & !useAPI) {
     stop("Either useCache or useAPI must be TRUE")
@@ -80,7 +83,7 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
   }
 
   # Check if WFO API is reachable 
-  if (!checkURL(getOption("wfo.api_uri")) {
+  if (!checkURL(getOption("wfo.api_uri"))) {
     w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
     if (useCache) {
       warning(w, "\nOnly cached names will be filled")
@@ -123,7 +126,8 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
         preferAccepted = preferAccepted,
         useCache = useCache,
         useAPI = useAPI,
-        interactive = interactive))
+        interactive = interactive,
+        delay = delay))
   })
 
   # Define helper function to convert NULL values to NA
@@ -210,7 +214,9 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
 #' @param cand list of candidate taxa returned by `callWFOAPI()`
 #' @param offset initial index value used internally by pager, controls index
 #'     of page start
-#' @param offset index value used internally by pager, controls page length
+#' @param page_size index value used internally by pager, controls page length
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
 #'
 #' @return list containing information of matched taxonomic name
 #' 
@@ -221,7 +227,7 @@ correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
 #' 
 #' @export
 #' 
-pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
+pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
 
   # If no candidates, SKIP
   if (length(cand) == 0) {
@@ -277,7 +283,9 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
       valid <- TRUE
     } else if (grepl("^wfo-[0-9]{10}$", tolower(trimws(input)))) {
       input <- tolower(trimws(input))
-      match <- callWFOAPI(input, query_taxonNameById())$data$taxonNameById
+      match <- callWFOAPI(input, 
+        query = query_taxonNameById(), 
+        delay = delay)$data$taxonNameById
       match$method <- "MANUAL"
       valid <- TRUE
     } else if (tolower(input) == "n") {
@@ -319,13 +327,15 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
 #' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
 #'     found, and if there is only one candidate is an "accepted" name,
 #'     automatically choose that name
-#' @param interactive logical, if TRUE (default) user will be prompted to pick
-#'     names from a list where multiple ambiguous matches are found, otherwise
-#'     names with multiple ambiguous matches will be skipped
 #' @param useCache logical, if TRUE use cached values in
 #'     `options("wfo.api_uri")` preferentially, to reduce the number of API
 #'     calls
 #' @param useAPI logical, if TRUE (default) allow API calls
+#' @param interactive logical, if TRUE (default) user will be prompted to pick
+#'     names from a list where multiple ambiguous matches are found, otherwise
+#'     names with multiple ambiguous matches will be skipped
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
 #'
 #' @return list representation of JSON returned by API call 
 #' 
@@ -335,7 +345,7 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10) {
 #' 
 matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
   checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
-  useCache = FALSE, useAPI = TRUE, interactive = TRUE) {
+  useCache = FALSE, useAPI = TRUE, interactive = TRUE, delay = 0.5) {
 
   # Search cache for name 
   if (useCache && x %in% names(wfo_cache$names) ) {
@@ -344,11 +354,13 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
     cat(sprintf("Using cached data for: %s\n", x))
   } else if (useAPI == TRUE) {
     # If name not found in cache, send API call
-    response <- callWFOAPI(x, query_taxonNameMatch(), 
+    response <- callWFOAPI(x, 
+      query_taxonNameMatch(), 
       fallbackToGenus = fallbackToGenus,
       checkRank = checkRank,
       checkHomonyms = checkHomonyms,
-      fuzzyNameParts = fuzzyNameParts)
+      fuzzyNameParts = fuzzyNameParts,
+      delay = delay)
 
     # If interactive and name not found
     cand_roles <- unlist(lapply(response$data$taxonNameMatch$candidates, "[[", "role")) 
@@ -357,7 +369,9 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
         match <- response$data$taxonNameMatch$candidates[[which(cand_roles == "accepted")]]
         match$method <- "AUTO ACC"
       } else if (interactive) {
-        match <- pickWFOName(x, response$data$taxonNameMatch$candidates)
+        match <- pickWFOName(x, 
+          response$data$taxonNameMatch$candidates, 
+          delay = delay)
       } else {
         cat(sprintf("No cached name for: %s\n", x))
         match <- list()
@@ -406,6 +420,8 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
 #'     there are other names with the same words but different author strings
 #' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
 #'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
 #'
 #' @importFrom httr2 request req_body_json req_perform resp_body_json
 #' @return list representation of JSON returned by API call 
@@ -416,7 +432,7 @@ matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
 #' callWFOAPI("wfo-0000214110", query_taxonNameById())
 #'
 callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0) {
+  checkHomonyms = FALSE, fuzzyNameParts = 0, delay = 0.5) {
 
   # Create request 
   req <- httr2::request(getOption("wfo.api_uri"))
@@ -433,6 +449,9 @@ callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE,
 
   # Set body
   req <- httr2::req_body_json(req, payload, auto_unbox = TRUE)
+
+  # Rate limit: pause before making the request
+  Sys.sleep(delay)
 
   # Run request
   resp <- httr2::req_perform(req)
