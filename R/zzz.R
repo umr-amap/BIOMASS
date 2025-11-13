@@ -6,11 +6,6 @@
   
 }
 
-.onUnload <- function(libname, pkgname){
-  # Unset the WFO GraphQL API URI
-  options("wfo.api_uri" = NULL)
-}
-
 .onAttach <- function(libname, pkgname) {
   
   packageStartupMessage(
