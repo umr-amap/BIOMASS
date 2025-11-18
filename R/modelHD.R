@@ -141,7 +141,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     stop("The length of the 'plot' vector must be either 1 or the length of D")
   }
   # Check if package brms is available
-  if (!requireNamespace("brms", quietly = TRUE)) {
+  if (bayesian && !requireNamespace("brms", quietly = TRUE)) {
     warning(
       'To build bayesian models, you must install the "brms" library \n\n',
       '\t\tinstall.packages("brms")'
