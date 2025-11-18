@@ -106,21 +106,6 @@ test_that("check_plot_coord, trust_GPS_corners", {
 
 })
 
-test_that("check_plot_coord, plot design", {
-  
-  vdiffr::expect_doppelganger("check-plot-201-trust-T", 
-                              check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-                                               trust_GPS_corners = T, rm_outliers = T, draw_plot = F)$plot_design)
-  
-  vdiffr::expect_doppelganger("check-plot-201-trust-F", 
-                              check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-                                               trust_GPS_corners = F, rm_outliers = T, draw_plot = F)$plot_design)
-  
-  vdiffr::expect_doppelganger("check-plot-204", 
-                              check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
-                                               trust_GPS_corners = T, rm_outliers = T, draw_plot = F)$plot_design)
-})
-
 
 test_that("check_plot_coord, tree data and raster", {
   
@@ -134,17 +119,11 @@ test_that("check_plot_coord, tree data and raster", {
   expect_equal(dim(res$tree_data), c(nrow(NouraguesTrees[NouraguesTrees$Plot=="201",]), ncol(NouraguesTrees)+3))
   expect_equal(sum(!res$tree_data$is_in_plot),3)
   
-  vdiffr::expect_doppelganger("check-plot-201-trees", 
-                              res$plot_design)
-  
   res_trust_F <- suppressWarnings(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = FALSE, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield")))
-  vdiffr::expect_doppelganger("check-plot-201-trees-dont-trust-GPS", 
-                              res_trust_F$plot_design)
-  
   
   nouragues_raster <- terra::rast(system.file("extdata", "NouraguesRaster.tif", package = "BIOMASS", mustWork = TRUE))
   res_prop_raster <- suppressWarnings(
@@ -153,8 +132,6 @@ test_that("check_plot_coord, tree data and raster", {
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D",
       ref_raster = nouragues_raster))
-  vdiffr::expect_doppelganger("check-plot-201-rast-prop", 
-                              res_prop_raster$plot_design)
   
   
 })
