@@ -48,6 +48,11 @@ library("BIOMASS")
 Two vignettes are available in the ‘Articles’ section of the following
 page : <https://umr-amap.github.io/BIOMASS/index.html>
 
+## Shiny application
+
+Access the shiny version of the BIOMASS package at
+<https://amap-apps.cirad.fr/apps/biomass-app/>
+
 ## Citation
 
 Please cite this package as:
