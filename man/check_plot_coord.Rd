@@ -19,7 +19,7 @@ check_plot_coord(
   tree_plot_ID = NULL,
   ref_raster = NULL,
   prop_tree = NULL,
-  ask = T
+  ask = TRUE
 )
 }
 \arguments{

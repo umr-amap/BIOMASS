@@ -2,7 +2,7 @@ context("CorrectTaxo")
 
 test_that("CorrectTaxo", {
 
-  inv_test <- read.csv("data/test_correctTaxo.csv")
+  inv_test <- read.csv("../testdata/test_correctTaxo.csv")
 
   skip_on_cran() #we do not want any query to tnrs when cran is testing
   
