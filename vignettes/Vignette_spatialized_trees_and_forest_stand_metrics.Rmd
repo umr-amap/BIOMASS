@@ -109,7 +109,7 @@ check_plot_trust_GPS <- check_plot_coord(
   rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = T,
   draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE )
+  max_dist = 10, rm_outliers = TRUE)
 ```
 
 The two blue arrows represent the origin of the plot's relative coordinate system. 
@@ -151,7 +151,7 @@ For full details, the `$outlier_corners` output returns all the information abou
 
 ## Visualising and retrieving projected tree coordinates {#tree_coordinates}
 
-Tree coordinates are usually measured in the plot's relative coordinate system. To project them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
+Tree coordinates are usually measured in the plot's relative coordinate system. To project them in the projected/GPS system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
 
 ```{r}
 plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
@@ -163,11 +163,9 @@ check_plot_trust_GPS <- check_plot_coord(
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
 ```
 
-The projected coordinates of the trees are added to the tree data-frame and returned by the output `$tree_data` (columns x_proj and y_proj).
+The projected/GPS coordinates of the trees are added to the tree data-frame and returned by the output `$tree_data` (columns x_proj/long and y_proj/lat).
 
 ```{r}
-plot201Trees[c("Xutm","Yutm")] <- check_plot_trust_GPS$tree_data[c("x_proj","y_proj")]
-
 kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
 ```
 
@@ -179,12 +177,6 @@ You can also access and modify the plot via the `$plot_design` output which is a
 plot_to_change <- check_plot_trust_GPS$plot_design
 plot_to_change <- plot_to_change + ggtitle("A custom title")
 plot_to_change
-```
-
-If you provided longitude and latitude corner coordinates, you can retrieve the GPS coordinates of the trees in a longitude/latitude format using this code:
-
-```{r}
-tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_data[c("x_proj","y_proj")], proj = check_plot_trust_GPS$UTM_code$UTM_code, inverse = TRUE) )
 ```
 
 
@@ -216,7 +208,7 @@ multiple_checks <- check_plot_coord(
   plot_ID = "Plot",
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), 
   prop_tree = "D", tree_plot_ID = "Plot",
-  ref_raster = nouraguesRaster, ask = FALSE)
+  ref_raster = nouraguesRaster)
 ```
 
 Be aware that by default, the function will ask you to type Enter between each plot (argument 'ask = TRUE').
@@ -440,7 +432,7 @@ custom_plot +
   labs(title = "Nouragues plot" , fill="Sum of AGB per hectare")
 # Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
-  geom_point(data=plot201Trees, mapping = aes(x = Xutm, y = Yutm, size = D, alpha= D), shape=1,) +
+  geom_point(data=check_plot_trust_GPS$tree_data, mapping = aes(x = x_proj, y = y_proj, size = D, alpha= D), shape=1,) +
   labs(fill = "Sum of AGB per hectare") +
   guides(alpha = guide_legend(title = "Diameter (cm)"),
          size = guide_legend(title = "Diameter (cm)")) + 

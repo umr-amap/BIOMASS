@@ -37,14 +37,11 @@ test_that("check_plot_coord error", {
   wrong_coords[1,"Xutm"] <- 0 ; wrong_coords[1,"Long"] <- NA
   expect_error(check_plot_coord(wrong_coords, longlat = c("Long","Lat"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T), "Missing values are detected in corner longitude/latitude coordinates. Please remove them and call the function again")
   
-  expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T),"If multiple plots are present, then the argument plot_ID is required.")
+  expect_error(suppressMessages(check_plot_coord(corner_data = NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=TRUE)),
+               "It seems that 'corner_data' contains several plots")
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "a"),"is not found in corner_data column names.")
   
   expect_error(check_plot_coord(NouraguesCoords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), "The argument tree_plot_ID is required if plot_ID is provided.")
-  wrong_coords <- NouraguesCoords 
-  wrong_coords <- rbind(wrong_coords[1,], wrong_coords)
-  wrong_coords[1,"Xfield"] <- 1
-  expect_error(check_plot_coord(wrong_coords, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot"), "5 unique corners are detected in 201 rel_coord (instead of 4)", fixed = TRUE)
   
   expect_warning(check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "These ID's are found in tree_plot_ID but not in plot_ID : 201 213 223")
   
@@ -55,7 +52,7 @@ test_that("check_plot_coord error", {
 
 test_that("check_plot_coord outputs and outliers", {
   # with max dist equal 10
-  expect_warning(
+  expect_message(
     check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, draw_plot = F, max_dist = 10),"Be carefull, you may have GNSS measurement outliers"
   )
   outputs <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
@@ -92,11 +89,13 @@ test_that("check_plot_coord in long lat", {
   outputs_proj_coord <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   expect_is(outputs_longlat, "list")
   expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code","sd_coord"))
-  expect_equal(outputs_longlat[c(1,4)], outputs_proj_coord[c(1,4)])
+  expect_equal(names(outputs_longlat$corner_coord)[c(5,6)], c("long","lat"))
+  expect_equal(outputs_longlat$corner_coord[,c(1:4)], outputs_proj_coord$corner_coord[,c(1:4)])
+  expect_equal(outputs_longlat$outlier_corners, outputs_proj_coord$outlier_corners)
 })
 
 test_that("check_plot_coord, trust_GPS_corners", {
-  expect_warning(
+  expect_message(
     check_plot_coord(NouraguesPlot201[-(1:7),], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, draw_plot = F),"At least one corner has less than 5 measurements. We suggest using the argument trust_GPS_corners = FALSE"
   )
   
@@ -109,7 +108,7 @@ test_that("check_plot_coord, trust_GPS_corners", {
 
 test_that("check_plot_coord, tree data and raster", {
   
-  res <- suppressWarnings(
+  res <- suppressMessages(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
@@ -119,14 +118,14 @@ test_that("check_plot_coord, tree data and raster", {
   expect_equal(dim(res$tree_data), c(nrow(NouraguesTrees[NouraguesTrees$Plot=="201",]), ncol(NouraguesTrees)+3))
   expect_equal(sum(!res$tree_data$is_in_plot),3)
   
-  res_trust_F <- suppressWarnings(
+  res_trust_F <- suppressMessages(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = FALSE, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield")))
   
   nouragues_raster <- terra::rast(system.file("extdata", "NouraguesRaster.tif", package = "BIOMASS", mustWork = TRUE))
-  res_prop_raster <- suppressWarnings(
+  res_prop_raster <- suppressMessages(
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
@@ -139,7 +138,7 @@ test_that("check_plot_coord, tree data and raster", {
 test_that("check_plot_coord, sd_coord", {
   controled_sd <- as.data.table(rbind(NouraguesPlot201,NouraguesPlot201,NouraguesPlot201,NouraguesPlot201))
   controled_sd[, c("Xutm","Yutm") := list(mean(Xutm, na.rm=TRUE) + rnorm(40,0,5), mean(Yutm, na.rm=TRUE) + rnorm(40,0,5)) , by = list(Xfield, Yfield) ]
-  res <- suppressWarnings(
+  res <- suppressMessages(
     check_plot_coord(
       controled_sd, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = T, rm_outliers = FALSE, draw_plot = F))
