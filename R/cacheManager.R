@@ -21,14 +21,10 @@ cacheManager <- function(nameFile) {
     stop("Only one file at a time please!")
   }
   
-  if (nameFile == "correctTaxo.log") {
-    return(cachePath("correctTaxo.log"))
-  }
-  
   if (nameFile %in% c("log1_weights_F_model.rds","log1_weights_T_model.rds","log2_weights_F_model.rds","log2_weights_T_model.rds","michaelis_weights_F_model.rds","michaelis_weights_T_model.rds","weibull_weights_F_model.rds","weibull_weights_T_model.rds")) {
     return(cachePath(nameFile))
   }
-  
+
   if (nameFile == "feldRegion.grd") {
     return(system.file("extdata", "feldRegion.grd", package = "BIOMASS", mustWork = TRUE))
   }
@@ -50,7 +46,7 @@ cacheManager <- function(nameFile) {
   
   req <- httr2::request(url)
   req <- httr2::req_error(req, function(response) FALSE)
-  qryResult <- httr2::req_perform(req)
+  qryResult <- httr2::req_perform_connection(req)
   
   if (httr2::resp_is_error(qryResult)) {
     message("There appears to be a problem reaching the directory.")
