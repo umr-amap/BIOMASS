@@ -162,7 +162,7 @@ check_plot_trust_GPS <- check_plot_coord(
   rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = T,
   draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE )
+  max_dist = 10, rm_outliers = TRUE)
 ```
 
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/check_plot_trust_GPS-1.png)
@@ -184,7 +184,7 @@ check_plot_trust_field <- check_plot_coord(
   rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = FALSE,
   draw_plot = TRUE, rm_outliers = FALSE)
-#> Warning:  Be carefull, you may have GNSS measurement outliers. 
+#>  Be carefull, you may have GNSS measurement outliers. 
 #>  Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments).
 ```
 
@@ -204,12 +204,12 @@ processing.
 kable(check_plot_trust_GPS$corner_coord, row.names = FALSE, caption = "Reference corner coordinates")
 ```
 
-| x_rel | y_rel |   x_proj |   y_proj |
-|------:|------:|---------:|---------:|
-|     0 |     0 | 313005.7 | 451723.2 |
-|   100 |     0 | 312956.9 | 451630.2 |
-|   100 |   100 | 313050.2 | 451582.6 |
-|     0 |   100 | 313100.5 | 451665.9 |
+| x_rel | y_rel |   x_proj |   y_proj |      long |      lat |
+|------:|------:|---------:|---------:|----------:|---------:|
+|     0 |     0 | 313005.7 | 451723.2 | -52.68448 | 4.085040 |
+|   100 |     0 | 312956.9 | 451630.2 | -52.68492 | 4.084198 |
+|   100 |   100 | 313050.2 | 451582.6 | -52.68408 | 4.083769 |
+|     0 |   100 | 313100.5 | 451665.9 | -52.68363 | 4.084524 |
 
 Reference corner coordinates
 
@@ -230,8 +230,9 @@ the X and Y axes.
 ### Visualising and retrieving projected tree coordinates
 
 Tree coordinates are usually measured in the plot’s relative coordinate
-system. To project them in the projected system, you can supply their
-relative coordinates using the `tree_data` and `tree_coords` arguments.
+system. To project them in the projected/GPS system, you can supply
+their relative coordinates using the `tree_data` and `tree_coords`
+arguments.
 
 ``` r
 plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
@@ -241,28 +242,27 @@ check_plot_trust_GPS <- check_plot_coord(
   longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE,
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
-#> Warning in check_corner_fct(.SD):  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
+#>  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
 ```
 
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-7-1.png)
 
-The projected coordinates of the trees are added to the tree data-frame
-and returned by the output `$tree_data` (columns x_proj and y_proj).
+The projected/GPS coordinates of the trees are added to the tree
+data-frame and returned by the output `$tree_data` (columns x_proj/long
+and y_proj/lat).
 
 ``` r
-plot201Trees[c("Xutm","Yutm")] <- check_plot_trust_GPS$tree_data[c("x_proj","y_proj")]
-
 kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
 ```
 
-| Site          | Plot | x_rel | y_rel |    D |   x_proj |   y_proj | is_in_plot |
-|:--------------|-----:|------:|------:|-----:|---------:|---------:|:-----------|
-| Petit_Plateau |  201 |   0.0 |  31.5 | 11.0 | 313035.6 | 451705.1 | TRUE       |
-| Petit_Plateau |  201 |   0.1 |  75.2 | 74.4 | 313077.0 | 451680.0 | TRUE       |
-| Petit_Plateau |  201 |   0.2 |  27.6 | 25.4 | 313031.8 | 451707.2 | TRUE       |
-| Petit_Plateau |  201 |  -4.0 |  67.5 | 10.0 | 313071.7 | 451688.0 | FALSE      |
-| Petit_Plateau |  201 |   0.3 |  39.9 | 18.9 | 313043.4 | 451700.1 | TRUE       |
-| Petit_Plateau |  201 |  -3.5 |  41.5 | 10.0 | 313046.8 | 451702.5 | FALSE      |
+| Site          | Plot | x_rel | y_rel |    D |   x_proj |   y_proj | is_in_plot |    long |   lat |
+|:--------------|-----:|------:|------:|-----:|---------:|---------:|:-----------|--------:|------:|
+| Petit_Plateau |  201 |   0.0 |  31.5 | 11.0 | 313035.6 | 451705.1 | TRUE       | -52.684 | 4.085 |
+| Petit_Plateau |  201 |   0.1 |  75.2 | 74.4 | 313077.0 | 451680.0 | TRUE       | -52.684 | 4.085 |
+| Petit_Plateau |  201 |   0.2 |  27.6 | 25.4 | 313031.8 | 451707.2 | TRUE       | -52.684 | 4.085 |
+| Petit_Plateau |  201 |  -4.0 |  67.5 | 10.0 | 313071.7 | 451688.0 | FALSE      | -52.684 | 4.085 |
+| Petit_Plateau |  201 |   0.3 |  39.9 | 18.9 | 313043.4 | 451700.1 | TRUE       | -52.684 | 4.085 |
+| Petit_Plateau |  201 |  -3.5 |  41.5 | 10.0 | 313046.8 | 451702.5 | FALSE      | -52.684 | 4.085 |
 
 Head of the \$tree_data output
 
@@ -281,14 +281,6 @@ plot_to_change
 
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-9-1.png)
 
-If you provided longitude and latitude corner coordinates, you can
-retrieve the GPS coordinates of the trees in a longitude/latitude format
-using this code:
-
-``` r
-tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_data[c("x_proj","y_proj")], proj = check_plot_trust_GPS$UTM_code$UTM_code, inverse = TRUE) )
-```
-
 ### Integrating LiDAR data
 
 If you have LiDAR data in raster format (typically a CHM raster) that
@@ -305,10 +297,10 @@ check_plot_trust_GPS <- check_plot_coord(
   trust_GPS_corners = TRUE,
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"), prop_tree = "D", # here the treediameter
   ref_raster = nouraguesRaster)
-#> Warning in check_corner_fct(.SD):  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
+#>  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
 ```
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-1.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-10-1.png)
 
 ### Checking multiple plots at once
 
@@ -324,13 +316,13 @@ multiple_checks <- check_plot_coord(
   plot_ID = "Plot",
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), 
   prop_tree = "D", tree_plot_ID = "Plot",
-  ref_raster = nouraguesRaster, ask = FALSE)
-#> Warning in check_corner_fct(.SD): In plot 201 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
-#> Warning in check_corner_fct(.SD): In plot 213 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
-#> Warning in check_corner_fct(.SD): In plot 223 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
+  ref_raster = nouraguesRaster)
+#> In plot 201 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
+#> In plot 213 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
+#> In plot 223 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
 ```
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-1.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-2.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-3.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-4.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-1.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-2.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-3.png)![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-4.png)
 
 Be aware that by default, the function will ask you to type Enter
 between each plot (argument ‘ask = TRUE’).
@@ -425,14 +417,14 @@ The function now returns a list containing:
 kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-| x_rel | Plot | Family        | Genus               | Species     |     Xutm |     Yutm | AGB | plot_ID | subplot_ID  |
-|------:|-----:|:--------------|:--------------------|:------------|---------:|---------:|----:|:--------|:------------|
-|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 313035.6 | 451705.1 | 0.1 |         | subplot_0_1 |
-|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 313077.0 | 451680.0 | 4.7 |         | subplot_0_3 |
-|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 313031.8 | 451707.2 | 0.6 |         | subplot_0_1 |
-|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 313071.7 | 451688.0 | 0.0 |         | NA          |
-|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 313043.4 | 451700.1 | 0.2 |         | subplot_0_1 |
-|  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 313046.8 | 451702.5 | 0.1 |         | NA          |
+| x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID  |
+|------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:------------|
+|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_1 |
+|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 4.7 |         | subplot_0_3 |
+|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_1 |
+|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.0 |         | NA          |
+|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.2 |         | subplot_0_1 |
+|  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA          |
 
 Head of the divide_plot()\$tree_data returns
 
@@ -557,7 +549,7 @@ subplot_AGBD <- subplot_summary(
 #> [[1]]
 ```
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-16-1.png)
 
 The simulated AGBs are therefore summarised in **AGBD** (i.e. AGB per
 hectare), and the function returns an additional output containing all
@@ -577,7 +569,7 @@ raster_summary <- subplot_summary(
 #> Extracting raster metric...Extracting raster metric done.[[1]]
 ```
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png)
 
 ### All at once
 
@@ -599,17 +591,17 @@ subplot_metric <- subplot_summary(
 #> Extracting raster metric...Extracting raster metric done.[[1]]
 ```
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-1.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png)
 
     #> 
     #> [[2]]
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-2.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-2.png)
 
     #> 
     #> [[3]]
 
-![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-3.png)
+![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-3.png)
 
 ### Customizing the ggplot
 
@@ -638,7 +630,7 @@ custom_plot +
 ``` r
 # Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
-  geom_point(data=plot201Trees, mapping = aes(x = Xutm, y = Yutm, size = D, alpha= D), shape=1,) +
+  geom_point(data=check_plot_trust_GPS$tree_data, mapping = aes(x = x_proj, y = y_proj, size = D, alpha= D), shape=1,) +
   labs(fill = "Sum of AGB per hectare") +
   guides(alpha = guide_legend(title = "Diameter (cm)"),
          size = guide_legend(title = "Diameter (cm)")) + 

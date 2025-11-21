@@ -66,7 +66,7 @@ Bailly</h4>
             
             <h4 data-toc-skip class="date">2025-11-21</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/issue_81-check_plot_coord/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
     </div>
 
@@ -457,7 +457,7 @@ can also detect and remove GPS outliers using the ‘rm_outliers’ and
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
 <span>  trust_GPS_corners <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  max_dist <span class="op">=</span> <span class="fl">10</span>, rm_outliers <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span></span></code></pre></div>
+<span>  max_dist <span class="op">=</span> <span class="fl">10</span>, rm_outliers <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/check_plot_trust_GPS-1.png" class="r-plt" width="1458.33333333333" style="display: block; margin: auto;"></p>
 <p>The two blue arrows represent the origin of the plot’s relative
 coordinate system.</p>
@@ -476,7 +476,7 @@ unreliable GPS coordinates.</p>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
 <span>  trust_GPS_corners <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  draw_plot <span class="op">=</span> <span class="cn">TRUE</span>, rm_outliers <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning:  Be carefull, you may have GNSS measurement outliers. </span></span>
+<span><span class="co">#&gt;  Be carefull, you may have GNSS measurement outliers. </span></span>
 <span><span class="co">#&gt;  Removing them may improve the georeferencing of your plot (see rm_outliers and max_dist arguments).</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="1458.33333333333" style="display: block; margin: auto;"></p>
 <p>We can see that the corners of the plot do not match the GPS
@@ -500,6 +500,8 @@ future data processing.</p>
 <th align="right">y_rel</th>
 <th align="right">x_proj</th>
 <th align="right">y_proj</th>
+<th align="right">long</th>
+<th align="right">lat</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -507,24 +509,32 @@ future data processing.</p>
 <td align="right">0</td>
 <td align="right">313005.7</td>
 <td align="right">451723.2</td>
+<td align="right">-52.68448</td>
+<td align="right">4.085040</td>
 </tr>
 <tr class="even">
 <td align="right">100</td>
 <td align="right">0</td>
 <td align="right">312956.9</td>
 <td align="right">451630.2</td>
+<td align="right">-52.68492</td>
+<td align="right">4.084198</td>
 </tr>
 <tr class="odd">
 <td align="right">100</td>
 <td align="right">100</td>
 <td align="right">313050.2</td>
 <td align="right">451582.6</td>
+<td align="right">-52.68408</td>
+<td align="right">4.083769</td>
 </tr>
 <tr class="even">
 <td align="right">0</td>
 <td align="right">100</td>
 <td align="right">313100.5</td>
 <td align="right">451665.9</td>
+<td align="right">-52.68363</td>
+<td align="right">4.084524</td>
 </tr>
 </tbody>
 </table>
@@ -543,7 +553,7 @@ the GPS measurements for each corner on the X and Y axes.</p>
 <h3 id="tree_coordinates">Visualising and retrieving projected tree coordinates<a class="anchor" aria-label="anchor" href="#tree_coordinates"></a>
 </h3>
 <p>Tree coordinates are usually measured in the plot’s relative
-coordinate system. To project them in the projected system, you can
+coordinate system. To project them in the projected/GPS system, you can
 supply their relative coordinates using the <code>tree_data</code> and
 <code>tree_coords</code> arguments.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -554,26 +564,26 @@ supply their relative coordinates using the <code>tree_data</code> and
 <span>  longlat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Long"</span>, <span class="st">"Lat"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
 <span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_corner_fct(.SD):  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
+<span><span class="co">#&gt;  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
-<p>The projected coordinates of the trees are added to the tree
+<p>The projected/GPS coordinates of the trees are added to the tree
 data-frame and returned by the output <code>$tree_data</code> (columns
-x_proj and y_proj).</p>
+x_proj/long and y_proj/lat).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plot201Trees</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span><span class="op">]</span></span>
-<span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the $tree_data output"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">7</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the $tree_data output"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Head of the $tree_data output</caption>
 <colgroup>
-<col width="21%">
+<col width="17%">
+<col width="6%">
 <col width="7%">
-<col width="9%">
-<col width="9%">
 <col width="7%">
+<col width="6%">
+<col width="11%">
+<col width="11%">
 <col width="13%">
-<col width="13%">
-<col width="16%">
+<col width="10%">
+<col width="7%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Site</th>
@@ -584,6 +594,8 @@ x_proj and y_proj).</p>
 <th align="right">x_proj</th>
 <th align="right">y_proj</th>
 <th align="left">is_in_plot</th>
+<th align="right">long</th>
+<th align="right">lat</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -595,6 +607,8 @@ x_proj and y_proj).</p>
 <td align="right">313035.6</td>
 <td align="right">451705.1</td>
 <td align="left">TRUE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 <tr class="even">
 <td align="left">Petit_Plateau</td>
@@ -605,6 +619,8 @@ x_proj and y_proj).</p>
 <td align="right">313077.0</td>
 <td align="right">451680.0</td>
 <td align="left">TRUE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 <tr class="odd">
 <td align="left">Petit_Plateau</td>
@@ -615,6 +631,8 @@ x_proj and y_proj).</p>
 <td align="right">313031.8</td>
 <td align="right">451707.2</td>
 <td align="left">TRUE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 <tr class="even">
 <td align="left">Petit_Plateau</td>
@@ -625,6 +643,8 @@ x_proj and y_proj).</p>
 <td align="right">313071.7</td>
 <td align="right">451688.0</td>
 <td align="left">FALSE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 <tr class="odd">
 <td align="left">Petit_Plateau</td>
@@ -635,6 +655,8 @@ x_proj and y_proj).</p>
 <td align="right">313043.4</td>
 <td align="right">451700.1</td>
 <td align="left">TRUE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 <tr class="even">
 <td align="left">Petit_Plateau</td>
@@ -645,6 +667,8 @@ x_proj and y_proj).</p>
 <td align="right">313046.8</td>
 <td align="right">451702.5</td>
 <td align="left">FALSE</td>
+<td align="right">-52.684</td>
+<td align="right">4.085</td>
 </tr>
 </tbody>
 </table>
@@ -660,11 +684,6 @@ to change the plot title:</p>
 <span><span class="va">plot_to_change</span> <span class="op">&lt;-</span> <span class="va">plot_to_change</span> <span class="op">+</span> <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"A custom title"</span><span class="op">)</span></span>
 <span><span class="va">plot_to_change</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
-<p>If you provided longitude and latitude corner coordinates, you can
-retrieve the GPS coordinates of the trees in a longitude/latitude format
-using this code:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tree_GPS_coord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span> <span class="fu">proj4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/proj4/man/project.html" class="external-link">project</a></span><span class="op">(</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span><span class="op">]</span>, proj <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">UTM_code</span><span class="op">$</span><span class="va">UTM_code</span>, inverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="integrating-lidar-data">Integrating LiDAR data<a class="anchor" aria-label="anchor" href="#integrating-lidar-data"></a>
@@ -672,7 +691,7 @@ using this code:</p>
 <p>If you have LiDAR data in raster format (typically a CHM raster) that
 you want to compare with a tree metric, this can be done with the
 <code>ref_raster</code> and the <code>prop_tree</code> arguments.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load internal CHM raster</span></span>
 <span><span class="va">nouraguesRaster</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"NouraguesRaster.tif"</span>,package <span class="op">=</span> <span class="st">"BIOMASS"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -682,8 +701,8 @@ you want to compare with a tree metric, this can be done with the
 <span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, prop_tree <span class="op">=</span> <span class="st">"D"</span>, <span class="co"># here the treediameter</span></span>
 <span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_corner_fct(.SD):  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<span><span class="co">#&gt;  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="checking-multiple-plots-at-once">Checking multiple plots at once<a class="anchor" aria-label="anchor" href="#checking-multiple-plots-at-once"></a>
@@ -692,7 +711,7 @@ you want to compare with a tree metric, this can be done with the
 several plots, you have to supply the column names containing the plots
 IDs of the corners and the trees via the <code>plot_ID</code> and
 <code>tree_plot_ID</code> arguments:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_checks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_plot_coord.html">check_plot_coord</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>, <span class="co"># NouraguesCoords contains 4 plots</span></span>
 <span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>, <span class="st">"Yutm"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
@@ -700,11 +719,11 @@ IDs of the corners and the trees via the <code>plot_ID</code> and
 <span>  plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, </span>
 <span>  prop_tree <span class="op">=</span> <span class="st">"D"</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
-<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_corner_fct(.SD): In plot 201 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
-<span><span class="co">#&gt; Warning in check_corner_fct(.SD): In plot 213 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
-<span><span class="co">#&gt; Warning in check_corner_fct(.SD): In plot 223 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-2.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-3.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-12-4.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span><span class="op">)</span></span>
+<span><span class="co">#&gt; In plot 201 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
+<span><span class="co">#&gt; In plot 213 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
+<span><span class="co">#&gt; In plot 223 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-2.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-3.png" class="r-plt" width="700" style="display: block; margin: auto;"><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-11-4.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p>Be aware that by default, the function will ask you to type Enter
 between each plot (argument ‘ask = TRUE’).</p>
 </div>
@@ -717,7 +736,7 @@ between each plot (argument ‘ask = TRUE’).</p>
 coordinates of the 4 corners of the plot to divide it into a grid. Be
 aware that <strong>the plot must be rectangular in the plot’s relative
 coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
@@ -824,7 +843,7 @@ set <code>proj_coord</code> = NULL.</p>
 <p>The function also handles imperfect cuts with the <code>origin</code>
 and <code>grid_tol</code> arguments. Here an example with a 40mx45m grid
 and origin coordinates set at (10 ; 5).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>, </span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
@@ -842,7 +861,7 @@ the next section), the function returns the coordinates of subplot
 corners but can also <strong>assign to each tree its subplot</strong>
 with the <strong><code>tree_data</code> and <code>tree_coords</code>
 arguments</strong>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add AGB predictions (calculated in Vignette BIOMASS) to plot201Trees</span></span>
 <span><span class="va">AGB_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="st">"saved_data/NouraguesTreesAGB.rds"</span><span class="op">)</span></span>
 <span><span class="va">plot201Trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">plot201Trees</span> , <span class="va">AGB_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span>,<span class="st">"D"</span>,<span class="st">"AGB"</span><span class="op">)</span><span class="op">]</span>, sort<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
@@ -863,21 +882,19 @@ previously</p></li>
 <li><p><code>tree_data</code>: the tree data-frame with the
 <strong>subplot_ID added in last column</strong></p></li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots</span><span class="op">$</span><span class="va">tree_data</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the divide_plot()$tree_data returns"</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Head of the divide_plot()$tree_data returns</caption>
 <colgroup>
+<col width="7%">
 <col width="6%">
-<col width="5%">
+<col width="17%">
+<col width="24%">
 <col width="14%">
-<col width="20%">
-<col width="12%">
-<col width="9%">
-<col width="9%">
 <col width="4%">
-<col width="8%">
-<col width="12%">
+<col width="9%">
+<col width="14%">
 </colgroup>
 <thead><tr class="header">
 <th align="right">x_rel</th>
@@ -885,8 +902,6 @@ previously</p></li>
 <th align="left">Family</th>
 <th align="left">Genus</th>
 <th align="left">Species</th>
-<th align="right">Xutm</th>
-<th align="right">Yutm</th>
 <th align="right">AGB</th>
 <th align="left">plot_ID</th>
 <th align="left">subplot_ID</th>
@@ -898,8 +913,6 @@ previously</p></li>
 <td align="left">Burseraceae</td>
 <td align="left">Protium</td>
 <td align="left">surinamense</td>
-<td align="right">313035.6</td>
-<td align="right">451705.1</td>
 <td align="right">0.1</td>
 <td align="left"></td>
 <td align="left">subplot_0_1</td>
@@ -910,8 +923,6 @@ previously</p></li>
 <td align="left">Anacardiaceae</td>
 <td align="left">Tapirira</td>
 <td align="left">guianensis</td>
-<td align="right">313077.0</td>
-<td align="right">451680.0</td>
 <td align="right">4.7</td>
 <td align="left"></td>
 <td align="left">subplot_0_3</td>
@@ -922,8 +933,6 @@ previously</p></li>
 <td align="left">Lecythidaceae</td>
 <td align="left">Indet.Lecythidaceae</td>
 <td align="left">Indet.</td>
-<td align="right">313031.8</td>
-<td align="right">451707.2</td>
 <td align="right">0.6</td>
 <td align="left"></td>
 <td align="left">subplot_0_1</td>
@@ -934,8 +943,6 @@ previously</p></li>
 <td align="left">Euphorbiaceae</td>
 <td align="left">Conceveiba</td>
 <td align="left">guyanensis</td>
-<td align="right">313071.7</td>
-<td align="right">451688.0</td>
 <td align="right">0.0</td>
 <td align="left"></td>
 <td align="left">NA</td>
@@ -946,8 +953,6 @@ previously</p></li>
 <td align="left">Burseraceae</td>
 <td align="left">Protium</td>
 <td align="left">altissimum</td>
-<td align="right">313043.4</td>
-<td align="right">451700.1</td>
 <td align="right">0.2</td>
 <td align="left"></td>
 <td align="left">subplot_0_1</td>
@@ -958,8 +963,6 @@ previously</p></li>
 <td align="left">Euphorbiaceae</td>
 <td align="left">Mabea</td>
 <td align="left">speciosa</td>
-<td align="right">313046.8</td>
-<td align="right">451702.5</td>
 <td align="right">0.1</td>
 <td align="left"></td>
 <td align="left">NA</td>
@@ -969,7 +972,7 @@ previously</p></li>
 <p>Of course, the function can handle as many plots as you want, using
 the <code>corner_plot_ID</code> and <code>tree_plot_ID</code>
 arguments:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, corner_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
@@ -984,7 +987,7 @@ arguments. In this case, <code>n</code> simulations of corner
 positioning will be drawn and returned via the <code>$simu_coord</code>
 output list. The uncertainty (sd) on each corner position along the X-
 and Y- axis will be equal to the value of sd_coord:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sd_coord_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
@@ -1006,7 +1009,7 @@ and Y- axis will be equal to the value of sd_coord:</p>
 non-null <code>tree_data</code> argument, you can summarise any tree
 metric at the subplot level with the <code><a href="../reference/subplot_summary.html">subplot_summary()</a></code>
 function.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>, <span class="co"># AGB was added before applying divide_plot()</span></span>
@@ -1018,7 +1021,7 @@ and divides the result by the area of each subplot (to obtain a summary
 <strong>per hectare</strong>), but you can request any valid function
 using <code>fun</code> argument and choose between a raw or a per
 hectare summary using <code>per_ha</code> argument.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"AGB"</span>,</span>
@@ -1037,7 +1040,7 @@ modified</p></li>
 </ul>
 <p>The returned <strong>polygons can be saved into a shapefile</strong>
 like this:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set the CRS of the polygons</span></span>
 <span><span class="va">subplot_polygons</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_set_crs</a></span><span class="op">(</span></span>
 <span>  <span class="va">subplot_metric</span><span class="op">$</span><span class="va">polygon</span> ,</span>
@@ -1047,7 +1050,7 @@ like this:</p>
 <span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">st_write</a></span><span class="op">(</span><span class="va">subplot_polygons</span>, <span class="st">"your_directory/subplots_201.shp"</span><span class="op">)</span></span></code></pre></div>
 <p>And of course, the function can handle <strong>as many plots as
 provided in divide_plot()</strong>:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">multiple_subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">mean</span>, per_ha <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -1062,14 +1065,14 @@ function using the <code>AGB_simu</code> argument.<br>
 The function also handles uncertainty in corner coordinates if the
 <code>subplots</code> argument provided has been created using the
 <code>sd_coord</code> argument (optional):</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_AGBD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">sd_coord_subplots</span>,</span>
 <span>  AGB_simu <span class="op">=</span> <span class="va">error_prop</span><span class="op">$</span><span class="va">AGB_simu</span> <span class="co"># error_prop has been created in the previous vignette</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; As 'AGB_simu' contains 200 simulations, and 'subplots$simu_coord' contains 50 simulations, 150 simulations will be resampled in 'subplots'.</span></span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p>The simulated AGBs are therefore summarised in <strong>AGBD</strong>
 (i.e. AGB per hectare), and the function returns an additional output
 containing all the simulations performed:
@@ -1082,12 +1085,12 @@ containing all the simulations performed:
 contained in a raster</strong> (typically a CHM raster obtained from
 LiDAR data) by providing the <code>ref_raster</code> and the
 <code>raster_fun</code> arguments:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">raster_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>, raster_fun <span class="op">=</span> <span class="va">median</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracting raster metric...Extracting raster metric done.[[1]]</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="all-at-once">All at once<a class="anchor" aria-label="anchor" href="#all-at-once"></a>
@@ -1099,7 +1102,7 @@ corners and summarise the following information:</p>
 <li>the AGB and its uncertainty</li>
 <li>the mean raster values</li>
 </ul>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">sd_coord_subplots</span>,</span>
 <span>  value <span class="op">=</span> <span class="st">"D"</span>, fun <span class="op">=</span> <span class="va">sd</span>, per_ha <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -1108,35 +1111,35 @@ corners and summarise the following information:</p>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; As 'AGB_simu' contains 200 simulations, and 'subplots$simu_coord' contains 50 simulations, 150 simulations will be resampled in 'subplots'.</span></span>
 <span><span class="co">#&gt; Extracting raster metric...Extracting raster metric done.[[1]]</span></span></code></pre></div>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span></code></pre>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-2.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-2.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span></code></pre>
-<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-19-3.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
+<p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-3.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="customizing-the-ggplot">Customizing the ggplot<a class="anchor" aria-label="anchor" href="#customizing-the-ggplot"></a>
 </h3>
 <p>Here are some examples to custom the ggplot of the
 <code><a href="../reference/subplot_summary.html">subplot_summary()</a></code> function:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">subplot_metric</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span>subplots <span class="op">=</span> <span class="va">subplots</span>,</span>
 <span>                                  value <span class="op">=</span> <span class="st">"AGB"</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">custom_plot</span> <span class="op">&lt;-</span> <span class="va">subplot_metric</span><span class="op">$</span><span class="va">plot_design</span></span>
 <span><span class="co"># Change the title and legend:</span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
 <span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Nouragues plot"</span> , fill<span class="op">=</span><span class="st">"Sum of AGB per hectare"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-2.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display trees with diameter as size and transparency (and a smaller legend on the right): </span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>data<span class="op">=</span><span class="va">plot201Trees</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Xutm</span>, y <span class="op">=</span> <span class="va">Yutm</span>, size <span class="op">=</span> <span class="va">D</span>, alpha<span class="op">=</span> <span class="va">D</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span>,<span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>data<span class="op">=</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_proj</span>, y <span class="op">=</span> <span class="va">y_proj</span>, size <span class="op">=</span> <span class="va">D</span>, alpha<span class="op">=</span> <span class="va">D</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span>,<span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Sum of AGB per hectare"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">guides</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span>,</span>
 <span>         size <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
