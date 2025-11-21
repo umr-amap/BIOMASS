@@ -1,5 +1,7 @@
 context("CorrectTaxo")
 
+inv_test <- read.csv("data/test_correctTaxo.csv")
+
 test_that("CorrectTaxo", {
 
   skip_on_cran() #we do not want any query to tnrs when cran is testing
