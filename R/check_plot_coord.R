@@ -28,6 +28,7 @@
 #' @param tree_plot_ID If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.
 #' @param ref_raster A SpatRaster object from terra package, typically a chm raster created from LiDAR data.
 #' @param prop_tree The column name variable of tree_data for which the tree visualization will be proportional.
+#' @param threshold_tree a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.
 #' @param ask If TRUE and dealing with multiple plots, then prompt user before displaying each plot. 
 #'
 #' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
@@ -87,13 +88,13 @@
 #'  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
 #'  trust_GPS_corners = TRUE, draw_plot = FALSE,
 #'  tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
-#'  ref_raster = nouragues_raster, prop_tree = "D"
+#'  ref_raster = nouragues_raster, prop_tree = "D", threshold_tree = 25
 #' )
 #' \donttest{
 #'   check_plot_204$plot_design
 #' }
 
-check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, ask = TRUE) {
+check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, threshold_tree = NULL, ask = TRUE) {
   
   ##### Checking arguments -----------------------------------------------------
   
@@ -132,6 +133,12 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
   if (!is.null(prop_tree) && !any(prop_tree == names(tree_data))) {
     stop("column name provided by prop_tree is not found in tree_data")
+  }
+  if (!is.null(threshold_tree) && is.null(prop_tree)) {
+    stop("If 'threshold_tree' is provided, then the 'prop_tree' argument must also be provided.")
+  }
+  if (!is.null(threshold_tree) && (!is.numeric(threshold_tree) || length(threshold_tree) !=1) ) {
+    stop("'threshold_tree' must be a numeric of length 1.")
   }
   if (length(max_dist) != 1) {
     stop("The max_dist argument must be of length 1")
@@ -491,9 +498,15 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
         
       } else { # if there is a proportional variable to display
         
+        if(!is.null(threshold_tree)) {
+          filt_disp_trees <- tree_dt[[prop_tree]] >= threshold_tree
+        } else {
+          filt_disp_trees <- TRUE
+        }
+        
         plot_design <- plot_design +
           # Display the trees inside the plot
-          geom_point(data = tree_dt[plot_ID == current_plot_ID & is_in_plot==T, ], 
+          geom_point(data = tree_dt[plot_ID == current_plot_ID & is_in_plot==T & filt_disp_trees, ], 
                      mapping = aes(x = x_proj, y = y_proj,
                                    size = .data[[prop_tree]],
                                    alpha = .data[[prop_tree]]), 
