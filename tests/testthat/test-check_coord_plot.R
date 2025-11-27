@@ -25,7 +25,8 @@ test_that("check_plot_coord error", {
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees),"You must provide the column names corresponding to the relative coordinates of tree_data using the argument `tree_coords`")
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("a","b")),"column names provided by tree_coords are not found in tree_data")
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), prop_tree = "a"), "column name provided by prop_tree is not found in tree_data")
-  
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), prop_tree = "D", threshold_tree = "a"), "'threshold_tree' must be a numeric of length 1.")
+  expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=F, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), threshold_tree = 15), "the 'prop_tree' argument must also be provided.")
   
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, max_dist=c(10,20) ),"The max_dist argument must be of length 1")
   expect_error(check_plot_coord(NouraguesPlot201, proj_coord=c("Xutm","Yutm"), rel_coord=c("Xfield","Yfield"), trust_GPS_corners=T, plot_ID = "Plot", draw_plot = F, max_dist = 0.1) , "increasing the distance")
@@ -129,7 +130,7 @@ test_that("check_plot_coord, tree data and raster", {
     check_plot_coord(
       NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
-      tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D",
+      tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D", threshold_tree = 20,
       ref_raster = nouragues_raster))
   
   
