@@ -64,9 +64,9 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-11-21</h4>
+            <h4 data-toc-skip class="date">2025-11-27</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/check_plot_coord_display_threshold/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
     </div>
 
@@ -690,7 +690,8 @@ to change the plot title:</p>
 </h3>
 <p>If you have LiDAR data in raster format (typically a CHM raster) that
 you want to compare with a tree metric, this can be done with the
-<code>ref_raster</code> and the <code>prop_tree</code> arguments.</p>
+<code>ref_raster</code>, <code>prop_tree</code> and
+<code>threshold_tree</code> arguments.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load internal CHM raster</span></span>
 <span><span class="va">nouraguesRaster</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"NouraguesRaster.tif"</span>,package <span class="op">=</span> <span class="st">"BIOMASS"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
@@ -699,8 +700,9 @@ you want to compare with a tree metric, this can be done with the
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesPlot201</span>,</span>
 <span>  longlat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Long"</span>, <span class="st">"Lat"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
 <span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, prop_tree <span class="op">=</span> <span class="st">"D"</span>, <span class="co"># here the treediameter</span></span>
-<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span><span class="op">)</span></span>
+<span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span>
+<span>  prop_tree <span class="op">=</span> <span class="st">"D"</span>, threshold_tree <span class="op">=</span> <span class="fl">20</span>, <span class="co"># Display tree diameters &gt;= 20</span></span>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 </div>

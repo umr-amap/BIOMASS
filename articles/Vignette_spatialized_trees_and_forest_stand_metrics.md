@@ -285,7 +285,7 @@ plot_to_change
 
 If you have LiDAR data in raster format (typically a CHM raster) that
 you want to compare with a tree metric, this can be done with the
-`ref_raster` and the `prop_tree` arguments.
+`ref_raster`, `prop_tree` and `threshold_tree` arguments.
 
 ``` r
 # Load internal CHM raster
@@ -295,8 +295,9 @@ check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
   longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE,
-  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"), prop_tree = "D", # here the treediameter
-  ref_raster = nouraguesRaster)
+  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"),
+  prop_tree = "D", threshold_tree = 20, # Display tree diameters >= 20
+  ref_raster = nouraguesRaster )
 #>  Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)
 ```
 

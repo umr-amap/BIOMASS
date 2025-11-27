@@ -32,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Check coordinates of plot corners and trees</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/check_plot_coord.R" class="external-link"><code>R/check_plot_coord.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/check_plot_coord_display_threshold/R/check_plot_coord.R" class="external-link"><code>R/check_plot_coord.R</code></a></small>
       <div class="d-none name"><code>check_plot_coord.Rd</code></div>
     </div>
 
@@ -57,6 +57,7 @@
 <span>  tree_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ref_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prop_tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  threshold_tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -119,6 +120,10 @@
 
 <dt id="arg-prop-tree">prop_tree<a class="anchor" aria-label="anchor" href="#arg-prop-tree"></a></dt>
 <dd><p>The column name variable of tree_data for which the tree visualization will be proportional.</p></dd>
+
+
+<dt id="arg-threshold-tree">threshold_tree<a class="anchor" aria-label="anchor" href="#arg-threshold-tree"></a></dt>
+<dd><p>a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.</p></dd>
 
 
 <dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>
@@ -221,7 +226,7 @@
 <span class="r-in"><span> proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span> trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>, draw_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span> tree_data <span class="op">=</span> <span class="va">plot_204_trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span> ref_raster <span class="op">=</span> <span class="va">nouragues_raster</span>, prop_tree <span class="op">=</span> <span class="st">"D"</span></span></span>
+<span class="r-in"><span> ref_raster <span class="op">=</span> <span class="va">nouragues_raster</span>, prop_tree <span class="op">=</span> <span class="st">"D"</span>, threshold_tree <span class="op">=</span> <span class="fl">25</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="va">check_plot_204</span><span class="op">$</span><span class="va">plot_design</span></span></span>
