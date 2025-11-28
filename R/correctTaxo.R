@@ -1,83 +1,73 @@
-#' Correct trees taxonomy
+#' Correct and match taxonomic names to the World Flora Online database
 #'
 #' @description
-#' This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
+#' This function matches taxonomic names using the World Flora Online database,
+#'     via their GraphQL API
 #'
-#' @details
-#' This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
-#' to avoid the replication of time-consuming server requests.
-#'
-#' By default, names are queried in batches of 500, with a 0.5s delay between each query. These values can be modified using options:
-#' `options(BIOMASS.batch_size=500)` for batch size (max 1000), `options(BIOMASS.wait_delay=0.5)` for delay (in seconds).
+#' This function creates a file named correctTaxo.rds (see Localisation), this
+#' file holds all previous API requests, to avoid the replication of
+#' time-consuming server requests.
 #'
 #' @inheritSection cacheManager Localisation
 #'
-#' @param genus Vector of genera to be checked. Alternatively, the whole species name (genus + species)
-#'  or (genus + species + author) may be given (see example).
-#' @param species (optional) Vector of species to be checked (same size as the genus vector).
-#' @param score Score of the matching ( see https://tnrs.biendata.org/instructions ) below which corrections are discarded.
-#' @param useCache logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)
-#' @param verbose logical. If TRUE various messages are displayed during process
-#' @param accepted logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.
+#' @param x vector of taxonomic names
+#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
+#'     if no species-level match is available
+#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
+#'     possible to estimate taxonomic rank from the search string and the rank
+#'     does not match that in the name record
+#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
+#'     there are other names with the same words but different author strings
+#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
+#'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
+#'     found, and if there is only one candidate is an "accepted" name,
+#'     automatically choose that name
+#' @param interactive logical, if TRUE (default) user will be prompted to pick
+#'     names from a list where multiple ambiguous matches are found, otherwise
+#'     names with multiple ambiguous matches will be skipped
+#' @param useCache logical, if TRUE use cached values in
+#'     `options("wfo.api_uri")` preferentially, to reduce the number of API
+#'     calls
+#' @param useAPI logical, if TRUE (default) allow API calls
+#' @param raw logical, if TRUE raw a nested list is returned, otherwise a
+#'     dataframe
+#' @param delay number of seconds to pause between API calls. Used to
+#'     rate-limit repeated API calls
 #'
-#' @return The function returns a dataframe with the corrected (or not) genera and species.
+#' @return data.frame containing taxonomic name information with rows matching
+#'     names in `x`, or a list containing unique values in `x` if raw = TRUE
 #'
-#' @references Boyle, B. et al. (2013).
-#' _The taxonomic name resolution service: An online tool for automated standardization of plant names_. BMC bioinformatics, 14, 1. doi:10.1186/1471-2105-14-16
+#' @references Borsch, T. et al. (2020).
+#' _World Flora Online: Placing taxonomists at the heart of a definitive and
+#' comprehensive global resource on the world's plants_. TAXON, 69, 6.
+#' doi10.1002/tax.12373:
 #'
-#' @author Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
+#' @author John L. Godlee
+#' 
+#' @export
+#'
+#' @importFrom data.table rbindlist
+#' @importFrom httr2 request req_method req_perform
 #'
 #' @examples
-#' \dontrun{
-#' correctTaxo(genus = "Astrocarium", species = "standleanum")
-#' correctTaxo(genus = "Astrocarium standleanum")
-#' }
+#' x <- c("Burkea africana", "Julbernardia paniculata", "Fabaceae", 
+#'   "Indet indet", "Brachystegia")
+#' correctTaxo(x)
+#' correctTaxo(x, raw = TRUE)
+#' correctTaxo(x, fallbackToGenus = TRUE)
+#' correctTaxo(x, interactive = FALSE)
 #'
-#' @export
-#' @importFrom data.table tstrsplit := data.table setkey chmatch fread fwrite setDF setDT rbindlist
-#' @importFrom rappdirs user_data_dir
-#' @importFrom jsonlite fromJSON toJSON
-#' @importFrom utils head
-#'
-correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, verbose = TRUE, accepted=FALSE) {
+correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
+  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
+  interactive = TRUE, useCache = FALSE, useAPI = TRUE, raw = FALSE, 
+  delay = 0.5) {
 
-  # Check if package httr2 is available
-  if (!requireNamespace("httr2", quietly = TRUE)) {
-    warning(
-      'To use this function, you must install the "httr2" library \n\n',
-      '\t\tinstall.packages("httr2")'
-    )
-    return(invisible(NULL))
+  if (!useCache & !useAPI) {
+    stop("Either useCache or useAPI must be TRUE")
   }
 
-  # check parameters -------------------------------------------------
-
-  WAIT_DELAY <- getOption("BIOMASS.wait_delay", 0.5) # delay between requests to tnrs (to reduce load on server)
-  BATCH_SIZE <- min(getOption("BIOMASS.batch_size", 500), 1000) # number of taxa sought per request to tnrs (max 1000)
-
-  if (is.logical(useCache) && !useCache) {
-    message("Using useCache=TRUE is recommended to reduce online search time for the next query")
-  }
-
-  if (all(is.na(genus))) {
-    stop("Please supply at least one name for genus")
-  }
-
-  if (!is.null(species)) {
-    if (all(is.na(species))) {
-      stop("Please supply at least one name for species")
-    }
-    if (length(genus) != length(species)) {
-      stop("You should provide two vectors of genera and species of the same length")
-    }
-    species[is.na(genus)] <- NA
-  }
-
-  if(accepted && !is.null(useCache) && useCache) {
-    warning("Cache cannot be used if accepted names are required! I will ignore it")
-    useCache <- FALSE
-  }
-
+  # Define function to check URL
   checkURL <- function(url) {
     tryCatch(
       {
@@ -92,266 +82,506 @@ correctTaxo <- function(genus, species = NULL, score = 0.5, useCache = FALSE, ve
     )
   }
 
-  if(!checkURL("https://tnrsapi.xyz")) {
-    warning("Sorry there is no internet connexion or the tnrs site is unreachable!", call. = FALSE, immediate. = TRUE)
-    return(invisible(NULL))
-  }
-
-  # sub-function definition -------------------------------------------------
-
-  # split x always returning count columns (padding with NA)
-  tstrsplit_NA <- function(x, pattern = "\\s+", count = 2) {
-    # NOTE extraneous columns ignored maybe better paste them together
-    split <- utils::head(tstrsplit(x, pattern), count)
-
-    # pad with NA
-    if (length(split) < count) {
-      split <- c(split, rep(NA_character_, count - length(split)))
+  # Check if WFO API is reachable 
+  if (!checkURL(getOption("wfo.api_uri"))) {
+    w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
+    if (useCache) {
+      warning(w, "\nOnly cached names will be filled")
+      useAPI <- FALSE
+    } else {
+      stop("\n", w, " and useCache = FALSE, Exiting ...")
     }
-    split
   }
 
-  # Data preparation --------------------------------------------------------
-
-  # remove spaces at beginning and end, and remove extra spacing
-  squish <- function(x) {
-    x <- gsub("(^\\s+)|(\\s+$)", "", x)
-    gsub("\\s+", " ", x)
+  # Load cache
+  if (useCache) {
+    if (!(exists("wfo_cache", envir = .GlobalEnv) && 
+      is.environment(get("wfo_cache", envir = .GlobalEnv)))) {
+      # Create wfo_cache in the global environment
+      assign("wfo_cache", new.env(parent = emptyenv()), envir = .GlobalEnv)
+      wfo_cache$names <- list()
+    }
+    cachePath <- cacheManager("correctTaxo.rds")
+    wfo_cache$names <- readRDS(cachePath)
+    message(sprintf("Cached taxonomic names loaded from '%s'", cachePath))
   }
-  
-  genus <- squish(as.character(genus))
 
-  if (is.null(species)) {
+  # Extract unique names 
+  xun <- sort(unique(x))
+  xlen <- length(xun)
 
-    # Create a dataframe with the original values
-    userTaxo <- data.table(
-      genus = NA_character_,
-      species = NA_character_,
-      query = genus
-    )
-    # split genus (query)
-    userTaxo[, c("genus", "species") := tstrsplit_NA(query)]
+  # For each unique taxonomic name 
+  resp_list <- lapply(seq_along(xun), function(i) {
+    taxon <- xun[i]
+
+    cat(sprintf("%i of %i:\t%s\n", i, xlen, taxon))
+
+    # Submit API query
+    c(list(submitted_name = taxon), 
+      matchWFOName(taxon, 
+        fallbackToGenus = fallbackToGenus, 
+        checkRank = checkRank,
+        checkHomonyms = checkHomonyms,
+        fuzzyNameParts = fuzzyNameParts,
+        preferAccepted = preferAccepted,
+        useCache = useCache,
+        useAPI = useAPI,
+        interactive = interactive,
+        delay = delay))
+  })
+
+  # Define helper function to convert NULL values to NA
+  null2na <- function(x) {
+    if (is.null(x)) {
+      NA_character_ 
+    } else { 
+      x
+    }
+  }
+
+  if (raw) {
+    # Return raw list output
+    out <- resp_list
   } else {
-    species <- squish(as.character(species))
+    # Create formatted dataframe
+    out <- data.table::rbindlist(lapply(resp_list, function(i) { 
+      if ("id" %in% names(i)) {
+        data.frame(
+          taxon_name_subm = null2na(i$submitted_name),
+          method = null2na(i$method),
+          fallbackToGenus = null2na(i$fallbackToGenus),
+          checkRank = null2na(i$checkRank),
+          checkHomonyms = null2na(i$checkHomonyms),
+          fuzzyNameParts = null2na(i$fuzzyNameParts),
+          preferAccepted = null2na(i$preferAccepted),
+          taxon_wfo_syn = null2na(i$id),
+          taxon_name_syn = null2na(i$fullNameStringNoAuthorsPlain),
+          taxon_auth_syn = null2na(i$authorsString),
+          taxon_stat_syn = null2na(i$nomenclaturalStatus),
+          taxon_role_syn = null2na(i$role),
+          taxon_rank_syn = null2na(i$rank),
+          taxon_path_syn = null2na(i$wfoPath),
+          taxon_wfo_acc = null2na(i$currentPreferredUsage$hasName$id),
+          taxon_name_acc = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
+          taxon_auth_acc = null2na(i$currentPreferredUsage$hasName$authorsString),
+          taxon_stat_acc = null2na(i$currentPreferredUsage$hasName$nomenclaturalStatus),
+          taxon_role_acc = null2na(i$currentPreferredUsage$hasName$role),
+          taxon_rank_acc = null2na(i$currentPreferredUsage$hasName$rank),
+          taxon_path_acc = null2na(i$currentPreferredUsage$hasName$wfoPath))
+      } else { 
+        data.frame(
+          taxon_name_subm = i$submitted_name,
+          method = i$method,
+          fallbackToGenus = i$fallbackToGenus,
+          checkRank = i$checkRank,
+          checkHomonyms = i$checkHomonyms,
+          fuzzyNameParts = i$fuzzyNameParts,
+          preferAccepted = i$preferAccepted,
+          taxon_wfo_syn = NA_character_,
+          taxon_name_syn = NA_character_,
+          taxon_auth_syn = NA_character_,
+          taxon_stat_syn = NA_character_,
+          taxon_role_syn = NA_character_,
+          taxon_rank_syn = NA_character_,
+          taxon_path_syn = NA_character_,
+          taxon_wfo_acc = NA_character_,
+          taxon_name_acc = NA_character_,
+          taxon_auth_acc = NA_character_,
+          taxon_stat_acc = NA_character_,
+          taxon_role_acc = NA_character_,
+          taxon_rank_acc = NA_character_,
+          taxon_path_acc = NA_character_)
+      }
+    }))
 
-    # Create a dataframe with the original values
-    userTaxo <- data.table(
-      genus = genus,
-      species = species,
-      query = genus
-    )
-    # species can be NA so handle it with care when pasting
-    userTaxo[!is.na(genus) & !is.na(species), query := paste(query, species)]
+    # Match row order of dataframe to x
+    out <- out[match(x, out$taxon_name_subm),]
   }
 
-  # If there is an empty genus
-  userTaxo[is.na(genus) | (genus == ""), ":="(genus = NA_character_, species = NA_character_, query = NA_character_)]
+  # Optionally write cache to file
+  if (useCache) {
+    saveRDS(wfo_cache, cachePath)
+    message(sprintf("Cached taxonomic names saved to '%s'", cachePath))
+  }
 
-  # If there is empty species
-  userTaxo[is.na(species) | (species == ""), ":="(species = NA_character_, query = gsub(" ", "", query))]
+  # Return
+  return(out)
+}
 
-  # get unique values
-  qryTaxo <- unique(userTaxo[!is.na(query)])
+#' Manually pick a taxonomic name from a list returned by the WFO GraphQL API
+#'
+#' @param x original taxonomic name searched by `callWFOAPI()`
+#' @param cand list of candidate taxa returned by `callWFOAPI()`
+#' @param offset initial index value used internally by pager, controls index
+#'     of page start
+#' @param page_size index value used internally by pager, controls page length
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
+#'
+#' @return list containing information of matched taxonomic name
+#' 
+#' @examples
+#' x <- "Burkea af"
+#' resp <- callWFOAPI(x, query_taxonNameMatch())
+#' pickWFOName(x, resp$data$taxonNameMatch$candidates)
+#' 
+#' @export
+#' 
+pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
 
-  # get cached taxonomic corrections if needed -------------------------------------------------
+  # If no candidates, SKIP
+  if (length(cand) == 0) {
+    cat(sprintf("No candidates, skipping: %s\n", x))
+    match <- list(method = "EMPTY")
+    return(match)
+  }
 
-  cachedTaxo <- NULL
+  # Set up number of candidates per page
+  start_page <- offset + 1
+  end_page <- start_page + page_size -1
+  if (end_page > length(cand)) {
+    end_page <- length(cand)
+  }
 
-  if (is.null(useCache) || useCache) {
-    cachePath <- cacheManager("correctTaxo.log")
+  # Create header
+  cat("\n\n--- Pick a name ---")
+  cat(sprintf("\nMatching string:\t%s\n", x))
 
-    if (file.exists(cachePath)) {
+  # List candidates
+  for (i in start_page:end_page) {
+    cat(
+      sprintf(
+        "%-4s%s\t%s\t%s\t%s\n",
+        i,
+        cand[[i]]$id,
+        cand[[i]]$fullNameStringPlain,
+        cand[[i]]$role,
+        cand[[i]]$wfoPath
+      )
+    )
+  }
 
-      # should we remove cache ?
-      if (is.null(useCache)) {
-        file.remove(cachePath)
-        useCache <- TRUE
+  valid <- FALSE
+  while (!valid) {
+
+    # Create footer
+    prompt <- paste(
+      "Enter a number to pick a row from the list,",
+      "a valid WFO ID,", 
+      "'N' for the next page,", 
+      "'P' for the previous page,",
+      "'S' to skip this name: ")
+
+    # Prompt the user for input
+    input <- trimws(readline(prompt))
+    input_num <- suppressWarnings(as.numeric(input))
+
+    # Valid numeric selection
+    if (!is.na(input_num) && input_num > 0 && input_num <= length(cand)) {
+      match <- cand[[input_num]]
+      match$method <- "MANUAL"
+      valid <- TRUE
+    } else if (grepl("^wfo-[0-9]{10}$", tolower(trimws(input)))) {
+      input <- tolower(trimws(input))
+      match <- callWFOAPI(input, 
+        query = query_taxonNameById(), 
+        delay = delay)$data$taxonNameById
+      match$method <- "MANUAL"
+      valid <- TRUE
+    } else if (tolower(input) == "n") {
+      if (end_page < length(cand)) {
+        return(pickWFOName(x, cand, offset + page_size, page_size, delay = delay))
       } else {
-        if (verbose) {
-          message("Cache last modification time : ", as.character.POSIXt(file.info(cachePath)$mtime))
-        }
-        cachedTaxo <- fread(file = cachePath)
-        cachedTaxo[, from := "cache"]
-
-        # if not the right format then ignore it!
-        if (!("submittedName" %in% names(cachedTaxo))) {
-          cachedTaxo <- NULL
-        }
+        cat("Already on last page.\n")
       }
-    } else if (is.null(useCache)) {
-      useCache <- TRUE
+    } else if (tolower(input) == "p") {
+      if (start_page > 1) {
+        return(pickWFOName(x, cand, offset - page_size, page_size, delay = delay))
+      } else {
+        cat("Already on first page.\n")
+      }
+    } else if (tolower(input) %in% c("s", "")) {
+      match <- list(method = "SKIP")
+      valid <- TRUE
+    } else {
+      cat("Invalid input. Enter an integer, a valid WFO ID, 'N', 'P', 'S', or press Enter to skip.\n" )
     }
   }
 
-  # init cachedTaxo with empty data
-  if (is.null(cachedTaxo)) {
-    cachedTaxo <- data.table(
-      submittedName = character(0), score = numeric(0), matchedName = character(0), from = character(0),
-      acceptedName = character(0)
-    )
-  }
+  # Return
+  return(match)
+}
 
-  # identify taxo not present in cache
-  missingTaxo <- qryTaxo[!cachedTaxo[, .(submittedName)], on = c(query = "submittedName")]
+#' Match a taxonomic name against the WFO GraphQL API
+#'
+#' @param x taxonomic name to be searched 
+#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
+#'     if no species-level match is available
+#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
+#'     possible to estimate taxonomic rank from the search string and the rank
+#'     does not match that in the name record
+#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
+#'     there are other names with the same words but different author strings
+#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
+#'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
+#'     found, and if there is only one candidate is an "accepted" name,
+#'     automatically choose that name
+#' @param useCache logical, if TRUE use cached values in
+#'     `options("wfo.api_uri")` preferentially, to reduce the number of API
+#'     calls
+#' @param useAPI logical, if TRUE (default) allow API calls
+#' @param interactive logical, if TRUE (default) user will be prompted to pick
+#'     names from a list where multiple ambiguous matches are found, otherwise
+#'     names with multiple ambiguous matches will be skipped
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
+#'
+#' @return list representation of JSON returned by API call 
+#' 
+#' @noRd
+#' @examples
+#' matchWFOName("Burkea africana")
+#' 
+matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
+  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
+  useCache = FALSE, useAPI = TRUE, interactive = TRUE, delay = 0.5) {
 
-  # query tnrs for missing taxo if any
-  queriedTaxo <- NULL
-  if (nrow(missingTaxo)) {
+  # Search cache for name 
+  if (useCache && x %in% names(wfo_cache$names) ) {
+    # If name found, use cached version
+    match <- wfo_cache$names[[x]]
+    cat(sprintf("Using cached data for: %s\n", x))
+  } else if (useAPI == TRUE) {
+    # If name not found in cache, send API call
+    response <- callWFOAPI(x, 
+      query_taxonNameMatch(), 
+      fallbackToGenus = fallbackToGenus,
+      checkRank = checkRank,
+      checkHomonyms = checkHomonyms,
+      fuzzyNameParts = fuzzyNameParts,
+      delay = delay)
 
-    # split missing taxo in chunks of 30
-    slices <- split(missingTaxo[, slice := ceiling(.I / BATCH_SIZE)], by = "slice", keep.by = TRUE)
-    
-    pb <- if(verbose) utils::txtProgressBar(style = 3)
-    
-    queriedTaxo <- tryCatch(
-      {
-        # for each slice of queries
-        queriedTaxo <- rbindlist(lapply(slices, function(slice) {
-          
-          req <- httr2::request("https://tnrsapi.xyz/tnrs_api.php")
-          req <- httr2::req_headers(req,
-            'Accept' = 'application/json',
-            'Content-Type' = "application/json",
-            'charset' = "UTF-8"
-          )
-          req <- httr2::req_body_json(req, list(
-            opts = list(
-              class = jsonlite::unbox("wfo"),
-              mode = jsonlite::unbox("resolve"),
-              matches = jsonlite::unbox("best")
-            ),
-            data = unname(data.frame(seq_along(slice$query),slice$query))
-          ))
-          
-          req <- httr2::req_timeout(req, 20)
-          qryResult <- httr2::req_perform(req)
-          
-          # parse answer from tnrs
-          answer <- setDT(httr2::resp_body_json(qryResult, simplifyVector = TRUE))
-          
-          # recode empty strings as NA
-          answer[, names(answer) := lapply(.SD, function(x) {
-            x[x==""]<-NA
-            x
-          })]
-          
-          # format result
-          answer <- answer[, .(
-            submittedName = Name_submitted,
-            score = as.numeric(Overall_score),
-            matchedName = Name_matched,
-            from = "iplant_tnrs",
-            acceptedName = Accepted_name
-          )]
-          
-          if (verbose) {
-            utils::setTxtProgressBar(pb, slice$slice[1] / length(slices))
-          }
-          
-          Sys.sleep(WAIT_DELAY)
-          
-          answer
-        }))        
-      },
-      error = function(e) {
-        structure(list(), message = e$message)
-      },
-      finally = {
-        # close progress bar
-        if(!is.null(pb)) {
-          close(pb)
-        }
+    # If interactive and name not found
+    cand_roles <- unlist(lapply(response$data$taxonNameMatch$candidates, "[[", "role")) 
+    if (is.null(response$data$taxonNameMatch$match)) {
+      if (preferAccepted && sum(cand_roles == "accepted") == 1) {
+        match <- response$data$taxonNameMatch$candidates[[which(cand_roles == "accepted")]]
+        match$method <- "AUTO ACC"
+      } else if (interactive) {
+        match <- pickWFOName(x, 
+          response$data$taxonNameMatch$candidates, 
+          delay = delay)
+      } else {
+        cat(sprintf("No cached name for: %s\n", x))
+        match <- list()
+        match$method <- "EMPTY"
       }
-    )
-  }
-
-  if(nrow(missingTaxo) && is.null(nrow(queriedTaxo))) {
-    warning("There seem to be a problem reaching the TNRS API!\n", 
-      attr(queriedTaxo, "message"), immediate. = TRUE, call. = FALSE)
-    return(invisible(NULL))
-  }
-  
-  # build reference taxonomy from cached and queried ones
-  fullTaxo <- rbindlist(list(queriedTaxo, cachedTaxo), fill = TRUE)
-
-  # inject taxo names in original (user provided) taxonomy
-  if(accepted) {
-    userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
-      outName = ifelse(score >= ..score, acceptedName, query),
-      nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
-      from = from
-    )]
-
+    } else {
+      match <- response$data$taxonNameMatch$match
+      match$method <- "AUTO"
+    }
   } else {
-    userTaxo[fullTaxo, on = c(query = "submittedName"), `:=`(
-      outName = ifelse(score >= ..score, matchedName, query),
-      nameModified = ifelse(score >= ..score, "TRUE", "NoMatch(low_score)"),
-      from = from
-    )]
+    cat(sprintf("No cached name for: %s\n", x))
+    match <- list()
+      match$method <- "EMPTY"
   }
 
-  # if nothing changed tell it
-  userTaxo[
-    !is.na(outName) & (outName == query) & (nameModified != "NoMatch(low_score)"),
-    nameModified := "FALSE"
-  ]
+  # Add query parameters
+  match$fallbackToGenus <- fallbackToGenus
+  match$checkRank <- checkRank
+  match$checkHomonyms <- checkHomonyms
+  match$fuzzyNameParts <- fuzzyNameParts 
+  match$preferAccepted <- preferAccepted 
 
-  # split name
-  userTaxo[, c("genusCorrected", "speciesCorrected") := tstrsplit_NA(outName)]
-
-  # If genera or species not found by TNRS
-  # Genera
-  userTaxo[
-    ((nameModified == "TRUE") | is.na(nameModified)) & is.na(genusCorrected) & !is.na(genus),
-    c("genusCorrected", "nameModified") := list(genus, "TaxaNotFound")
-  ]
-
-  # Species
-  userTaxo[
-    (nameModified %in% c("TRUE", "TaxaNotFound")| is.na(nameModified)) & is.na(speciesCorrected) & !is.na(species),
-    `:=`(
-      speciesCorrected = species,
-      nameModified = ifelse(nameModified == "TRUE", "SpNotFound", nameModified)
-    )
-  ]
-
-  # cache full taxonomy for further use
-  if (useCache && !is.null(queriedTaxo)) {
-
-    # complete taxo with matched names and accepted names
-    matchedTaxo <- unique(fullTaxo[submittedName != matchedName],
-      by = "matchedName"
-    )[, `:=`(
-      submittedName = matchedName,
-      score = 1
-    )]
-
-    acceptedTaxo <- unique(fullTaxo[(submittedName != acceptedName) & (acceptedName != matchedName)],
-      by = "acceptedName"
-    )[, `:=`(
-      submittedName = acceptedName,
-      matchedName = acceptedName,
-      score = 1
-    )]
-
-    fullTaxo <- unique(rbindlist(list(fullTaxo, matchedTaxo, acceptedTaxo))[submittedName != ""])
-
-    # write cache
-    fwrite(fullTaxo[order(submittedName), -"from"], file = cachePath)
-    if (verbose) {
-      message("Cache updated")
-    }
+  # Store result in cache
+  if (match$method %in% c("AUTO", "MANUAL") & 
+      !x %in% names(wfo_cache$names) &
+      !is.null(match$id) && !is.na(match$id)) {
+    wfo_cache$names[[x]] <- match
   }
 
-  # stats
-  if (verbose) {
-    stats <- userTaxo[, by = from, .N]
-    message("Source ", paste(sprintf("%s:%d", stats$from, stats$N), collapse = ", "))
+  # Return
+  return(match)
+}
 
-    stats <- userTaxo[, by = nameModified, .N]
-    message("Corrections ", paste(sprintf("%s:%d", stats$nameModified, stats$N), collapse = ", "))
-  }
 
-  # return corrected taxo
-  data.frame(userTaxo[, .(genusCorrected, speciesCorrected, nameModified)])
+#' Call the WorldFlora API to match a taxonomic name
+#'
+#' @param x taxonomic name to be searched 
+#' @param query GraphQL API query string, e.g. as returned `query_taxonNameMatch()`
+#'     or `query_taxonNameById()`
+#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
+#'     if no species-level match is available
+#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
+#'     possible to estimate taxonomic rank from the search string and the rank
+#'     does not match that in the name record
+#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
+#'     there are other names with the same words but different author strings
+#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
+#'     Levenshtein distance used for fuzzy matching words in `x`
+#' @param delay number of seconds to pause before sending the API call. Used to
+#'     rate-limit repeated API calls
+#'
+#' @importFrom httr2 request req_body_json req_perform resp_body_json
+#' @return list representation of JSON returned by API call 
+#' 
+#' @noRd
+#' @examples
+#' callWFOAPI("Burkea africana", query_taxonNameMatch())
+#' callWFOAPI("wfo-0000214110", query_taxonNameById())
+#'
+callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE, 
+  checkHomonyms = FALSE, fuzzyNameParts = 0, delay = 0.5) {
+
+  # Create request 
+  req <- httr2::request(getOption("wfo.api_uri"))
+
+  # prepare the body
+  variables <- list(
+    searchString = x, 
+    fallbackToGenus = fallbackToGenus,
+    checkRank = checkRank,
+    checkHomonyms = checkHomonyms,
+    fuzzyNameParts = fuzzyNameParts
+  )
+  payload <- list(query = query, variables = variables)
+
+  # Set body
+  req <- httr2::req_body_json(req, payload, auto_unbox = TRUE)
+
+  # Rate limit: pause before making the request
+  Sys.sleep(delay)
+
+  # Run request
+  resp <- httr2::req_perform(req)
+
+  # return the whole thing as a list of lists
+  return(httr2::resp_body_json(resp))
+}
+
+
+#' Define WFO GraphQL API query for name matching
+#'
+#' @return character string with WFO GraphQL API query
+#' 
+#' @noRd
+#' 
+query_taxonNameMatch <- function() {
+  "query NameMatch(
+    $searchString: String, 
+    $checkHomonyms: Boolean,
+    $checkRank: Boolean,
+    $fallbackToGenus: Boolean
+    $fuzzyNameParts: Int
+  )
+    {
+      taxonNameMatch(
+        inputString: $searchString
+        checkHomonyms: $checkHomonyms
+        checkRank: $checkRank
+        fallbackToGenus: $fallbackToGenus
+        fuzzyNameParts: $fuzzyNameParts
+      ) {
+        inputString
+        searchString
+        match {
+          id
+          fullNameStringPlain
+          fullNameStringNoAuthorsPlain
+          genusString
+          nameString
+          authorsString
+          nomenclaturalStatus
+          role
+          rank
+          wfoPath
+          currentPreferredUsage {
+            hasName {
+              id
+              fullNameStringPlain
+              fullNameStringNoAuthorsPlain
+              genusString
+              nameString
+              authorsString
+              nomenclaturalStatus
+              role
+              rank
+              wfoPath
+            }
+          }
+        }
+        candidates {
+          id
+          fullNameStringPlain
+          fullNameStringNoAuthorsPlain
+          genusString
+          nameString
+          authorsString
+          nomenclaturalStatus
+          role
+          rank
+          wfoPath
+          currentPreferredUsage {
+            hasName {
+              id
+              fullNameStringPlain
+              fullNameStringNoAuthorsPlain
+              genusString
+              nameString
+              authorsString
+              nomenclaturalStatus
+              role
+              rank
+              wfoPath
+            }
+          }
+        }
+        error
+        errorMessage
+        method
+        narrative
+      }
+    }"
+}
+
+#' Define WFO GraphQL API query for WFO ID matching
+#'
+#' @return character string with WFO GraphQL API query
+#' 
+#' @noRd
+#' 
+query_taxonNameById <- function() {
+  "query NameByID(
+    $searchString: String)
+    {
+      taxonNameById(
+        nameId: $searchString
+      ) {
+        id
+        fullNameStringPlain
+        fullNameStringNoAuthorsPlain
+        genusString
+        nameString
+        authorsString
+        nomenclaturalStatus
+        role
+        rank
+        wfoPath
+        currentPreferredUsage {
+          hasName {
+            id
+            fullNameStringPlain
+            fullNameStringNoAuthorsPlain
+            genusString
+            nameString
+            authorsString
+            nomenclaturalStatus
+            role
+            rank
+            wfoPath
+          }
+        }
+      }
+    }"
 }
