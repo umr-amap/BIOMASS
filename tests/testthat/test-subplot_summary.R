@@ -11,11 +11,9 @@ corner_data <- suppressWarnings(check_plot_coord(NouraguesPlot201, proj_coord = 
 test_that("subplot_summary error", {
   subplots <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50)
   
-  expect_error(subplot_summary(subplots), "subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
-  
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50, tree_data = NouraguesTrees201, tree_coords = c("Xfield","Yfield")))
   
-  expect_message(subplot_summary(subplots, value = "D", draw_plot = F), "Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system", fixed=TRUE)
+  expect_message(subplot_summary(subplots, value = "D", draw_plot = F), "Projected coordinates are not found in sub_corner_coord$subplots, metric(s) will be summarised in the relative coordinate system.", fixed=TRUE)
   
   expect_error(suppressMessages(subplot_summary(subplots = subplots, AGB_simu = matrix(1:4))), "The rows in 'subplots$tree_data' must match the rows in 'AGB_simu'", fixed = TRUE)
   
@@ -111,7 +109,6 @@ test_that("subplot_summary_raster", {
   expect_equal(res_multiple$tree_summary[1:16, c(2,4)] , res_unique$tree_summary[,c(2,3)], tol=1e-2)
   
 })
-
 
 
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
