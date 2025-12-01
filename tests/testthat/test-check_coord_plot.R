@@ -146,4 +146,4 @@ test_that("check_plot_coord, tree data and raster", {
                               res_prop_raster$plot_design)
   
   
-})
+# })
