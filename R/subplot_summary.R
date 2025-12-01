@@ -124,12 +124,9 @@
 subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ref_raster = NULL, raster_fun = mean, ...) {
   
   # Checking parameters --------------------------------------------------------
-  if(is.null(subplots$tree_data)) {
-    stop("subplots argument does'nt contain any tree data frame. Use the divide_plot function with a non-null tree_data argument")
-  }
-  if(any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord))) {
+  if( any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord)) ) {
     subplots$sub_corner_coord[,c("x_proj","y_proj")] <- subplots$sub_corner_coord[,c("x_rel","y_rel")]
-    message("Projected coordinates are not found in sub_corner_coord$subplots, tree metric will be summarised in the relative coordinate system")
+    message("Projected coordinates are not found in sub_corner_coord$subplots, metric(s) will be summarised in the relative coordinate system.")
   }
   if(!is.null(value) && !any(value %in% names(subplots$tree_data))) {
     stop(paste(value,"is not a column name of subplots$tree_data"))
@@ -413,7 +410,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     } else {
       extract_rast_val <- extract(x = ref_raster, y = vect(sf_simu_polygons$sf_subplot_polygon), exact = TRUE)
     }
-    cat("Extracting raster metric done.")
+    cat("Extracting raster metric done.\n")
     # keeping raster values whose fraction are > 0.5
     extract_rast_val = data.table(extract_rast_val)[ fraction >0.5,]
     rast_val_name <- names(extract_rast_val)[2]
