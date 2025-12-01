@@ -567,7 +567,8 @@ raster obtained from LiDAR data) by providing the `ref_raster` and the
 raster_summary <- subplot_summary(
   subplots = subplots,
   ref_raster = nouraguesRaster, raster_fun = median)
-#> Extracting raster metric...Extracting raster metric done.[[1]]
+#> Extracting raster metric...Extracting raster metric done.
+#> [[1]]
 ```
 
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-17-1.png)
@@ -589,7 +590,8 @@ subplot_metric <- subplot_summary(
   ref_raster = nouraguesRaster # by default, the associated function is the mean function
   )
 #> As 'AGB_simu' contains 200 simulations, and 'subplots$simu_coord' contains 50 simulations, 150 simulations will be resampled in 'subplots'.
-#> Extracting raster metric...Extracting raster metric done.[[1]]
+#> Extracting raster metric...Extracting raster metric done.
+#> [[1]]
 ```
 
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-18-1.png)
