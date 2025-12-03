@@ -26,7 +26,8 @@
 #' @param rm_outliers If TRUE and dealing with repeated measurements of each corner, then outliers are removed from the coordinate calculation of the referenced corners.
 #' @param plot_ID If dealing with multiple plots : a character indicating the variable name for corner plot IDs in corner_data.
 #' @param tree_plot_ID If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.
-#' @param ref_raster A SpatRaster object from terra package, typically a chm raster created from LiDAR data.
+#' @param ref_raster filename (character) of the raster to be displayed (typically a CHM raster created from LiDAR data), or a SpatRaster object from terra package. 
+#' @param shapefile filename (character) of the shapefile to be displayed, or an object of class 'sf' (sf package). 
 #' @param prop_tree The column name variable of tree_data for which the tree visualization will be proportional.
 #' @param threshold_tree a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.
 #' @param ask If TRUE and dealing with multiple plots, then prompt user before displaying each plot. 
@@ -94,9 +95,9 @@
 #'   check_plot_204$plot_design
 #' }
 
-check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, prop_tree = NULL, threshold_tree = NULL, ask = TRUE) {
+check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel_coord, trust_GPS_corners, draw_plot = TRUE, tree_data = NULL, tree_coords = NULL, max_dist = 10, rm_outliers = TRUE, plot_ID = NULL, tree_plot_ID = NULL, ref_raster = NULL, shapefile = NULL, prop_tree = NULL, threshold_tree = NULL, ask = TRUE) {
   
-  ##### Checking arguments -----------------------------------------------------
+  # Checking arguments ---------------------------------------------------------
   
   if(missing(corner_data)) {
     stop("The way in which arguments are provided to the function has changed since version 2.2.1. You now have to provide corner_data data frame and its associated coordinates variable names.")
@@ -166,9 +167,9 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   }
   
   
-  ##### Data processing --------------------------------------------------------
+  # Data processing ------------------------------------------------------------
   
-  # Formatting corner data
+  ## Formatting corner data ----
   setnames(corner_dt, old = rel_coord, new = c("x_rel","y_rel"))
   
   if(!is.null(proj_coord)) {
@@ -184,7 +185,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     corner_dt[, plot_ID := "" ]
   }
   
-  # Formatting tree data 
+  ## Formatting tree data ----
   if(!is.null(tree_data)) {
     tree_dt <- data.table(tree_data)
     
@@ -203,7 +204,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   
   outliers <- data.table("plot_ID" = character(), "x_proj" = numeric(), "y_proj" = numeric(), "row_number" = integer())
   
-  ### Transform the geographic coordinates into UTM coordinates ----------------
+  ## Transform the geographic coordinates into UTM coordinates ----
   
   latlong2UTM_fct <- function(dat) { # dat = corner_dt
     proj_coord <- latlong2UTM(dat[, c("long","lat")])
@@ -220,7 +221,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     UTM_code <- corner_dt[, latlong2UTM_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
   }
   
-  ### Calculating sd_coord: the mean of the standard deviation of each corner (along x and y) ----
+  ## Calculating sd_coord: the mean of the standard deviation of each corner (along x and y) ----
   sd_coord <- copy(corner_dt)
   sd_coord <- sd_coord[ , c("sd_coord_x","sd_coord_y") := list(sd(x_proj, na.rm=TRUE), sd(y_proj, na.rm=TRUE)) , by = list(x_rel, y_rel, plot_ID) ]
   sd_coord <- unique(sd_coord[,c("plot_ID","sd_coord_x","sd_coord_y")])
@@ -228,7 +229,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
                       v.names = "sd_coord", timevar = NULL, ids = NULL)
   sd_coord <- unique(sd_coord[ , sd_coord := mean(sd_coord) , by = plot_ID ])
   
-  ### Check corner coordinates and calculate tree projected coordinates --------
+  # Check corner coordinates and calculate tree projected coordinates --------
   
   check_corner_fct <- function(dat) { # dat = corner_dt
     
@@ -372,10 +373,10 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     
   }
   
-  # Apply check_corner_fct to all plots
+  ## Apply check_corner_fct to all plots ----
   corner_checked <- corner_dt[, check_corner_fct(.SD), by = plot_ID, .SDcols = colnames(corner_dt)]
   
-  ### Create polygon -----------------------------------------------------------
+  # Create polygon -------------------------------------------------------------
   create_polygon <- function(dat) {
     corner_polygon <- st_multipoint(as.matrix(rbind(dat[,c("x_proj","y_proj")], dat[1,c("x_proj","y_proj")])))
     corner_polygon <- st_polygon(x = list(corner_polygon), dim = "XY")
@@ -385,7 +386,54 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
   corner_polygon <- st_sfc( lapply( split(corner_checked,corner_checked$plot_ID) , create_polygon ), 
                             crs = ifelse(!is.null(longlat), UTM_code$UTM_code, ""))
   
-  ### Draw the plot ------------------------------------------------------------
+  # Preparing plot(s) display --------------------------------------------------
+  
+  ## check ref_aster ----
+  if(!is.null(ref_raster)) {
+    # ref_raster as a character vector
+    if(is.character(ref_raster)) {
+      ref_raster <- tryCatch({
+        terra::rast(x = ref_raster)
+      }, error = function(e) {
+        message("The raster file could not be read and so will not be displayed.")
+        NULL
+      })
+    } else {
+      # ref_raster as a SpatRaster object
+      if(!inherits(ref_raster, "SpatRaster")) {
+        message("'ref_raster' is not recognised as a SpatRaster object and so will not be displayed.")
+        ref_raster <- NULL
+      }
+    }
+  }
+  
+  ## check shapefile ----
+  if (!is.null(shapefile)) {
+    if (is.character(shapefile)) {
+      shapefile <- tryCatch({
+        sf::st_read(shapefile, quiet = TRUE)
+      }, error = function(e) {
+        message("The shapefile could not be read and so will not be displayed.")
+        NULL
+      })
+    }
+    # if shapefile CRS = WGS84 and longlat is not supplied
+    if( sf::st_crs(shapefile) == sf::st_crs(4326) && is.null(longlat) ) {
+      message("The corner coordinates and the shapefile do not share the same CRS (the shapefile's CRS is WGS 84 but 'longlat' has not been supplied). The shapefile will not be displayed.")
+      shapefile <- NULL
+    }
+    # if longlat is supplied, convert the shapefile's CRS to the projected one using UTM_code
+    if( !is.null(longlat) && sf::st_crs(shapefile) == sf::st_crs(4326) ) {
+      if(length(unique(UTM_code$UTM_code)) != 1 ) {
+        message("More than one UTM zone are detected. The shapefile will not be displayed, as it is not advisable to have multiple projections within the same file.")
+        shapefile <- NULL
+      } else {
+        shapefile <- sf::st_transform(shapefile, crs = unique(UTM_code$UTM_code))
+      }
+    }
+  }
+  
+  # Draw the plot ------------------------------------------------------------
   draw_plot_fct <-  function(corner_dat) { # corner_dat = corner_dt
     
     current_plot_ID <- unique(corner_dat$plot_ID)
@@ -406,6 +454,17 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     } else {
       plot_design <- ggplot()
     }
+    
+    # Shapefile 
+    if(!is.null(shapefile)) {
+      # Select shapefile geometries in the current plot
+      shp_data <- shapefile[sf::st_intersects(shapefile, corner_polygon[[match(current_plot_ID,names(corner_polygon))]], sparse = FALSE) , ]
+      # Plot the shapefile
+      plot_design <- plot_design + 
+        ggplot2::geom_sf(data = shp_data) + 
+        ggplot2::coord_sf(datum = sf::st_crs(shp_data))
+    }
+    
     
     # All GPS measurements :
     corner_dat[ , whatpoint := "GPS measurements"]
@@ -462,12 +521,16 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     # Plot Corners
     plot_design <- plot_design + 
       geom_point(data = corner_dat, mapping = aes(x = x_proj, y = y_proj, col = whatpoint, shape = whatpoint), size=2) + 
-      geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2)+
+      geom_polygon(data = corner_polygon[[match(current_plot_ID,names(corner_polygon))]][[1]][,] , mapping = aes(x=x_proj,y=y_proj), colour="black",fill=NA,linewidth=1.2) +
       geom_segment(data=arrow_plot, mapping=aes(x=x,y=y,xend=x_end,yend=y_end), arrow=arrow(length=unit(0.4,"cm")),linewidth=1, col="blue") +
       geom_text(data = pos_text_arrow, mapping = aes(x=x_proj, y=y_proj, label=c("x_rel","y_rel")), col="blue" ) +
       ggtitle(paste("Plot",current_plot_ID)) +
-      theme_minimal() + 
-      coord_equal()
+      theme_minimal()
+    
+    if(is.null(shapefile)) { # Add coord_equal() if no shapefile (otherwise geom_sf() implies coord_sf())
+      plot_design <- plot_design + 
+        coord_equal()
+    }
     
     cols <- c("GPS measurements"="black", "GPS outliers (discarded)"="red", "Reference corners"="black")
     shapes <- c("GPS measurements"=2, "GPS outliers (discarded)"=4, "Reference corners"=15, "Trees"=1,"Trees outside the plot"=13)
@@ -475,6 +538,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
     plot_design <- plot_design +
       scale_color_manual(values=cols, guide = guide_legend("Corners", order=1)) + 
       scale_shape_manual(values=shapes, guide = guide_legend("Corners", order=1))
+    
     
     # Plot Trees :
     if(!is.null(tree_data)) {
