@@ -266,11 +266,11 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   
   
   # Data processing ---------------------------------------------------------
-  Hdata <- data.table(H = H, D = D)
+  Hdata <- na.omit(data.table(H = H, D = D))
   weight <- NULL
   
   # Warn if there is less than 2 diameter values in the following quantile intervals : [0-0.5], ]0.5;0.75] and ]0.75,1]
-  if ( any( table(findInterval(D, c(-1, quantile(D, probs = c(0.5, 0.75)), max(D) + 1))) < 3 ) ) {
+  if ( any( table(findInterval(Hdata$D, c(-1, quantile(Hdata$D, probs = c(0.5, 0.75)), max(Hdata$D) + 1))) < 3 ) ) {
     if(is.null(plot)) {
       warning("Be careful, your diameter values are not evenly distributed. You should check their distribution.")
     } else {
@@ -279,7 +279,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
   
   # Vector of diameter used only for visualisation purpose
-  D_Plot <- data.frame(D = Hdata[, 10^seq(log10(floor(min(D))), log10(ceiling(max(D))), l=100 )])
+  D_Plot <- data.frame(D = Hdata[, 10^seq(log10(floor(min(Hdata$D))), log10(ceiling(max(Hdata$D))), l=100 )])
   
   # If the measures need to be weighted
   if (useWeight == TRUE) {

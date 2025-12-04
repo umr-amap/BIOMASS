@@ -301,11 +301,9 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   # and adding it(s) to tree_summary at subplot level
   if(!is.null(value)) {
     if(length(value) == 1) {
-      #tree_summary <- tree_summary[!is.na(subplot_ID), fun(get(value)) , by=c("subplot_ID"), ]
       tree_summary <- tree_summary[!is.na(subplot_ID), fun(get(value), ...) , by=c("subplot_ID")]
       setnames(tree_summary, "V1", value_fun_name)
     } else { # Apply functions to values by subplot
-      #tree_summary <- tree_summary[!is.na(subplot_ID), lapply( 1:length(value), function(i) fun[[i]](get(value[i])) ) , by=c("subplot_ID")]
       tree_summary <- tree_summary[!is.na(subplot_ID), lapply( 1:length(value), function(i) fun[[i]](get(value[i]), ...) ) , by=c("subplot_ID")]
       setnames(tree_summary, 2:(length(value)+1), value_fun_name)
     }
@@ -330,7 +328,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     AGB_simu[, plot_ID :=  subplots$tree_data$plot_ID]
     AGB_simu[, subplot_ID :=  subplots$tree_data$subplot_ID]
     #value_fun_name_AGB_simu <- paste0(value_AGB_simu,"_sum")
-    AGB_simu_sum <- AGB_simu[!is.na(subplot_ID), lapply(.SD, sum), by = c("plot_ID","subplot_ID"), .SDcols = !c("plot_ID","subplot_ID")]
+    AGB_simu_sum <- AGB_simu[!is.na(subplot_ID), lapply(.SD, sum, na.rm=TRUE), by = c("plot_ID","subplot_ID"), .SDcols = !c("plot_ID","subplot_ID")]
     
     # Check if there was a subplot without any tree
     if(nrow(AGB_simu_sum) != length(unique(corner_dat$subplot_ID))) {
