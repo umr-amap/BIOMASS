@@ -270,8 +270,11 @@ The output of the function also standardises the names of the relative
 tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot`
 column, indicating if a tree is in the plot or not.
 
-You can also access and modify the plot via the `$plot_design` output
-which is a ggplot object. For example, to change the plot title:
+If you have a shapefile containing useful information about the plot,
+you can also display it using the `shapefile` argument.
+
+Finally, you can access and modify the plot via the `$plot_design`
+output which is a ggplot object. For example, to change the plot title:
 
 ``` r
 plot_to_change <- check_plot_trust_GPS$plot_design

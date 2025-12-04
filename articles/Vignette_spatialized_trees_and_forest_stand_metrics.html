@@ -64,9 +64,9 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-12-01</h4>
+            <h4 data-toc-skip class="date">2025-12-04</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/shapefile_arg_check_plot_coord/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
     </div>
 
@@ -676,7 +676,9 @@ x_proj/long and y_proj/lat).</p>
 relative tree coordinates (to <code>x_rel</code> and <code>y_rel</code>)
 and adds the <code>is_in_plot</code> column, indicating if a tree is in
 the plot or not.</p>
-<p>You can also access and modify the plot via the
+<p>If you have a shapefile containing useful information about the plot,
+you can also display it using the <code>shapefile</code> argument.</p>
+<p>Finally, you can access and modify the plot via the
 <code>$plot_design</code> output which is a ggplot object. For example,
 to change the plot title:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">

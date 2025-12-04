@@ -19,6 +19,7 @@ check_plot_coord(
   plot_ID = NULL,
   tree_plot_ID = NULL,
   ref_raster = NULL,
+  shapefile = NULL,
   prop_tree = NULL,
   threshold_tree = NULL,
   ask = TRUE
@@ -95,8 +96,14 @@ check_plot_coord(
 
 - ref_raster:
 
-  A SpatRaster object from terra package, typically a chm raster created
-  from LiDAR data.
+  filename (character) of the raster to be displayed (typically a CHM
+  raster created from LiDAR data), or a SpatRaster object from terra
+  package.
+
+- shapefile:
+
+  filename (character) of the shapefile to be displayed, or an object of
+  class 'sf' (sf package).
 
 - prop_tree:
 

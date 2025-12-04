@@ -32,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Check coordinates of plot corners and trees</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/check_plot_coord.R" class="external-link"><code>R/check_plot_coord.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/shapefile_arg_check_plot_coord/R/check_plot_coord.R" class="external-link"><code>R/check_plot_coord.R</code></a></small>
       <div class="d-none name"><code>check_plot_coord.Rd</code></div>
     </div>
 
@@ -56,6 +56,7 @@
 <span>  plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree_plot_ID <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ref_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shapefile <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  prop_tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  threshold_tree <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ask <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -115,7 +116,11 @@
 
 
 <dt id="arg-ref-raster">ref_raster<a class="anchor" aria-label="anchor" href="#arg-ref-raster"></a></dt>
-<dd><p>A SpatRaster object from terra package, typically a chm raster created from LiDAR data.</p></dd>
+<dd><p>filename (character) of the raster to be displayed (typically a CHM raster created from LiDAR data), or a SpatRaster object from terra package.</p></dd>
+
+
+<dt id="arg-shapefile">shapefile<a class="anchor" aria-label="anchor" href="#arg-shapefile"></a></dt>
+<dd><p>filename (character) of the shapefile to be displayed, or an object of class 'sf' (sf package).</p></dd>
 
 
 <dt id="arg-prop-tree">prop_tree<a class="anchor" aria-label="anchor" href="#arg-prop-tree"></a></dt>
