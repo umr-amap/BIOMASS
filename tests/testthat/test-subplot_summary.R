@@ -77,6 +77,11 @@ test_that("subplot_summary_value", {
   res_metrics <- subplot_summary(subplots = multiple_subplots, value = c("D","x_rel"), fun = list(D=sum,x_rel=mean), per_ha = c(T,F) , draw_plot = F)
   expect_equal(names(res_metrics$tree_summary), c("subplot_ID","x_rel_mean","D_sum_per_ha"))
   
+  # Test with user function : 
+  count_fun <- function(x) length(na.omit(x))
+  res_metrics <- subplot_summary(subplots = subplots_longlat, value = c("D","x_rel"), fun = list(D=sum,x_rel=count_fun), per_ha = c(T,F) , draw_plot = F)
+  expect_equal(names(res_metrics$tree_summary), c("subplot_ID","x_rel_count_fun","D_sum_per_ha"))
+  
 })
 
 test_that("subplot_summary_raster", {
