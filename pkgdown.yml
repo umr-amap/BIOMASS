@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   Vignette_BIOMASS: Vignette_BIOMASS.html
   Vignette_spatialized_trees_and_forest_stand_metrics: Vignette_spatialized_trees_and_forest_stand_metrics.html
-last_built: 2025-12-04T16:11Z
+last_built: 2025-12-04T17:25Z
 urls:
   reference: https://umr-amap.github.io/BIOMASS/reference
   article: https://umr-amap.github.io/BIOMASS/articles
