@@ -107,7 +107,7 @@ test_that("check_plot_coord, trust_GPS_corners", {
 })
 
 
-test_that("check_plot_coord, tree data and raster", {
+test_that("check_plot_coord, tree data, raster and shapefile", {
   
   res <- suppressMessages(
     check_plot_coord(
@@ -132,7 +132,30 @@ test_that("check_plot_coord, tree data and raster", {
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield"), prop_tree = "D", threshold_tree = 20,
       ref_raster = nouragues_raster))
+  nouragues_raster_path <- system.file("extdata", "NouraguesRaster.tif", package = "BIOMASS", mustWork = TRUE)
+  res_prop_raster <- 
+    check_plot_coord(
+      NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+      trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
+      ref_raster = nouragues_raster_path)
   
+  ### Shapefile
+  shapefile_path <- "../testdata/shapefiles/pp_canopy_gap_lines_proj.shp"
+  check_plot_coord(
+    NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+    trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
+    shapefile = shapefile_path, ref_raster = nouragues_raster)
+  
+  shapefile <- sf::st_read("../testdata/shapefiles/pp_canopy_gap_lines.shp", quiet = TRUE)
+  expect_message(check_plot_coord(
+    NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
+    trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
+    shapefile = shapefile) , 
+    "The shapefile will not be displayed.")
+  check_plot_coord(
+    NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"),
+    trust_GPS_corners = T, rm_outliers = T, draw_plot = T,
+    shapefile = shapefile, ref_raster = nouragues_raster)
   
 })
 

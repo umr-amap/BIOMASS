@@ -18,6 +18,7 @@ check_plot_coord(
   plot_ID = NULL,
   tree_plot_ID = NULL,
   ref_raster = NULL,
+  shapefile = NULL,
   prop_tree = NULL,
   threshold_tree = NULL,
   ask = TRUE
@@ -48,7 +49,9 @@ check_plot_coord(
 
 \item{tree_plot_ID}{If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.}
 
-\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data.}
+\item{ref_raster}{filename (character) of the raster to be displayed (typically a CHM raster created from LiDAR data), or a SpatRaster object from terra package.}
+
+\item{shapefile}{filename (character) of the shapefile to be displayed, or an object of class 'sf' (sf package).}
 
 \item{prop_tree}{The column name variable of tree_data for which the tree visualization will be proportional.}
 

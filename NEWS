@@ -3,6 +3,7 @@
 - Fixed an issue when plotting subplot_summary outputs due to a change in geom_sf().
 - Added argument origin to divide_plot() specifying how the grid should be aligned in relative coordinate space.
 - In addition to the four corners, check_plot_coord() can now accept GPS measurements along the sides of plots. 
+- Added the shapefile argument in check_plot_coord().
 
 * version 2.2.6
 - modelHD() can now be called with the 'bayesian' and 'useCache' arguments to build H-D models in a bayesian framework using brms library. This will results in propagating parameters uncertainties of the bayesian model during the error propagation of the AGBmonteCarlo() function.
