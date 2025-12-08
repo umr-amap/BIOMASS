@@ -270,9 +270,9 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       
       if( all(corner_dat$outlier) ) {
         stop(
-          paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) ,
-                 "all measurements for at least one corner are considered as outliers.\n
-                 This may be because some coordinates have very large error associated.\n
+          paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste0("In plot ", unique(corner_dat$plot_ID), ": \n")) ,
+                 "All measurements for at least one corner are considered as outliers. Did you forget to provide 'plot_ID' ? \n
+                 If not, this may be because some coordinates have very large error associated.\n
                  Try to remove these very large error or reconsider the max_dist parameter by increasing the distance"))
       }
       
@@ -356,7 +356,7 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       
       # Add a column telling if a tree is inside the plot or not 
       tree_dt[plot_ID %in% unique(corner_dat$plot_ID), is_in_plot := x_rel %between% range(corner_dat$x_rel) & y_rel %between% range(corner_dat$y_rel)]
-      if(any(! tree_dt[plot_ID %in% unique(corner_dat$plot_ID) , ][["is_in_plot"]])) { 
+      if(any(! tree_dt[plot_ID %in% unique(corner_dat$plot_ID) , ][["is_in_plot"]], na.rm = TRUE)) { 
         message(
           paste( ifelse(unique(corner_dat$plot_ID)=="", "", paste("In plot", unique(corner_dat$plot_ID), ":")) , 
                  "Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)\n"))

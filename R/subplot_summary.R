@@ -327,13 +327,15 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     names(AGB_simu) <- paste("AGB",1:ncol(AGB_simu), sep="_")
     AGB_simu[, plot_ID :=  subplots$tree_data$plot_ID]
     AGB_simu[, subplot_ID :=  subplots$tree_data$subplot_ID]
-    #value_fun_name_AGB_simu <- paste0(value_AGB_simu,"_sum")
     AGB_simu_sum <- AGB_simu[!is.na(subplot_ID), lapply(.SD, sum, na.rm=TRUE), by = c("plot_ID","subplot_ID"), .SDcols = !c("plot_ID","subplot_ID")]
     
     # Check if there was a subplot without any tree
     if(nrow(AGB_simu_sum) != length(unique(corner_dat$subplot_ID))) {
-      AGB_simu_sum <- AGB_simu_sum[data.table(subplot_ID = as.character(unique(corner_dat$subplot_ID))),
-                                   on = "subplot_ID"]
+      AGB_simu_sum <- AGB_simu_sum[
+        data.table(plot_ID = rep(as.character(unique(corner_dat$plot_ID)) , e=4),
+                   subplot_ID = as.character(unique(corner_dat$subplot_ID))),
+                                   on = c("plot_ID","subplot_ID")]
+      AGB_simu_sum[is.na(AGB_simu_sum)] <- 0
     }
   }
   
