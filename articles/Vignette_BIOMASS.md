@@ -227,10 +227,10 @@ kable(HD_res)
 
 | method    |      RSE |    RSElog | Average_bias |
 |:----------|---------:|----------:|-------------:|
-| log1      | 4.700088 | 0.2472750 |    0.0890365 |
-| log2      | 4.329727 | 0.2240379 |    0.0385429 |
-| weibull   | 4.307951 |        NA |    0.0028240 |
-| michaelis | 4.294488 |        NA |    0.0145642 |
+| log1      | 4.700088 | 0.2472750 |    0.0724598 |
+| log2      | 4.329727 | 0.2240379 |    0.0182504 |
+| weibull   | 4.307951 |        NA |   -0.0186951 |
+| michaelis | 4.294488 |        NA |   -0.0064068 |
 
 As the log2 model has the lowest RSE, we will build this model using the
 `method` argument and add its predictions to the dataset with the
