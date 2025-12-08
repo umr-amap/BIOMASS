@@ -23,11 +23,11 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 
       expect_is(HDmodel$model, ifelse(logMethod, "lm", "nls"))
 
-      expect_equal(length(HDmodel$residuals), nrow(na.omit(output)))
+      expect_equal(length(HDmodel$residuals), nrow(output))
 
       expect_equal(HDmodel$method, method)
 
-      expect_equal(length(HDmodel$predicted), nrow(na.omit(output)))
+      expect_equal(length(HDmodel$predicted), nrow(output))
       expect_is(HDmodel$predicted, "numeric")
 
       expect_is(HDmodel$RSE, "numeric")
@@ -62,10 +62,10 @@ test_that("Without parameters", {
   expect_equal(ncol(Res),4)
 
   res <- "method  RSE    RSElog Average_bias
-log1 4.305060 0.2231136  0.004227454
-log2  4.222718 0.2215495  0.003121671
-weibull 4.220562        NA  3.973461e-05
-michaelis 4.235974        NA  -1.219911e-03
+log1 4.305060 0.2231136  -0.01559652
+log2  4.222718 0.2215495  -0.01595885
+weibull 4.220562        NA  -0.01878870
+michaelis 4.235974        NA  -0.02018496
 "
   expect_equal(Res, fread(res, data.table = FALSE), tolerance = 10^-6)
 })
