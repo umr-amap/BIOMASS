@@ -189,19 +189,19 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
         if(is.null(weight)) {
           output$RSElog <- summary(mod)$sigma
         } else { # if weighted model, summary(mod)$sigma is not the appropriate RSE
-          res <- na.omit(log(Hdata$H)) - predict(mod)
-          output$RSElog <- sqrt(sum(res^2) / summary(mod)$df[2])
+          res <- log(Hdata$H) - predict(mod, newdata = Hdata)
+          output$RSElog <- sqrt(sum(res^2, na.rm = TRUE) / summary(mod)$df[2])
         }
         # Baskerville correction 1972
-        output$Hpredict <- exp(predict(mod) + 0.5 * output$RSElog^2)
+        output$Hpredict <- exp(predict(mod, newdata = Hdata) + 0.5 * output$RSElog^2)
       } else {
         if(is.null(weight)) {
           output$RSElog <- summary(mod)$spec_pars$Estimate
         } else { # if weighted model, summary(mod)$spec_pars$Estimate is not the appropriate RSE
-          res <- na.omit(log(Hdata$H)) - predict(mod)[,1]
-          output$RSElog <- sqrt(sum(res^2) / summary(mod)$nobs)  
+          res <- log(Hdata$H) - suppressWarnings(predict(mod, newdata = Hdata)[,1]) #warnings caused by NA's 
+          output$RSElog <- sqrt(sum(res^2, na.rm = TRUE) / summary(mod)$nobs) 
         }
-        output$Hpredict <- exp(predict(mod)[,1] + 0.5 * output$RSElog^2)
+        output$Hpredict <- exp(suppressWarnings(predict(mod, newdata = Hdata)[,1]) + 0.5 * output$RSElog^2)
       }
       
       if (useGraph) {
@@ -220,7 +220,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       )
       
       if(!bayesian) {
-        output$Hpredict <- predict(mod)
+        output$Hpredict <- predict(mod, newdata = Hdata)
         if (useGraph) {
           output$Hpredict_plot <- predict(mod, newdata = D_Plot)
         }
@@ -235,15 +235,15 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     }
     
     names(output$Hpredict) <- NULL
-    res <- na.omit(Hdata$H) - output$Hpredict 
+    res <- Hdata$H - output$Hpredict 
     
     output$method <- method
     if(!bayesian) {
-      output$RSE <- sqrt(sum(res^2) / summary(mod)$df[2]) # Residual standard error
+      output$RSE <- sqrt(sum(res^2, na.rm=TRUE) / summary(mod)$df[2]) # Residual standard error
     } else {
-      output$RSE <- sqrt(sum(res^2) / summary(mod)$nobs) # Residual standard error
+      output$RSE <- sqrt(sum(res^2, na.rm=TRUE) / summary(mod)$nobs) # Residual standard error
     }
-    output$Average_bias <- (mean(output$Hpredict) - mean(Hdata$H, na.rm = TRUE)) / mean(Hdata$H, na.rm = TRUE)
+    output$Average_bias <- (mean(output$Hpredict, na.rm = TRUE) - mean(Hdata$H, na.rm = TRUE)) / mean(Hdata$H, na.rm = TRUE)
     output$residuals <- res
     output$mod <- mod
     
