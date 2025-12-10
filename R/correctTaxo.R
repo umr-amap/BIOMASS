@@ -1,233 +1,117 @@
-#' Correct and match taxonomic names to the World Flora Online database
+#' Check that a URL is responsive
 #'
-#' @description
-#' This function matches taxonomic names using the World Flora Online database,
-#'     via their GraphQL API
+#' @param x URL to check
 #'
-#' This function creates a file named correctTaxo.rds (see Localisation), this
-#' file holds all previous API requests, to avoid the replication of
-#' time-consuming server requests.
+#' @return logical
+#' 
+#' @noRd
+#' 
+checkURL <- function(x) {
+  tryCatch(
+    {
+      req <- httr2::request(x)
+      req <- httr2::req_method(req, "HEAD")
+      httr2::req_perform(req)
+      TRUE
+    },
+    error = function(e) {
+      FALSE
+    }
+  )
+}
+
+#' Convert NULL and empty vectors to NA
 #'
-#' @inheritSection cacheManager Localisation
+#' @param x vector that is potentially `NULL` or of `length(0)`
 #'
-#' @param x vector of taxonomic names
-#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
-#'     if no species-level match is available
-#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
-#'     possible to estimate taxonomic rank from the search string and the rank
-#'     does not match that in the name record
-#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
-#'     there are other names with the same words but different author strings
-#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
-#'     Levenshtein distance used for fuzzy matching words in `x`
-#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
-#'     found, and if there is only one candidate is an "accepted" name,
-#'     automatically choose that name
-#' @param interactive logical, if TRUE (default) user will be prompted to pick
-#'     names from a list where multiple ambiguous matches are found, otherwise
-#'     names with multiple ambiguous matches will be skipped
-#' @param useCache logical, if TRUE use cached values in
-#'     `options("wfo.api_uri")` preferentially, to reduce the number of API
-#'     calls
-#' @param useAPI logical, if TRUE (default) allow API calls
-#' @param raw logical, if TRUE raw a nested list is returned, otherwise a
-#'     dataframe
-#' @param delay number of seconds to pause between API calls. Used to
-#'     rate-limit repeated API calls
+#' @noRd
+#' 
+null2na <- function(x) {
+  if (is.null(x) | length(x) == 0) {
+    NA_character_ 
+  } else { 
+    x
+  }
+}
+
+#' Common taxonomic name substitutions
+#' 
+#' @return character vector with regular expressions for use with `gsub()`
 #'
-#' @return data.frame containing taxonomic name information with rows matching
-#'     names in `x`, or a list containing unique values in `x` if raw = TRUE
-#'
-#' @references Borsch, T. et al. (2020).
-#' _World Flora Online: Placing taxonomists at the heart of a definitive and
-#' comprehensive global resource on the world's plants_. TAXON, 69, 6.
-#' doi10.1002/tax.12373:
-#'
-#' @author John L. Godlee
+#' @details
+#' Used in argument `sub_pattern` in `correctTaxo()`
 #' 
 #' @export
+#' 
+subPattern <- function() {
+  c(" sp[.]", " spp[.]", " pl[.]", " indet[.]", " ind[.]", " gen[.]", " g[.]",
+    " fam[.]", " nov[.]", " prox[.]", " cf[.]", " aff[.]", " s[.]s[.]", 
+    " s[.]l[.]", " p[.]p[.]", " p[.] p[.]", "[?]", " inc[.]", " stet[.]",
+    "Ca[.]", "nom[.] cons[.]", "nom[.] dub[.]", " nom[.] err[.]", " nom[.] illeg[.]", 
+    " nom[.] inval[.]", " nom[.] nov[.]", " nom[.] nud[.]", " nom[.] obl[.]", 
+    " nom[.] prot[.]", " nom[.] rej[.]", " nom[.] supp[.]", " sensu auct[.]", 
+    "\\bsp\\b", "\\bspp\\b", "\\bpl\\b", "\\bindet\\b", "\\bind\\b", "\\bgen\\b", "\\bg\\b",
+    "\\bfam\\b", "\\bnov\\b", "\\bprox\\b", "\\bcf\\b", "\\baff\\b")
+}
+
+#' Construct WorldFlora GraphQL API calls
 #'
-#' @importFrom data.table rbindlist
-#' @importFrom httr2 request req_method req_perform
+#' @param vars list of variables used in query
+#' @param query GraphQL API query string, e.g. as returned
+#'     `query_taxonNameMatch()`, `query_taxonNameById()`
+#'     `query_taxonConceptById()`, `query_classifications()`
+#' @param capacity maximum number of API calls which can accumulate over the 
+#'     duration of `fill_time_s`. See documentation for `httr2::req_throttle()`
+#' @param fill_time_s time in seconds to refill the capacity for repeated API 
+#'     calls. See documentation for `httr2::req_throttle()`
+#' @param timeout time in seconds to wait before disconnecting from an
+#'     unresponsive request
 #'
+#' @return API call object
+#' 
+#' @noRd
+#' 
 #' @examples
-#' x <- c("Burkea africana", "Julbernardia paniculata", "Fabaceae", 
-#'   "Indet indet", "Brachystegia")
-#' correctTaxo(x)
-#' correctTaxo(x, raw = TRUE)
-#' correctTaxo(x, fallbackToGenus = TRUE)
-#' correctTaxo(x, interactive = FALSE)
+#' callAPI("Burkea africana", query_taxonNameMatch())
+#' callAPI("wfo-0000214110", query_taxonNameById())
 #'
-correctTaxo <- function(x, fallbackToGenus = FALSE, checkRank = FALSE,
-  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
-  interactive = TRUE, useCache = FALSE, useAPI = TRUE, raw = FALSE, 
-  delay = 0.5) {
+callAPI <- function(vars, query, capacity = 60, fill_time_s = 60, timeout = 10) {
 
-  if (!useCache & !useAPI) {
-    stop("Either useCache or useAPI must be TRUE")
-  }
+  # Create request 
+  req <- httr2::request(getOption("wfo.api_uri"))
 
-  # Define function to check URL
-  checkURL <- function(url) {
-    tryCatch(
-      {
-        req <- httr2::request(url)
-        req <- httr2::req_method(req, "HEAD")
-        httr2::req_perform(req)
-        TRUE
-      },
-      error = function(e) {
-        FALSE
-      }
-    )
-  }
+  payload <- list(query = query, variables = vars)
 
-  # Check if WFO API is reachable 
-  if (!checkURL(getOption("wfo.api_uri"))) {
-    w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
-    if (useCache) {
-      warning(w, "\nOnly cached names will be filled")
-      useAPI <- FALSE
-    } else {
-      stop("\n", w, " and useCache = FALSE, Exiting ...")
-    }
-  }
+  # Set body
+  req <- httr2::req_body_json(req, payload, auto_unbox = TRUE)
+  
+  # Set timeout
+  req <- httr2::req_options(req, timeout = timeout)
 
-  # Load cache
-  if (useCache) {
-    if (!(exists("wfo_cache", envir = .GlobalEnv) && 
-      is.environment(get("wfo_cache", envir = .GlobalEnv)))) {
-      # Create wfo_cache in the global environment
-      assign("wfo_cache", new.env(parent = emptyenv()), envir = .GlobalEnv)
-      wfo_cache$names <- list()
-    }
-    cachePath <- cacheManager("correctTaxo.rds")
-    wfo_cache$names <- readRDS(cachePath)
-    message(sprintf("Cached taxonomic names loaded from '%s'", cachePath))
-  }
-
-  # Extract unique names 
-  xun <- sort(unique(x))
-  xlen <- length(xun)
-
-  # For each unique taxonomic name 
-  resp_list <- lapply(seq_along(xun), function(i) {
-    taxon <- xun[i]
-
-    cat(sprintf("%i of %i:\t%s\n", i, xlen, taxon))
-
-    # Submit API query
-    c(list(submitted_name = taxon), 
-      matchWFOName(taxon, 
-        fallbackToGenus = fallbackToGenus, 
-        checkRank = checkRank,
-        checkHomonyms = checkHomonyms,
-        fuzzyNameParts = fuzzyNameParts,
-        preferAccepted = preferAccepted,
-        useCache = useCache,
-        useAPI = useAPI,
-        interactive = interactive,
-        delay = delay))
-  })
-
-  # Define helper function to convert NULL values to NA
-  null2na <- function(x) {
-    if (is.null(x)) {
-      NA_character_ 
-    } else { 
-      x
-    }
-  }
-
-  if (raw) {
-    # Return raw list output
-    out <- resp_list
-  } else {
-    # Create formatted dataframe
-    out <- data.table::rbindlist(lapply(resp_list, function(i) { 
-      if ("id" %in% names(i)) {
-        data.frame(
-          taxon_name_subm = null2na(i$submitted_name),
-          method = null2na(i$method),
-          fallbackToGenus = null2na(i$fallbackToGenus),
-          checkRank = null2na(i$checkRank),
-          checkHomonyms = null2na(i$checkHomonyms),
-          fuzzyNameParts = null2na(i$fuzzyNameParts),
-          preferAccepted = null2na(i$preferAccepted),
-          taxon_wfo_syn = null2na(i$id),
-          taxon_name_syn = null2na(i$fullNameStringNoAuthorsPlain),
-          taxon_auth_syn = null2na(i$authorsString),
-          taxon_stat_syn = null2na(i$nomenclaturalStatus),
-          taxon_role_syn = null2na(i$role),
-          taxon_rank_syn = null2na(i$rank),
-          taxon_path_syn = null2na(i$wfoPath),
-          taxon_wfo_acc = null2na(i$currentPreferredUsage$hasName$id),
-          taxon_name_acc = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
-          taxon_auth_acc = null2na(i$currentPreferredUsage$hasName$authorsString),
-          taxon_stat_acc = null2na(i$currentPreferredUsage$hasName$nomenclaturalStatus),
-          taxon_role_acc = null2na(i$currentPreferredUsage$hasName$role),
-          taxon_rank_acc = null2na(i$currentPreferredUsage$hasName$rank),
-          taxon_path_acc = null2na(i$currentPreferredUsage$hasName$wfoPath))
-      } else { 
-        data.frame(
-          taxon_name_subm = i$submitted_name,
-          method = i$method,
-          fallbackToGenus = i$fallbackToGenus,
-          checkRank = i$checkRank,
-          checkHomonyms = i$checkHomonyms,
-          fuzzyNameParts = i$fuzzyNameParts,
-          preferAccepted = i$preferAccepted,
-          taxon_wfo_syn = NA_character_,
-          taxon_name_syn = NA_character_,
-          taxon_auth_syn = NA_character_,
-          taxon_stat_syn = NA_character_,
-          taxon_role_syn = NA_character_,
-          taxon_rank_syn = NA_character_,
-          taxon_path_syn = NA_character_,
-          taxon_wfo_acc = NA_character_,
-          taxon_name_acc = NA_character_,
-          taxon_auth_acc = NA_character_,
-          taxon_stat_acc = NA_character_,
-          taxon_role_acc = NA_character_,
-          taxon_rank_acc = NA_character_,
-          taxon_path_acc = NA_character_)
-      }
-    }))
-
-    # Match row order of dataframe to x
-    out <- out[match(x, out$taxon_name_subm),]
-  }
-
-  # Optionally write cache to file
-  if (useCache) {
-    saveRDS(wfo_cache, cachePath)
-    message(sprintf("Cached taxonomic names saved to '%s'", cachePath))
-  }
+  # Set throttle to avoid rate-limiting 
+  req <- httr2::req_throttle(req, 
+    capacity = capacity, 
+    fill_time_s = fill_time_s)
 
   # Return
-  return(out)
+  return(req)
 }
 
 #' Manually pick a taxonomic name from a list returned by the WFO GraphQL API
 #'
-#' @param x original taxonomic name searched by `callWFOAPI()`
-#' @param cand list of candidate taxa returned by `callWFOAPI()`
+#' @param x original taxonomic name 
+#' @param cand list of candidate taxa 
 #' @param offset initial index value used internally by pager, controls index
 #'     of page start
 #' @param page_size index value used internally by pager, controls page length
-#' @param delay number of seconds to pause before sending the API call. Used to
-#'     rate-limit repeated API calls
+#' @param timeout time in seconds to wait before disconnecting from an
+#'     unresponsive request
 #'
 #' @return list containing information of matched taxonomic name
 #' 
-#' @examples
-#' x <- "Burkea af"
-#' resp <- callWFOAPI(x, query_taxonNameMatch())
-#' pickWFOName(x, resp$data$taxonNameMatch$candidates)
+#' @noRd
 #' 
-#' @export
-#' 
-pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
+pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 
   # If no candidates, SKIP
   if (length(cand) == 0) {
@@ -251,10 +135,11 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
   for (i in start_page:end_page) {
     cat(
       sprintf(
-        "%-4s%s\t%s\t%s\t%s\n",
+        "%-4s%s\t%s\t%s\t%s\t%s\n",
         i,
         cand[[i]]$id,
-        cand[[i]]$fullNameStringPlain,
+        cand[[i]]$fullNameStringNoAuthorsPlain,
+        cand[[i]]$authorsString,
         cand[[i]]$role,
         cand[[i]]$wfoPath
       )
@@ -282,21 +167,24 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
       match$method <- "MANUAL"
       valid <- TRUE
     } else if (grepl("^wfo-[0-9]{10}$", tolower(trimws(input)))) {
+      # Prepare body of call
       input <- tolower(trimws(input))
-      match <- callWFOAPI(input, 
-        query = query_taxonNameById(), 
-        delay = delay)$data$taxonNameById
+      api_vars <- list(searchString = input)
+      api_call <- callAPI(api_vars, query_taxonNameById(), timeout = timeout)
+      api_resp <- httr2::req_perform(api_call)
+      api_json <- httr2::resp_body_json(api_resp)
+      match <- api_json$data$taxonNameById
       match$method <- "MANUAL"
       valid <- TRUE
     } else if (tolower(input) == "n") {
       if (end_page < length(cand)) {
-        return(pickWFOName(x, cand, offset + page_size, page_size, delay = delay))
+        return(pickName(x, cand, offset + page_size, page_size))
       } else {
         cat("Already on last page.\n")
       }
     } else if (tolower(input) == "p") {
       if (start_page > 1) {
-        return(pickWFOName(x, cand, offset - page_size, page_size, delay = delay))
+        return(pickName(x, cand, offset - page_size, page_size))
       } else {
         cat("Already on first page.\n")
       }
@@ -312,154 +200,384 @@ pickWFOName <- function(x, cand, offset = 0, page_size = 10, delay = 0.5) {
   return(match)
 }
 
-#' Match a taxonomic name against the WFO GraphQL API
+#' Correct and match taxonomic names to the World Flora Online database
 #'
-#' @param x taxonomic name to be searched 
-#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
-#'     if no species-level match is available
-#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
-#'     possible to estimate taxonomic rank from the search string and the rank
-#'     does not match that in the name record
-#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
-#'     there are other names with the same words but different author strings
-#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
-#'     Levenshtein distance used for fuzzy matching words in `x`
-#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
-#'     found, and if there is only one candidate is an "accepted" name,
-#'     automatically choose that name
-#' @param useCache logical, if TRUE use cached values in
-#'     `options("wfo.api_uri")` preferentially, to reduce the number of API
-#'     calls
-#' @param useAPI logical, if TRUE (default) allow API calls
+#' @description
+#' Match taxonomic names using the World Flora Online database, via their 
+#'     GraphQL API
+#'
+#' @param x vector of taxonomic names
 #' @param interactive logical, if TRUE (default) user will be prompted to pick
 #'     names from a list where multiple ambiguous matches are found, otherwise
 #'     names with multiple ambiguous matches will be skipped
-#' @param delay number of seconds to pause before sending the API call. Used to
-#'     rate-limit repeated API calls
+#' @param preferAccepted logical, if TRUE, if multiple ambiguous matches are
+#'     found, and if only one candidate is an "accepted" name,
+#'     automatically choose that name
+#' @param preferFuzzy logical, if TRUE, if multiple ambiguous matches are 
+#'     found, the accepted matched name with the lowest Levenshtein distance to
+#'     the submitted name will be returned
+#' @param sub_pattern character vector of regex patterns which will be removed
+#'     from names in `x` using `gsub()`. The order of this vector matters,
+#'     substitutions are applied sequentially. Sensible defaults are provided
+#'     by `subPattern()`
+#' @param useCache logical, if TRUE use cached values in `the$wfo_cache` 
+#'     preferentially, to reduce the number of API calls
+#' @param useAPI logical, if TRUE (default) allow API calls
+#' @param capacity maximum number of API calls which can accumulate over the 
+#'     duration of `fill_time_s`. See documentation for `httr2::req_throttle()`
+#' @param fill_time_s time in seconds to refill the capacity for repeated API 
+#'     calls. See documentation for `httr2::req_throttle()`
+#' @param timeout time in seconds to wait before disconnecting from an
+#'     unresponsive request
 #'
-#' @return list representation of JSON returned by API call 
+#' @return data.frame of taxonomic names with rows matching names in `x`.
+#' \describe{
+#'   \item{nameOriginal}{Original name as in `genus` + `species`}
+#'   \item{nameSubmitted}{Name after optional sanitisation according to
+#'       `sub_pattern`}
+#'   \item{nameMatched}{Matched taxonomic name}
+#'   \item{nameAccepted}{Accepted taxonomic name}
+#'   \item{familyAccepted}{Family of accepted name}
+#'   \item{genusAccepted}{Genus of accepted name}
+#'   \item{speciesAccepted}{Species epithet of accepted name}
+#'   \item{nameModified}{Flag indicating if `matchedName` is different from
+#'       `nameOriginal`, not including the removal of excess whitespace}
+#' }
+#'
+#' @references 
+#' Borsch, T. et al. (2020). _World Flora Online: Placing taxonomists at the
+#' heart of a definitive and comprehensive global resource on the world's
+#' plants_. TAXON, 69, 6. doi10.1002/tax.12373:
+#'
+#' @author John L. Godlee
 #' 
-#' @noRd
+#' @export
+#' 
+#' @importFrom stringdist stringsim
+#'
 #' @examples
-#' matchWFOName("Burkea africana")
-#' 
-matchWFOName <- function(x, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0, preferAccepted = FALSE, 
-  useCache = FALSE, useAPI = TRUE, interactive = TRUE, delay = 0.5) {
+#'
+correctTaxo <- function(genus, species, interactive = TRUE,
+  preferAccepted = FALSE, preferFuzzy = FALSE, sub_pattern = subPattern(),
+  useCache = FALSE, useAPI = TRUE, capacity = 60, fill_time_s = 60, timeout = 10) {
 
-  # Search cache for name 
-  if (useCache && x %in% names(wfo_cache$names) ) {
-    # If name found, use cached version
-    match <- wfo_cache$names[[x]]
-    cat(sprintf("Using cached data for: %s\n", x))
-  } else if (useAPI == TRUE) {
-    # If name not found in cache, send API call
-    response <- callWFOAPI(x, 
-      query_taxonNameMatch(), 
-      fallbackToGenus = fallbackToGenus,
-      checkRank = checkRank,
-      checkHomonyms = checkHomonyms,
-      fuzzyNameParts = fuzzyNameParts,
-      delay = delay)
-
-    # If interactive and name not found
-    cand_roles <- unlist(lapply(response$data$taxonNameMatch$candidates, "[[", "role")) 
-    if (is.null(response$data$taxonNameMatch$match)) {
-      if (preferAccepted && sum(cand_roles == "accepted") == 1) {
-        match <- response$data$taxonNameMatch$candidates[[which(cand_roles == "accepted")]]
-        match$method <- "AUTO ACC"
-      } else if (interactive) {
-        match <- pickWFOName(x, 
-          response$data$taxonNameMatch$candidates, 
-          delay = delay)
-      } else {
-        cat(sprintf("No cached name for: %s\n", x))
-        match <- list()
-        match$method <- "EMPTY"
-      }
-    } else {
-      match <- response$data$taxonNameMatch$match
-      match$method <- "AUTO"
+  # Combine genus and species fragments
+  if (!is.null(species)) { 
+    if (length(genus) != length(species)) {
+      stop("'genus' and 'species' must be of equal length")
     }
-  } else {
-    cat(sprintf("No cached name for: %s\n", x))
-    match <- list()
-      match$method <- "EMPTY"
+    species[is.na(species)] <- ""
+    x <- paste(genus, species, sep = " ")
+  } else { 
+    x <- genus
   }
 
-  # Add query parameters
-  match$fallbackToGenus <- fallbackToGenus
-  match$checkRank <- checkRank
-  match$checkHomonyms <- checkHomonyms
-  match$fuzzyNameParts <- fuzzyNameParts 
-  match$preferAccepted <- preferAccepted 
-
-  # Store result in cache
-  if (match$method %in% c("AUTO", "MANUAL") & 
-      !x %in% names(wfo_cache$names) &
-      !is.null(match$id) && !is.na(match$id)) {
-    wfo_cache$names[[x]] <- match
+  # If API throttling arguments are empty, set generous limits 
+  if (is.na(capacity)) { 
+    capacity <- length(x)
   }
+
+  if (is.na(fill_time_s)) { 
+    fill_time_s <- length(x)
+  }
+
+  # Check use of API and cache
+  if (!useCache & !useAPI) {
+    stop("Either useCache or useAPI must be TRUE")
+  }
+
+  if (preferFuzzy & interactive) { 
+    warning(
+      "'preferFuzzy' and 'interactive' are both TRUE, defaulting to interactive matching", 
+      immediate. = TRUE)
+    preferFuzzy <- FALSE
+  }
+
+  # Check if WFO API is reachable 
+  if (useAPI && !checkURL(getOption("wfo.api_uri"))) {
+    w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
+    if (useCache) {
+      warning(w, "\nOnly cached names will be filled")
+      useAPI <- FALSE
+    } else {
+      stop("\n", w, " and useCache = FALSE, Exiting ...")
+    }
+  }
+
+  # Duplicate vector of names to prepare for sanitising
+  xsub <- x
+
+  # Convert characters to lowercase
+  xsub <- tolower(xsub)
+
+  # Optionally remove substrings matched by sub_pattern
+  sub_pattern <- na.omit(sub_pattern)
+  if (length(sub_pattern) > 0) {
+    for (i in seq_along(sub_pattern)) {
+      xsub <- gsub(sub_pattern[i], "", xsub)
+    }
+  } 
+
+  # Remove leading and trailing whitespace and multiple spaces
+  xsub <- trimws(gsub("\\s+", " ", xsub))
+
+  # Extract unique names 
+  xun <- sort(unique(xsub))
+
+  # Optionally search cache for names
+  match_cache_list <- list()
+  if (useCache) {
+    # Extract cached names
+    match_cache_list <- the$wfo_cache[xun]
+    match_cache_list[sapply(match_cache_list, is.null)] <- NULL
+
+    # Remove names matched in cache from vector of names
+    xun <- xun[!xun %in% names(match_cache_list)]
+
+    # Message
+    if (length(match_cache_list) > 0) {
+      cat(sprintf("Using cached data for %s names\n", length(match_cache_list)), "\n")
+    }
+  }
+
+  # Send message if names not matched in cache and API is off 
+  if (!useAPI & length(xun) > 0) {
+  cat(sprintf(
+      "Some names not found in cache and useAPI = FALSE. These names will be NA:\n  %s",
+      paste(xun, collapse = "\n  ")
+    ), "\n")
+  }
+
+  # For each taxonomic name (optionally excluding names matched in cache)
+  # Construct API calls
+  match_api_list <- list()
+  if (useAPI & length(xun) > 0) {
+    # Get current WFO backbone version
+    req <- httr2::request(getOption("wfo.api_uri"))
+    bb_payload <- list(query = query_classifications())
+    bb_req <- httr2::req_body_json(req, bb_payload, auto_unbox = TRUE)
+    bb_resp <- httr2::req_perform(bb_req)
+    bb_json <- httr2::resp_body_json(bb_resp)
+    bb <- unlist(bb_json)
+
+    # Construct API calls for name matching
+    api_call_list <- list()
+    for (i in seq_along(xun)) {
+
+      api_vars <- list(
+        searchString = xun[i], 
+        fallbackToGenus = FALSE,
+        checkRank = FALSE,
+        checkHomonyms = FALSE,
+        fuzzyNameParts = 3
+      )
+
+      api_call_list[[i]] <- callAPI(api_vars, 
+          query = query_taxonNameMatch(), 
+          capacity = capacity,
+          fill_time_s = fill_time_s,
+          timeout = timeout)
+    }
+
+    # Submit API calls
+    api_resp_list <- httr2::req_perform_parallel(api_call_list)
+
+    # Convert API responses to JSON
+    api_json_list <- lapply(api_resp_list, httr2::resp_body_json)
+
+    # Collect matched names 
+    for (i in seq_along(api_json_list)) {
+
+      # If unambiguous match found
+      if (!is.null(api_json_list[[i]]$data$taxonNameMatch$match)) {
+        # Singular accepted name
+        match_api_list[[i]] <- api_json_list[[i]]$data$taxonNameMatch$match
+        match_api_list[[i]]$method <- "AUTO"
+      } else if (length(api_json_list[[i]]$data$taxonNameMatch$candidates) != 0) {
+        # Find Levenshtein distance between submitted name and candidate names
+        cand_dist <- 1 - stringdist::stringsim(xun[i],
+          unlist(lapply(
+            api_json_list[[i]]$data$taxonNameMatch$candidates, 
+            "[[", "fullNameStringNoAuthorsPlain")) )
+
+        # List role of candidate matches (accepted, synonym, unplaced, etc.) 
+        role_lev <- c("accepted", "synonym", "unplaced", "deprecated")
+        cand_roles <- factor(unlist(lapply(
+            api_json_list[[i]]$data$taxonNameMatch$candidates, 
+            "[[", "role")), levels = role_lev)
+
+        # Reorder candidate matches according to Levenshtein distance and role
+        cand_names <- unlist(lapply(
+            api_json_list[[i]]$data$taxonNameMatch$candidates, 
+            "[[", "fullNameStringNoAuthorsPlain")) 
+
+        # Sort candidate matches first by Levenshtein distance, then by role
+        cand_sort <- order(cand_roles, cand_names)
+        api_json_list[[i]]$data$taxonNameMatch$candidates <- 
+          api_json_list[[i]]$data$taxonNameMatch$candidates[cand_sort]
+
+        if (preferAccepted && sum(cand_roles == "accepted") == 1) {
+          # Auto-accept singular accepted name
+          match_api_list[[i]] <- api_json_list[[i]]$data$taxonNameMatch$candidates[[
+            which(cand_roles == "accepted")]]
+          match_api_list[[i]]$method <- "AUTO ACC"
+        } else if (preferFuzzy) {
+          # Auto-accept singular accepted name
+          match_api_list[[i]] <- api_json_list[[i]]$data$taxonNameMatch$candidates[[1]]
+          match_api_list[[i]]$method <- "AUTO FUZZY"
+        } else if (interactive) {
+          # Interactive name picking
+          match_api_list[[i]] <- pickName(xun[i], api_json_list[[i]]$data$taxonNameMatch$candidates)
+        } else {
+          # No successful match
+          cat(sprintf("No unique match for: %s\n", xun[i]))
+          match_api_list[[i]] <- list()
+          match_api_list[[i]]$method <- "EMPTY"
+        }
+      } else {
+        # No candidates 
+        cat(sprintf("No candidates for: %s\n", xun[i]))
+        match_api_list[[i]] <- list()
+        match_api_list[[i]]$method <- "EMPTY"
+      }
+
+      # Add submitted name
+      match_api_list[[i]]$submitted_name <- xun[i]
+    }
+
+    # Construct API calls to extract family, genus, and species epithet
+    wfo_id_bb_api_call_list <- list()
+    for (i in seq_along(match_api_list)) {
+      wfo_id_bb <- paste0(
+        match_api_list[[i]]$currentPreferredUsage$hasName$id, "-", bb)
+
+      # Extract accepted name WFO IDs and add current backbone version 
+      api_vars <- list(searchString = wfo_id_bb)
+      wfo_id_bb_api_call_list[[i]] <- callAPI(api_vars, 
+        query = query_taxonConceptById(),
+        capacity = capacity,
+        fill_time_s = fill_time_s,
+        timeout = timeout)
+    }
+
+    # Submit API calls
+    api_req <- httr2::req_perform_parallel(wfo_id_bb_api_call_list)
+
+    # Convert API responses to JSON
+    api_resp <- lapply(api_req, httr2::resp_body_json)
+
+    # Extract family, genus and species epithet
+    for (i in seq_along(api_resp)) {
+
+      path <- api_resp[[i]]$data$taxonConceptById$path
+
+      # Extract all ranks
+      ranks <- vapply(
+        path,
+        function(j) {
+          r <- j$hasName$rank
+          if (length(r) == 0) NA_character_ else r
+        },
+        character(1)
+      )
+
+      # Isolate desired ranks
+      rank_sel <- c("family", "genus", "species")
+      idx <- match(rank_sel, ranks)
+
+      # Build named output 
+      rank_list <- setNames(vector("list", length(rank_sel)),
+                      paste0(rank_sel, "Acc"))
+
+      for (j in seq_along(idx)) {
+        if (is.na(idx[j])) {
+          # Set missing ranks to NA
+          rank_list[[j]] <- NA_character_
+        } else {
+          # Extract rank values
+          rank_list[[j]] <- path[[idx[j]]]$hasName$fullNameStringNoAuthorsPlain
+        }
+      }
+
+      # Add ranks to list 
+      match_api_list[[i]] <- c(match_api_list[[i]], rank_list)
+
+      # Get species epithet only
+      match_api_list[[i]]$speciesAcc <- gsub(".*\\s", "", trimws(match_api_list[[i]]$speciesAcc))
+
+    }
+    names(match_api_list) <- xun
+  }
+
+  # Combine match lists
+  match_list <- c(match_cache_list, match_api_list)
+
+  # Create formatted dataframe
+  match_df <- do.call(rbind, lapply(match_list, function(i) { 
+    if ("id" %in% names(i)) {
+      data.frame(
+        nameSubmitted = null2na(i$submitted_name),
+        nameMatched = null2na(i$fullNameStringNoAuthorsPlain),
+        nameAccepted = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
+        familyAccepted = null2na(i$familyAcc), 
+        genusAccepted = null2na(i$genusAcc), 
+        speciesAccepted = null2na(i$speciesAcc))
+    } else { 
+      data.frame(
+        nameSubmitted = null2na(i$submitted_name),
+        nameMatched = NA_character_,
+        nameAccepted = NA_character_,
+        familyAccepted = NA_character_,
+        genusAccepted = NA_character_,
+        speciesAccepted = NA_character_)
+    }
+  }))
+  
+  # Match row order of dataframe to x
+  out <- cbind(nameOriginal = x, match_df[match(xsub, match_df$nameSubmitted),])
+  rownames(out) <- NULL
+
+  # Add whether name has been modified
+  out$nameModified <- ifelse(
+    trimws(gsub("\\s+", " ", out$nameOriginal)) != out$nameMatched, 
+    TRUE, FALSE)
+
+  # Store good API results in cache
+  # Non-ambiguous automatic matches and manual assertions only
+  match_list_new <- match_list[
+    !names(match_list) %in% names(the$wfo_cache)]
+  the$wfo_cache <- c(the$wfo_cache, match_list_new)
 
   # Return
-  return(match)
+  return(out)
 }
 
-
-#' Call the WorldFlora API to match a taxonomic name
-#'
-#' @param x taxonomic name to be searched 
-#' @param query GraphQL API query string, e.g. as returned `query_taxonNameMatch()`
-#'     or `query_taxonNameById()`
-#' @param fallbackToGenus logical, if TRUE genus-level matches will be returned
-#'     if no species-level match is available
-#' @param checkRank logical, if TRUE consider matches to be ambiguous if it is
-#'     possible to estimate taxonomic rank from the search string and the rank
-#'     does not match that in the name record
-#' @param checkHomonyms logical, if TRUE consider matches to be ambiguous if
-#'     there are other names with the same words but different author strings
-#' @param fuzzyNameParts integer value of 0 (default) or greater. The maximum
-#'     Levenshtein distance used for fuzzy matching words in `x`
-#' @param delay number of seconds to pause before sending the API call. Used to
-#'     rate-limit repeated API calls
-#'
-#' @importFrom httr2 request req_body_json req_perform resp_body_json
-#' @return list representation of JSON returned by API call 
+#' Reusable GraphQL fields for taxon objects
+#' 
+#' @return character string with WFO GraphQL API query
 #' 
 #' @noRd
-#' @examples
-#' callWFOAPI("Burkea africana", query_taxonNameMatch())
-#' callWFOAPI("wfo-0000214110", query_taxonNameById())
-#'
-callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE, 
-  checkHomonyms = FALSE, fuzzyNameParts = 0, delay = 0.5) {
-
-  # Create request 
-  req <- httr2::request(getOption("wfo.api_uri"))
-
-  # prepare the body
-  variables <- list(
-    searchString = x, 
-    fallbackToGenus = fallbackToGenus,
-    checkRank = checkRank,
-    checkHomonyms = checkHomonyms,
-    fuzzyNameParts = fuzzyNameParts
-  )
-  payload <- list(query = query, variables = variables)
-
-  # Set body
-  req <- httr2::req_body_json(req, payload, auto_unbox = TRUE)
-
-  # Rate limit: pause before making the request
-  Sys.sleep(delay)
-
-  # Run request
-  resp <- httr2::req_perform(req)
-
-  # return the whole thing as a list of lists
-  return(httr2::resp_body_json(resp))
+#' 
+wfo_query_fields <- function() {
+  "id
+   fullNameStringNoAuthorsPlain
+   authorsString
+   nomenclaturalStatus
+   role
+   rank
+   wfoPath
+   currentPreferredUsage {
+     hasName {
+       id
+       fullNameStringNoAuthorsPlain
+       authorsString
+       nomenclaturalStatus
+       role
+       rank
+       wfoPath
+     }
+   }"
 }
-
 
 #' Define WFO GraphQL API query for name matching
 #'
@@ -468,7 +586,7 @@ callWFOAPI <- function(x, query, fallbackToGenus = FALSE, checkRank = FALSE,
 #' @noRd
 #' 
 query_taxonNameMatch <- function() {
-  "query NameMatch(
+  paste0("query NameMatch(
     $searchString: String, 
     $checkHomonyms: Boolean,
     $checkRank: Boolean,
@@ -485,103 +603,76 @@ query_taxonNameMatch <- function() {
       ) {
         inputString
         searchString
-        match {
-          id
-          fullNameStringPlain
-          fullNameStringNoAuthorsPlain
-          genusString
-          nameString
-          authorsString
-          nomenclaturalStatus
-          role
-          rank
-          wfoPath
-          currentPreferredUsage {
-            hasName {
-              id
-              fullNameStringPlain
-              fullNameStringNoAuthorsPlain
-              genusString
-              nameString
-              authorsString
-              nomenclaturalStatus
-              role
-              rank
-              wfoPath
-            }
-          }
-        }
-        candidates {
-          id
-          fullNameStringPlain
-          fullNameStringNoAuthorsPlain
-          genusString
-          nameString
-          authorsString
-          nomenclaturalStatus
-          role
-          rank
-          wfoPath
-          currentPreferredUsage {
-            hasName {
-              id
-              fullNameStringPlain
-              fullNameStringNoAuthorsPlain
-              genusString
-              nameString
-              authorsString
-              nomenclaturalStatus
-              role
-              rank
-              wfoPath
-            }
-          }
-        }
+        match { ", wfo_query_fields(), " }
+        candidates { ", wfo_query_fields(), "}
         error
         errorMessage
         method
         narrative
       }
-    }"
+    }")
 }
 
-#' Define WFO GraphQL API query for WFO ID matching
+#' Define WFO GraphQL API query for WFO ID name matching
 #'
 #' @return character string with WFO GraphQL API query
 #' 
 #' @noRd
 #' 
 query_taxonNameById <- function() {
-  "query NameByID(
+  paste0("query NameByID(
     $searchString: String)
     {
       taxonNameById(
         nameId: $searchString
-      ) {
-        id
-        fullNameStringPlain
-        fullNameStringNoAuthorsPlain
-        genusString
-        nameString
-        authorsString
-        nomenclaturalStatus
-        role
-        rank
-        wfoPath
-        currentPreferredUsage {
-          hasName {
-            id
-            fullNameStringPlain
-            fullNameStringNoAuthorsPlain
-            genusString
-            nameString
-            authorsString
-            nomenclaturalStatus
-            role
-            rank
-            wfoPath
-          }
+      ) { ", wfo_query_fields(), " }
+    }")
+}
+
+#' Define WFO GraphQL API query for WFO ID concept matching
+#' 
+#' Used to return higher order taxonomic rank information
+#'
+#' @return character string with WFO GraphQL API query
+#' 
+#' @noRd
+#' 
+query_taxonConceptById <- function() {
+  "query ConceptByID(
+    $searchString: String)
+  {
+    taxonConceptById(
+      taxonId: $searchString
+    ) {
+      path {
+        hasName {
+          id
+          fullNameStringNoAuthorsPlain
+          authorsString
+          nomenclaturalStatus
+          role
+          rank
+          wfoPath
         }
       }
-    }"
+    }
+  }"
 }
+
+#' Define WFO GraphQL API query for current backbone version
+#' 
+#' Used to return higher order taxonomic rank information
+#'
+#' @return character string with WFO GraphQL API query
+#' 
+#' @noRd
+#' 
+query_classifications <- function() { 
+  "query {
+      classifications(classificationId: \"DEFAULT\") {
+        id
+      }
+    }
+  "
+}
+
