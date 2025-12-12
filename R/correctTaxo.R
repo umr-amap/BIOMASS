@@ -27,7 +27,7 @@ checkURL <- function(x) {
 #' @noRd
 #' 
 null2na <- function(x) {
-  if (is.null(x) | length(x) == 0) {
+  if (is.null(x) || length(x) == 0) {
     NA_character_ 
   } else { 
     x
@@ -115,7 +115,7 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 
   # If no candidates, SKIP
   if (length(cand) == 0) {
-    cat(sprintf("No candidates, skipping: %s\n", x))
+    message(sprintf("No candidates, skipping: %s", x))
     match <- list(method = "EMPTY")
     return(match)
   }
@@ -282,11 +282,11 @@ correctTaxo <- function(genus, species, interactive = TRUE,
   }
 
   # Check use of API and cache
-  if (!useCache & !useAPI) {
+  if (!useCache && !useAPI) {
     stop("Either useCache or useAPI must be TRUE")
   }
 
-  if (preferFuzzy & interactive) { 
+  if (preferFuzzy && interactive) { 
     warning(
       "'preferFuzzy' and 'interactive' are both TRUE, defaulting to interactive matching", 
       immediate. = TRUE)
@@ -297,7 +297,7 @@ correctTaxo <- function(genus, species, interactive = TRUE,
   if (useAPI && !checkURL(getOption("wfo.api_uri"))) {
     w <- paste("WFO API unreachable:", getOption("wfo.api_uri"))
     if (useCache) {
-      warning(w, "\nOnly cached names will be filled")
+      warning(w, "\nOnly cached names will be filled", immediate. = TRUE)
       useAPI <- FALSE
     } else {
       stop("\n", w, " and useCache = FALSE, Exiting ...")
@@ -336,22 +336,22 @@ correctTaxo <- function(genus, species, interactive = TRUE,
 
     # Message
     if (length(match_cache_list) > 0) {
-      cat(sprintf("Using cached data for %s names\n", length(match_cache_list)), "\n")
+      message(sprintf("Using cached data for %s names", length(match_cache_list)))
     }
   }
 
   # Send message if names not matched in cache and API is off 
-  if (!useAPI & length(xun) > 0) {
-  cat(sprintf(
-      "Some names not found in cache and useAPI = FALSE. These names will be NA:\n  %s",
+  if (!useAPI && length(xun) > 0) {
+  message(sprintf(
+    "Some names not found in cache and useAPI = FALSE. These names will be NA:\n  %s",
       paste(xun, collapse = "\n  ")
-    ), "\n")
+    ))
   }
 
   # For each taxonomic name (optionally excluding names matched in cache)
   # Construct API calls
   match_api_list <- list()
-  if (useAPI & length(xun) > 0) {
+  if (useAPI && length(xun) > 0) {
     # Get current WFO backbone version
     req <- httr2::request(getOption("wfo.api_uri"))
     bb_payload <- list(query = query_classifications())
@@ -430,13 +430,13 @@ correctTaxo <- function(genus, species, interactive = TRUE,
           match_api_list[[i]] <- pickName(xun[i], api_json_list[[i]]$data$taxonNameMatch$candidates)
         } else {
           # No successful match
-          cat(sprintf("No unique match for: %s\n", xun[i]))
+          message(sprintf("No unique match for: %s", xun[i]))
           match_api_list[[i]] <- list()
           match_api_list[[i]]$method <- "EMPTY"
         }
       } else {
         # No candidates 
-        cat(sprintf("No candidates for: %s\n", xun[i]))
+        message(sprintf("No candidates for: %s\n", xun[i]))
         match_api_list[[i]] <- list()
         match_api_list[[i]]$method <- "EMPTY"
       }
