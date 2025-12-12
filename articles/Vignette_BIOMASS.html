@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2025-12-08</h4>
+            <h4 data-toc-skip class="date">2025-12-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -391,17 +391,20 @@ with the <code><a href="../reference/retrieveH.html">retrieveH()</a></code> func
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  bayesian <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">H_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieveH.html">retrieveH</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">HDmodel</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_model</span> <span class="op">&lt;-</span>  <span class="va">H_model</span><span class="op">$</span><span class="va">H</span></span></code></pre></div>
-<p>By setting <code>bayesian = TRUE</code> in <code><a href="../reference/modelHD.html">modelHD()</a></code>
-arguments, we could have built bayesian models using the brms package
-(see section <a href="#bayesian-models">Building bayesian
-Height-Diameter models</a>).</p>
+<p>By default, <code>bayesian = TRUE</code> in <code><a href="../reference/modelHD.html">modelHD()</a></code>
+arguments. In this case, a Bayesian model will be fitted using the brms
+package (see section <a href="#bayesian-models">Building bayesian
+Height-Diameter models</a>), ensuring proper propagation of parameter
+uncertainties. As this method is more time-consuming, for educational
+purposes, we will set bayesian = FALSE.</p>
 <p>Note that if some of the trees’ heights had been measured in the
 <code>NouraguesTrees</code> dataset, we could have provided these
 heights to <code><a href="../reference/modelHD.html">modelHD()</a></code>. In this case, we could also have

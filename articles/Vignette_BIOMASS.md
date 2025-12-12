@@ -240,7 +240,8 @@ function:
 ``` r
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
-  method = "log2", useWeight = TRUE)
+  method = "log2", useWeight = TRUE, 
+  bayesian = FALSE)
 
 H_model <- retrieveH(
   D = NouraguesTrees$D,
@@ -249,11 +250,13 @@ H_model <- retrieveH(
 NouraguesTrees$H_model <-  H_model$H
 ```
 
-By setting `bayesian = TRUE` in
+By default, `bayesian = TRUE` in
 [`modelHD()`](https://umr-amap.github.io/BIOMASS/reference/modelHD.md)
-arguments, we could have built bayesian models using the brms package
-(see section [Building bayesian Height-Diameter
-models](#bayesian-models)).
+arguments. In this case, a Bayesian model will be fitted using the brms
+package (see section [Building bayesian Height-Diameter
+models](#bayesian-models)), ensuring proper propagation of parameter
+uncertainties. As this method is more time-consuming, for educational
+purposes, we will set bayesian = FALSE.
 
 Note that if some of the trees’ heights had been measured in the
 `NouraguesTrees` dataset, we could have provided these heights to

@@ -161,7 +161,7 @@ if (FALSE) { # \dontrun{
   )
   
   # Modelling height-diameter relationship
-  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
   # Retrieving wood density values
   Nouragues201WD <- getWoodDensity(
     genus = NouraguesTrees201$Genus,
