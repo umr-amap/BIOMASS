@@ -42,7 +42,7 @@ weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thi
                        file = cache_path,
                        chains = chains, thin = thin, iter = iter, warmup = warmup,
                        ...)
-      if(!useCache) {
+      if(useCache) {
         message(paste("Saving the H-D model in",cache_path,"\n"))
         saveRDS(mod, file = cache_path)
       }
