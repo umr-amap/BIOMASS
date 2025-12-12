@@ -3,14 +3,15 @@
 #' @description 
 #' After applying the [subplot_summary()] function, this function fits a log-log bayesian regression model with spatially varying coefficient process, on AGBD and raster metric simulated values (see Details).
 #' 
-#' @param long_AGB_simu the '$long_AGB_simu' output of the [subplot_summary()] function (see Details).
-#' @param nb_rep the number of simulation to provide in the brms fit (nb_rep > 50 will not improved significantly the model and will be much longer to fit).
-#' @param useCache a logical that determines wether to use the cache when building a Bayesian model (see Details).
-#' @param plot_model a logical indicating whether the model should be plot.
+#' @param long_AGB_simu The '$long_AGB_simu' output of the [subplot_summary()] function (see Details).
+#' @param nb_rep Number of simulation to provide in the brms fit (nb_rep > 50 will not improved significantly the model and will be much longer to fit).
+#' @param useCache A logical that determines wether to use the cache when building a Bayesian model (see Details).
+#' @param plot_model A logical indicating whether the model should be plot.
 #' @param chains Number of Markov chains (defaults to 3), see [brms::brm()]
 #' @param thin Thinning rate, see [brms::brm()]
-#' @param iter number of total iterations per chain (including warmup; defaults to 5000), see [brms::brm()]
-#' @param warmup number of warmup (aka burnin) iterations (defaults to 1000), see [brms::brm()]
+#' @param iter Number of total iterations per chain (including warmup; defaults to 5000), see [brms::brm()]
+#' @param warmup Number of warmup (aka burnin) iterations (defaults to 1000), see [brms::brm()]
+#' @param cores Number of cores to use when executing the chains in parallel, see [brms::brm()]
 #' @param ... Further arguments passed to `brm()`, e.g: prior, cores, etc. See [brms::brm()]
 #'
 #' @return
@@ -34,9 +35,11 @@
 #' @author Arthur Bailly
 #'
 #' @importFrom data.table is.data.table copy
-#' @importFrom brms 
 #' 
 #' @examples
+#' \dontrun{
+#' 
+#' }
 
 calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_model = TRUE, chains = 4, thin = 20, iter = 2300, warmup = 300, cores = 4, ...) {
   
@@ -58,13 +61,13 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
   }
   
   # Log the AGBD and raster metric
-  dt_inf[, c("log_AGBD","log_CHM") := list( log(dt_inf$AGBD), log(dt_inf$raster_metric) ) ]
+  dt_inf[, c("log_AGBD","log_CHM") := list( log(AGBD), log(raster_metric) ) ]
   
   # If 'raster_metric' was the result of simulated corner coordinates
-  dt_inf[, median_logCHM := median(log_CHM) , by = subplot_ID] #median or median ???
+  dt_inf[, log_CHM := median(log_CHM) , by = subplot_ID]
   
   # Convert projected coordinates in km
-  dt_inf[, c("X_km", "Y_km", "subplot_ID") := list(x_center/1000, y_center/1000, as.factor(dt_inf$subplot_ID))]
+  dt_inf[, c("X_km", "Y_km", "subplot_ID") := list(x_center/1000, y_center/1000, as.factor(subplot_ID))]
   
   # select number of simulations
   dt_inf <- dt_inf[N_simu %in% sample(1:200, nb_rep),]
@@ -79,7 +82,7 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
     useCache <- TRUE
   }
   
-  bf_formula <- brms::bf(log_AGBD  ~  0 + betatilde * median_logCHM,
+  bf_formula <- brms::bf(log_AGBD  ~  0 + betatilde * log_CHM,
                          betatilde ~ 1 + gp(X_km, Y_km, gr = T, scale = T,
                                             cov = "matern32"),
                          nl = T
@@ -88,7 +91,7 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
   if (useCache & file.exists(cache_path) ) { # if the model has already been build (and compiled)
     message(paste("Loading SVC brms model using the cache..."))
     fit_brms <- readRDS(cache_path)
-    fit_brms <- update(fit_brms, newdata = dt_inf, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+    fit_brms <- update(fit_brms, newdata = dt_inf, chains = chains, thin = thin, iter = iter, warmup = warmup, cores = cores, ...)
     saveRDS(fit_brms, file = cache_path)
     message(paste("Saving SVC brms model udpated in",cache_path))
   } else { # else, build the model (and save it as .rds if useCache = TRUE)

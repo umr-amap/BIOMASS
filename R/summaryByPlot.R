@@ -9,7 +9,7 @@
 #'
 #' @param AGB_val Either the matrix resulting from the [AGBmonteCarlo()] function (AGB_simu element of the list), or simply the output of the [AGBmonteCarlo()] function itself.
 #' @param plot Vector corresponding to the plots code (plots ID)
-#' @param drawPlot A logic indicating whether the graphic should be displayed or not
+#' @param drawPlot A logical indicating whether the graphic should be displayed or not
 #'
 #' @return a data frame where:
 #'   - `plot`: the code of the plot
@@ -31,7 +31,7 @@
 #' data(NouraguesTrees)
 #'
 #' # Modelling height-diameter relationship
-#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+#' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 #'
 #' # Retrieving wood density values
 #' \donttest{

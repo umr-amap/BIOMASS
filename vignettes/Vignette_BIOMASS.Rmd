@@ -180,7 +180,8 @@ As the log2 model has the lowest RSE, we will build this model using the `method
 ```{r log2_modelHD}
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
-  method = "log2", useWeight = TRUE)
+  method = "log2", useWeight = TRUE, 
+  bayesian = FALSE)
 
 H_model <- retrieveH(
   D = NouraguesTrees$D,
@@ -189,7 +190,7 @@ H_model <- retrieveH(
 NouraguesTrees$H_model <-  H_model$H
 ```
 
-By setting `bayesian = TRUE` in `modelHD()` arguments, we could have built bayesian models using the brms package (see section [Building bayesian Height-Diameter models](#bayesian-models)). 
+By default, `bayesian = TRUE` in `modelHD()` arguments. In this case, a Bayesian model will be fitted using the brms package (see section [Building bayesian Height-Diameter models](#bayesian-models)), ensuring proper propagation of parameter uncertainties. As this method is more time-consuming, for educational purposes, we will set bayesian = FALSE.
 
 Note that if some of the trees' heights had been measured in the `NouraguesTrees` dataset, we could have provided these heights to `modelHD()`. In this case, we could also have created a model for each stand/sub-region present in `NouraguesTrees` using the `plot` argument. But keep in mind that even for well-measured trees, `retrieveH()` gives you the predicted height (see [this section](#mixing-measured_estimated)).
 

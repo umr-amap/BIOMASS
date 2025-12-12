@@ -1,3 +1,8 @@
+* version 3.0
+- When LiDAR data are available in raster format, BIOMASS can now be used to predict AGBD at the landscape scale using two new functions of the pipeline:
+- calibrate_model(): takes the `long_AGB_simu` output from `subplot_summary(subplots = ..., AGB_simu = ..., ref_raster = ...)`. This function fits a log–log Bayesian regression model with spatially varying coefficients between AGBD and simulated raster metrics.
+- predict_map(): takes the output from `calibrate_model()` to predict AGBD from a raster containing CHM values.
+
 * version 2.2.7
 - The propagation of uncertainties in the coordinates of plot corners is now performed by divide_plot() using the arguments ‘sd_coord’ and ‘n’. These uncertainties are handled by subplot_summary(), which can also handle AGB uncertainties using the argument 'AGB_simu' given by AGBmonteCarlo()$AGB_simu.
 - Fixed an issue when plotting subplot_summary outputs due to a change in geom_sf().

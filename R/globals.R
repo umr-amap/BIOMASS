@@ -39,5 +39,8 @@ if(getRversion() >= "2.15.1") {
   # model functions
   utils::globalVariables(c("loglogFunction","michaelisFunction","weibullFunction"))
   
+  # calibrate_model and predict_map
+  utils::globalVariables(c("raster_metric","log_CHM","x_center","y_center","post_median_AGBD","post_sd_AGBD","post_cred_2.5_AGBD","post_cred_97.5_AGBD"))
+  
   
 }

@@ -106,7 +106,7 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
   )
   
   # Modelling height-diameter relationship
-  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
   # Retrieving wood density values
   Nouragues201WD <- getWoodDensity(
     genus = NouraguesTrees201$Genus,
@@ -132,7 +132,8 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
   res_summary <- subplot_summary(
     subplots = nouragues_subplots, 
     AGB_simu = resultMC$AGB_simu,
-    ref_raster = nouragues_raster, raster_fun = mean)
+    ref_raster = nouragues_raster,
+    raster_fun = mean, na.rm = TRUE)
     
   res_summary$tree_summary
   res_summary$plot_design[[1]]

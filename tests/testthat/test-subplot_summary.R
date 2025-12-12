@@ -116,7 +116,7 @@ test_that("subplot_summary_raster", {
 })
 
 
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 NouraguesWD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
 
 error_prop <- AGBmonteCarlo(
@@ -219,22 +219,22 @@ test_that("subplot_summary_coord_uncertainties", {
   
   expect_equal(names(res_coord$tree_summary), c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
   expect_equal(dim(res_coord$long_AGB_simu), c(50*4,7))
-  expect_equal(names(res_coord$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
-  expect_equal(length(unique(res_coord$long_AGB_simu$z2012_mean)) , 4 * 10)
+  expect_equal(names(res_coord$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","raster_metric"))
+  expect_equal(length(unique(res_coord$long_AGB_simu$raster_metric)) , 4 * 10)
   
   # multiple plots: 
   multiple_subplots <- suppressWarnings(divide_plot(NouraguesCoords, rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), grid_size = 50,
                                            tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"),
                                            corner_plot_ID = "Plot", tree_plot_ID = "Plot",
-                                           sd_coord = 5, n = 60))
+                                           sd_coord = 5, n = 5))
   expect_message(
-    res_coord_mult <- subplot_summary(subplots = multiple_subplots, AGB_simu = error_prop$AGB_simu, ref_raster = nouragues_raster, draw_plot = FALSE),
-    "the first 50 simulations contained in 'subplots$simu_coord' will be considered.", fixed=TRUE)
+    res_coord_mult <- subplot_summary(subplots = multiple_subplots, AGB_simu = error_prop$AGB_simu[,1:4], ref_raster = nouragues_raster, draw_plot = FALSE),
+    "the first 4 simulations contained in 'subplots$simu_coord' will be considered.", fixed=TRUE)
   
   expect_equal(names(res_coord_mult$tree_summary), c("subplot_ID","AGBD_median","AGBD_cred_2.5","AGBD_cred_97.5","z2012_mean_median","z2012_mean_cred_2.5","z2012_mean_cred_97.5") )
-  expect_equal(dim(res_coord_mult$long_AGB_simu), c(50*4*4,7))
-  expect_equal(names(res_coord_mult$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","z2012_mean"))
-  expect_equal(length(unique(res_coord_mult$long_AGB_simu$z2012_mean)) , 4*50*4)
+  expect_equal(dim(res_coord_mult$long_AGB_simu), c(4*4*4,7))
+  expect_equal(names(res_coord_mult$long_AGB_simu), c("plot_ID","subplot_ID","N_simu","x_center","y_center","AGBD","raster_metric"))
+  expect_equal(length(unique(res_coord_mult$long_AGB_simu$raster_metric)) , 4*4*4)
   
   
 })

@@ -11,7 +11,7 @@ summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 
 \item{plot}{Vector corresponding to the plots code (plots ID)}
 
-\item{drawPlot}{A logic indicating whether the graphic should be displayed or not}
+\item{drawPlot}{A logical indicating whether the graphic should be displayed or not}
 }
 \value{
 a data frame where:
@@ -36,7 +36,7 @@ data(NouraguesHD)
 data(NouraguesTrees)
 
 # Modelling height-diameter relationship
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 
 # Retrieving wood density values
 \donttest{

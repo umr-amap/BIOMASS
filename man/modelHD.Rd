@@ -11,7 +11,7 @@ modelHD(
   useWeight = FALSE,
   drawGraph = FALSE,
   plot = NULL,
-  bayesian = FALSE,
+  bayesian = TRUE,
   useCache = FALSE,
   chains = 3,
   thin = 5,
@@ -105,23 +105,26 @@ data(NouraguesHD)
 # Fit H-D models for the Nouragues dataset
 \donttest{ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE) }
 
+### Using frequentist inference
 # For a selected model
 HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
-                   method = "log2", drawGraph = TRUE)
+                   method = "log2", drawGraph = TRUE, 
+                   bayesian = FALSE)
 
 # Using weights
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   method = "log2", useWeight = TRUE,
-  drawGraph = TRUE)
+  drawGraph = TRUE, bayesian = FALSE)
 
 # With multiple stands (plots)
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   method = "log2", useWeight = TRUE, 
-  plot = NouraguesHD$plotId, drawGraph = TRUE)
+  plot = NouraguesHD$plotId,
+  drawGraph = TRUE, bayesian = FALSE)
 
-### Using log2 bayesian model
+### Using bayesian inference
 \dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
   method = "log2", bayesian = TRUE, useCache = TRUE)
 plot(HDmodel$model) }

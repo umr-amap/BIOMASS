@@ -11,7 +11,7 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
     for (useWeight in c(TRUE, FALSE)) {
     test_that(paste("Method", method, "useWeight", useWeight), {
       #skip_on_cran()
-      HDmodel <- modelHD(D, H, method = method, useWeight = useWeight)
+      HDmodel <- modelHD(D, H, method = method, useWeight = useWeight, bayesian = FALSE)
 
       logMethod <- grepl("log", method)
 
@@ -74,7 +74,7 @@ test_that("With the plot arguments", {
   #skip_on_cran()
   plot <- NouraguesHD$plotId
 
-  Res <- expect_message(modelHD(D, H, plot = plot), "build a HD model")
+  Res <- expect_message(modelHD(D, H, plot = plot, bayesian = FALSE), "build a HD model")
 
   expect_is(Res, "list")
   expect_length(Res, length(unique(plot)))
@@ -86,7 +86,7 @@ test_that("With the plot arguments", {
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
-  Res <- modelHD(D, H, plot = plot, method = "log2")
+  Res <- modelHD(D, H, plot = plot, method = "log2", bayesian = FALSE)
 
   expect_is(Res, "list")
   expect_length(Res, length(unique(plot)))
@@ -98,7 +98,7 @@ test_that("With the plot arguments", {
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
-  Res <- modelHD(D, H, plot = "plot1")
+  Res <- modelHD(D, H, plot = "plot1", bayesian = FALSE)
   expect_is(Res, "data.frame")
 
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
