@@ -114,7 +114,8 @@
 #'   res_summary <- subplot_summary(
 #'     subplots = nouragues_subplots, 
 #'     AGB_simu = resultMC$AGB_simu,
-#'     ref_raster = nouragues_raster, raster_fun = mean)
+#'     ref_raster = nouragues_raster,
+#'     raster_fun = mean, na.rm = TRUE)
 #'     
 #'   res_summary$tree_summary
 #'   res_summary$plot_design[[1]]
@@ -499,7 +500,15 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     
     if(exists("long_AGB_simu_sum")) {
       long_AGB_simu_sum[, eval(raster_value_fun_name) := sf_simu_polygons[[raster_value_fun_name]] ]
+      setnames(long_AGB_simu_sum, old = raster_value_fun_name, new = "raster_metric")
     }
+  } else if (!is.null(ref_raster) && is.null(subplots$simu_coord)) {
+    # Add raster_metric if there is raster but no simulated corners
+    if(exists("long_AGB_simu_sum")) {
+      long_AGB_simu_sum <- long_AGB_simu_sum[tree_summary[, .SD, .SDcols = grep("AGBD", names(tree_summary), invert = TRUE)] , on = c("subplot_ID")]
+      setnames(long_AGB_simu_sum, old = raster_value_fun_name, new = "raster_metric")
+    }
+    
   }
   
   # Add metrics to sf_polygons
