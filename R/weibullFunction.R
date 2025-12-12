@@ -29,20 +29,23 @@ weibullFunction <- function(data, weight = NULL, bayesian, useCache, chains, thi
       message("Loading Weibull model using the cache...")
       mod <- readRDS(cache_path)
       mod <- update(mod, newdata = data, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+      message(paste("Saving the updated H-D model in",cache_path,"\n"))
+      saveRDS(mod, file = cache_path)
       
     } else { # else, build the model (and save it as .rds if useCache = TRUE)
       
       message("Building Weibull model using brms library.")
       message("Compiling the Stan programme may take some time the first time around. Next time, consider using 'useCache' = TRUE to avoid this compilation time.")
-      if(!useCache) {
-        cache_path <- NULL
-      }
       mod <- brms::brm(data = data,
                        family = gaussian(link = "identity"),
                        formula = bf_formula,
                        file = cache_path,
                        chains = chains, thin = thin, iter = iter, warmup = warmup,
                        ...)
+      if(!useCache) {
+        message(paste("Saving the H-D model in",cache_path,"\n"))
+        saveRDS(mod, file = cache_path)
+      }
     }
     
     

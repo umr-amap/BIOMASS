@@ -9,7 +9,7 @@ test_that("predictHeight errors", {
   
   HDmodel <- modelHD(
     D = NouraguesHD$D, H = NouraguesHD$H,
-    method = "log2", useWeight = FALSE)
+    method = "log2", useWeight = FALSE, bayesian = FALSE)
   
   expect_error(predictHeight(D = NouraguesHD$D, model = HDmodel), "`D` must be a n x m matrix containing tree diameters")
   expect_error(predictHeight(D = as.matrix(NouraguesHD$D), model = HDmodel$model), "`model` must be the output of the `modelHD()` function", fixed = TRUE)
@@ -18,7 +18,7 @@ test_that("predictHeight errors", {
   
   mult_HDmodel <- modelHD(
     D = NouraguesHD$D, H = NouraguesHD$H,
-    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId)
+    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId, bayesian = FALSE)
   
   expect_error(predictHeight(D = as.matrix(NouraguesHD$D), model = mult_HDmodel), "The 'model' argument contains several stand-specific HD models, use the `plot` argument to assign the corresponding stand-specific model to each tree.")
   
@@ -36,7 +36,7 @@ for (method in c("log1", "log2", "weibull", "michaelis")) {
       D = NouraguesHD$D,
       H = NouraguesHD$H,
       method = method,
-      useWeight = TRUE
+      useWeight = TRUE, bayesian = FALSE
     )
     for (err in c(TRUE, FALSE)) {
       expect_length(predictHeight(as.matrix(NouraguesHD$D), HDmodel, err = err), length(NouraguesHD$D))
@@ -53,15 +53,15 @@ for (method in c("log1", "log2", "weibull", "michaelis")) {
 test_that("predictHeigth with plot argument", {
   HDmodel <- modelHD(
     D = NouraguesHD$D, H = NouraguesHD$H,
-    method = "log2", useWeight = FALSE)
+    method = "log2", useWeight = FALSE, bayesian = FALSE)
   
   mult_HDmodel <- modelHD(
     D = NouraguesHD$D, H = NouraguesHD$H,
-    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId)
+    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId, bayesian = FALSE)
 
   mult_HDmodel <- modelHD(
     D = NouraguesHD$D, H = NouraguesHD$H,
-    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId)
+    method = "log2", useWeight = FALSE, plot = NouraguesHD$plotId, bayesian = FALSE)
   
   res <- predictHeight(D = as.matrix(NouraguesHD$D), model = HDmodel)
   mult_res <- predictHeight(D = as.matrix(NouraguesHD$D), model = mult_HDmodel, plot =  NouraguesHD$plotId)

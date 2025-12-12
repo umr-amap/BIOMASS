@@ -13,7 +13,7 @@ test_that("ComputeAGB", {
   
   WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
   
-  H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE))
+  H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE, , bayesian = FALSE))
   
   expect_error(computeAGB(D, WD$meanWD[1:65]), "different lenghts")
   expect_error(computeAGB(D, WD$meanWD), "You need to provide either H or coord")

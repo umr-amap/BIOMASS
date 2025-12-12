@@ -8,7 +8,7 @@ NouraguesTrees <- NouraguesTrees[1:50, ]
 
 # Argument repetitive
 D <- NouraguesTrees$D
-modHD <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", drawGraph = FALSE)
+modHD <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", drawGraph = FALSE, bayesian = FALSE)
 data <- data.frame(H = retrieveH(D, model =modHD )$H, D = D)
 
 
