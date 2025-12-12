@@ -164,7 +164,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   # arg_fun <- available_functions[[input$sel_user_function]]
   # subplot_summary(..., fun = arg_fun)
   # it returned column names like "AGB_arg_fun_per_ha"
-  # code generated with Claude AI
+  # code generated with the help of Claude AI
   
   # Helper function to find original function name ----
   find_function_name <- function(func) {
@@ -489,7 +489,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     res_raster_sim <- sf_simu_polygons[,
                                        setNames(
                                          list(
-                                           median(get(raster_value_fun_name)),
+                                           median(get(raster_value_fun_name), na.rm=TRUE),
                                            quantile(get(raster_value_fun_name), probs = 0.025, na.rm=TRUE),
                                            quantile(get(raster_value_fun_name), probs = 0.975, na.rm=TRUE)
                                          ),
