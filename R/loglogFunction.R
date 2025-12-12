@@ -43,6 +43,9 @@ loglogFunction <- function(data, weight = NULL, method, bayesian, useCache, chai
       message(paste("Loading",method,"model using the cache..."))
       mod <- readRDS(cache_path)
       mod <- update(mod, newdata = data, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+      message(paste("Saving the updated H-D model in",cache_path,"\n"))
+      saveRDS(mod, file = cache_path)
+      
     } else { # else, build the model (and save it as .rds if useCache = TRUE)
       message(paste("Building", method, "model using brms library."))
       message("Compiling the Stan programme may take some time the first time around. Next time, consider using 'useCache' = TRUE to avoid this compilation time.")
@@ -56,6 +59,8 @@ loglogFunction <- function(data, weight = NULL, method, bayesian, useCache, chai
                        chains = chains, thin = thin, iter = iter, warmup = warmup,
                        ...
       )
+      message(paste("Saving the H-D model in",cache_path,"\n"))
+      saveRDS(mod, file = cache_path)
     }
   } else {
     formula <- as.formula(paste("I(log(H))", end_formula, sep = " ~ "))

@@ -70,23 +70,26 @@
 #' # Fit H-D models for the Nouragues dataset
 #' \donttest{ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE) }
 #'
+#' ### Using frequentist inference
 #' # For a selected model
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
-#'                    method = "log2", drawGraph = TRUE)
+#'                    method = "log2", drawGraph = TRUE, 
+#'                    bayesian = FALSE)
 #'
 #' # Using weights
 #' HDmodel <- modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H,
 #'   method = "log2", useWeight = TRUE,
-#'   drawGraph = TRUE)
+#'   drawGraph = TRUE, bayesian = FALSE)
 #' 
 #' # With multiple stands (plots)
 #' HDmodel <- modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H,
 #'   method = "log2", useWeight = TRUE, 
-#'   plot = NouraguesHD$plotId, drawGraph = TRUE)
+#'   plot = NouraguesHD$plotId,
+#'   drawGraph = TRUE, bayesian = FALSE)
 #' 
-#' ### Using log2 bayesian model
+#' ### Using bayesian inference
 #' \dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
 #'   method = "log2", bayesian = TRUE, useCache = TRUE)
 #' plot(HDmodel$model) }
@@ -112,7 +115,7 @@
 #' @importFrom data.table data.table
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_minimal theme scale_x_continuous scale_y_continuous element_text 
 
-modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL, bayesian = FALSE, useCache = FALSE, chains = 3, thin = 5, iter = 5000, warmup = 500, ...) {
+modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL, bayesian = TRUE, useCache = FALSE, chains = 3, thin = 5, iter = 5000, warmup = 500, ...) {
   
   # Checking arguments -------------------------------------------------
   
@@ -126,6 +129,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
   if (!is.null(method)) {
     method <- tolower(method)
+  } else {
+    # if no method (hence: evaluation of all methods), set bayesian to FALSE
+    bayesian <- FALSE
   }
   methods <- c("log1", "log2", "weibull", "michaelis")
   if (!is.null(method) && !(method %in% methods)) {

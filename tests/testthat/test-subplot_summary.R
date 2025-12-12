@@ -116,7 +116,7 @@ test_that("subplot_summary_raster", {
 })
 
 
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 NouraguesWD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
 
 error_prop <- AGBmonteCarlo(

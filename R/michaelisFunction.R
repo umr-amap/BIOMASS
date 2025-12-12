@@ -29,6 +29,8 @@ michaelisFunction <- function(data, weight = NULL, bayesian, useCache, chains, t
       message("Loading Michaelis-Menten model using the cache...")
       mod <- readRDS(cache_path)
       mod <- update(mod, newdata = data, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+      message(paste("Saving the updated H-D model in",cache_path,"\n"))
+      saveRDS(mod, file = cache_path)
       
     } else { # else, build the model (and save it as .rds if useCache = TRUE)
       
@@ -43,7 +45,8 @@ michaelisFunction <- function(data, weight = NULL, bayesian, useCache, chains, t
                        file = cache_path,
                        chains = chains, thin = thin, iter = iter, warmup = warmup,
                        ...)
-      
+      message(paste("Saving the H-D model in",cache_path,"\n"))
+      saveRDS(mod, file = cache_path)
     }
     
   } else {

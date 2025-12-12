@@ -47,7 +47,7 @@ From the diameter and either i) a model, ii) the coordinates of the plot or iii)
 \examples{
 # Load a database
 data(NouraguesHD)
-model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 
 # If any height model is available
 H <- retrieveH(D = NouraguesHD$D, model = model)

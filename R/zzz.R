@@ -22,7 +22,7 @@
   if(attr(basePath, "source")=="data") {
     packageStartupMessage(
       "Using user data cache ", basePath,
-      "\n  To clear or remove cache see function clearCache()."
+      "\n To create a directory cache, use the function 'createCache()'.\n To clear or remove cache, see the function 'clearCache()'."
     )
   }
 }
