@@ -3,7 +3,7 @@
 #' @description
 #' 
 #'
-#' @param 
+#' @param fit_brms a brmsfit object, output of the [subplot_summary()] function
 #' @param n_cores
 #'
 #' @return 
@@ -16,6 +16,6 @@
 #' 
 #' @examples
 
-subplot_summary <- function(n_cores) {
+subplot_summary <- function(fit_brms, n_cores) {
   
 }

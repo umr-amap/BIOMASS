@@ -89,18 +89,22 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
     message(paste("Loading SVC brms model using the cache..."))
     fit_brms <- readRDS(cache_path)
     fit_brms <- update(fit_brms, newdata = dt_inf, chains = chains, thin = thin, iter = iter, warmup = warmup, ...)
+    saveRDS(fit_brms, file = cache_path)
+    message(paste("Saving SVC brms model udpated in",cache_path))
   } else { # else, build the model (and save it as .rds if useCache = TRUE)
+    
     message(paste("Building SVC model using brms library."))
     message("Compiling the Stan programme may take some time the first time around. Next time, consider using 'useCache' = TRUE to avoid this compilation time.")
-    if(!useCache) {
-      cache_path <- NULL
-    }
     fit_brms <- brms::brm(data = dt_inf,
                           family = gaussian(link = "identity"),
                           formula = bf_formula,
                           iter = iter, warmup = warmup, chains = chains, cores = cores, thin = thin,
                           control = list(adapt_delta = 0.9, max_treedepth = 14 )
     )
+    if(useCache) {
+      saveRDS(fit_brms, file = cache_path)
+      message(paste("Saving SVC brms model in",cache_path))
+    }
   }
   
   if(plot_model) {
