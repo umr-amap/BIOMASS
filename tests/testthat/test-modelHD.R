@@ -11,7 +11,7 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
     for (useWeight in c(TRUE, FALSE)) {
     test_that(paste("Method", method, "useWeight", useWeight), {
       #skip_on_cran()
-      HDmodel <- modelHD(D, H, method = method, useWeight = useWeight)
+      HDmodel <- modelHD(D, H, method = method, useWeight = useWeight, bayesian = FALSE)
 
       logMethod <- grepl("log", method)
 
@@ -23,11 +23,11 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 
       expect_is(HDmodel$model, ifelse(logMethod, "lm", "nls"))
 
-      expect_equal(length(HDmodel$residuals), nrow(na.omit(output)))
+      expect_equal(length(HDmodel$residuals), nrow(output))
 
       expect_equal(HDmodel$method, method)
 
-      expect_equal(length(HDmodel$predicted), nrow(na.omit(output)))
+      expect_equal(length(HDmodel$predicted), nrow(output))
       expect_is(HDmodel$predicted, "numeric")
 
       expect_is(HDmodel$RSE, "numeric")
@@ -62,10 +62,10 @@ test_that("Without parameters", {
   expect_equal(ncol(Res),4)
 
   res <- "method  RSE    RSElog Average_bias
-log1 4.305060 0.2231136  0.004227454
-log2  4.222718 0.2215495  0.003121671
-weibull 4.220562        NA  3.973461e-05
-michaelis 4.235974        NA  -1.219911e-03
+log1 4.305060 0.2231136  -0.01559652
+log2  4.222718 0.2215495  -0.01595885
+weibull 4.220562        NA  -0.01878870
+michaelis 4.235974        NA  -0.02018496
 "
   expect_equal(Res, fread(res, data.table = FALSE), tolerance = 10^-6)
 })
@@ -74,7 +74,7 @@ test_that("With the plot arguments", {
   #skip_on_cran()
   plot <- NouraguesHD$plotId
 
-  Res <- expect_message(modelHD(D, H, plot = plot), "build a HD model")
+  Res <- expect_message(modelHD(D, H, plot = plot, bayesian = FALSE), "build a HD model")
 
   expect_is(Res, "list")
   expect_length(Res, length(unique(plot)))
@@ -86,7 +86,7 @@ test_that("With the plot arguments", {
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
-  Res <- modelHD(D, H, plot = plot, method = "log2")
+  Res <- modelHD(D, H, plot = plot, method = "log2", bayesian = FALSE)
 
   expect_is(Res, "list")
   expect_length(Res, length(unique(plot)))
@@ -98,7 +98,7 @@ test_that("With the plot arguments", {
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
-  Res <- modelHD(D, H, plot = "plot1")
+  Res <- modelHD(D, H, plot = "plot1", bayesian = FALSE)
   expect_is(Res, "data.frame")
 
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")

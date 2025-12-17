@@ -2,13 +2,15 @@ options(stringsAsFactors = FALSE)
 
 data("NouraguesTrees")
 data("NouraguesHD")
+data("NouraguesCoords")
 
 NouraguesTrees <- NouraguesTrees[1:50, ]
 
 # Argument repetitive
 D <- NouraguesTrees$D
+modHD <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", drawGraph = FALSE, bayesian = FALSE)
+data <- data.frame(H = retrieveH(D, model =modHD )$H, D = D)
 
-data("NouraguesCoords")
 
 skip_if_not_function <- function(name) {
   if (!exists(name)) {
@@ -98,18 +100,12 @@ context("Internal function of HD model ")
 test_that("loglog function", {
   skip_if_not_function("loglogFunction")
 
-  data <- data.frame(H = c(5, 5), D = c(2, 3))
-
   expect_is(loglogFunction(data, method="log1", bayesian=FALSE), "lm")
   expect_is(loglogFunction(data, method="log2", bayesian=FALSE), "lm")
 })
 
 test_that("Michaelis function", {
   skip_if_not_function("michaelisFunction")
-  
-  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
-  
-  data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
   expect_is(michaelisFunction(data, weight = NULL, bayesian = FALSE), "nls")
 })
@@ -117,10 +113,6 @@ test_that("Michaelis function", {
 test_that("Weibull function", {
   
   skip_if_not_function("weibullFunction")
-  
-  coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
-  
-  data <- data.frame(H = retrieveH(D, coord = coord)$H, D = D)
 
   expect_is(weibullFunction(data, weight = NULL, bayesian = FALSE), "nls")
 })
@@ -177,3 +169,4 @@ test_that("lat long to UTM", {
   expect_is(UTM[, 3], "character")
   expect_equal(unique(UTM[, 3]), "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 })
+

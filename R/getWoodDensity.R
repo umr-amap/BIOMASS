@@ -38,7 +38,7 @@
 #'
 #' @export
 #'
-#' @author Arthur BAILLY, Maxime REJOU-MECHAIN
+#' @author Arthur BAILLY, Maxime REJOU-MECHAIN, Fabian FISCHER
 #'
 #' @references
 #' Fischer, F. J., et al. 2025 _A global map of wood density_ https://doi.org/10.1101/2025.08.25.671920
@@ -92,9 +92,9 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   }
 
   if (!is.null(addWoodDensityData)) {
-    if (!(all(names(addWoodDensityData) %in% c("genus", "species", "wd","sd", "family")) && length(names(addWoodDensityData)) %in% c(4, 5))) {
+    if (!(all(names(addWoodDensityData) %in% c("genus", "species", "WD","sdWD", "family")) && length(names(addWoodDensityData)) %in% c(4, 5))) {
       stop('The additional wood density database should be organized in a dataframe with four (or five) columns:
-           "genus","species","wd","sd", and the column "family" is optional')
+           "genus","species","WD","sdWD", and the column "family" is optional')
     }
   }
 
@@ -116,6 +116,7 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
     wdData <- merge(wdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
     wdData[!is.na(WD), wsg := WD]
     wdData[!is.na(sdWD), sd := sdWD]
+    wdData[, c("WD","sdWD") := NULL]
   }
 
   # Do we print the following information ??? subWdData contained individual measurements so if we want to print it, we have to retrieve the number of individual measurements in GWDD_v2... BUT GWDD_v2 contains aggregate measurements !
@@ -123,24 +124,21 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   #   message("The reference dataset contains ", nrow(subWdData), " wood density values")
   # }
 
-  # Creating an input dataframe
+  # Creating an input data-table
   inputData <- data.table(genus = as.character(genus), species = as.character(species))
-
-  # Adding the family if not provided
+  inputData[, binomial := paste(genus, species)]
+  
+  # Assign family if provided 
   if (!is.null(family)) {
     inputData[, family := as.character(family)]
-  } else {
-    if (!exists("genusFamily", inherits = FALSE)) {
-      genusFamily <- data.table(BIOMASS::genusFamily)
-    }
-    inputData[genusFamily, on = "genus", family := i.family]
   }
 
+  # Assign stand if provided 
   if (!is.null(stand)) {
     inputData[, stand := as.character(stand)]
   }
 
-  taxa <- unique(inputData, by = c("family", "genus", "species"))
+  taxa <- unique(inputData, by = c("binomial"))
   if (verbose) {
     message("Your taxonomic table contains ", nrow(taxa), " taxa")
   }
@@ -155,90 +153,49 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
     x
   }
 
-  # Select only the relevant data
-  meanWdData <- subWdData[(family %in% taxa$family | genus %in% taxa$genus | species %in% taxa$species), ]
+  # # If there is no genus or species level
+  # inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
+  # 
+  # if (nrow(meanWdData) == 0) {
+  #   stop("Our database have not any of your family, genus and species")
+  # }
 
-  if (nrow(meanWdData) == 0) {
-    stop("Our database have not any of your family, genus and species")
-  }
+  # if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
+  #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
+  #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
+  #   stop("There is no exact match among the family, genus and species, please check that 'genus' and 'species' doesn't contain any special character or provide 'addWoodDensity' dataset.")
+  # }
 
+  
+  # Merging WdData with inputData ----------------------------------------------
 
-  # If there is no genus or species level
-  inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
-
-
-  if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
-    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
-    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
-    stop("There is no exact match among the family, genus and species, try with 'addWoodDensity'
-         or inform the 'family' or increase the 'region'")
-  }
-
-  # Extracting data ---------------------------------------------------------
-
-  # compute mean at species level
-  sdSP <- sd_10[taxo == "species", sd]
-  meanSP <- meanWdData[,
-    by = c("family", "genus", "species"),
-    .(
-      meanWDsp = mean(wd),
-      nIndsp = .N,
-      sdWDsp = sdSP
-    )
+  # At species level: 
+  inputData <- merge(x = inputData, y = wdData[, c("species","wsg","sd","level_tax")], all.x = TRUE, by.x = "binomial", by.y = "species")
+  
+  # At genus level: 
+  inputData[ is.na(level_tax),
+             c("wsg", "sd", "level_tax") := wdData[is.na(species),][
+               .SD,
+               on = .(genus),
+               .(wsg, sd, level_tax)]
   ]
-  inputData[meanSP,
-    on = c("family", "genus", "species"), by = .EACHI,
-    `:=`(
-      meanWD = meanWDsp,
-      nInd = nIndsp,
-      sdWD = sdWDsp,
-      levelWD = "species"
-    )
-  ]
-
-  # mean at genus level
-  sdGN <- sd_10[taxo == "genus", sd]
-  meanGN <- meanSP[,
-    by = c("family", "genus"),
-    .(
-      meanWDgn = mean(meanWDsp),
-      nIndgn = .N,
-      sdWDgn = sdGN
-    )
-  ]
-  inputData[meanGN,
-    on = c("family", "genus"), by = .EACHI,
-    `:=`(
-      meanWD = coalesce(meanWD, meanWDgn),
-      nInd = coalesce(nInd, nIndgn),
-      sdWD = coalesce(sdWD, sdWDgn),
-      levelWD = coalesce(levelWD, "genus")
-    )
-  ]
-
-  # mean at family level if provided
-  if (!is.null(family)) {
-    sdFM <- sd_10[taxo == "family", sd]
-    meanFM <- meanGN[,
-      by = family,
-      .(
-        meanWDfm = mean(meanWDgn),
-        nIndfm = .N,
-        sdWDfm = sdFM
-      )
-    ]
-    inputData[meanFM,
-      on = "family", by = .EACHI,
-      `:=`(
-        meanWD = coalesce(meanWD, meanWDfm),
-        nInd = coalesce(nInd, nIndfm),
-        sdWD = coalesce(sdWD, sdWDfm),
-        levelWD = coalesce(levelWD, "family")
-      )
+  
+  # At family level: 
+  if(!is.null(family)) {
+    inputData[ is.na(level_tax),
+               c("wsg", "sd", "level_tax") := wdData[is.na(genus),][
+                 .SD,
+                 on = .(family),
+                 .(wsg, sd, level_tax)]
     ]
   }
-
-  # mean at stand level if provided
+  
+  # Warning when family is not provided and when all taxa are not matched
+  if(is.null(family) && sum(is.na(inputData$wsg)) != 0) {
+      warning( paste( sum(is.na(inputData$wsg)), "taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level." ) )
+  }
+  
+  # retrieve mean at stand level if provided
   if (!is.null(stand)) {
     meanST <- inputData[!is.na(meanWD),
       by = stand,

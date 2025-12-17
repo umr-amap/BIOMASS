@@ -18,8 +18,10 @@ check_plot_coord(
   plot_ID = NULL,
   tree_plot_ID = NULL,
   ref_raster = NULL,
+  shapefile = NULL,
   prop_tree = NULL,
-  ask = T
+  threshold_tree = NULL,
+  ask = TRUE
 )
 }
 \arguments{
@@ -47,9 +49,13 @@ check_plot_coord(
 
 \item{tree_plot_ID}{If dealing with multiple plots : a character indicating the variable name for tree plot IDs in tree_data.}
 
-\item{ref_raster}{A SpatRaster object from terra package, typically a chm raster created from LiDAR data.}
+\item{ref_raster}{filename (character) of the raster to be displayed (typically a CHM raster created from LiDAR data), or a SpatRaster object from terra package.}
+
+\item{shapefile}{filename (character) of the shapefile to be displayed, or an object of class 'sf' (sf package).}
 
 \item{prop_tree}{The column name variable of tree_data for which the tree visualization will be proportional.}
+
+\item{threshold_tree}{a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.}
 
 \item{ask}{If TRUE and dealing with multiple plots, then prompt user before displaying each plot.}
 }
@@ -115,7 +121,7 @@ check_plot_204 <- check_plot_coord(
  proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
  trust_GPS_corners = TRUE, draw_plot = FALSE,
  tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
- ref_raster = nouragues_raster, prop_tree = "D"
+ ref_raster = nouragues_raster, prop_tree = "D", threshold_tree = 25
 )
 \donttest{
   check_plot_204$plot_design

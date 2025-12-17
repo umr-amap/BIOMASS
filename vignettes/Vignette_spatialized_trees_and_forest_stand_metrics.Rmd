@@ -100,7 +100,7 @@ You can give either geographical coordinates with the 'longlat' argument or anot
 
 - When only **1 GPS measurement by corner** has been recorded **with a high degree of accuracy** (by a geometer, for example), or if you already have averaged your measurements by yourself, you can supply these 4 GPS coordinates to the function.
 
-- When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), coordinates will be averaged by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the 'rm_outliers' and 'max_dist' arguments. 
+- When **enough coordinates have been recorded for each corner** (for more information, see the [CEOS good practices protocol, section A.1.3.1](https://lpvs.gsfc.nasa.gov/PDF/CEOS_WGCV_LPV_Biomass_Protocol_2021_V1.0.pdf) ), the coordinates will be averaged by corner, resulting in 4 reference coordinates. The function can also detect and remove GPS outliers using the 'rm_outliers' and 'max_dist' arguments. 
 
 ```{r check_plot_trust_GPS, dpi=200, message=FALSE}
 check_plot_trust_GPS <- check_plot_coord(
@@ -109,7 +109,7 @@ check_plot_trust_GPS <- check_plot_coord(
   rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = T,
   draw_plot = TRUE,
-  max_dist = 10, rm_outliers = TRUE )
+  max_dist = 10, rm_outliers = TRUE)
 ```
 
 The two blue arrows represent the origin of the plot's relative coordinate system. 
@@ -146,12 +146,12 @@ The associated polygon is returned via the `$polygon` output and can be saved in
 sf::st_write(check_plot_trust_GPS$polygon, "your_directory/plot201.shp")
 ```
 
-For full details, the `$outlier_corners` output returns all the information about GPS outliers found by the function, and the `$UTM_code` output returns the UTM code calculated by the function if geographic coordinates have been provided.
+For full details, the `$outlier_corners` output returns all the information about GPS outliers found by the function, the `$UTM_code` output returns the UTM code calculated by the function if geographic coordinates have been provided, and the `$sd_coord` output returns the average standard deviation of the GPS measurements for each corner on the X and Y axes.
 
 
 ## Visualising and retrieving projected tree coordinates {#tree_coordinates}
 
-Tree coordinates are usually measured in the plot's relative coordinate system. To project them in the projected system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
+Tree coordinates are usually measured in the plot's relative coordinate system. To project them in the projected/GPS system, you can supply their relative coordinates using the `tree_data` and `tree_coords` arguments.
 
 ```{r}
 plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
@@ -163,17 +163,17 @@ check_plot_trust_GPS <- check_plot_coord(
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"))
 ```
 
-The projected coordinates of the trees are added to the tree data-frame and returned by the output `$tree_data` (columns x_proj and y_proj).
+The projected/GPS coordinates of the trees are added to the tree data-frame and returned by the output `$tree_data` (columns x_proj/long and y_proj/lat).
 
 ```{r}
-plot201Trees[c("Xutm","Yutm")] <- check_plot_trust_GPS$tree_data[c("x_proj","y_proj")]
-
 kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
 ```
 
 The output of the function also standardises the names of the relative tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot` column, indicating if a tree is in the plot or not.
 
-You can also access and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title: 
+If you have a shapefile containing useful information about the plot, you can also display it using the `shapefile` argument.
+
+Finally, you can access and modify the plot via the `$plot_design` output which is a ggplot object. For example, to change the plot title: 
 
 ```{r}
 plot_to_change <- check_plot_trust_GPS$plot_design
@@ -181,16 +181,10 @@ plot_to_change <- plot_to_change + ggtitle("A custom title")
 plot_to_change
 ```
 
-If you provided longitude and latitude corner coordinates, you can retrieve the GPS coordinates of the trees in a longitude/latitude format using this code:
-
-```{r}
-tree_GPS_coord <- as.data.frame( proj4::project(check_plot_trust_GPS$tree_data[c("x_proj","y_proj")], proj = check_plot_trust_GPS$UTM_code$UTM_code, inverse = TRUE) )
-```
-
 
 ## Integrating LiDAR data
 
-If you have LiDAR data in raster format (typically a CHM raster) that you want to compare with a tree metric, this can be done with the `ref_raster` and the `prop_tree` arguments.
+If you have LiDAR data in raster format (typically a CHM raster) that you want to compare with a tree metric, this can be done with the `ref_raster`, `prop_tree` and `threshold_tree` arguments.
 
 ```{r}
 # Load internal CHM raster
@@ -200,8 +194,9 @@ check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
   longlat = c("Long", "Lat"), rel_coord = c("Xfield", "Yfield"),
   trust_GPS_corners = TRUE,
-  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"), prop_tree = "D", # here the treediameter
-  ref_raster = nouraguesRaster)
+  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"),
+  prop_tree = "D", threshold_tree = 20, # Display tree diameters >= 20
+  ref_raster = nouraguesRaster )
 ```
 
 ## Checking multiple plots at once
@@ -216,7 +211,7 @@ multiple_checks <- check_plot_coord(
   plot_ID = "Plot",
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), 
   prop_tree = "D", tree_plot_ID = "Plot",
-  ref_raster = nouraguesRaster, ask = FALSE)
+  ref_raster = nouraguesRaster)
 ```
 
 Be aware that by default, the function will ask you to type Enter between each plot (argument 'ask = TRUE').
@@ -238,15 +233,15 @@ kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, captio
 
 If you want to stay in the plot's relative coordinate system, just set `proj_coord` = NULL.
 
-The function also handles imperfect cuts with the arguments `centred_grid` and `grid_tol`. Here an example with a 40mx45m grid.
+The function also handles imperfect cuts with the `origin` and `grid_tol` arguments. Here an example with a 40mx45m grid and origin coordinates set at (10 ; 5).
 
 ```{r}
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = c(40,45), 
-  centred_grid = TRUE, # centre the grid in the middle of the plot
-  grid_tol = 0.3 # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
+  grid_tol = 0.3, # by default =0.1, ie, if more than 10% of the plot is not covered by the grid, it will returned an error
+  origin = c(10,5)
   )
 ```
 
@@ -256,7 +251,6 @@ non_centred <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = c(40,45), 
-  centred_grid = FALSE,
   grid_tol = 0.3)
 
 ggplot(data = subplots$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
@@ -266,7 +260,7 @@ ggplot(data = subplots$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) +
   geom_point(col="red") + 
   coord_equal() + 
   theme_bw() + 
-  labs(title = "subplot divisions with centred_grid = TRUE")
+  labs(title = "subplot divisions with origin at (10,5)")
 
 ggplot(data = non_centred$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) + 
   geom_point(data = check_plot_trust_GPS$corner_coord, 
@@ -275,7 +269,7 @@ ggplot(data = non_centred$sub_corner_coord, mapping = aes(x=x_proj, y=y_proj)) +
   geom_point(col="red") + 
   coord_equal() + 
   theme_bw() + 
-  labs(title = "subplot divisions with centred_grid = FALSE")
+  labs(title = "subplot divisions with origin at (0,0) by default")
 
 ```
 
@@ -284,7 +278,7 @@ For the purpose of summarising and representing subplots (coming in the next sec
 ```{r divide_plot_trees}
 # Add AGB predictions (calculated in Vignette BIOMASS) to plot201Trees
 AGB_data <- readRDS("saved_data/NouraguesTreesAGB.rds")
-plot201Trees <- merge(plot201Trees , AGB_data[c("Xfield","Yfield","D","AGB")])
+plot201Trees <- merge(plot201Trees , AGB_data[c("Xfield","Yfield","D","AGB")], sort=FALSE)
 
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
@@ -305,19 +299,34 @@ The function now returns a list containing:
 kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-Last but not least, the function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
+Of course, the function can handle as many plots as you want, using the `corner_plot_ID` and `tree_plot_ID` arguments:
 
 ```{r divide_multiple_plots}
 multiple_subplots <- divide_plot(
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
-  grid_size = 25,
+  grid_size = 25, 
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
 )
 ```
 
+Last but not least, the function can account for uncertainty in the corner coordinates using the `sd_coord` and `n` arguments. In this case, `n` simulations of corner positioning will be drawn and returned via the `$simu_coord` output list. The uncertainty (sd) on each corner position along the X- and Y- axis will be equal to the value of sd_coord: 
 
-# Summarising tree metrics at subplot level
+```{r divide_sd_coord}
+sd_coord_subplots <- divide_plot(
+  corner_data = check_plot_trust_GPS$corner_coord,
+  rel_coord = c("x_rel","y_rel"),
+  proj_coord = c("x_proj","y_proj"),
+  grid_size = 25, # or c(25,25)
+  tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"),
+  sd_coord = check_plot_trust_GPS$sd_coord, n = 50
+  )
+```
+
+
+# Summarising metrics at subplot level
+
+## Summarising tree metrics 
 
 Once you've applied the `divide_plot()` function with a non-null `tree_data` argument, you can summarise any tree metric at the subplot level with the `subplot_summary()` function.
 
@@ -342,7 +351,7 @@ The output of the function is a list containing:
 
 * `$tree_summary`: a summary of the metric per subplot 
 
-* `$polygon`: an object of the class `sf` containing a simple feature collection of the subplot's polygon
+* `$polygon`: a simple feature collection of the summarised subplot's polygons
 
 * `$plot_design`: a ggplot object that can easily be modified
 
@@ -361,8 +370,54 @@ And of course, the function can handle **as many plots as provided in divide_plo
 
 ```{r subplot_summary_display_trees}
 multiple_subplot_metric <- subplot_summary(
-  subplots = multiple_subplots,
+  subplots = multiple_subplots, draw_plot = FALSE,
   value = "D", fun = mean, per_ha = FALSE)
+```
+
+
+## Summarising the AGBD and its uncertainties
+
+If you have obtained the **AGB estimates and their uncertainty using the 'AGBmonteCarlo()'** function (see the [Estimating stand biomass vignette](https://umr-amap.github.io/BIOMASS/articles/Vignette_BIOMASS.html#some-tricks), you can provide the output matrix of this function using the `AGB_simu` argument.  
+The function also handles uncertainty in corner coordinates if the `subplots` argument provided has been created using the `sd_coord` argument (optional): 
+
+```{r, include=FALSE}
+error_prop <- readRDS("saved_data/error_prop.rds")
+```
+
+```{r}
+subplot_AGBD <- subplot_summary(
+  subplots = sd_coord_subplots,
+  AGB_simu = error_prop$AGB_simu # error_prop has been created in the previous vignette
+)
+```
+
+The simulated AGBs are therefore summarised in **AGBD** (i.e. AGB per hectare), and the function returns an additional output containing all the simulations performed: `$long_AGB_simu`.
+
+## Summarising LiDAR metrics
+
+`subplot_summary()` can also **summarise the metric contained in a raster** (typically a CHM raster obtained from LiDAR data) by providing the `ref_raster` and the `raster_fun` arguments:
+
+```{r}
+raster_summary <- subplot_summary(
+  subplots = subplots,
+  ref_raster = nouraguesRaster, raster_fun = median)
+```
+
+## All at once
+
+Let us consider the uncertainty in the coordinates of the plot corners and summarise the following information:
+
+- the standard deviation of diameter
+- the AGB and its uncertainty
+- the mean raster values
+
+```{r}
+subplot_metric <- subplot_summary(
+  subplots = sd_coord_subplots,
+  value = "D", fun = sd, per_ha = TRUE,
+  AGB_simu = error_prop$AGB_simu, 
+  ref_raster = nouraguesRaster # by default, the associated function is the mean function
+  )
 ```
 
 
@@ -380,7 +435,7 @@ custom_plot +
   labs(title = "Nouragues plot" , fill="Sum of AGB per hectare")
 # Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
-  geom_point(data=plot201Trees, mapping = aes(x = Xutm, y = Yutm, size = D, alpha= D), shape=1,) +
+  geom_point(data=check_plot_trust_GPS$tree_data, mapping = aes(x = x_proj, y = y_proj, size = D, alpha= D), shape=1,) +
   labs(fill = "Sum of AGB per hectare") +
   guides(alpha = guide_legend(title = "Diameter (cm)"),
          size = guide_legend(title = "Diameter (cm)")) + 

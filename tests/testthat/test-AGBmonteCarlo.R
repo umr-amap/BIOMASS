@@ -7,7 +7,7 @@ HDmodel <- modelHD(
   D = NouraguesHD$D,
   H = NouraguesHD$H,
   method = "log2",
-  useWeight = TRUE
+  useWeight = TRUE, bayesian = FALSE
 )
 
 nIter <- 50
@@ -279,7 +279,8 @@ test_that("With the plot value", {
     H = NouraguesHD$H,
     method = "log2",
     useWeight = TRUE,
-    plot = NouraguesHD$plotId
+    plot = NouraguesHD$plotId,
+    bayesian = FALSE
   )
 
   WD <- suppressMessages(getWoodDensity(NouraguesHD$genus, NouraguesHD$species))

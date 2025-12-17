@@ -74,7 +74,7 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
     # See man/figures/predictHeight_help.pdf for details 
     
     # If model is a brmsfit model, sample posterior parameters in brm draws
-    if(brms::is.brmsfit(mod$model)) {
+    if(inherits(mod$model, "brmsfit")) {
       param_draws <- as.data.frame(brms::as_draws_df(mod$model))
       n_draws <- nrow(param_draws)
       n_trees <- nrow(D_stand)
@@ -143,7 +143,7 @@ predictHeight <- function(D, model, err = FALSE, plot = NULL) {
       H_simu <- param_draws[[1]] * ( 1 - exp( -(D_stand / param_draws[[2]]) ^ param_draws[[3]]) ) + e
     }
     # if bayesian model without error propagation, get the median of all estimates
-    if(brms::is.brmsfit(mod$model) && !err) H_simu <- as.matrix(apply(H_simu , 1, median, na.rm=TRUE))
+    if(inherits(mod$model,"brmsfit") && !err) H_simu <- as.matrix(apply(H_simu , 1, median, na.rm=TRUE))
     as.matrix(H_simu)
   }))
   

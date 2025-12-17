@@ -1,11 +1,9 @@
-test <- fread("family       genus        species        plotId
-Fabaceae      Acacia        sinuata        plot1
-Cornaceae    Alangium   salviifolium        plot1
-Fabaceae     Albizia        lebbeck        plot2
-Fabaceae     Albizia        procera        plot2
-Sapindaceae  Allophylus          cobbe        plot2
-Lauraceae Alseodaphne semecarpifolia        plot1
-Phyllanthaceae     Aporosa     lindleyana        plot1", data.table = F)
+test <- data.table(
+  family = c("Fabaceae","Cornaceae","Fabaceae","Fabaceae","Sapindaceae","Lauraceae","Phyllanthaceae","Lecythidaceae"),
+  genus = c("Acacia","Alangium","Albizia","Albizia","Allophylus","Alseodaphne","Aporosa","Indet.Lecythidaceae"),
+  species = c("sinuata","salviifolium","lebbeck","procera","cobbe","semecarpifolia","lindleyana","Indet."),
+  plotId = c("plot1","plot1","plot2","plot2","plot2","plot1","plot1","plot1")
+)
 
 suppressMessages({
   context("Function to get the wood density")
@@ -17,7 +15,7 @@ suppressMessages({
       "do not have the same length"
     )
 
-    WD <- getWoodDensity(test$genus, test$species)
+    WD <- getWoodDensity(genus = test$genus, species = test$species)
     expect_is(WD, "data.frame")
 
     expect_equal(colnames(WD), c("family", "genus", "species", "meanWD", "sdWD", "levelWD", "nInd"))

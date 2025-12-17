@@ -1,0 +1,34 @@
+"genus","species","genusCorrected","speciesCorrected","nameModified","taxon_family_acc","taxon_genus_acc","taxon_species_acc"
+"Terminalia","superba","Terminalia","superba","FALSE","Combretaceae","Terminalia","superba"
+"Thomandersia","hensii","Thomandersia","hensii","FALSE","Thomandersiaceae","Thomandersia","hensii"
+"Guarea","glabra","Guarea","glabra","FALSE","Meliaceae","Guarea","glabra"
+"Fabaceae",NA,"Fabaceae",NA,"FALSE",NA,"Fabaceae",NA
+"Fabaceae","","Fabaceae",NA,"FALSE",NA,"Fabaceae",NA
+"Fabaceae"," ","Fabaceae",NA,"FALSE",NA,"Fabaceae",NA
+"Fabaceae sp",NA,"Fabaceae sp",NA,"TaxaNotFound",NA,"Fabaceae sp",NA
+"Fabacee sp","","Fabacee sp",NA,"TaxaNotFound",NA,"Fabacee sp",NA
+"Leguminosae",NA,"Fabaceae",NA,"TRUE",NA,"Leguminosae",NA
+"Terminalia sp. superba","superba","Terminalia","sp.","NoMatch(low_score)","Combretaceae","Terminalia","superba"
+"Terminalia cf. superba","cf. superba","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Terminalia aff. superba","aff. superba","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Terminalia ","superba","Terminalia","superba","FALSE","Combretaceae","Terminalia","superba"
+" Terminalia","superba ","Terminalia","superba","FALSE","Combretaceae","Terminalia","superba"
+"Terminalia  "," superba","Terminalia","superba","FALSE","Combretaceae","Terminalia","superba"
+"Teminalia","superba","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Terminlia","superb","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Termnalia","suprba","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Thommandersia","hensii","Thomandersia","hensii","TRUE","Thomandersiaceae","Thomandersia","hensii"
+"Thommandersio","hensi","Thomandersia","hensii","TRUE","Thomandersiaceae","Thomandersia","hensii"
+"Thomadersia","heensii","Thomandersia","hensii","TRUE","Thomandersiaceae","Thomandersia","hensii"
+"Terminalia sp",NA,"Terminalia",NA,"TRUE","Combretaceae","Terminalia",NA
+"Guarea sp","sp","Guarea","sp","SpNotFound","Combretaceae","Guarea",NA
+"Guarea spp","spp","Guarea","spp","SpNotFound","Combretaceae","Guarea",NA
+"Guarea sp.","sp.","Guarea","sp.","SpNotFound","Combretaceae","Guarea",NA
+"terminalia","Superba","Terminalia","Superba","SpNotFound","Combretaceae","Terminalia","superba"
+"TERMINALIA","SUPERBA","Terminalia","superba","TRUE","Combretaceae","Terminalia","superba"
+"Guarea glabra  subsp. excelsa","glabra  subsp. excelsa","Guarea","glabra","TRUE","Meliaceae","Guarea","glabra  subsp. excelsa"
+"Guarea glabra subsp. excelsa","Guarea glabra subsp. excelsa","Guarea","glabra","TRUE","Meliaceae","Guarea","glabra  subsp. excelsa"
+"Guarea","glabra subsp. excelsa","Guarea","glabra","FALSE","Meliaceae","Guarea","glabra  subsp. excelsa"
+"Guarea","glabra sub excelsa","Guarea","glabra","TRUE","Meliaceae","Guarea","glabra  subsp. excelsa"
+"Gymnacranthera","farquhariana  var. paniculata","Gymnacranthera","farquhariana","FALSE","Myristicaceae","Gymnacranthera","farquhariana  var. paniculata"
+"Gymnacranthera","farquhariana  var paniculata","Gymnacranthera","farquhariana","TRUE","Myristicaceae","Gymnacranthera","farquhariana  var. paniculata"

@@ -12,7 +12,7 @@ test_that("With the HDmodel", {
     D = NouraguesHD$D,
     H = NouraguesHD$H,
     method = "log2",
-    useWeight = TRUE
+    useWeight = TRUE, bayesian = FALSE
   )
 
   H <- retrieveH(D, model = HDmodel)
@@ -69,7 +69,7 @@ test_that("With the plot", {
   model <- modelHD(NouraguesHD$D,
     NouraguesHD$H,
     method = "log2",
-    plot = NouraguesHD$plotId
+    plot = NouraguesHD$plotId, bayesian = FALSE
   )
 
   D <- NouraguesHD$D

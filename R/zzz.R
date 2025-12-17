@@ -5,8 +5,9 @@
 .onAttach <- function(libname, pkgname) {
   
   packageStartupMessage(
-    "For more information on using BIOMASS, visit https://umr-amap.github.io/BIOMASS\n"
-  )
+    "For more information on using BIOMASS, visit https://umr-amap.github.io/BIOMASS \n")
+  packageStartupMessage(
+    "Access the shiny version of the BIOMASS package at https://amap-apps.cirad.fr/apps/biomass-app/ \n")
   
   basePath <- cachePath()
   
@@ -21,7 +22,7 @@
   if(attr(basePath, "source")=="data") {
     packageStartupMessage(
       "Using user data cache ", basePath,
-      "\n  To clear or remove cache see function clearCache()."
+      "\n To create a directory cache, use the function 'createCache()'.\n To clear or remove cache, see the function 'clearCache()'."
     )
   }
 }

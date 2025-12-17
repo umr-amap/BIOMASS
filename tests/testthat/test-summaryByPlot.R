@@ -7,7 +7,7 @@ test_that("summary by plot", {
   NouraguesTrees <- NouraguesTrees[c(1:100,551:650),]
   
   # Modelling height-diameter relationship
-  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
   
   # Retrieving wood density values
   NouraguesWD <- suppressMessages(

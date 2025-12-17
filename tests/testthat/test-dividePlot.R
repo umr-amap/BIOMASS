@@ -25,6 +25,8 @@ test_that("divide_plot error", {
   expect_error(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("x_rel","y_rel")), "column names provided by tree_coords are not found in tree_data colunm names")
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")), 
                "You must provide tree_plot_ID if you have more than one plot in your data")
+  expect_error(divide_plot(NouraguesPlot201[c(1,11,21,31),], c("Xfield","Yfield"), grid_size = 25, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), 
+               "The argument corner_plot_ID is required if tree_plot_ID is provided (it means that 'corner_data' contains several plots).", fixed=TRUE)
   expect_error(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "a"),
                "is not found in tree_data column names.")
   
@@ -39,6 +41,9 @@ test_that("divide_plot error", {
   # when the plot is not a rectangle
   rect_plot <- data.frame(x_rel=c(0,100,0,110),y_rel=c(0,0,100,100))
   expect_error(divide_plot(rect_plot, c("x_rel","y_rel"), grid_size = 25) , "BIOMASS package can't deal with non-rectangular plot")
+  
+  # origin argument 
+  expect_error(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 25, origin = 2) , "If provided, origin must be a numeric vector of length 2")
 })
 
 test_that("divide_plot on relative coordinates only", {
@@ -66,8 +71,13 @@ test_that("divide_plot on relative coordinates only", {
   expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)))
   
   # Test non-adjusted grid
-  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3, centred_grid = T))
-  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,95,95,50), y=c(0,0,20,20)))
+  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3))
+  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4), x_rel=c(45,90,90,45), y_rel=c(0,0,20,20)))
+  
+  # Test origin
+  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3, origin = c(10,10)))
+  expect_equivalent(subplots$sub_corner_coord[1:4,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_0_0",4), x_rel=c(10,55,55,10), y_rel=c(10,10,30,30)))
+  
 })
 
 test_that("divide_plot with projected coordinates", {
@@ -105,9 +115,16 @@ test_that("divide_plot with tree coordinates", {
   # Test warning when a tree is not in any subplot
   expect_warning(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")), "(not in a subplot area)")
   
-  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
-  
+  subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 50, tree_data = NouraguesTrees[NouraguesTrees$Plot==201,], tree_coords = c("Xfield","Yfield")))
   expect_equal(subplots$tree_data$subplot_ID[4:6] , c(NA,"subplot_0_0",NA))
+  
+  subplots_all_trees <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 50, tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield")))
+  
+  expect_equal(subplots$sub_corner_coord , subplots_all_trees$sub_corner_coord)
+  expect_equal(subplots$tree_data , subplots_all_trees$tree_data[subplots_all_trees$tree_data$Plot==201,])
+  
+  
+  
   
   # Test with multiple plots
   multiple_subplots <- suppressWarnings(
@@ -121,8 +138,6 @@ test_that("divide_plot with coordinates uncertainties", {
   multiple_subplots <- suppressWarnings(
     divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), grid_size = 50,
                 corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"))
-  
-  expect_equal(multiple_subplots$tree_data$subplot_ID[c(100,101)], c("201_0_1","201_0_0"))
 
   NouraguesTrees <- NouraguesTrees[!is.na(multiple_subplots$tree_data$subplot_ID),]
   
@@ -142,8 +157,8 @@ test_that("divide_plot with coordinates uncertainties", {
     corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot",
     sd_coord = 0, n = 5))
   
-  expect_equal(length(subplots_sd_0$sub_corner_coord), 5)
-  expect_equal(multiple_subplots$sub_corner_coord, as.data.frame(subplots_sd_0$sub_corner_coord[[1]]))
+  expect_equal(length(subplots_sd_0$sub_corner_coord), 6)
+  expect_equal(multiple_subplots$sub_corner_coord, subplots_sd_0$sub_corner_coord)
   
   sd_coord <- data.frame(plot_id = c(2010,204,213,223), sd_coord = c(NA,2,3,4))
   expect_error(suppressWarnings(divide_plot(
@@ -170,7 +185,7 @@ test_that("divide_plot with coordinates uncertainties", {
     corner_plot_ID = "Plot", tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot",
     sd_coord = sd_coord, n = 50))
   
-  corner_coord <- do.call(rbind,subplots_sd$sub_corner_coord)
+  corner_coord <- do.call(rbind,subplots_sd$simu_coord)
   corner_coord <- corner_coord[x_rel==0&y_rel==0 | x_rel==100&y_rel==0 | x_rel==0&y_rel==100| x_rel==100&y_rel==100 |
                                x_rel==0&y_rel==300 | x_rel==100&y_rel==300 | x_rel==0&y_rel==400| x_rel==100&y_rel==400 |
                                x_rel==100&y_rel==200 | x_rel==200&y_rel==200 | x_rel==100&y_rel==300| x_rel==200&y_rel==300 |

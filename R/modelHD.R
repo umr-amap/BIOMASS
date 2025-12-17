@@ -70,23 +70,26 @@
 #' # Fit H-D models for the Nouragues dataset
 #' \donttest{ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, drawGraph = TRUE) }
 #'
+#' ### Using frequentist inference
 #' # For a selected model
 #' HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
-#'                    method = "log2", drawGraph = TRUE)
+#'                    method = "log2", drawGraph = TRUE, 
+#'                    bayesian = FALSE)
 #'
 #' # Using weights
 #' HDmodel <- modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H,
 #'   method = "log2", useWeight = TRUE,
-#'   drawGraph = TRUE)
+#'   drawGraph = TRUE, bayesian = FALSE)
 #' 
 #' # With multiple stands (plots)
 #' HDmodel <- modelHD(
 #'   D = NouraguesHD$D, H = NouraguesHD$H,
 #'   method = "log2", useWeight = TRUE, 
-#'   plot = NouraguesHD$plotId, drawGraph = TRUE)
+#'   plot = NouraguesHD$plotId,
+#'   drawGraph = TRUE, bayesian = FALSE)
 #' 
-#' ### Using log2 bayesian model
+#' ### Using bayesian inference
 #' \dontrun{HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, 
 #'   method = "log2", bayesian = TRUE, useCache = TRUE)
 #' plot(HDmodel$model) }
@@ -112,7 +115,7 @@
 #' @importFrom data.table data.table
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_minimal theme scale_x_continuous scale_y_continuous element_text 
 
-modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL, bayesian = FALSE, useCache = FALSE, chains = 3, thin = 5, iter = 5000, warmup = 500, ...) {
+modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, plot = NULL, bayesian = TRUE, useCache = FALSE, chains = 3, thin = 5, iter = 5000, warmup = 500, ...) {
   
   # Checking arguments -------------------------------------------------
   
@@ -126,6 +129,9 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
   if (!is.null(method)) {
     method <- tolower(method)
+  } else {
+    # if no method (hence: evaluation of all methods), set bayesian to FALSE
+    bayesian <- FALSE
   }
   methods <- c("log1", "log2", "weibull", "michaelis")
   if (!is.null(method) && !(method %in% methods)) {
@@ -141,7 +147,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     stop("The length of the 'plot' vector must be either 1 or the length of D")
   }
   # Check if package brms is available
-  if (!requireNamespace("brms", quietly = TRUE)) {
+  if (bayesian && !requireNamespace("brms", quietly = TRUE)) {
     warning(
       'To build bayesian models, you must install the "brms" library \n\n',
       '\t\tinstall.packages("brms")'
@@ -189,19 +195,19 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
         if(is.null(weight)) {
           output$RSElog <- summary(mod)$sigma
         } else { # if weighted model, summary(mod)$sigma is not the appropriate RSE
-          res <- na.omit(log(Hdata$H)) - predict(mod)
-          output$RSElog <- sqrt(sum(res^2) / summary(mod)$df[2])
+          res <- log(Hdata$H) - predict(mod, newdata = Hdata)
+          output$RSElog <- sqrt(sum(res^2, na.rm = TRUE) / summary(mod)$df[2])
         }
         # Baskerville correction 1972
-        output$Hpredict <- exp(predict(mod) + 0.5 * output$RSElog^2)
+        output$Hpredict <- exp(predict(mod, newdata = Hdata) + 0.5 * output$RSElog^2)
       } else {
         if(is.null(weight)) {
           output$RSElog <- summary(mod)$spec_pars$Estimate
         } else { # if weighted model, summary(mod)$spec_pars$Estimate is not the appropriate RSE
-          res <- na.omit(log(Hdata$H)) - predict(mod)[,1]
-          output$RSElog <- sqrt(sum(res^2) / summary(mod)$nobs)  
+          res <- log(Hdata$H) - suppressWarnings(predict(mod, newdata = Hdata)[,1]) #warnings caused by NA's 
+          output$RSElog <- sqrt(sum(res^2, na.rm = TRUE) / summary(mod)$nobs) 
         }
-        output$Hpredict <- exp(predict(mod)[,1] + 0.5 * output$RSElog^2)
+        output$Hpredict <- exp(suppressWarnings(predict(mod, newdata = Hdata)[,1]) + 0.5 * output$RSElog^2)
       }
       
       if (useGraph) {
@@ -220,7 +226,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
       )
       
       if(!bayesian) {
-        output$Hpredict <- predict(mod)
+        output$Hpredict <- predict(mod, newdata = Hdata)
         if (useGraph) {
           output$Hpredict_plot <- predict(mod, newdata = D_Plot)
         }
@@ -235,15 +241,15 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
     }
     
     names(output$Hpredict) <- NULL
-    res <- na.omit(Hdata$H) - output$Hpredict 
+    res <- Hdata$H - output$Hpredict 
     
     output$method <- method
     if(!bayesian) {
-      output$RSE <- sqrt(sum(res^2) / summary(mod)$df[2]) # Residual standard error
+      output$RSE <- sqrt(sum(res^2, na.rm=TRUE) / summary(mod)$df[2]) # Residual standard error
     } else {
-      output$RSE <- sqrt(sum(res^2) / summary(mod)$nobs) # Residual standard error
+      output$RSE <- sqrt(sum(res^2, na.rm=TRUE) / summary(mod)$nobs) # Residual standard error
     }
-    output$Average_bias <- (mean(output$Hpredict) - mean(Hdata$H, na.rm = TRUE)) / mean(Hdata$H, na.rm = TRUE)
+    output$Average_bias <- (mean(output$Hpredict, na.rm = TRUE) - mean(Hdata$H, na.rm = TRUE)) / mean(Hdata$H, na.rm = TRUE)
     output$residuals <- res
     output$mod <- mod
     
@@ -270,7 +276,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   weight <- NULL
   
   # Warn if there is less than 2 diameter values in the following quantile intervals : [0-0.5], ]0.5;0.75] and ]0.75,1]
-  if ( any( table(findInterval(D, c(-1, quantile(D, probs = c(0.5, 0.75)), max(D) + 1))) < 3 ) ) {
+  if ( any( table(findInterval(Hdata$D, c(-1, quantile(Hdata$D, probs = c(0.5, 0.75), na.rm = TRUE), max(Hdata$D, na.rm = TRUE) + 1))) < 3 ) ) {
     if(is.null(plot)) {
       warning("Be careful, your diameter values are not evenly distributed. You should check their distribution.")
     } else {
@@ -279,7 +285,7 @@ modelHD <- function(D, H, method = NULL, useWeight = FALSE, drawGraph = FALSE, p
   }
   
   # Vector of diameter used only for visualisation purpose
-  D_Plot <- data.frame(D = Hdata[, 10^seq(log10(floor(min(D))), log10(ceiling(max(D))), l=100 )])
+  D_Plot <- data.frame(D = Hdata[, 10^seq(log10(floor(min(Hdata$D, na.rm=TRUE))), log10(ceiling(max(Hdata$D,na.rm=TRUE))), l=100 )])
   
   # If the measures need to be weighted
   if (useWeight == TRUE) {

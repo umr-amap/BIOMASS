@@ -19,9 +19,9 @@ subplot_summary(
 \arguments{
 \item{subplots}{output of the \code{\link[=divide_plot]{divide_plot()}} function}
 
-\item{value}{(if AGB_simu is not provided) a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)}
+\item{value}{a character indicating the column in subplots$tree_data to be summarised (or character vector to summarise several metrics at once)}
 
-\item{AGB_simu}{(if value is not provided) a n x m matrix containing individual AGB where n is the number of tree and m is the number of monte carlo simulation. Typically, the output '$AGB_simu' of the AGBmonteCarlo() function.}
+\item{AGB_simu}{a n x m matrix containing individual AGB where n is the number of tree and m is the number of monte carlo simulation. Typically, the output '$AGB_simu' of the AGBmonteCarlo() function.}
 
 \item{draw_plot}{a logical indicating whether the plot design should be displayed}
 
@@ -36,22 +36,23 @@ subplot_summary(
 \item{...}{optional arguments to fun}
 }
 \value{
-If 'value' is provided, a list containing the following elements:
+a list containing the following elements:
 \itemize{
-\item \code{tree_summary} : a summary of the metric per subplot
-\item \code{polygon} : an sf object : simple feature collection of the subplot's polygon
+\item \code{tree_summary}: a summary of the metric(s) per subplot
+\item \code{polygon}: a simple feature collection of the summarised subplot's polygon
 \item \code{plot_design} : a ggplot object (or a list of ggplot objects) that can easily be modified
 }
 
-If 'AGB_simu' is provided, a data.table containing a summary of the metric(s) per subplot and per simulation.
+If 'AGB_simu' is provided, the function also return \verb{$long_AGB_simu}: a data.table containing the resulting AGBD, the extracted raster values (if ref_raster is provided) and the coordinates of the center per subplot and per simulation.
 }
 \description{
-After applying the \code{\link[=divide_plot]{divide_plot()}} function, this function summarises with any defined function the desired tree metric by sub-plot and displays the plot representation.
+After applying the \code{\link[=divide_plot]{divide_plot()}} function, this function summarises with any defined function the desired tree metric (including AGB simulations calculated by the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function) by sub-plot and displays the plot representation.
 }
 \examples{
 # One plot with repeated measurements of each corner
 data("NouraguesPlot201")
 data("NouraguesTrees")
+
 check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
@@ -66,7 +67,6 @@ subplots_201 <- suppressWarnings(
 # Sum summary (by default) of diameter
 subplots_201_sum <- subplot_summary(subplots_201 , value = "D", draw_plot = FALSE)
 subplots_201_sum$tree_summary
-subplots_201_sum$polygon
 \donttest{
   subplots_201_sum$plot_design
 }
@@ -75,7 +75,7 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
                                       fun = quantile, probs=0.9)
   
 
-# Dealing with multiple plots
+# Dealing with multiple plots and metrics
 \dontrun{
   data("NouraguesCoords")
   nouragues_subplots <- suppressWarnings(
@@ -86,23 +86,6 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
     grid_size = 50,
     tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
     tree_plot_ID = "Plot"))
-  # Sum summary (by default)
-  nouragues_sum <- subplot_summary(nouragues_subplots , value = "D", draw_plot = FALSE)
-  nouragues_sum$tree_summary
-  nouragues_sum$plot_design
-}
-
-\dontrun{
-  data("NouraguesCoords")
-  nouragues_subplots <- suppressWarnings(
-  divide_plot(
-     corner_data = NouraguesCoords,
-    rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"),
-    corner_plot_ID = "Plot",
-    grid_size = 50,
-    tree_data = NouraguesTrees, tree_coords =  c("Xfield","Yfield"),
-    tree_plot_ID = "Plot"))
-  # Sum summary (by default)
   nouragues_mult <- subplot_summary(nouragues_subplots , 
                                    value = c("D","D","x_rel"),
                                    fun = list(D=sum,D=mean,x_rel=mean),
@@ -114,6 +97,47 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
   nouragues_mult$plot_design$`201`[[3]]
 }
 
+# Dealing with AGB simulations, coordinates uncertainties of corners and a CHM raster
+\dontrun{
+  NouraguesTrees201 <- NouraguesTrees[NouraguesTrees$Plot == 201,]
+  nouragues_raster <- terra::rast(
+    system.file("extdata", "NouraguesRaster.tif",
+                package = "BIOMASS", mustWork = TRUE)
+  )
+  
+  # Modelling height-diameter relationship
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
+  # Retrieving wood density values
+  Nouragues201WD <- getWoodDensity(
+    genus = NouraguesTrees201$Genus,
+    species = NouraguesTrees201$Species)
+  # MCMC AGB simulations
+  resultMC <- AGBmonteCarlo(
+    D = NouraguesTrees201$D, Dpropag = "chave2004",
+    WD = Nouragues201WD$meanWD, errWD = Nouragues201WD$sdWD,
+    HDmodel = HDmodel,
+    n = 200
+  )
+  # Dividing plot 201 with coordinates uncertainties  
+  nouragues_subplots <- suppressWarnings(
+    divide_plot(
+      corner_data = check_plot201$corner_coord,
+      rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
+      grid_size = 50,
+      tree_data = NouraguesTrees201, tree_coords =  c("Xfield","Yfield"),
+      sd_coord = check_plot201$sd_coord, n = 200
+    )
+  )
+  # Summary (may take few minutes to extract all raster metrics)
+  res_summary <- subplot_summary(
+    subplots = nouragues_subplots, 
+    AGB_simu = resultMC$AGB_simu,
+    ref_raster = nouragues_raster, raster_fun = mean)
+    
+  res_summary$tree_summary
+  res_summary$plot_design[[1]]
+  head(res_summary$long_AGB_simu)
+}
 }
 \author{
 Arthur Bailly
