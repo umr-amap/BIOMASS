@@ -5,7 +5,8 @@
 
 # Otherwise, wsg_hierarchical.csv is available at Fabian's dropbox (email 11 Novembre 2025 13:28)
 
-# ONCE THE wsg_estimates.rda WILL BE FINALISED, DON'T FORGET TO UPDATE data_documentation.R !!!
+# ONCE THE wsg_estimates.rda WILL BE FINALISED, DON'T FORGET TO UPDATE data_documentation.R !
+# BESIDES, data-raw/globalwd.R will be obsolete and can be deleted.
 
 library(data.table)
 

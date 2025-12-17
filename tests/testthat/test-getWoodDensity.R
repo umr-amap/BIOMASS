@@ -30,14 +30,14 @@ suppressMessages({
     expect_equal(dim(WD), c(7, 7))
 
 
-
+    # Test addWoodDensityData
     LocalWoodDensity <- data.table(
       family = test$family,
       genus = test$genus,
       species = test$species,
-      wd = runif(nrow(test), min = 0.1, max = 1.5)
+      WD = runif(nrow(test), min = 0.1, max = 1.5),
+      sdWD = runif(nrow(test), min = 0.02, max = 0.2)
     )
-
 
     WD <- getWoodDensity(
       genus = test$genus, species = test$species,
