@@ -1,7 +1,7 @@
 #' Predict map of AGBD and associated uncertainty
 #'
 #' @description
-#' As part of the FRM4BIOMASS project, this function enables to produce a map of
+#' This function enables to produce a map of
 #' the AGBD and associated uncertainty, using a spatially varying coefficient
 #' calibrated model created with the [calibrate_model()] function.
 #'
@@ -26,7 +26,7 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly
+#' @author Arthur Bailly, Dominique Lamonica
 #'
 #' @importFrom data.table as.data.table
 #' @importFrom ggplot2 scale_fill_gradientn coord_fixed geom_raster labs
@@ -55,28 +55,28 @@ predict_map <- function(fit_brms,
   if (!requireNamespace("foreach", quietly = TRUE)) {
     warning(
       'To speed up map predictions, you must install the "foreach" library \n\n',
-      '\t\tinstall.packages("brms")'
+      '\t\tinstall.packages("foreach")'
     )
     return(invisible(NULL))
   }
   if (!requireNamespace("future", quietly = TRUE)) {
     warning(
       'To speed up map predictions, you must install the "foreach" library \n\n',
-      '\t\tinstall.packages("brms")'
+      '\t\tinstall.packages("future")'
     )
     return(invisible(NULL))
   }
   if (!requireNamespace("doFuture", quietly = TRUE)) {
     warning(
       'To speed up map predictions, you must install the "foreach" library \n\n',
-      '\t\tinstall.packages("brms")'
+      '\t\tinstall.packages("doFuture")'
     )
     return(invisible(NULL))
   }
   if (!requireNamespace("progressr", quietly = TRUE)) {
     warning(
       'In order to check the progression of map predictions, you must install the "progressr" library \n\n',
-      '\t\tinstall.packages("brms")'
+      '\t\tinstall.packages("progressr")'
     )
     return(invisible(NULL))
   }
@@ -99,10 +99,7 @@ predict_map <- function(fit_brms,
   
   # Formatting dt_pred -----------------------------------------------------
   dt_pred <- as.data.table(pred_raster, xy = T)
-  dt_pred[ ,
-           c("X_km","Y_km","log_CHM") := list(x/1000, y/1000, log(dt_pred[[3]])) #change mean_logCHM to a more general name ????
-  ]
-  
+  dt_pred[ , log_CHM := log(dt_pred[[3]])] #change mean_logCHM to a more general name ????
   
   # Predictions ----------------------------------------------------------------
   draw_size <- n_post_draws/n_cores
@@ -140,8 +137,7 @@ predict_map <- function(fit_brms,
   dt_pred[, post_sd_AGBD := apply(X = exp(df_map_pred), MARGIN = 2, FUN = sd)]
   dt_pred[, post_cred_2.5_AGBD := apply(X = exp(df_map_pred), MARGIN = 2, FUN = quantile, probs = 0.025, na.rm=TRUE)]
   dt_pred[, post_cred_97.5_AGBD := apply(X = exp(df_map_pred), MARGIN = 2, FUN = quantile, probs = 0.975, na.rm=TRUE)]
-  dt_pred[, post_sd_AGBD := apply(X = exp(df_map_pred), MARGIN = 2, FUN = sd)]
-  dt_pred[, c("X_km","Y_km","log_CHM") := NULL]
+  dt_pred[, log_CHM := NULL]
   
   # Display maps ---------------------------------------------------------------
   if(plot_maps) {
@@ -167,6 +163,7 @@ predict_map <- function(fit_brms,
     print(plot_cv)
   }
   
-  return(dt_pred)
+  # return dt_pred in a raster format
+  return(terra::rast(dt_pred, crs = terra::crs(ref_raster) ))
   
 }

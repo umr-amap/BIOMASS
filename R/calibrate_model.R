@@ -32,9 +32,9 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly
+#' @author Arthur Bailly, Dominique Lamonica
 #'
-#' @importFrom data.table is.data.table copy
+#' @importFrom data.table is.data.table copy setnames
 #' 
 #' @examples
 #' \dontrun{
@@ -66,12 +66,13 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
   # If 'raster_metric' was the result of simulated corner coordinates
   dt_inf[, log_CHM := median(log_CHM) , by = subplot_ID]
   
-  # Convert projected coordinates in km
-  dt_inf[, c("X_km", "Y_km", "subplot_ID") := list(x_center/1000, y_center/1000, as.factor(subplot_ID))]
+  # subplot_ID as a factor
+  dt_inf[, subplot_ID := as.factor(subplot_ID)]
+  # rename x_center and y_center
+  setnames(x = dt_inf, old = c("x_center","y_center"), new = c("x","y"))
   
   # select number of simulations
-  dt_inf <- dt_inf[N_simu %in% sample(1:200, nb_rep),]
-  
+  dt_inf <- dt_inf[N_simu %in% sample(1:max(N_simu), nb_rep),]
   
   # Fit SVC model with brms ----------------------------------------------------
   
@@ -83,7 +84,7 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
   }
   
   bf_formula <- brms::bf(log_AGBD  ~  0 + betatilde * log_CHM,
-                         betatilde ~ 1 + gp(X_km, Y_km, gr = T, scale = T,
+                         betatilde ~ 1 + gp(x, y, gr = T, scale = T,
                                             cov = "matern32"),
                          nl = T
   )
