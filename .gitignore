@@ -35,6 +35,8 @@ vignettes/BIOMASS_cache/html/
 
 \.~*\#
 
+tests/testthat/_snaps/
+
 # Web site
 docs
 
