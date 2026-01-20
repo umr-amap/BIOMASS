@@ -412,9 +412,11 @@ correctTaxo <- function(genus, species, interactive = TRUE,
             "[[", "fullNameStringNoAuthorsPlain")) 
 
         # Sort candidate matches first by Levenshtein distance, then by role
-        cand_sort <- order(cand_roles, cand_names)
+        cand_sort <- order(cand_dist, cand_roles, cand_names)
+
         api_json_list[[i]]$data$taxonNameMatch$candidates <- 
           api_json_list[[i]]$data$taxonNameMatch$candidates[cand_sort]
+        cand_roles <- cand_roles[cand_sort]
 
         if (preferAccepted && sum(cand_roles == "accepted") == 1) {
           # Auto-accept singular accepted name
@@ -513,25 +515,37 @@ correctTaxo <- function(genus, species, interactive = TRUE,
   match_list <- c(match_cache_list, match_api_list)
 
   # Create formatted dataframe
-  match_df <- do.call(rbind, lapply(match_list, function(i) { 
-    if ("id" %in% names(i)) {
-      data.frame(
-        nameSubmitted = null2na(i$submitted_name),
-        nameMatched = null2na(i$fullNameStringNoAuthorsPlain),
-        nameAccepted = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
-        familyAccepted = null2na(i$familyAcc), 
-        genusAccepted = null2na(i$genusAcc), 
-        speciesAccepted = null2na(i$speciesAcc))
-    } else { 
-      data.frame(
-        nameSubmitted = null2na(i$submitted_name),
-        nameMatched = NA_character_,
-        nameAccepted = NA_character_,
-        familyAccepted = NA_character_,
-        genusAccepted = NA_character_,
-        speciesAccepted = NA_character_)
-    }
-  }))
+  if (length(match_list) == 0) {
+    # Handle the case where nothing was matched (API down + empty cache)
+    match_df <- data.frame(
+      nameSubmitted = xun,
+      nameMatched = NA_character_,
+      nameAccepted = NA_character_,
+      familyAccepted = NA_character_,
+      genusAccepted = NA_character_,
+      speciesAccepted = NA_character_
+    )
+  } else {
+    match_df <- do.call(rbind, lapply(match_list, function(i) { 
+      if ("id" %in% names(i)) {
+        data.frame(
+          nameSubmitted = null2na(i$submitted_name),
+          nameMatched = null2na(i$fullNameStringNoAuthorsPlain),
+          nameAccepted = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
+          familyAccepted = null2na(i$familyAcc), 
+          genusAccepted = null2na(i$genusAcc), 
+          speciesAccepted = null2na(i$speciesAcc))
+      } else { 
+        data.frame(
+          nameSubmitted = null2na(i$submitted_name),
+          nameMatched = NA_character_,
+          nameAccepted = NA_character_,
+          familyAccepted = NA_character_,
+          genusAccepted = NA_character_,
+          speciesAccepted = NA_character_)
+      }
+    }))
+  }
   
   # Match row order of dataframe to x
   out <- cbind(nameOriginal = x, match_df[match(xsub, match_df$nameSubmitted),])
