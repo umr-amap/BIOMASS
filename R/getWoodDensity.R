@@ -38,7 +38,7 @@
 #'
 #' @export
 #'
-#' @author Arthur BAILLY, Maxime REJOU-MECHAIN, Fabian FISCHER
+#' @author Arthur BAILLY, Maxime REJOU-MECHAIN, Fabian FISCHER, Dominique LAMONICA
 #'
 #' @references
 #' Fischer, F. J., et al. 2025 A global map of wood density https://doi.org/10.1101/2025.08.25.671920
