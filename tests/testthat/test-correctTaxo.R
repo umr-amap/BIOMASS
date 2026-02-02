@@ -100,9 +100,8 @@ test_that("correctTaxo uses cache and avoids API calls when possible", {
 
   # Simulate backbone version without pinging API 
   mock_bb <- list(data = list(classifications = list(id = "v2023.12")))
-  m_api_resp <- mockery::mock(mock_bb)
-  mockery::stub(correctTaxo, "httr2::req_perform", m_api_resp)
-  mockery::stub(correctTaxo, "httr2::resp_body_json", m_api_resp)
+  mockery::stub(correctTaxo, "httr2::req_perform", mockery::mock(mock_bb))
+  mockery::stub(correctTaxo, "httr2::resp_body_json", mockery::mock(mock_bb))
   
   # Choose cached value 
   expect_equal(
@@ -301,28 +300,28 @@ test_that("correctTaxo returns empty dataframe when nothing matches", {
   expect_true(is.na(res$nameMatched))
 })
 
-# # here error due to expect_all_equal : to be fixed
-# # correctTaxo - test against CSV
-# # Does not run during CRAN testing
-# test_that("correctTaxo handles real API calls", {
-#   skip_on_cran()
-#   reset_cache()
-# 
-#   # Import data
-#   test <- read.csv("../testdata/test_correctTaxo.csv")
-# 
-#   # Run correctTaxo
-#   # Not interactive, prefer accepted names and best fuzzy matches
-#   resp <- correctTaxo(
-#     genus = test$genus,
-#     species = test$species,
-#     interactive = FALSE,
-#     preferAccepted = TRUE,
-#     preferFuzzy = TRUE)
-# 
-#   # Match expected values in CSV
-#   expect_all_equal(resp$nameAccepted, test$nameAccepted)
-# })
+# correctTaxo - test against CSV
+# Does not run during CRAN testing
+test_that("correctTaxo handles real API calls", {
+  skip_on_cran()
+  reset_cache()
+  options(wfo.api_uri = "https://list.worldfloraonline.org/gql.php")
+
+  # Import data
+  test <- read.csv("../testdata/test_correctTaxo.csv")
+
+  # Run correctTaxo
+  # Not interactive, prefer accepted names and best fuzzy matches
+  resp <- correctTaxo(
+    genus = test$genus,
+    species = test$species,
+    interactive = FALSE,
+    preferAccepted = TRUE,
+    preferFuzzy = TRUE)
+
+  # Match expected values in CSV
+  expect_equal(resp$nameAccepted, test$nameAccepted)
+})
 
 # callAPI - valid API call
 test_that("callAPI constructs correct httr2 request", {

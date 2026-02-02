@@ -24,7 +24,7 @@ out <- as.data.frame(
       "Burke", "africana", "Burkea africana",
       "Brke", "africn", NA_character_,
       "Thommandersia", "hensii", "Thomandersia hensii",
-      "Thommandersio", "hensi", NA_character_,
+      "Thommandersio", "hensi", "Thomandersia hensii",
 
       # Genus with sp or spp
       "Terminalia sp", NA, "Terminalia",
