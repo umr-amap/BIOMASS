@@ -3,7 +3,7 @@ D <- NouraguesTrees$D[1:50]
 data("NouraguesCoords")
 coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
-context("Function retriveH")
+context("Function retrieveH")
 
 test_that("With the HDmodel", {
   expect_error(retrieveH(D), "Either")

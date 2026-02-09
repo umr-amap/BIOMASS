@@ -42,3 +42,6 @@ docs
 
 # Build R WASM package
 .github/workflows/webr-pkgdown-build-and-deploy.yml
+
+# Some test files
+tests/testthat/_snaps/
