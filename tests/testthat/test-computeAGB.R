@@ -11,7 +11,7 @@ test_that("ComputeAGB", {
   
   D <- NouraguesTrees$D
   
-  WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
+  WD <- suppressMessages(suppressWarnings(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species)))
   
   H <- retrieveH(D, model = modelHD(NouraguesHD$D, NouraguesHD$H, method = "log2", useWeight = TRUE, , bayesian = FALSE))
   

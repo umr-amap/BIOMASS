@@ -1,3 +1,4 @@
+data("NouraguesHD")
 D <- NouraguesHD$D
 H <- NouraguesHD$H
 
@@ -44,7 +45,7 @@ test_that("errors and warnings", {
   expect_error(modelHD(D, H, useWeight = "") , "UseWeight argument must be a boolean")
   expect_error(modelHD(D, H, drawGraph = "") , "drawGraph argument must be a boolean")
   expect_error(modelHD(D, H, drawGraph = "") , "drawGraph argument must be a boolean")
-  expect_warning(suppressMessages(modelHD(c(1,2,rep(3,13)), rnorm(15,10))) , "Be careful, your diameter values are not evenly distributed.")
+  expect_warning(suppressMessages(modelHD(c(1,2,rep(3,13)), rnorm(15,10),method = "log2", bayesian = FALSE)) , "Be careful, your diameter values are not evenly distributed.")
 })
 
 test_that("NA characters", {

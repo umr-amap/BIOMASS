@@ -19,7 +19,7 @@ coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of
 
 H <- predictHeight(as.matrix(D), HDmodel)
 
-WD <- suppressMessages(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
+WD <- suppressMessages(suppressWarnings(getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species)))
 
 context("AGBmonteCarlo")
 test_that("AGBmonteCarlo error", {
@@ -283,7 +283,7 @@ test_that("With the plot value", {
     bayesian = FALSE
   )
 
-  WD <- suppressMessages(getWoodDensity(NouraguesHD$genus, NouraguesHD$species))
+  WD <- suppressMessages(suppressWarnings(getWoodDensity(NouraguesHD$genus, NouraguesHD$species)))
   D <- NouraguesHD$D
 
   set.seed(2)

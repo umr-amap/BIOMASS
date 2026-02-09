@@ -10,7 +10,7 @@ test_that("summary by plot", {
   HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
   
   # Retrieving wood density values
-  NouraguesWD <- suppressMessages(
+  NouraguesWD <- suppressWarnings(
     getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species))
   
   # Propagating errors with a standard error in wood density

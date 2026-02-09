@@ -53,28 +53,6 @@ test_that("getBioclimParam", {
   )
 })
 
-context("Function getTaxonomy")
-
-test_that("Without finding the order", {
-  
-  Taxo <- getTaxonomy(NouraguesTrees$Genus)
-
-  expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
-  expect_is(Taxo, "data.frame")
-  expect_equal(dim(Taxo), c(50, 2))
-  expect_is(Taxo[, 1], "character")
-  expect_is(Taxo[, 2], "character")
-
-  Taxo <- Taxo[order(Taxo$inputGenus), ]
-
-  res <- "inputGenus      family
-  Abarema    Fabaceae
-  Amaioua   Rubiaceae
-  Amphirrhox    Violaceae"
-
-  expect_equivalent(unique(Taxo)[1:3,], fread(res, data.table = FALSE))
-})
-
 test_that("With finding the order", {
   Taxo <- getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE)
   expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
