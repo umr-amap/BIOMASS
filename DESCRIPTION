@@ -52,4 +52,4 @@ Suggests:
 	brms,
 	BH,
 	RcppEigen
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

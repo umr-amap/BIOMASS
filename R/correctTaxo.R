@@ -250,13 +250,16 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' plants_. TAXON, 69, 6. doi10.1002/tax.12373:
 #'
 #' @author John L. Godlee
-#' 
-#' @export
-#' 
-#' @importFrom stringdist stringsim
 #'
 #' @examples
+#' \dontrun{
+#' correctTaxo(genus = "Astrocarium", species = "standleanum")
+#' correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
+#' }
 #'
+#' @export
+#' @importFrom stringdist stringsim 
+
 correctTaxo <- function(genus, species, interactive = TRUE,
   preferAccepted = FALSE, preferFuzzy = FALSE, sub_pattern = subPattern(),
   useCache = FALSE, useAPI = TRUE, capacity = 60, fill_time_s = 60, timeout = 10) {
