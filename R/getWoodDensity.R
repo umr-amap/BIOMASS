@@ -1,7 +1,7 @@
 #' Estimating wood density and associated uncertainties
 #'
 #' @description
-#' The function estimates the wood density (WD) and the associated sd of the trees from their taxonomy or from their congeners using the global wood density database V2 (Fischer et al. 2025) or any additional dataset if the sd is also provided. The WD can either be attributed to an individual at a species, genus, family or stand level.
+#' The function estimates the wood density (WD) and the associated standard deviation of the trees from their taxonomy or from their congeners using the global wood density database V2 (Fischer et al. 2026) or any additional dataset if the sd is also provided. The WD can either be attributed to an individual at a species, genus, family or stand level.
 #'
 #' @param genus Vector of genus names.
 #' @param species Vector of species names.
@@ -41,9 +41,9 @@
 #' @author Arthur BAILLY, Maxime REJOU-MECHAIN, Fabian FISCHER, Dominique LAMONICA
 #'
 #' @references
-#' Fischer, F. J., et al. 2025 A global map of wood density https://doi.org/10.1101/2025.08.25.671920
-#' Fischer, F. J., et al. 2025 Beyond species means - the intraspecific contribution to global wood density variation https://doi.org/10.1101/2025.08.25.671896
-#'
+#' Fischer, F. J., et al. (2026). Beyond species means - the intraspecific contribution to global wood density variation. New Phytol. https://doi.org/10.1111/nph.70860
+#' Fischer, F. J., et al. (2026). Global Wood Density Database v.2 (GWDD v.2) (Data set). Zenodo. https://doi.org/10.5281/zenodo.18262736
+#' 
 #' @examples
 #' # Load a data set
 #' data(NouraguesTrees)
