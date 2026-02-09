@@ -102,7 +102,7 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   
   # Data processing ------------------------------------------------------------
 
-  # Load global wood density estimates and uncertainties (created from data-raw/format_wsg_estimates_and_sd.R)
+  # Load global wood density estimates and uncertainties
   wdData <- data.table(BIOMASS::wsg_estimates)
 
   # Adding addWoodDensityData to wdData
