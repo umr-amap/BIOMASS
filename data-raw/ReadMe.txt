@@ -46,9 +46,10 @@ OUTPUT: genusFamily.csv: a file with 2 columns:
 	- genus
 
 
-3. Global wood density, globalwd.R
+3. Global wood density, generate_wd_for_biomass.R and inference_gwd_all_cluster.R
+ 
+  Scripts used to generate wsg_estimates.rda
 
-OUTPUT: wdData.csv: download the file and read it from the website : http://datadryad.org/bitstream/handle/10255/dryad.235/GlobalWoodDensityDatabase.xls?sequence=1
 
 
 4. NouraguesHD
@@ -57,24 +58,18 @@ OUTPUT: wdData.csv: download the file and read it from the website : http://data
 
 
 
-5. sd_10, sd_10.R
-
-INPUT: the data from the table wdData, see 3. 
-
-
-
-6. param_4, param_4.R
+5. param_4, param_4.R
 
 INPUT: Allometry-database-2012m_data.csv
 
 
 
-7. param_7, param_7.R
+6. param_7, param_7.R
 
 INPUT:
 	- Allometry-database-2012m_data.csv
 	- Allometry-database-2012n_envsub.csv
 
 
-9. Feldpausch Coefficient
+7. Feldpausch Coefficient
 	For this one there is no code just it's a copy/paste of the table 3 on the paper: Feldpausch et al. 2012.
