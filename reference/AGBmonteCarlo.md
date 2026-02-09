@@ -137,8 +137,8 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesi
 NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
   stand = NouraguesTrees$Plot
 )
-#> The reference dataset contains 16467 wood density values
 #> Your taxonomic table contains 409 taxa
+#> Warning: 142 taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level.
 # }
 
 # Propagating errors with a standard error for Wood density

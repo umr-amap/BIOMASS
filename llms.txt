@@ -87,7 +87,7 @@ AGB and its uncertainty
 ### Estimate wood density
 
 - [`getWoodDensity()`](https://umr-amap.github.io/BIOMASS/reference/getWoodDensity.md)
-  : Estimating wood density
+  : Estimating wood density and associated uncertainties
 
 ### Estimate tree height
 

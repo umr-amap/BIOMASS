@@ -88,8 +88,8 @@ to a plot at each iteration of the AGB monte Carlo approach.</p>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="va">NouraguesWD</span> <span class="op">&lt;-</span> <span class="fu"><a href="getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Genus</span>, <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span>,</span></span>
 <span class="r-in"><span>                                stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">plotId</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The reference dataset contains 16467 wood density values</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Your taxonomic table contains 409 taxa</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>142 taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level.</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Propagating errors</span></span></span>
@@ -101,10 +101,10 @@ to a plot at each iteration of the AGB monte Carlo approach.</p>
 <span class="r-in"><span>  <span class="co"># The summary by plot</span></span></span>
 <span class="r-in"><span>  <span class="fu">summaryByPlot</span><span class="op">(</span>AGB_val <span class="op">=</span> <span class="va">resultMC</span><span class="op">$</span><span class="va">AGB_simu</span>, plot <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   plot      AGB Cred_2.5 Cred_97.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  201 456.9527 414.5240  510.7609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  204 511.7294 464.0859  563.9798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  213 372.5745 334.5266  417.6881</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  223 291.6578 265.0000  323.9551</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  201 439.0494 396.5443  490.9730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  204 499.3496 453.1172  552.4187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  213 399.7311 357.7081  449.4184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  223 271.7406 247.0399  301.9182</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

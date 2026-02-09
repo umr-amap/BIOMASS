@@ -60,8 +60,8 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesi
 # \donttest{
   NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
                                 stand = NouraguesTrees$plotId)
-#> The reference dataset contains 16467 wood density values
 #> Your taxonomic table contains 409 taxa
+#> Warning: 142 taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level.
 # }
 
 # Propagating errors
@@ -73,9 +73,9 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesi
   # The summary by plot
   summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 #>   plot      AGB Cred_2.5 Cred_97.5
-#> 1  201 456.9527 414.5240  510.7609
-#> 2  204 511.7294 464.0859  563.9798
-#> 3  213 372.5745 334.5266  417.6881
-#> 4  223 291.6578 265.0000  323.9551
+#> 1  201 439.0494 396.5443  490.9730
+#> 2  204 499.3496 453.1172  552.4187
+#> 3  213 399.7311 357.7081  449.4184
+#> 4  223 271.7406 247.0399  301.9182
 # }
 ```

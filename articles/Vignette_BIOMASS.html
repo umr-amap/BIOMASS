@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2026-01-05</h4>
+            <h4 data-toc-skip class="date">2026-02-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -271,8 +271,11 @@ the stand-level mean wood density is assigned to the tree.</p>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
 <span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span> <span class="co"># for unidentified or non-documented trees in the reference database</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; The reference dataset contains 16467 wood density values</span></span>
 <span><span class="co">#&gt; Your taxonomic table contains 408 taxa</span></span>
+<span><span class="co">#&gt; Warning in getWoodDensity(genus = NouraguesTrees$GenusCorrected, species =</span></span>
+<span><span class="co">#&gt; NouraguesTrees$SpeciesCorrected, : 142 taxa don't match the Global Wood Density</span></span>
+<span><span class="co">#&gt; Database V2. You may provide 'family' to match wood density estimates at family</span></span>
+<span><span class="co">#&gt; level.</span></span>
 <span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span> <span class="op">&lt;-</span> <span class="va">wood_densities</span><span class="op">$</span><span class="va">meanWD</span></span></code></pre></div>
 <p>For information, here are the number of wood density values estimated
@@ -280,13 +283,13 @@ at the species, genus and plot level:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At species level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1291</span></span>
+<span><span class="co">#&gt; [1] 1647</span></span>
 <span><span class="co"># At genus level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"genus"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 586</span></span>
+<span><span class="co">#&gt; [1] 261</span></span>
 <span><span class="co"># At plot level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"genus"</span>, <span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 173</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 142</span></span></code></pre></div>
 <p>The <code>family</code> argument also assigns to the trees a
 family-level wood density average, but bear in mind that the
 taxon-average approach gives relatively poor estimates above the genus
@@ -581,17 +584,17 @@ of the trees) using the <code>coord</code> argument:</li>
 <span></span>
 <span><span class="va">error_prop</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $meanAGB</span></span>
-<span><span class="co">#&gt; [1] 1703.035</span></span>
+<span><span class="co">#&gt; [1] 1677.512</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $medAGB</span></span>
-<span><span class="co">#&gt; [1] 1701.263</span></span>
+<span><span class="co">#&gt; [1] 1675.369</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sdAGB</span></span>
-<span><span class="co">#&gt; [1] 46.91725</span></span>
+<span><span class="co">#&gt; [1] 47.52699</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $credibilityAGB</span></span>
-<span><span class="co">#&gt;     2.5%    97.5% </span></span>
-<span><span class="co">#&gt; 1614.013 1800.008</span></span></code></pre></div>
+<span><span class="co">#&gt;    2.5%   97.5% </span></span>
+<span><span class="co">#&gt; 1588.23 1774.28</span></span></code></pre></div>
 <p>The first four elements of the output contain the mean, median,
 standard deviation and credibility intervals of the total AGB of the
 dataset but nothing about the AGB at the plot level. To do this, you can

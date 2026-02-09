@@ -132,8 +132,11 @@ wood_densities <- getWoodDensity(
   species = NouraguesTrees$SpeciesCorrected,
   stand = NouraguesTrees$Plot # for unidentified or non-documented trees in the reference database
 )
-#> The reference dataset contains 16467 wood density values
 #> Your taxonomic table contains 408 taxa
+#> Warning in getWoodDensity(genus = NouraguesTrees$GenusCorrected, species =
+#> NouraguesTrees$SpeciesCorrected, : 142 taxa don't match the Global Wood Density
+#> Database V2. You may provide 'family' to match wood density estimates at family
+#> level.
 
 NouraguesTrees$WD <- wood_densities$meanWD
 ```
@@ -144,13 +147,13 @@ the species, genus and plot level:
 ``` r
 # At species level
 sum(wood_densities$levelWD == "species")
-#> [1] 1291
+#> [1] 1647
 # At genus level
 sum(wood_densities$levelWD == "genus")
-#> [1] 586
+#> [1] 261
 # At plot level
 sum(!wood_densities$levelWD %in% c("genus", "species"))
-#> [1] 173
+#> [1] 142
 ```
 
 The `family` argument also assigns to the trees a family-level wood
@@ -448,17 +451,17 @@ error_prop <- AGBmonteCarlo(
 
 error_prop[(1:4)]
 #> $meanAGB
-#> [1] 1703.035
+#> [1] 1677.512
 #> 
 #> $medAGB
-#> [1] 1701.263
+#> [1] 1675.369
 #> 
 #> $sdAGB
-#> [1] 46.91725
+#> [1] 47.52699
 #> 
 #> $credibilityAGB
-#>     2.5%    97.5% 
-#> 1614.013 1800.008
+#>    2.5%   97.5% 
+#> 1588.23 1774.28
 ```
 
 The first four elements of the output contain the mean, median, standard
