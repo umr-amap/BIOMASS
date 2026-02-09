@@ -1,8 +1,8 @@
 Package: BIOMASS
 Type: Package
 Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 2.2.7
-Date: 2025-11-20
+Version: 2.2.8
+Date: 2026-02-09
 Authors@R: c(
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
@@ -36,7 +36,8 @@ Imports:
 	rappdirs,
 	sf,
 	terra,
-	ggplot2
+	ggplot2,
+	stringdist
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
@@ -53,3 +54,4 @@ Suggests:
 	BH,
 	RcppEigen
 RoxygenNote: 7.3.3
+Config/testthat/edition: 3

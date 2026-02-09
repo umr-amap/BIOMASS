@@ -45,3 +45,5 @@ docs
 
 # Some test files
 tests/testthat/_snaps/
+/doc/
+/Meta/

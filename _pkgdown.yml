@@ -28,7 +28,6 @@ reference:
 - subtitle: Correct tree taxonomy
   contents: 
   - correctTaxo
-  - getTaxonomy
 - subtitle: Estimate wood density
   contents:
   - getWoodDensity

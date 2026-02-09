@@ -53,7 +53,9 @@ test_that("getBioclimParam", {
   )
 })
 
+context("Deprecated getTaxonomy")
 test_that("With finding the order", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   Taxo <- getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE)
   expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
 
@@ -73,6 +75,9 @@ test_that("With finding the order", {
   expect_equivalent(unique(Taxo)[1:3,], fread(res, data.table = FALSE))
 })
 
+test_that("getTaxonomy is deprecated", {
+  expect_snapshot(getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE))
+})
 
 context("Internal function of HD model ")
 test_that("loglog function", {
