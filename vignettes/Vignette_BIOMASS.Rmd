@@ -69,7 +69,7 @@ That said, let's continue with the call to `correctTaxo()` function:
 Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
-  useCache = TRUE, verbose = FALSE)
+  useCache = TRUE, interactive = F, preferFuzzy = T)
 saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
 ```
 
@@ -167,7 +167,7 @@ The `modelHD()` function is used to either **compare four implemented models to 
 
 Here we first compare the four H-D models using linear regression (for log^1 and log^2 models) or nonlinear least squares estimates (for Michaelis-Menten and Weibull models)  :
 
-```{r multiple_modelHD, message=FALSE}
+```{r multiple_modelHD}
 HD_res <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   useWeight = TRUE, drawGraph = T)
