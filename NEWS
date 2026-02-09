@@ -1,3 +1,7 @@
+* version 2.2.8
+- update getWoodDensity() (including data: mean and sd of population wood density at various taxonomic levels) in accordance with the release of Global Wood Density database v2 (Fischer et al. 2026)
+
+
 * version 2.2.7
 - The propagation of uncertainties in the coordinates of plot corners is now performed by divide_plot() using the arguments ‘sd_coord’ and ‘n’. These uncertainties are handled by subplot_summary(), which can also handle AGB uncertainties using the argument 'AGB_simu' given by AGBmonteCarlo()$AGB_simu.
 - Fixed an issue when plotting subplot_summary outputs due to a change in geom_sf().
