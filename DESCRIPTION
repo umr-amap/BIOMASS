@@ -26,7 +26,6 @@ URL: https://umr-amap.github.io/BIOMASS/, https://github.com/umr-amap/BIOMASS/
 BugReports: https://github.com/umr-amap/BIOMASS/issues/
 Imports:
 	minpack.lm, 
-	jsonlite, 
 	methods, 
 	proj4,	
 	graphics, 
@@ -52,6 +51,9 @@ Suggests:
 	dplyr,
 	brms,
 	BH,
-	RcppEigen
+	RcppEigen,
+	mockery,
+	lifecycle,
+	jsonlite
 RoxygenNote: 7.3.3
 Config/testthat/edition: 3
