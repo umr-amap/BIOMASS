@@ -2,7 +2,7 @@
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
-#' getTaxonomy() is now deprecated, correctTaxo() being able to handle retrieving taxonomy all at once.
+#' `getTaxonomy()` is now deprecated, `correctTaxo()` being able to handle retrieving taxonomy all at once.
 #' 
 #' From given genus, the function finds the APG III family, and optionally the order, from the [genusFamily] database and the [apgFamilies] dataset
 #'

@@ -60,9 +60,9 @@ subPattern <- function() {
 #' @param query GraphQL API query string, e.g. as returned
 #'     `query_taxonNameMatch()`, `query_taxonNameById()`
 #'     `query_taxonConceptById()`, `query_classifications()`
-#' @param capacity maximum number of API calls which can accumulate over the 
+#' @param capacity maximum number of API calls which can accumulate over the 
 #'     duration of `fill_time_s`. See documentation for `httr2::req_throttle()`
-#' @param fill_time_s time in seconds to refill the capacity for repeated API 
+#' @param fill_time_s time in seconds to refill the capacity for repeated API 
 #'     calls. See documentation for `httr2::req_throttle()`
 #' @param timeout time in seconds to wait before disconnecting from an
 #'     unresponsive request
@@ -223,9 +223,9 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' @param useCache logical, if TRUE use cached values in `the$wfo_cache` 
 #'     preferentially, to reduce the number of API calls
 #' @param useAPI logical, if TRUE (default) allow API calls
-#' @param capacity maximum number of API calls which can accumulate over the 
+#' @param capacity maximum number of API calls which can accumulate over the 
 #'     duration of `fill_time_s`. See documentation for `httr2::req_throttle()`
-#' @param fill_time_s time in seconds to refill the capacity for repeated API 
+#' @param fill_time_s time in seconds to refill the capacity for repeated API 
 #'     calls. See documentation for `httr2::req_throttle()`
 #' @param timeout time in seconds to wait before disconnecting from an
 #'     unresponsive request

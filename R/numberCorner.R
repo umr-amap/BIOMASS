@@ -7,6 +7,10 @@ if (getRversion() >= "2.15.1") {
 #' Get the UTM coordinates with the corner of the plot
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
+#' `numberCorner() ` is now deprecated.
+#' Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#' 
 #' Get the UTM coordinates from the latitude and longitude of the corners of a plot.
 #' The function also assign a number to the corners in a clockwise or counterclockwise way, with the number 1 for the XY origin.
 #' Corner numbering is done as followed:

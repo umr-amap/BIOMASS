@@ -5,7 +5,12 @@ if (getRversion() >= "2.15.1") {
 }
 
 #' Attribute trees to subplots
-#'
+#' 
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' `attributeTree()` is now deprecated. The tree attribution to subplots is now done by the `divide_plot()` function
+#' Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#' 
 #' Function to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 #'
 #' @param xy The coordinates of the trees for each plot

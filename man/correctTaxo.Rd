@@ -42,8 +42,9 @@ preferentially, to reduce the number of API calls}
 \item{useAPI}{logical, if TRUE (default) allow API calls}
 
 \item{capacity}{maximum number of API calls which can accumulate over the
-duration of \code{fill_time_s}. See documentation for \code{httr2::req_throttle()}
- @param fill_time_s time in seconds to refill the capacity for repeated API
+duration of \code{fill_time_s}. See documentation for \code{httr2::req_throttle()}}
+
+\item{fill_time_s}{time in seconds to refill the capacity for repeated API
 calls. See documentation for \code{httr2::req_throttle()}}
 
 \item{timeout}{time in seconds to wait before disconnecting from an
