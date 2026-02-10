@@ -206,7 +206,10 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' Match taxonomic names using the World Flora Online database, via their 
 #'     GraphQL API
 #'
-#' @param x vector of taxonomic names
+#' @param genus vector of genera. Alternatively, the whole taxonomic name
+#'     (genus + species) 
+#' @param species optional, vector of species epithets to be checked (same
+#'     length as `genus`)
 #' @param interactive logical, if TRUE (default) user will be prompted to pick
 #'     names from a list where multiple ambiguous matches are found, otherwise
 #'     names with multiple ambiguous matches will be skipped
@@ -217,9 +220,9 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #'     found, the accepted matched name with the lowest Levenshtein distance to
 #'     the submitted name will be returned
 #' @param sub_pattern character vector of regex patterns which will be removed
-#'     from names in `x` using `gsub()`. The order of this vector matters,
-#'     substitutions are applied sequentially. Sensible defaults are provided
-#'     by `subPattern()`
+#'     from `paste(genus, species)` using `gsub()`. The order of this vector
+#'     matters, substitutions are applied sequentially. Sensible defaults are
+#'     provided by `subPattern()`
 #' @param useCache logical, if TRUE use cached values in `the$wfo_cache` 
 #'     preferentially, to reduce the number of API calls
 #' @param useAPI logical, if TRUE (default) allow API calls
@@ -230,7 +233,7 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' @param timeout time in seconds to wait before disconnecting from an
 #'     unresponsive request
 #'
-#' @return data.frame of taxonomic names with rows matching names in `x`.
+#' @return data.frame of taxonomic names with rows matching `genus` + `species`.
 #' \describe{
 #'   \item{nameOriginal}{Original name as in `genus` + `species`}
 #'   \item{nameSubmitted}{Name after optional sanitisation according to
@@ -255,12 +258,13 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' \donttest{
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
+#' correctTaxo(genus = "Astrocarium standleanum", interactive = F, preferFuzzy = T)
 #' }
 #'
 #' @export
 #' @importFrom stringdist stringsim 
 
-correctTaxo <- function(genus, species, interactive = TRUE,
+correctTaxo <- function(genus, species = NULL, interactive = TRUE,
   preferAccepted = FALSE, preferFuzzy = FALSE, sub_pattern = subPattern(),
   useCache = FALSE, useAPI = TRUE, capacity = 60, fill_time_s = 60, timeout = 10) {
 
