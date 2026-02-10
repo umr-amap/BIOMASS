@@ -28,6 +28,7 @@ reference:
 - subtitle: Correct tree taxonomy
   contents: 
   - correctTaxo
+  - subPattern
 - subtitle: Estimate wood density
   contents:
   - getWoodDensity
@@ -55,7 +56,6 @@ reference:
   contents:
   - subplot_summary
 
-
 - title: Other functions
 - subtile: Coordinate conversion from one system to another
   desc: >
@@ -66,15 +66,12 @@ reference:
 - subtile: Coordinate conversion from long/lat coordinates to UTM X/Y coordinates
   contents:
   - latlong2UTM
-  
 - subtitle: Retrieve Feldpausch regions
   contents:
   - computeFeldRegion
-
 - subtitle: Predict tree height from a HD-model
   contents: 
   - predictHeight
-  
 - subtitle: Manage user cache
   contents: 
   - cacheManager
