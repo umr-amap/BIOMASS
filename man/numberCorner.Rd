@@ -27,10 +27,6 @@ A data frame with:
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-\code{numberCorner() } is now deprecated.
-Please see the vignette \verb{Spatialized trees and forest stand metrics with BIOMASS}
-
 Get the UTM coordinates from the latitude and longitude of the corners of a plot.
 The function also assign a number to the corners in a clockwise or counterclockwise way, with the number 1 for the XY origin.
 Corner numbering is done as followed:

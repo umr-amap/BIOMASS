@@ -31,10 +31,6 @@ Returns a data-frame containing as many rows as there are corners corresponding 
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-\code{cutPlot()} is deprecated and has been replaced by \code{divide_plot()}.
-Please see the vignette \verb{Spatialized trees and forest stand metrics with BIOMASS}
-
 This function divides a plot (or several plots) in subplots and returns the coordinates of the grid.
 These coordinates are calculated by a bilinear interpolation with the projected corner coordinates as references.
 }

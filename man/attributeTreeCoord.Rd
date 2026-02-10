@@ -21,9 +21,7 @@ A data frame with two columns:
 - \code{Yproj}: The \code{Y} coordinates in the absolute coordinate system
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-\code{attributeTreeCoord()} is deprecated. The projected tree coordinates are now retrieved by the \code{check_plot_coord()} function
-Please see the vignette \verb{Spatialized trees and forest stand metrics with BIOMASS}
+Attribute GPS coordinates to trees
 }
 \examples{
 

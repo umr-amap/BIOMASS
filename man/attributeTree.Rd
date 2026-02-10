@@ -18,10 +18,6 @@ A vector with the code of the subplot for each trees, the code will be \code{plo
 where the tree is inside the plot in regards to the corresponding subplot.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-\code{attributeTree()} is now deprecated. The tree attribution to subplots is now done by the \code{divide_plot()} function
-Please see the vignette \verb{Spatialized trees and forest stand metrics with BIOMASS}
-
 Function to attribute the trees on each subplot, the trees that are at the exterior of the subplot will be marked as NA
 }
 \examples{
