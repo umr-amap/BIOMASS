@@ -61,6 +61,8 @@ H <- retrieveH(D = NouraguesHD$D, coord = coord)
 
 # If the only data available is the region of your spot
 H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
+closeAllConnections()
+
 }
 \references{
 Feldpausch et al. \emph{Tree height integrated into pantropical forest biomass estimates}. Biogeosciences (2012): 3381-3403.

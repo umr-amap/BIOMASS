@@ -43,6 +43,7 @@
 #' \donttest{
 #' E <- computeE(coord)
 #' }
+#' closeAllConnections()
 #' 
 #' @importFrom terra rast extract buffer vect
 #' @importFrom data.table as.data.table

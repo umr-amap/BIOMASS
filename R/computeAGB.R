@@ -53,7 +53,7 @@
 #' \donttest{
 #' AGB <- computeAGB(D, WD, coord = coord)
 #' }
-#'
+#' closeAllConnections()
 #' @keywords AGB above ground biomass forest carbon allometry
 
 computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {

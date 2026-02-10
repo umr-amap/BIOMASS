@@ -57,6 +57,7 @@ coord <- cbind(long, lat)
 \donttest{
 bioclim <- getBioclimParam(coord)
 }
+closeAllConnections()
 
 }
 \references{

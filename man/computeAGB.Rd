@@ -61,7 +61,7 @@ coord <- cbind(long, lat)
 \donttest{
 AGB <- computeAGB(D, WD, coord = coord)
 }
-
+closeAllConnections()
 }
 \references{
 Chave et al. (2014) \emph{Improved allometric models to estimate the aboveground biomass of tropical trees},
