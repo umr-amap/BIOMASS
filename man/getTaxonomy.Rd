@@ -31,3 +31,4 @@ getTaxonomy("Aphelandra", findOrder = TRUE)
 \author{
 Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
 }
+\keyword{internal}

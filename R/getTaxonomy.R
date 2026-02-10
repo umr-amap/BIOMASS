@@ -20,7 +20,7 @@
 #' \donttest{
 #' getTaxonomy("Aphelandra", findOrder = TRUE)
 #' }
-#' @importFrom data.table setDF setDT data.table
+#' @importFrom data.table setDF setDT data.table setkey
 #' 
 #' @keywords internal
 #' 
