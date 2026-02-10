@@ -22,8 +22,6 @@
 #' }
 #' @importFrom data.table setDF setDT data.table setkey
 #' 
-#' @keywords internal
-#' 
 getTaxonomy <- function(genus, findOrder = FALSE) {
   lifecycle::deprecate_warn("2.2.8", "getTaxonomy()", "correctTaxo()")
   ### Find the family (and the order) of a vector of genus
