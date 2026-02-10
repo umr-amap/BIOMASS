@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2026-02-09</h4>
+            <h4 data-toc-skip class="date">2026-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -233,7 +233,7 @@ function:</p>
 <code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Genus</span>, <span class="co"># genus also accepts the whole species name (genus + species) or (genus + species + author) </span></span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span>, </span>
-<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">Taxo</span>, file <span class="op">=</span> <span class="st">"saved_data/Taxo_vignette.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>The corrected genus and species of the trees can now be added to the
 data:</p>
@@ -351,9 +351,9 @@ Michaelis-Menten and Weibull models) :</p>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
 <span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, drawGraph <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">HD_res</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; To build a HD model you must use the parameter 'method' in this function</span></span>
+<span></span>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">HD_res</span><span class="op">)</span></span></code></pre>
 <table class="table">
 <thead><tr class="header">
 <th align="left">method</th>

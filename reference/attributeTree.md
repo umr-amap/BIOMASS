@@ -1,5 +1,11 @@
 # Attribute trees to subplots
 
+**\[deprecated\]** `attributeTree()` is now deprecated. The tree
+attribution to subplots is now done by the
+[`divide_plot()`](https://umr-amap.github.io/BIOMASS/reference/divide_plot.md)
+function Please see the vignette
+`Spatialized trees and forest stand metrics with BIOMASS`
+
 Function to attribute the trees on each subplot, the trees that are at
 the exterior of the subplot will be marked as NA
 

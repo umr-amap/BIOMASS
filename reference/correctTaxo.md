@@ -1,105 +1,135 @@
-# Correct trees taxonomy
+# Correct and match taxonomic names to the World Flora Online database
 
-This function corrects typos for a given taxonomic name using the
-Taxonomic Name Resolution Service (TNRS).
+Match taxonomic names using the World Flora Online database, via their
+GraphQL API
 
 ## Usage
 
 ``` r
 correctTaxo(
   genus,
-  species = NULL,
-  score = 0.5,
+  species,
+  interactive = TRUE,
+  preferAccepted = FALSE,
+  preferFuzzy = FALSE,
+  sub_pattern = subPattern(),
   useCache = FALSE,
-  verbose = TRUE,
-  accepted = FALSE
+  useAPI = TRUE,
+  capacity = 60,
+  fill_time_s = 60,
+  timeout = 10
 )
 ```
 
 ## Arguments
 
-- genus:
+- interactive:
 
-  Vector of genera to be checked. Alternatively, the whole species name
-  (genus + species) or (genus + species + author) may be given (see
-  example).
+  logical, if TRUE (default) user will be prompted to pick names from a
+  list where multiple ambiguous matches are found, otherwise names with
+  multiple ambiguous matches will be skipped
 
-- species:
+- preferAccepted:
 
-  (optional) Vector of species to be checked (same size as the genus
-  vector).
+  logical, if TRUE, if multiple ambiguous matches are found, and if only
+  one candidate is an "accepted" name, automatically choose that name
 
-- score:
+- preferFuzzy:
 
-  Score of the matching ( see https://tnrs.biendata.org/instructions )
-  below which corrections are discarded.
+  logical, if TRUE, if multiple ambiguous matches are found, the
+  accepted matched name with the lowest Levenshtein distance to the
+  submitted name will be returned
+
+- sub_pattern:
+
+  character vector of regex patterns which will be removed from names in
+  `x` using [`gsub()`](https://rdrr.io/r/base/grep.html). The order of
+  this vector matters, substitutions are applied sequentially. Sensible
+  defaults are provided by
+  [`subPattern()`](https://umr-amap.github.io/BIOMASS/reference/subPattern.md)
 
 - useCache:
 
-  logical. Whether or not use a cache to reduce online search of taxa
-  names (NULL means use cache but clear it first)
+  logical, if TRUE use cached values in `the$wfo_cache` preferentially,
+  to reduce the number of API calls
 
-- verbose:
+- useAPI:
 
-  logical. If TRUE various messages are displayed during process
+  logical, if TRUE (default) allow API calls
 
-- accepted:
+- capacity:
 
-  logical. If TRUE accepted names will be returned instead of matched
-  names. Cache will not be used as synonymy changes over time.
+  maximum number of API calls which can accumulate over the duration of
+  `fill_time_s`. See documentation for
+  [`httr2::req_throttle()`](https://httr2.r-lib.org/reference/req_throttle.html)
+
+- fill_time_s:
+
+  time in seconds to refill the capacity for repeated API calls. See
+  documentation for
+  [`httr2::req_throttle()`](https://httr2.r-lib.org/reference/req_throttle.html)
+
+- timeout:
+
+  time in seconds to wait before disconnecting from an unresponsive
+  request
+
+- x:
+
+  vector of taxonomic names
 
 ## Value
 
-The function returns a dataframe with the corrected (or not) genera and
-species.
+data.frame of taxonomic names with rows matching names in `x`.
 
-## Details
+- nameOriginal:
 
-This function create a file named correctTaxo.log (see Localisation),
-this file have the memory of all the previous requests, as to avoid the
-replication of time-consuming server requests.
+  Original name as in `genus` + `species`
 
-By default, names are queried in batches of 500, with a 0.5s delay
-between each query. These values can be modified using options:
-`options(BIOMASS.batch_size=500)` for batch size (max 1000),
-`options(BIOMASS.wait_delay=0.5)` for delay (in seconds).
+- nameSubmitted:
 
-## Localisation
+  Name after optional sanitisation according to `sub_pattern`
 
-Cache path discovery protocol
+- nameMatched:
 
-1.  BIOMASS.cache option set to an **existing** folder
+  Matched taxonomic name
 
-2.  **existing** user data folder
-    [`rappdirs::user_data_dir()`](https://rappdirs.r-lib.org/reference/user_data_dir.html)
+- nameAccepted:
 
-    - On Linux : `~/.local/share/R/BIOMASS`
+  Accepted taxonomic name
 
-    - On Mac OS X : `~/Library/Application Support/R/BIOMASS`
+- familyAccepted:
 
-    - On Windows 7 up to 10 :
-      `C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS`
+  Family of accepted name
 
-    - On Windows XP :
-      `C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS`
+- genusAccepted:
 
-3.  fallback to R session tempdir
+  Genus of accepted name
+
+- speciesAccepted:
+
+  Species epithet of accepted name
+
+- nameModified:
+
+  Flag indicating if `matchedName` is different from `nameOriginal`, not
+  including the removal of excess whitespace
 
 ## References
 
-Boyle, B. et al. (2013). *The taxonomic name resolution service: An
-online tool for automated standardization of plant names*. BMC
-bioinformatics, 14, 1. doi:10.1186/1471-2105-14-16
+Borsch, T. et al. (2020). *World Flora Online: Placing taxonomists at
+the heart of a definitive and comprehensive global resource on the
+world's plants*. TAXON, 69, 6. doi10.1002/tax.12373:
 
 ## Author
 
-Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
+John L. Godlee
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
-correctTaxo(genus = "Astrocarium standleanum")
+correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
 } # }
 ```

@@ -1,5 +1,10 @@
 # Divides one or more plots into subplots
 
+**\[deprecated\]** `cutPlot()` is deprecated and has been replaced by
+[`divide_plot()`](https://umr-amap.github.io/BIOMASS/reference/divide_plot.md).
+Please see the vignette
+`Spatialized trees and forest stand metrics with BIOMASS`
+
 This function divides a plot (or several plots) in subplots and returns
 the coordinates of the grid. These coordinates are calculated by a
 bilinear interpolation with the projected corner coordinates as

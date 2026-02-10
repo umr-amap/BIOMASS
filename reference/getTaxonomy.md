@@ -1,5 +1,9 @@
 # Retrieve trees taxonomy
 
+**\[deprecated\]** `getTaxonomy()` is now deprecated,
+[`correctTaxo()`](https://umr-amap.github.io/BIOMASS/reference/correctTaxo.md)
+being able to handle retrieving taxonomy all at once.
+
 From given genus, the function finds the APG III family, and optionally
 the order, from the
 [genusFamily](https://umr-amap.github.io/BIOMASS/reference/genusFamily.md)
@@ -37,6 +41,8 @@ Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
 ``` r
 # Find the Family of the Aphelandra genus
 getTaxonomy("Aphelandra")
+#> Warning: `getTaxonomy()` was deprecated in BIOMASS 2.2.8.
+#> ℹ Please use `correctTaxo()` instead.
 #>   inputGenus      family
 #> 1 Aphelandra Acanthaceae
 # ... and the order

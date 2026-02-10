@@ -1,5 +1,11 @@
 # Correct the GPS coordinates
 
+**\[deprecated\]** `correctCoordGPS()` is deprecated and has been
+replaced by
+[`check_plot_coord()`](https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.md).
+Please see the vignette
+`Spatialized trees and forest stand metrics with BIOMASS`
+
 This function builds the most probable GPS coordinates of the plot
 corners from multiple GPS measurements.
 

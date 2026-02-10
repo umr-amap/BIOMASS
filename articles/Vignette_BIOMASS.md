@@ -83,7 +83,7 @@ function:
 Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
-  useCache = TRUE, verbose = FALSE)
+  useCache = TRUE, interactive = F, preferFuzzy = T)
 saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
 ```
 
@@ -223,10 +223,9 @@ HD_res <- modelHD(
 
 ![](Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png)
 
-``` r
+    #> To build a HD model you must use the parameter 'method' in this function
 
-kable(HD_res)
-```
+    kable(HD_res)
 
 | method    |      RSE |    RSElog | Average_bias |
 |:----------|---------:|----------:|-------------:|

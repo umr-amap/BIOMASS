@@ -1,6 +1,10 @@
 # Attribute GPS coordinates to trees
 
-Attribute GPS coordinates to trees
+**\[deprecated\]** `attributeTreeCoord()` is deprecated. The projected
+tree coordinates are now retrieved by the
+[`check_plot_coord()`](https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.md)
+function Please see the vignette
+`Spatialized trees and forest stand metrics with BIOMASS`
 
 ## Usage
 
