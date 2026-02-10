@@ -53,6 +53,7 @@ test_that("getBioclimParam", {
   )
 })
 
+closeAllConnections()
 
 # test_that("Deprecated getTaxonomy - With finding the order", {
 #   withr::local_options(lifecycle_verbosity = "quiet")

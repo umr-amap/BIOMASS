@@ -290,3 +290,5 @@ test_that("With the plot value", {
   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
 
 })
+
+closeAllConnections()
