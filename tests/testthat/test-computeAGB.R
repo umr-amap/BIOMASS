@@ -1,4 +1,3 @@
-context("Function to compute the AGB")
 
 test_that("ComputeAGB", {
   

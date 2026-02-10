@@ -1,4 +1,3 @@
-context("Check plot coordinates")
 
 data("NouraguesCoords")
 data("NouraguesPlot201")
@@ -54,12 +53,12 @@ test_that("check_plot_coord outputs and outliers", {
     check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = F, draw_plot = F, max_dist = 10),"Be carefull, you may have GNSS measurement outliers"
   )
   outputs <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
-  expect_is(outputs, "list")
+  expect_true(is.list(outputs))
   expect_length(outputs, 5)
   expect_equal(names(outputs), c("corner_coord", "polygon", "plot_design", "outlier_corners","sd_coord"))
-  expect_is(outputs$corner_coord, "data.frame")
-  expect_is(outputs$outlier_corners, "data.frame")
-  expect_is(outputs$sd_coord, "numeric")
+  expect_true(is.data.frame(outputs$corner_coord))
+  expect_true(is.data.frame(outputs$outlier_corners))
+  expect_type(outputs$sd_coord, "double")
 
   expect_equal(dim(outputs$outlier_corners), c(7,3))
   expect_equal(dim(outputs$corner_coord), c(4, 4))
@@ -85,7 +84,7 @@ test_that("check_plot_coord outputs and outliers", {
 test_that("check_plot_coord in long lat", {
   outputs_longlat <- check_plot_coord(NouraguesPlot201, longlat = c("Long","Lat"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
   outputs_proj_coord <- check_plot_coord(NouraguesPlot201, proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F, max_dist = 10)
-  expect_is(outputs_longlat, "list")
+  expect_true(is.list(outputs_longlat))
   expect_equal(names(outputs_longlat), c("corner_coord", "polygon", "plot_design", "outlier_corners","UTM_code","sd_coord"))
   expect_equal(names(outputs_longlat$corner_coord)[c(5,6)], c("long","lat"))
   expect_equal(outputs_longlat$corner_coord[,c(1:4)], outputs_proj_coord$corner_coord[,c(1:4)])
@@ -99,7 +98,7 @@ test_that("check_plot_coord, trust_GPS_corners", {
   
   res_trust_GPS_corners_T <- check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = T, rm_outliers = T, draw_plot = F)
   res_trust_GPS_corners_F <- check_plot_coord(NouraguesCoords[NouraguesCoords$Plot=="204",], proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"), trust_GPS_corners = F, rm_outliers = T, draw_plot = F)
-  expect_equivalent(res_trust_GPS_corners_T$corner_coord, res_trust_GPS_corners_F$corner_coord)
+  expect_equal(res_trust_GPS_corners_T$corner_coord, res_trust_GPS_corners_F$corner_coord, ignore_attr = TRUE)
 
 })
 
@@ -112,7 +111,7 @@ test_that("check_plot_coord, tree data, raster and shapefile", {
       trust_GPS_corners = T, rm_outliers = T, draw_plot = F,
       tree_data = NouraguesTrees[NouraguesTrees$Plot=="201",], tree_coords = c("Xfield","Yfield")))
   
-  expect_is(res$tree_data, "data.frame")
+  expect_true(is.data.frame(res$tree_data))
   expect_equal(dim(res$tree_data), c(nrow(NouraguesTrees[NouraguesTrees$Plot=="201",]), ncol(NouraguesTrees)+3))
   expect_equal(sum(!res$tree_data$is_in_plot),3)
   

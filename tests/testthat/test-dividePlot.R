@@ -1,4 +1,3 @@
-context("divide Plot")
 
 data("NouraguesCoords")
 data("NouraguesPlot201")
@@ -36,7 +35,9 @@ test_that("divide_plot error", {
   expect_error(suppressWarnings(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = c(40,40))) , "If you still want to divide the plot, please increase the value of the grid_tol argument.")
   
   wrong_NouraguesTrees <- NouraguesTrees ; wrong_NouraguesTrees[1,"Plot"] <- 200
-  expect_warning(divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = wrong_NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"), "(not in a subplot area)")
+  divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = wrong_NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot") %>% 
+    expect_warning(regexp = "not in corner_data") %>% 
+    expect_warning(regexp = "(not in a subplot area)")
   
   # when the plot is not a rectangle
   rect_plot <- data.frame(x_rel=c(0,100,0,110),y_rel=c(0,0,100,100))
@@ -54,29 +55,31 @@ test_that("divide_plot on relative coordinates only", {
   
   # Test rectangular division
   rect_subplots <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(25,50))
-  expect_equivalent(rect_subplots$sub_corner_coord[29:32,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_3_1",4),x_rel=c(75,100,100,75), y_rel=c(50,50,100,100)))
+  expect_equal(rect_subplots$sub_corner_coord[29:32,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_3_1",4),x_rel=c(75,100,100,75), y_rel=c(50,50,100,100)),
+               ignore_attr = T)
   
   # Test when the origin is not (0;0)
   subplots <- divide_plot(NouraguesCoords[13:16,], rel_coord = c("Xfield","Yfield"), grid_size = 50)
-  expect_equivalent(subplots$sub_corner_coord[13:16,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_1",4),x=c(250,300,300,250), y=c(250,250,300,300)))
+  expect_equal(subplots$sub_corner_coord[13:16,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_1",4),x=c(250,300,300,250), y=c(250,250,300,300)),
+               ignore_attr = T)
   
   # Test multiple plots
   multiple_subplots <- divide_plot(NouraguesCoords, rel_coord = c("Xfield","Yfield"), grid_size = 50, corner_plot_ID = "Plot")
-  expect_equivalent(multiple_subplots$sub_corner_coord[49:64,3:4] , subplots$sub_corner_coord[,3:4])
-  expect_equivalent(multiple_subplots$sub_corner_coord[61:64,1:2] , data.frame(plot_ID = rep(223,4), subplot_ID = rep("223_1_1",4)))
+  expect_equal(multiple_subplots$sub_corner_coord[49:64,3:4] , subplots$sub_corner_coord[,3:4],ignore_attr = T)
+  expect_equal(multiple_subplots$sub_corner_coord[61:64,1:2] , data.frame(plot_ID = rep(223,4), subplot_ID = rep("223_1_1",4)),ignore_attr = T)
   
   
   # Test rectangular plot
   subplots <- divide_plot(expand.grid(x = c(0, 100), y = c(0, 50)), rel_coord = c("x","y"), grid_size = c(50,25))
-  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)))
+  expect_equal(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4),x=c(50,100,100,50), y=c(0,0,25,25)),ignore_attr = T)
   
   # Test non-adjusted grid
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3))
-  expect_equivalent(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4), x_rel=c(45,90,90,45), y_rel=c(0,0,20,20)))
+  expect_equal(subplots$sub_corner_coord[5:8,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_1_0",4), x_rel=c(45,90,90,45), y_rel=c(0,0,20,20)),ignore_attr = T)
   
   # Test origin
   subplots <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(45,20), grid_tol = 0.3, origin = c(10,10)))
-  expect_equivalent(subplots$sub_corner_coord[1:4,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_0_0",4), x_rel=c(10,55,55,10), y_rel=c(10,10,30,30)))
+  expect_equal(subplots$sub_corner_coord[1:4,] , data.frame(plot_ID=rep("",4), subplot_ID=rep("subplot_0_0",4), x_rel=c(10,55,55,10), y_rel=c(10,10,30,30)),ignore_attr = T)
   
 })
 
@@ -84,11 +87,11 @@ test_that("divide_plot with projected coordinates", {
   
   subplots <- divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"), grid_size = 50)
   #ggplot(subplots,aes(x=x_proj,y=y_proj,label=subplot_ID)) + geom_point()
-  expect_equivalent(subplots$sub_corner_coord[13:16,c("subplot_ID","x_proj","y_proj")] ,
+  expect_equal(subplots$sub_corner_coord[13:16,c("subplot_ID","x_proj","y_proj")] ,
                     data.frame(subplot_ID="subplot_1_1",
                                x_proj=c(313028.4,313003.6,313050.2,313075.4),
                                y_proj=c(451650.5,451606.4,451582.6,451624.2)),
-                    tol = 1e-5)
+                    tolerance = 1e-5, ignore_attr = T)
   
   # Test with longlat :
   corner_data[c("long","lat")] <- as.data.frame( proj4::project(corner_data[c("x_proj","y_proj")], proj = "+proj=utm +zone=22 +north +ellps=WGS84 +datum=WGS84 +units=m +no_defs", inverse = TRUE) )
@@ -105,8 +108,9 @@ test_that("divide_plot with projected coordinates", {
   # Test multiple plots
   multiple_subplots <- divide_plot(NouraguesCoords, rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), grid_size = 50, corner_plot_ID = "Plot")
   #ggplot(multiple_subplots$sub_corner_coord,aes(x=x_proj,y=y_proj,label=subplot_ID)) + geom_point() + geom_text(position = position_jitter()) + coord_equal()
-  expect_equivalent(multiple_subplots$sub_corner_coord[64,] ,
-                    data.frame(corner_plot_ID=223, subplot_ID="223_1_1", x_rel=250, y_rel=300, x_proj=c(313152.2), y_proj=c(451354.3)), tol=1e-5)
+  expect_equal(multiple_subplots$sub_corner_coord[64,] ,
+                    data.frame(corner_plot_ID=223, subplot_ID="223_1_1", x_rel=250, y_rel=300, x_proj=c(313152.2), y_proj=c(451354.3)), 
+               tolerance=1e-5, ignore_attr = T)
   
 })
 

@@ -1,4 +1,3 @@
-context("summary by plot")
 
 test_that("summary by plot", {
   
@@ -32,7 +31,7 @@ test_that("summary by plot", {
     "Your 'plot' vector have not the same length as your number of row in the matrix"
   )
   
-  expect_is(sum, "data.frame")
+  expect_true(is.data.frame(sum))
   expect_equal(nrow(sum), length(unique(NouraguesTrees$Plot)))
   expect_equal(ncol(sum), 4)
   expect_equal(colnames(sum), c("plot", "AGB", "Cred_2.5", "Cred_97.5"))
@@ -42,7 +41,7 @@ test_that("summary by plot", {
   expect_equal(
     sum[,c(1,3,4)] ,
     summaryByPlot(AGB_val = resultMC$AGB_simu, plot = plot_vec)[,c(1,3,4)], 
-    tol = 1e-2 )
+    tolerance = 1e-2 )
   
   expect_equal(
     summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot),

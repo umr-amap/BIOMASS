@@ -5,7 +5,6 @@ test <- data.table(
   plotId = c("plot1","plot1","plot2","plot2","plot2","plot1","plot1","plot1","plot1")
 )
 
-context("Function to get the wood density")
 test_that("Function getWoodDensity", {
   
   # Errors & warnings
@@ -31,25 +30,25 @@ test_that("Function getWoodDensity", {
   ### Basic tests
   # With genus and species only
   WD <- suppressWarnings(getWoodDensity(genus = test$genus, species = test$species))
-  expect_is(WD, "data.frame")
+  expect_true(is.data.frame(WD))
   expect_equal(colnames(WD), c("genus", "species", "meanWD", "sdWD", "levelWD"))
   expect_equal(dim(WD), c(9, 5))
   
   # With family
   WD <- getWoodDensity(genus = test$genus, species = test$species, family = test$family)
-  expect_is(WD, "data.frame")
+  expect_true(is.data.frame(WD))
   expect_equal(colnames(WD), c("family","genus", "species", "meanWD", "sdWD", "levelWD"))
   expect_equal(dim(WD), c(9, 6))
   
   # With stand
   WD <- suppressWarnings(getWoodDensity(genus = test$genus, species = test$species, stand = test$plotId))
-  expect_is(WD, "data.frame")
+  expect_true(is.data.frame(WD))
   expect_equal(colnames(WD), c("genus", "species", "stand", "meanWD", "sdWD", "levelWD"))
   expect_equal(dim(WD), c(9, 6))
   
   # With family and stand
   WD <- getWoodDensity(genus = test$genus, species = test$species, family = test$family, stand = test$plotId)
-  expect_is(WD, "data.frame")
+  expect_true(is.data.frame(WD))
   expect_equal(colnames(WD), c("family", "genus", "species", "stand", "meanWD", "sdWD", "levelWD"))
   expect_equal(dim(WD), c(9, 7))
   
@@ -68,7 +67,7 @@ test_that("Function getWoodDensity", {
     family = test$family, genus = test$genus, species = test$species, addWoodDensityData = LocalWoodDensity,
   )
   expect_equal(colnames(WD), c("family","genus", "species", "meanWD", "sdWD", "levelWD"))
-  expect_equivalent(WD[-9, c("family","genus", "species", "meanWD","sdWD")], setDF(LocalWoodDensity))
+  expect_equal(WD[-9, c("family","genus", "species", "meanWD","sdWD")], setDF(LocalWoodDensity), ignore_attr = T)
   
   names(LocalWoodDensity) <- c("genus", "species", "woodDensity")
   expect_error(

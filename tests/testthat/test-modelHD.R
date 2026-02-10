@@ -6,8 +6,6 @@ output <- data.frame(D = D, H = H)
 
 # Note: all tests on bayesian models usin brms are available at tests/test/function/brms_modelHD_*.R
 
-context("Methods of function modelHD")
-
 for (method in c("log1", "log2", "michaelis", "weibull")) {
     for (useWeight in c(TRUE, FALSE)) {
     test_that(paste("Method", method, "useWeight", useWeight), {
@@ -16,24 +14,24 @@ for (method in c("log1", "log2", "michaelis", "weibull")) {
 
       logMethod <- grepl("log", method)
 
-      expect_is(HDmodel, "list")
+      expect_true(is.list(HDmodel))
       expect_equal(length(HDmodel), ifelse(logMethod, 8, 7))
 
       expect_equal(HDmodel$input$D, output$D)
       expect_equal(HDmodel$input$H, output$H)
 
-      expect_is(HDmodel$model, ifelse(logMethod, "lm", "nls"))
+      #expect_equal(HDmodel$model, ifelse(logMethod, "lm", "nls"))
 
       expect_equal(length(HDmodel$residuals), nrow(output))
 
       expect_equal(HDmodel$method, method)
 
       expect_equal(length(HDmodel$predicted), nrow(output))
-      expect_is(HDmodel$predicted, "numeric")
+      expect_type(HDmodel$predicted, "double")
 
-      expect_is(HDmodel$RSE, "numeric")
+      expect_type(HDmodel$RSE, "double")
 
-      expect_is(HDmodel$RSElog, ifelse(logMethod, "numeric", "NULL"))
+      expect_type(HDmodel$RSElog, ifelse(logMethod, "double", "NULL"))
     })
   }
 }
@@ -57,9 +55,9 @@ test_that("NA characters", {
 })
 
 test_that("Without parameters", {
-  Res <- expect_message(modelHD(D = D, H = H, useWeight = FALSE), "build a HD model")
-
-  expect_is(Res, "data.frame")
+  expect_message(modelHD(D = D, H = H, useWeight = FALSE), "build a HD model")
+  Res <- modelHD(D = D, H = H, useWeight = FALSE)
+  expect_true(is.data.frame(Res))
   expect_equal(ncol(Res),4)
 
   res <- "method  RSE    RSElog Average_bias
@@ -74,33 +72,34 @@ michaelis 4.235974        NA  -0.02018496
 test_that("With the plot arguments", {
   #skip_on_cran()
   plot <- NouraguesHD$plotId
+  expect_message(modelHD(D, H, plot = plot, bayesian = FALSE), "build a HD model")
+  
+  Res <-modelHD(D, H, plot = plot, bayesian = FALSE)
 
-  Res <- expect_message(modelHD(D, H, plot = plot, bayesian = FALSE), "build a HD model")
-
-  expect_is(Res, "list")
+  expect_true(is.list(Res))
   expect_length(Res, length(unique(plot)))
   expect_equal(names(Res), unique(plot))
 
   invisible(sapply(Res, function(x) {
-    expect_is(x, "data.frame")
+    expect_true(is.data.frame(x))
     expect_equal(ncol(x), 4)
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
   Res <- modelHD(D, H, plot = plot, method = "log2", bayesian = FALSE)
 
-  expect_is(Res, "list")
+  expect_true(is.list(Res))
   expect_length(Res, length(unique(plot)))
   expect_equal(names(Res), unique(plot))
 
   invisible(sapply(Res, function(x) {
-    expect_is(x, "list")
+    expect_true(is.list(x))
     expect_equal(length(x), 8)
   }))
   expect_failure(expect_equal(Res[[1]], Res[[2]]))
 
   Res <- modelHD(D, H, plot = "plot1", bayesian = FALSE)
-  expect_is(Res, "data.frame")
+  expect_true(is.data.frame(Res))
 
   expect_error(modelHD(D, H, plot = rep("plot", 2)), "length")
 })

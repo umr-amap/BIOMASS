@@ -1,4 +1,3 @@
-context("subplot_summary")
 
 data("NouraguesCoords")
 data("NouraguesPlot201")
@@ -37,7 +36,8 @@ test_that("subplot_summary_value", {
   subplots_rel_coord <- suppressWarnings(divide_plot(corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 25,
                                                      tree_data = NouraguesTrees201, tree_coords = c("Xfield","Yfield")))
   res_rel_coord <- suppressMessages(subplot_summary(subplots_rel_coord, value = "D", draw_plot = F))
-  expect_equivalent(res_rel_coord$tree_summary[1,2], as.data.table(subplots_rel_coord$tree_data)[subplot_ID=="subplot_0_0", sum(D)] * 16)
+  expect_equal(res_rel_coord$tree_summary[1,2], as.data.frame(as.data.table(subplots_rel_coord$tree_data)[subplot_ID=="subplot_0_0", sum(D)] * 16),
+               ignore_attr = T)
   
   
   # Test with proj_coord
@@ -61,7 +61,8 @@ test_that("subplot_summary_value", {
   
   # Test with quantile function
   res_quantile <- subplot_summary(subplots_longlat, value = "D", draw_plot = F, fun = quantile, probs=0.75, per_ha = FALSE)
-  expect_equivalent(res_quantile$tree_summary$D_quantile[1], as.data.table(subplots_longlat$tree_data)[subplot_ID == "subplot_0_0",quantile(D,probs=0.75)])
+  expect_equal(res_quantile$tree_summary$D_quantile[1], as.data.table(subplots_longlat$tree_data)[subplot_ID == "subplot_0_0",quantile(D,probs=0.75)],
+               ignore_attr = T)
   
   # Test multiple plots
   multiple_subplots <- suppressWarnings(divide_plot(corner_data = NouraguesCoords,
@@ -71,7 +72,8 @@ test_that("subplot_summary_value", {
   
   res_multiple <- subplot_summary(subplots = multiple_subplots, value = "D", fun=mean, draw_plot = F, per_ha = FALSE)
   res_mean_D <- as.data.table(multiple_subplots$tree_data)[!is.na(subplot_ID), mean(D), by=subplot_ID]
-  expect_equivalent(res_multiple$tree_summary[order(res_multiple$tree_summary$subplot_ID),"D_mean"], res_mean_D[order(res_mean_D$subplot_ID),V1])
+  expect_equal(res_multiple$tree_summary[order(res_multiple$tree_summary$subplot_ID),"D_mean"], as.data.frame(res_mean_D[order(res_mean_D$subplot_ID),V1]),
+               ignore_attr = T)
   
   # Test with multiple metrics
   res_metrics <- subplot_summary(subplots = multiple_subplots, value = c("D","x_rel"), fun = list(D=sum,x_rel=mean), per_ha = c(T,F) , draw_plot = F)
@@ -111,7 +113,7 @@ test_that("subplot_summary_raster", {
   res_unique <- subplot_summary(subplots, value = "D", draw_plot = FALSE, fun = mean, ref_raster = nouragues_raster, raster_fun = mean)
   rownames(res_unique$tree_summary) <- NULL
   
-  expect_equal(res_multiple$tree_summary[1:16, c(2,4)] , res_unique$tree_summary[,c(2,3)], tol=1e-2)
+  expect_equal(res_multiple$tree_summary[1:16, c(2,4)] , res_unique$tree_summary[,c(2,3)], tolerance=1e-2)
   
 })
 
@@ -157,7 +159,7 @@ test_that("subplot_summary_AGB_uncertainties", {
   AGB_simu_201_sum$subplot_ID <- NULL
   AGB_simu_201_sum <- AGB_simu_201_sum*16
   AGB_simu_201_sum <- apply(AGB_simu_201_sum , 1 , median)
-  expect_equivalent(res$tree_summary$AGBD_median , AGB_simu_201_sum[res$tree_summary$subplot_ID])
+  expect_equal(res$tree_summary$AGBD_median , AGB_simu_201_sum[res$tree_summary$subplot_ID], ignore_attr = T)
   
   
   # With values : 
