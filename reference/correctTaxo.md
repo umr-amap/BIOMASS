@@ -128,8 +128,33 @@ John L. Godlee
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
+#> 
+#> 
+#> --- Pick a name ---
+#> Matching string: astrocarium standleanum
+#> 1   wfo-0000293953   Astrocaryum standleyanum    L.H.Bailey  accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/standleyanum
+#> 2   wfo-0000293087   Astrocaryum aculeatum   G.Mey.  accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/aculeatum
+#> 3   wfo-0000293066   Astrocaryum aculeatum   Barb.Rodr.  synonym Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/rodriguesii$Astrocaryum/aculeatum
+#> 4   wfo-0000293076   Astrocaryum aculeatum   Wallace synonym Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Bactris/balanophora$Astrocaryum/aculeatum
+#> 5   wfo-0000293098   Astrocaryum alatum  H.F.Loomis  accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/alatum
+#> 6   wfo-0000293920   Astrocaryum sechellarum (H.Wendl.) Baill.   synonym Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Phoenicophorium/borsigianum$Astrocaryum/sechellarum
+#> 7   wfo-0000293252   Astrocaryum ciliatum    F.Kahn & B.Millán   accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/ciliatum
+#> 8   wfo-0000293273   Astrocaryum confertum   H.Wendl. ex Burret  accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/confertum
+#> 9   wfo-0000293909   Astrocaryum scopatum    F.Kahn & B.Millán   accepted    Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/scopatum
+#> 10  wfo-0000293133   Astrocaryum aureum  Griseb. & H.Wendl.  synonym Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/tucuma$Astrocaryum/aureum
+#> Enter a number to pick a row from the list, a valid WFO ID, 'N' for the next page, 'P' for the previous page, 'S' to skip this name: 
+#>              nameOriginal           nameSubmitted nameMatched nameAccepted
+#> 1 Astrocarium standleanum astrocarium standleanum        <NA>         <NA>
+#>   familyAccepted genusAccepted speciesAccepted nameModified
+#> 1           <NA>          <NA>            <NA>           NA
 correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
-} # }
+#>              nameOriginal           nameSubmitted              nameMatched
+#> 1 Astrocarium standleanum astrocarium standleanum Astrocaryum standleyanum
+#>               nameAccepted familyAccepted genusAccepted speciesAccepted
+#> 1 Astrocaryum standleyanum      Arecaceae   Astrocaryum    standleyanum
+#>   nameModified
+#> 1         TRUE
+# }
 ```
