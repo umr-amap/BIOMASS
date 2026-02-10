@@ -252,7 +252,7 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' @author John L. Godlee
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' correctTaxo(genus = "Astrocarium", species = "standleanum")
 #' correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
 #' }

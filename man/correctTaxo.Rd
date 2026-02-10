@@ -72,7 +72,7 @@ Match taxonomic names using the World Flora Online database, via their
 GraphQL API
 }
 \examples{
-\dontrun{
+\donttest{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
 correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
 }
