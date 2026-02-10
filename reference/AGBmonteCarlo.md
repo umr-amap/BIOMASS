@@ -172,4 +172,5 @@ resultMC <- by(
 meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
 credperplot <- sapply(resultMC, "[", 4)
 # }
+closeAllConnections()
 ```
