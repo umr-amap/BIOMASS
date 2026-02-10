@@ -76,7 +76,7 @@ test_that("getBioclimParam", {
 # })
 
 test_that("getTaxonomy is deprecated", {
-  expect_snapshot(getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE))
+  expect_warning(getTaxonomy(NouraguesTrees$Genus), regexp = "deprecated")
 })
 
 
