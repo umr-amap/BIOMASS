@@ -47,7 +47,7 @@ GraphQL API</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">correctTaxo</span><span class="op">(</span></span>
 <span>  <span class="va">genus</span>,</span>
-<span>  <span class="va">species</span>,</span>
+<span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  interactive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  preferAccepted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  preferFuzzy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -64,7 +64,17 @@ GraphQL API</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-interactive">interactive<a class="anchor" aria-label="anchor" href="#arg-interactive"></a></dt>
+<dl><dt id="arg-genus">genus<a class="anchor" aria-label="anchor" href="#arg-genus"></a></dt>
+<dd><p>vector of genera. Alternatively, the whole taxonomic name
+(genus + species)</p></dd>
+
+
+<dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
+<dd><p>optional, vector of species epithets to be checked (same
+length as <code>genus</code>)</p></dd>
+
+
+<dt id="arg-interactive">interactive<a class="anchor" aria-label="anchor" href="#arg-interactive"></a></dt>
 <dd><p>logical, if TRUE (default) user will be prompted to pick
 names from a list where multiple ambiguous matches are found, otherwise
 names with multiple ambiguous matches will be skipped</p></dd>
@@ -84,9 +94,9 @@ the submitted name will be returned</p></dd>
 
 <dt id="arg-sub-pattern">sub_pattern<a class="anchor" aria-label="anchor" href="#arg-sub-pattern"></a></dt>
 <dd><p>character vector of regex patterns which will be removed
-from names in <code>x</code> using <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub()</a></code>. The order of this vector matters,
-substitutions are applied sequentially. Sensible defaults are provided
-by <code><a href="subPattern.html">subPattern()</a></code></p></dd>
+from <code>paste(genus, species)</code> using <code><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub()</a></code>. The order of this vector
+matters, substitutions are applied sequentially. Sensible defaults are
+provided by <code><a href="subPattern.html">subPattern()</a></code></p></dd>
 
 
 <dt id="arg-usecache">useCache<a class="anchor" aria-label="anchor" href="#arg-usecache"></a></dt>
@@ -112,14 +122,10 @@ calls. See documentation for <code><a href="https://httr2.r-lib.org/reference/re
 <dd><p>time in seconds to wait before disconnecting from an
 unresponsive request</p></dd>
 
-
-<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>vector of taxonomic names</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>data.frame of taxonomic names with rows matching names in <code>x</code>.</p><dl><dt>nameOriginal</dt>
+    <p>data.frame of taxonomic names with rows matching <code>genus</code> + <code>species</code>.</p><dl><dt>nameOriginal</dt>
 <dd><p>Original name as in <code>genus</code> + <code>species</code></p></dd>
 
 <dt>nameSubmitted</dt>
@@ -160,35 +166,11 @@ plants</em>. TAXON, 69, 6. doi10.1002/tax.12373:</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu">correctTaxo</span><span class="op">(</span>genus <span class="op">=</span> <span class="st">"Astrocarium"</span>, species <span class="op">=</span> <span class="st">"standleanum"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> --- Pick a name ---</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Matching string:	astrocarium standleanum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   wfo-0000293953	Astrocaryum standleyanum	L.H.Bailey	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/standleyanum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   wfo-0000293087	Astrocaryum aculeatum	G.Mey.	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/aculeatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   wfo-0000293066	Astrocaryum aculeatum	Barb.Rodr.	synonym	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/rodriguesii$Astrocaryum/aculeatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   wfo-0000293076	Astrocaryum aculeatum	Wallace	synonym	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Bactris/balanophora$Astrocaryum/aculeatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   wfo-0000293098	Astrocaryum alatum	H.F.Loomis	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/alatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   wfo-0000293920	Astrocaryum sechellarum	(H.Wendl.) Baill.	synonym	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Phoenicophorium/borsigianum$Astrocaryum/sechellarum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   wfo-0000293252	Astrocaryum ciliatum	F.Kahn &amp; B.Millán	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/ciliatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   wfo-0000293273	Astrocaryum confertum	H.Wendl. ex Burret	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/confertum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   wfo-0000293909	Astrocaryum scopatum	F.Kahn &amp; B.Millán	accepted	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/scopatum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  wfo-0000293133	Astrocaryum aureum	Griseb. &amp; H.Wendl.	synonym	Code/Plantae/Pteridobiotina/Angiosperms/Arecales/Arecaceae/Astrocaryum/tucuma$Astrocaryum/aureum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Enter a number to pick a row from the list, a valid WFO ID, 'N' for the next page, 'P' for the previous page, 'S' to skip this name: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              nameOriginal           nameSubmitted nameMatched nameAccepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Astrocarium standleanum astrocarium standleanum        &lt;NA&gt;         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   familyAccepted genusAccepted speciesAccepted nameModified</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;           NA</span>
 <span class="r-in"><span><span class="fu">correctTaxo</span><span class="op">(</span>genus <span class="op">=</span> <span class="st">"Astrocarium"</span>, species <span class="op">=</span> <span class="st">"standleanum"</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              nameOriginal           nameSubmitted              nameMatched</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Astrocarium standleanum astrocarium standleanum Astrocaryum standleyanum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               nameAccepted familyAccepted genusAccepted speciesAccepted</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Astrocaryum standleyanum      Arecaceae   Astrocaryum    standleyanum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   nameModified</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         TRUE</span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="fu">correctTaxo</span><span class="op">(</span>genus <span class="op">=</span> <span class="st">"Astrocarium standleanum"</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
