@@ -51,7 +51,7 @@ These data do not contain any information on wood density or height of trees. On
 
 This is done with the `correctTaxo()` function, but before calling it, let's speak about cache !
 
-When the function is called for the first time with the argument `useCache = TRUE`, a temporary file containing the request to [TNRS](https://tnrs.biendata.org/) will be automatically created in an existing folder. Once this has been done, during the current session **the use of `useCache = TRUE` will access the saved temporary file** in order to avoid time-consuming replication of server requests. But **by quitting the current R session, this temporary file will be removed**. So before calling `correctTaxo()`, we advise you to define a folder which will host the cache file permanently, enabling to work offline.
+When the function is called for the first time with the argument `useCache = TRUE`, a temporary file containing the request to [WFO](https://www.worldfloraonline.org/) will be automatically created in an existing folder. Once this has been done, during the current session **the use of `useCache = TRUE` will access the saved temporary file** in order to avoid time-consuming replication of server requests. But **by quitting the current R session, this temporary file will be removed**. So before calling `correctTaxo()`, we advise you to define a folder which will host the cache file permanently, enabling to work offline.
 
 ```{r, eval=FALSE}
 # By default
