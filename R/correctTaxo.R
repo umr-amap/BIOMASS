@@ -327,6 +327,9 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
 
   # Remove leading and trailing whitespace and multiple spaces
   xsub <- trimws(gsub("\\s+", " ", xsub))
+  
+  # Replace empty or punctuation only values (which cause failure when searching the db) with NA 
+  xsub[str_detect(xsub, "[a-z]") == F] <- NA_character_
 
   # Extract unique names 
   xun <- sort(unique(xsub))
@@ -389,7 +392,7 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
     # Submit API calls
     api_resp_list <- httr2::req_perform_parallel(api_call_list)
 
-    # Convert API responses to JSON
+    # Convert API responses to JSON (#here is the failure when genus & species "Indet")
     api_json_list <- lapply(api_resp_list, httr2::resp_body_json)
 
     # Collect matched names 
