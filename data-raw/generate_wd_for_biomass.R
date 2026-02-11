@@ -1,6 +1,8 @@
 # GENERATE MEAN & SD FOR FAMILY/GENUS/SPECIES FROM PREDICTIONS
 # SAVED IN FILE data/wsg_estimates.rda
 
+# authors: Dominique Lamonica, Fabian Fischer
+
 library(data.table)
 library(dplyr)
 library(stringr)

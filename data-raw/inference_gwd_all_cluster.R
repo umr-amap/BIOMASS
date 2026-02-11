@@ -1,6 +1,8 @@
 # RUN HIERARCHICAL BAYESIAN MODEL FOR MEAN & SD FOR FAMILY/GENUS/SPECIES
 # SAVE A BRMS FIT OBJECT IN data_raw directory
 
+# authors: Dominique Lamonica, Fabian Fischer
+
 library(data.table)
 library(dplyr)
 library(stringr)
