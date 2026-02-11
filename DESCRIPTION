@@ -36,7 +36,8 @@ Imports:
 	sf,
 	terra,
 	ggplot2,
-	stringdist
+	stringdist,
+	stringr
 VignetteBuilder: knitr
 Suggests:
 	knitr, 

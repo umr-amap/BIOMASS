@@ -6,7 +6,7 @@
 \usage{
 correctTaxo(
   genus,
-  species,
+  species = NULL,
   interactive = TRUE,
   preferAccepted = FALSE,
   preferFuzzy = FALSE,
@@ -19,6 +19,12 @@ correctTaxo(
 )
 }
 \arguments{
+\item{genus}{vector of genera. Alternatively, the whole taxonomic name
+(genus + species)}
+
+\item{species}{optional, vector of species epithets to be checked (same
+length as \code{genus})}
+
 \item{interactive}{logical, if TRUE (default) user will be prompted to pick
 names from a list where multiple ambiguous matches are found, otherwise
 names with multiple ambiguous matches will be skipped}
@@ -32,9 +38,9 @@ found, the accepted matched name with the lowest Levenshtein distance to
 the submitted name will be returned}
 
 \item{sub_pattern}{character vector of regex patterns which will be removed
-from names in \code{x} using \code{gsub()}. The order of this vector matters,
-substitutions are applied sequentially. Sensible defaults are provided
-by \code{subPattern()}}
+from \code{paste(genus, species)} using \code{gsub()}. The order of this vector
+matters, substitutions are applied sequentially. Sensible defaults are
+provided by \code{subPattern()}}
 
 \item{useCache}{logical, if TRUE use cached values in \code{the$wfo_cache}
 preferentially, to reduce the number of API calls}
@@ -49,11 +55,9 @@ calls. See documentation for \code{httr2::req_throttle()}}
 
 \item{timeout}{time in seconds to wait before disconnecting from an
 unresponsive request}
-
-\item{x}{vector of taxonomic names}
 }
 \value{
-data.frame of taxonomic names with rows matching names in \code{x}.
+data.frame of taxonomic names with rows matching \code{genus} + \code{species}.
 \describe{
 \item{nameOriginal}{Original name as in \code{genus} + \code{species}}
 \item{nameSubmitted}{Name after optional sanitisation according to
@@ -75,6 +79,7 @@ GraphQL API
 \donttest{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
 correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
+correctTaxo(genus = "Astrocarium standleanum", interactive = F, preferFuzzy = T)
 }
 
 }

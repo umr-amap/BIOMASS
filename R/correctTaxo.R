@@ -262,8 +262,9 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #' }
 #'
 #' @export
-#' @importFrom stringdist stringsim 
-
+#' @importFrom stringdist stringsim
+#' @importFrom stringr str_detect
+#' 
 correctTaxo <- function(genus, species = NULL, interactive = TRUE,
   preferAccepted = FALSE, preferFuzzy = FALSE, sub_pattern = subPattern(),
   useCache = FALSE, useAPI = TRUE, capacity = 60, fill_time_s = 60, timeout = 10) {
