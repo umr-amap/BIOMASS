@@ -1,132 +1,80 @@
-test <- fread("family       genus        species        plotId
-Fabaceae      Acacia        sinuata        plot1
-Cornaceae    Alangium   salviifolium        plot1
-Fabaceae     Albizia        lebbeck        plot2
-Fabaceae     Albizia        procera        plot2
-Sapindaceae  Allophylus          cobbe        plot2
-Lauraceae Alseodaphne semecarpifolia        plot1
-Phyllanthaceae     Aporosa     lindleyana        plot1", data.table = F)
+test <- data.table(
+  family = c("Fabaceae","Cornaceae","Fabaceae","Fabaceae","Sapindaceae","Lauraceae","Phyllanthaceae","Lecythidaceae","Indet"),
+  genus = c("Acacia","Alangium","Albizia","Albizia","Allophylus","Alseodaphne","Aporosa","Indet.Lecythidaceae",NA),
+  species = c("sinuata","salviifolium","lebbeck","procera","cobbe","semecarpifolia","lindleyana","Indet.",NA),
+  plotId = c("plot1","plot1","plot2","plot2","plot2","plot1","plot1","plot1","plot1")
+)
 
-suppressMessages({
-  context("Function to get the wood density")
-  test_that("Function getWoodDensity", {
-    test$family <- getTaxonomy(test$genus)$family
-
-    expect_error(
-      getWoodDensity(test$genus, test$species[1:10]),
-      "do not have the same length"
-    )
-
-    WD <- getWoodDensity(test$genus, test$species)
-    expect_is(WD, "data.frame")
-
-    expect_equal(colnames(WD), c("family", "genus", "species", "meanWD", "sdWD", "levelWD", "nInd"))
-    expect_equal(dim(WD), c(7, 7))
-
-    WD <- getWoodDensity(genus = test$genus, species = test$species, stand = test$plotId)
-    expect_is(WD, "data.frame")
-
-    expect_equal(colnames(WD), c("family", "genus", "species", "meanWD", "sdWD", "levelWD", "nInd"))
-    expect_equal(dim(WD), c(7, 7))
-
-
-
-    LocalWoodDensity <- data.table(
-      family = test$family,
-      genus = test$genus,
-      species = test$species,
-      wd = runif(nrow(test), min = 0.1, max = 1.5)
-    )
-
-
-    WD <- getWoodDensity(
+test_that("Function getWoodDensity", {
+  
+  # Errors & warnings
+  expect_error(
+    getWoodDensity(test$genus, test$species[1:10]),
+    "do not have the same length"
+  )
+  expect_error(
+    getWoodDensity(test$genus, test$species, test$family[1:10]),
+    "do not have the same length"
+  )
+  wrong_genus <- test$genus
+  wrong_genus[1] <- "Alangium"
+  expect_error(
+    getWoodDensity(genus = wrong_genus, species = test$species, family = test$family),
+    "Some genera are in two or more families"
+  )
+  
+  expect_warning(getWoodDensity(genus = test$genus, species = test$species) , 
+                 "You may provide 'family' to match wood density estimates at family level.")
+  
+  
+  ### Basic tests
+  # With genus and species only
+  WD <- suppressWarnings(getWoodDensity(genus = test$genus, species = test$species))
+  expect_true(is.data.frame(WD))
+  expect_equal(colnames(WD), c("genus", "species", "meanWD", "sdWD", "levelWD"))
+  expect_equal(dim(WD), c(9, 5))
+  
+  # With family
+  WD <- getWoodDensity(genus = test$genus, species = test$species, family = test$family)
+  expect_true(is.data.frame(WD))
+  expect_equal(colnames(WD), c("family","genus", "species", "meanWD", "sdWD", "levelWD"))
+  expect_equal(dim(WD), c(9, 6))
+  
+  # With stand
+  WD <- suppressWarnings(getWoodDensity(genus = test$genus, species = test$species, stand = test$plotId))
+  expect_true(is.data.frame(WD))
+  expect_equal(colnames(WD), c("genus", "species", "stand", "meanWD", "sdWD", "levelWD"))
+  expect_equal(dim(WD), c(9, 6))
+  
+  # With family and stand
+  WD <- getWoodDensity(genus = test$genus, species = test$species, family = test$family, stand = test$plotId)
+  expect_true(is.data.frame(WD))
+  expect_equal(colnames(WD), c("family", "genus", "species", "stand", "meanWD", "sdWD", "levelWD"))
+  expect_equal(dim(WD), c(9, 7))
+  
+  
+  # Test addWoodDensityData
+  LocalWoodDensity <- data.table(
+    family = test$family,
+    genus = test$genus,
+    species = test$species,
+    meanWD = runif(nrow(test), min = 0.1, max = 1.5),
+    sdWD = runif(nrow(test), min = 0.02, max = 0.2)
+  )
+  LocalWoodDensity <- LocalWoodDensity[-9,]
+  
+  WD <- getWoodDensity(
+    family = test$family, genus = test$genus, species = test$species, addWoodDensityData = LocalWoodDensity,
+  )
+  expect_equal(colnames(WD), c("family","genus", "species", "meanWD", "sdWD", "levelWD"))
+  expect_equal(WD[-9, c("family","genus", "species", "meanWD","sdWD")], setDF(LocalWoodDensity), ignore_attr = T)
+  
+  names(LocalWoodDensity) <- c("genus", "species", "woodDensity")
+  expect_error(
+    getWoodDensity(
       genus = test$genus, species = test$species,
-      stand = test$plotId, addWoodDensityData = LocalWoodDensity, region = "Europe"
-    )
-    expect_is(WD, "data.frame")
-
-    expect_equal(colnames(WD), c("family", "genus", "species", "meanWD", "sdWD", "levelWD", "nInd"))
-    expect_equal(dim(WD), c(7, 7))
-
-    expect_equivalent(WD[, c("family", "genus", "species", "meanWD")], setDF(LocalWoodDensity))
-
-    names(LocalWoodDensity) <- c("genus", "species", "woodDensity")
-    expect_error(
-      getWoodDensity(
-        genus = test$genus, species = test$species,
-        stand = test$plotId, addWoodDensityData = LocalWoodDensity
-      ),
-      "The additional wood density database should be organized in a dataframe with three"
-    )
-  })
-
-
-  test_that("Function getWoodDensity with other parameters", {
-
-    test$family <- getTaxonomy(test$genus)$family
-
-    expect_error(
-      getWoodDensity(test$genus, test$species, region = "feqz"),
-      "One of the region you entered is not recognized in the global wood density database"
-    )
-
-    suppressWarnings({
-      # expect an error if there is no genus and species to match in the smaller table
-      expect_error(getWoodDensity(test$genus,
-        test$species,
-        region = "Europe"
-      ), "exact match among the family")
-
-      # but if there is family who correspond to some family in the smaller table then it's pass
-      expect_failure(expect_error(
-        getWoodDensity(test$genus,
-          test$species,
-          region = "Europe", family = test$family
-        )
-      ))
-
-      # if there isn't any match in the smaller table
-      expect_error(
-        getWoodDensity(family = "Fabaceae", genus = "Abarema", species = "jupunba", region = "Europe"),
-        "database"
-      )
-    })
-
-    # If there is just the genus who correspond to the database
-    expect_equal(unique(getWoodDensity(test$genus, letters[seq(nrow(test))])$levelWD), "genus")
-
-    # If there is just the species who correspond to the database
-    expect_error(
-      getWoodDensity(letters[seq(nrow(test))], species = test$species),
-      "exact match among the family"
-    )
-
-    # If the genus and the species correspond to the database but not the family
-    expect_error(
-      getWoodDensity(genus = test$genus, species = test$species, family = letters[seq(nrow(test))]),
-      "exact match among the family"
-    )
-
-    expect_error(
-      getWoodDensity(test$genus, test$species, family = test$family[1:10]),
-      "same length"
-    )
-
-    # comparison of the result of if there is just the family who correspond
-    expect_failure(expect_equal(
-      getWoodDensity(c(test$genus, "a"), c(test$species, "a"), family = c(test$family, "Fabaceae")),
-      getWoodDensity(c(test$genus, "a"), c(test$species, "a"))
-    ))
-
-    expect_error(
-      getWoodDensity(test$genus, test$species, stand = test$plotId[1:2]),
-      "same length"
-    )
-
-
-    expect_failure(expect_equal(
-      getWoodDensity(c(test$genus, "a"), c(test$species, "a"), stand = c(test$plotId, "plot1")),
-      getWoodDensity(test$genus, test$species)
-    ))
-  })
+      stand = test$plotId, addWoodDensityData = LocalWoodDensity
+    ),
+    "The additional wood density database should be organized in a dataframe with four"
+  )
 })

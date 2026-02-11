@@ -1,6 +1,6 @@
 rm(list = ls())
 library(BIOMASS)
-
+library(jsonlite)
 
 # data used for the function
 data("NouraguesTrees")

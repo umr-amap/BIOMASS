@@ -1,6 +1,9 @@
 #' Retrieve trees taxonomy
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
+#' `getTaxonomy()` is now deprecated, `correctTaxo()` being able to handle retrieving taxonomy all at once.
+#' 
 #' From given genus, the function finds the APG III family, and optionally the order, from the [genusFamily] database and the [apgFamilies] dataset
 #'
 #' @param genus Vector of genus names
@@ -17,9 +20,10 @@
 #' \donttest{
 #' getTaxonomy("Aphelandra", findOrder = TRUE)
 #' }
-#' @importFrom data.table setDF setDT data.table
+#' @importFrom data.table setDF setDT data.table setkey
 #' 
 getTaxonomy <- function(genus, findOrder = FALSE) {
+  lifecycle::deprecate_warn("2.2.8", "getTaxonomy()", "correctTaxo()")
   ### Find the family (and the order) of a vector of genus
 
   ################## 1. Retrieve the Family

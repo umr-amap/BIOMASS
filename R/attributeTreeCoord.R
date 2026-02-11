@@ -5,7 +5,12 @@ if (getRversion() >= "2.15.1") {
 }
 
 #' Attribute GPS coordinates to trees
-#'
+#' 
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' `attributeTreeCoord()` is deprecated. The projected tree coordinates are now retrieved by the `check_plot_coord()` function
+#' Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#' 
 #' @param xy The relative coordinates of the trees within each plot
 #' @param plot The label of the plot (same length as the number of rows of `xy` or length of 1)
 #' @param dim The dimension of the plot (either one value if the plot is a square or a vector if a rectangle)

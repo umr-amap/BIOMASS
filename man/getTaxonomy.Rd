@@ -15,6 +15,9 @@ getTaxonomy(genus, findOrder = FALSE)
 Data frame with the order (if \code{findOrder} is \code{TRUE}), family and genus.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+\code{getTaxonomy()} is now deprecated, \code{correctTaxo()} being able to handle retrieving taxonomy all at once.
+
 From given genus, the function finds the APG III family, and optionally the order, from the \link{genusFamily} database and the \link{apgFamilies} dataset
 }
 \examples{

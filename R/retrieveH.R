@@ -55,6 +55,8 @@
 #'
 #' # If the only data available is the region of your spot
 #' H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
+#' closeAllConnections()
+#' 
 retrieveH <- function(D, model = NULL, coord = NULL, region = NULL, plot = NULL) {
   
   

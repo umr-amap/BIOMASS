@@ -2,71 +2,92 @@
 % Please edit documentation in R/correctTaxo.R
 \name{correctTaxo}
 \alias{correctTaxo}
-\title{Correct trees taxonomy}
+\title{Correct and match taxonomic names to the World Flora Online database}
 \usage{
 correctTaxo(
   genus,
   species = NULL,
-  score = 0.5,
+  interactive = TRUE,
+  preferAccepted = FALSE,
+  preferFuzzy = FALSE,
+  sub_pattern = subPattern(),
   useCache = FALSE,
-  verbose = TRUE,
-  accepted = FALSE
+  useAPI = TRUE,
+  capacity = 60,
+  fill_time_s = 60,
+  timeout = 10
 )
 }
 \arguments{
-\item{genus}{Vector of genera to be checked. Alternatively, the whole species name (genus + species)
-or (genus + species + author) may be given (see example).}
+\item{genus}{vector of genera. Alternatively, the whole taxonomic name
+(genus + species)}
 
-\item{species}{(optional) Vector of species to be checked (same size as the genus vector).}
+\item{species}{optional, vector of species epithets to be checked (same
+length as \code{genus})}
 
-\item{score}{Score of the matching ( see https://tnrs.biendata.org/instructions ) below which corrections are discarded.}
+\item{interactive}{logical, if TRUE (default) user will be prompted to pick
+names from a list where multiple ambiguous matches are found, otherwise
+names with multiple ambiguous matches will be skipped}
 
-\item{useCache}{logical. Whether or not use a cache to reduce online search of taxa names (NULL means use cache but clear it first)}
+\item{preferAccepted}{logical, if TRUE, if multiple ambiguous matches are
+found, and if only one candidate is an "accepted" name,
+automatically choose that name}
 
-\item{verbose}{logical. If TRUE various messages are displayed during process}
+\item{preferFuzzy}{logical, if TRUE, if multiple ambiguous matches are
+found, the accepted matched name with the lowest Levenshtein distance to
+the submitted name will be returned}
 
-\item{accepted}{logical. If TRUE accepted names will be returned instead of matched names. Cache will not be used as synonymy changes over time.}
+\item{sub_pattern}{character vector of regex patterns which will be removed
+from \code{paste(genus, species)} using \code{gsub()}. The order of this vector
+matters, substitutions are applied sequentially. Sensible defaults are
+provided by \code{subPattern()}}
+
+\item{useCache}{logical, if TRUE use cached values in \code{the$wfo_cache}
+preferentially, to reduce the number of API calls}
+
+\item{useAPI}{logical, if TRUE (default) allow API calls}
+
+\item{capacity}{maximum number of API calls which can accumulate over the
+duration of \code{fill_time_s}. See documentation for \code{httr2::req_throttle()}}
+
+\item{fill_time_s}{time in seconds to refill the capacity for repeated API
+calls. See documentation for \code{httr2::req_throttle()}}
+
+\item{timeout}{time in seconds to wait before disconnecting from an
+unresponsive request}
 }
 \value{
-The function returns a dataframe with the corrected (or not) genera and species.
+data.frame of taxonomic names with rows matching \code{genus} + \code{species}.
+\describe{
+\item{nameOriginal}{Original name as in \code{genus} + \code{species}}
+\item{nameSubmitted}{Name after optional sanitisation according to
+\code{sub_pattern}}
+\item{nameMatched}{Matched taxonomic name}
+\item{nameAccepted}{Accepted taxonomic name}
+\item{familyAccepted}{Family of accepted name}
+\item{genusAccepted}{Genus of accepted name}
+\item{speciesAccepted}{Species epithet of accepted name}
+\item{nameModified}{Flag indicating if \code{matchedName} is different from
+\code{nameOriginal}, not including the removal of excess whitespace}
+}
 }
 \description{
-This function corrects typos for a given taxonomic name using the Taxonomic Name Resolution Service (TNRS).
+Match taxonomic names using the World Flora Online database, via their
+GraphQL API
 }
-\details{
-This function create a file named correctTaxo.log (see Localisation), this file have the memory of all the previous requests, as
-to avoid the replication of time-consuming server requests.
-
-By default, names are queried in batches of 500, with a 0.5s delay between each query. These values can be modified using options:
-\code{options(BIOMASS.batch_size=500)} for batch size (max 1000), \code{options(BIOMASS.wait_delay=0.5)} for delay (in seconds).
-}
-\section{Localisation}{
-
-Cache path discovery protocol
-\enumerate{
-\item BIOMASS.cache option set to an \strong{existing} folder
-\item \strong{existing} user data folder \code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}}
-\itemize{
-\item On Linux : \verb{~/.local/share/R/BIOMASS}
-\item On Mac OS X : \verb{~/Library/Application Support/R/BIOMASS}
-\item On Windows 7 up to 10 : \verb{C:\\\\Users\\\\<username>\\\\AppData\\\\Local\\\\R\\\\BIOMASS}
-\item On Windows XP : \verb{C:\\\\Documents and Settings\\\\<username>\\\\Data\\\\R\\\\BIOMASS}
-}
-\item fallback to R session tempdir
-}
-}
-
 \examples{
 \dontrun{
 correctTaxo(genus = "Astrocarium", species = "standleanum")
-correctTaxo(genus = "Astrocarium standleanum")
+correctTaxo(genus = "Astrocarium", species = "standleanum", interactive = F, preferFuzzy = T)
+correctTaxo(genus = "Astrocarium standleanum", interactive = F, preferFuzzy = T)
 }
 
 }
 \references{
-Boyle, B. et al. (2013).
-\emph{The taxonomic name resolution service: An online tool for automated standardization of plant names}. BMC bioinformatics, 14, 1. doi:10.1186/1471-2105-14-16
+Borsch, T. et al. (2020). \emph{World Flora Online: Placing taxonomists at the
+heart of a definitive and comprehensive global resource on the world's
+plants}. TAXON, 69, 6. doi10.1002/tax.12373:
 }
 \author{
-Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN, Guillaume CORNU
+John L. Godlee
 }

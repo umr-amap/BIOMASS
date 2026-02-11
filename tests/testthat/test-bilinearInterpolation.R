@@ -1,5 +1,3 @@
-context("Bilinear interpolation")
-
 
 test_that("bilinear_interpolation error", {
   from_corner_coord <- data.frame(x=1:5,y=1:5)
@@ -28,7 +26,7 @@ test_that("bilinear_interpolation function", {
   #coord <- expand.grid(X = seq(0,100,10), Y = seq(0,50,5))
   #plot(coord, xlim=c(-10,150),ylim=c(-5,200), col="blue") ; points(from_corner_coord) ; points(proj_coord , col="purple") ; points(to_corner_coord, col="red")
   
-  expect_is(proj_coord,"data.frame")
+  expect_true(is.data.frame(proj_coord))
   expect_equal(nrow(proj_coord), nrow(coord))
   expect_equal(names(proj_coord), c("x_interp","y_interp"))
   expect_equal(proj_coord, data.frame(x_interp=c(59.15064,81.96152),y_interp=c(134.1506,164.6410)) , tolerance = 1e-6)
@@ -58,7 +56,7 @@ test_that("bilinear_interpolation function", {
   #coord <- expand.grid(X = seq(0,100,10), Y = seq(0,50,5)) + 50
   proj_coord = bilinear_interpolation(coord = coord, from_corner_coord = from_corner_coord, to_corner_coord = to_corner_coord)
   #plot(from_corner_coord , xlim=c(45,210),ylim=c(45,160) , asp=1) ; points(coord , col="blue") ; points(proj_coord , col="purple") ; points(to_corner_coord, col="red")
-  expect_equivalent(proj_coord, coord+60)
+  expect_equal(proj_coord, coord+60, ignore_attr = TRUE)
   
   # To negative coordinates : 
   from_corner_coord <- expand.grid(X = c(0, 100), Y = c(0, 50))

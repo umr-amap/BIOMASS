@@ -44,6 +44,7 @@
 #' \donttest{
 #' bioclim <- getBioclimParam(coord)
 #' }
+#' closeAllConnections()
 #'
 #' @importFrom terra rast extract
 

@@ -232,58 +232,31 @@
 "param_7"
 
 
-
-#' Mean standard deviation of wood density estimates at different taxonomic levels
-#'
-#' This dataset gives the mean standard deviation of wood density values of the [wdData] dataset
-#' at different taxonomical levels only considering taxa having more than 10 different values.
-#' This dataset is used in the function [getWoodDensity()] to associate at the appropriate taxonomic
-#' level a mean error to wood density estimate.
-#'
-#' @docType data
-#' @usage data("sd_10")
-#' @format
-#' A data frame with 3 observations on the following 2 variables:
-#'   - `taxo`: Character vector with the different taxonomical levels (family, genus, species)
-#'   - `sd`: Numeric vector giving the mean standard deviation of wood density values
-#'
-#' @details This dataset is used in the function [getWoodDensity()].
-#' @references
-#' Rejou-Mechain et al. (2017).
-#'  _BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests_.
-#'  Methods in Ecology and Evolution, 8 (9), 1163-1167.
-#' @examples
-#' data(sd_10)
-#' str(sd_10)
-#' @keywords datasets wdData getWoodDensity internal
-"sd_10"
-
-
 #' The global wood density database
 #'
-#' The global wood density database (Chave et al. 2009, Zanne et al. 2009).
+#' The Global Wood Density Database v.2 (GWDD v.2) (Fischer, F. J., et al. 2026).
 #'
 #' @docType data
-#' @usage data("wdData")
+#' @usage data("wsg_estimates")
 #' @format
-#'  A data frame with 16467 observations on the following 7 variables.
+#'  A data frame with 20332 observations on the following 6 variables.
 #'   - `family`: a character vector indicating the family
 #'   - `genus`: a character vector indicating the genus
 #'   - `species`: a character vector indicating the species
-#'   - `wd`: a numeric vector of wood densities (g/cm^3)
-#'   - `region`: a character vector of regions (see [getWoodDensity()])
-#'   - `referenceNumber`: a numeric vector of reference numbers (bibliography)
-#'   - `regionId`: a character vector of region ids
+#'   - `wsg`: a numeric vector of mean wood density of a population (g/cm^3) at taxonomic level
+#'   - `sd`: a numeric vector of standard deviation of wood density of a popuation (g/cm^3) at taxonomic level
+#'   - `level_tax`: a character vector of taxonomic level (namely `family` or `genus` or `species`)
 #'
 #' @details This dataset is used in the function [getWoodDensity()], to estimate a taxon-average wood density value.
 #' @references
-#' Chave et al. (2009) _Towards a worldwide wood economics spectrum._ Ecology letters 12:4, 351-366.
-#' @source Zanne et al. _Global wood density database._ Dryad. Identifier: http://datadryad.org/handle/10255/dryad.235 (2009).
+#' Fischer, F. J., et al. (2026). Beyond species means - the intraspecific contribution to global wood density variation. New Phytol. https://doi.org/10.1111/nph.70860
+#' @source 
+#' Fischer, F. J., et al. (2026). Global Wood Density Database v.2 (GWDD v.2) (Data set). Zenodo. https://doi.org/10.5281/zenodo.18262736
 #' @examples
-#' data(wdData)
-#' str(wdData)
+#' data(wsg_estimates)
+#' str(wsg_estimates)
 #' @keywords datasets wood density getWoodDensity internal
-"wdData"
+"wsg_estimates"
 
 
 #' @name HDmethods

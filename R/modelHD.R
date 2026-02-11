@@ -61,7 +61,7 @@
 #' @seealso [retrieveH()]
 #'
 #' @export
-#'
+#' @importFrom data.table rbindlist fread
 #' @examples
 #'
 #' # Load a data set

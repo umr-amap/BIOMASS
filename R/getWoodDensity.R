@@ -1,71 +1,49 @@
-#' Estimating wood density
+#' Estimating wood density and associated uncertainties
 #'
 #' @description
-#' The function estimates the wood density (WD) of the trees from their taxonomy or from their congeners using the global wood density database (Chave et al. 2009, Zanne et al. 2009) or any additional dataset. The WD can either be attributed to an individual at a species, genus, family or stand level.
+#' The function estimates the wood density (WD) and the associated standard deviation of the trees from their taxonomy or from their congeners using the global wood density database V2 (Fischer et al. 2026) or any additional dataset if the sd is also provided. The WD can either be attributed to an individual at a species, genus, family or stand level.
 #'
-#' @param genus Vector of genus names
-#' @param species Vector of species names
+#' @param genus Vector of genus names.
+#' @param species Vector of species names.
+#' @param family (optional) Vector of families. If set, the missing wood densities at the genus
+#' level will be attributed at family level if available.
 #' @param stand (optional) Vector with the corresponding stands of your data.
 #' If set, the missing wood densities at the genus level will be attributed at stand level.
 #' If not, the value attributed will be the mean of the whole tree dataset.
-#' @param family (optional) Vector of families. If set, the missing wood densities at the genus
-#' level will be attributed at family level if available.
-#' @param region Region (or vector of region) of interest of your sample. By default, Region is
-#' set to 'World', but you can restrict the WD estimates to a single region :
-#'   - `AfricaExtraTrop`: Africa (extra tropical)
-#'   - `AfricaTrop`: Africa (tropical)
-#'   - `Australia`: Australia
-#'   - `AustraliaTrop`: Australia (tropical)
-#'   - `CentralAmericaTrop`: Central America (tropical)
-#'   - `China`: China
-#'   - `Europe`: Europe
-#'   - `India`: India
-#'   - `Madagascar`: Madagascar
-#'   - `Mexico`: Mexico
-#'   - `NorthAmerica`: North America
-#'   - `Oceania`: Oceania
-#'   - `SouthEastAsia`: South-East Asia
-#'   - `SouthEastAsiaTrop`: South-East Asia (tropical)
-#'   - `SouthAmericaExtraTrop`: South America (extra tropical)
-#'   - `SouthAmericaTrop`: South America (tropical)
-#'   - `World`: World
-#'
 #' @param addWoodDensityData A dataframe containing additional wood density data to be
-#'  combined with the global wood density database. The dataframe should be organized
-#'  in a dataframe with three (or four) columns: "genus","species","wd", the fourth
-#'  column "family" is optional.
+#'  combined with the global wood density database (see Details).
 #' @param verbose A logical, give some statistic with the database
 #'
 #' @details
-#' The function assigns to each taxon a species- or genus- level average if at least
-#'  one wood density value at the genus level is available for that taxon in the reference database.
-#'  If not, the mean wood density of the family (if set) or of the stand (if set) is given.
+#' The function assigns wood density estimates (WD) and uncertainty (sigma) at species, genus or family level to each taxon, using the results of Bayesian hierarchical modelling on the Global Wood Density Database V2, with the following brms formula:
+#' WD ~ 1 + (1 | family / genus / species) + (1 | source_short)
+#' sigma ~ 1 + ind + (1 | species)
+#' The uncertainties related to the genus and family are then estimated by simulating WD values for all the species.
+#' 
+#' If a taxon is unidentified or absent from the database, the estimated WD and uncertainty of the stand (if set) is given.
 #'
-#' The function also provides an estimate of the error associated with the wood density estimate
-#'  (i.e. a standard deviation): a mean standard deviation value is given to the tree at the
-#'  appropriate taxonomic level using the [sd_10] dataset.
-#'
+#' When supplying addWoodDensityData, the dataframe should be organized as follow:
+#' - four (or five) columns: "genus","species","meanWD","sdWD" (the fifth column "family" is optional)
+#' - one row per species (not per individual measurement)
+#' The taxa present in addWoodDensityData will replace the GWDD V2 estimates.
 #'
 #' @return Returns a dataframe containing the following information:
-#'   - `family`: (if set) Family
+#'   - `family`: Family
 #'   - `genus`: Genus
 #'   - `species`: Species
-#'   - `meanWD` (g/cm^3): Mean wood density
-#'   - `sdWD` (g/cm^3): Standard deviation of the wood density that can be used in error propagation
-#' (see [sd_10] and [AGBmonteCarlo()])
+#'   - `meanWD` (g/cm^3): Mean wood density estimates
+#'   - `sdWD` (g/cm^3): Standard deviation estimates of the wood density
 #'   - `levelWD`: Level at which wood density has been calculated. Can be species, genus, family,
 #' dataset (mean of the entire dataset) or, if stand is set, the name of the stand (mean of the current stand)
-#'   - `nInd`: Number of individuals taken into account to compute the mean wood density
 #'
 #' @export
 #'
-#' @author Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY
+#' @author Arthur BAILLY, Maxime REJOU-MECHAIN, Fabian FISCHER, Dominique LAMONICA
 #'
 #' @references
-#' Chave, J., et al. _Towards a worldwide wood economics spectrum_. Ecology letters 12.4 (2009): 351-366.
-#' Zanne, A. E., et al. _Global wood density database_. Dryad. Identifier: http://hdl. handle. net/10255/dryad 235 (2009).
-#'
-#'
+#' Fischer, F. J., et al. (2026). Beyond species means - the intraspecific contribution to global wood density variation. New Phytol. https://doi.org/10.1111/nph.70860
+#' Fischer, F. J., et al. (2026). Global Wood Density Database v.2 (GWDD v.2) (Data set). Zenodo. https://doi.org/10.5281/zenodo.18262736
+#' 
 #' @examples
 #' # Load a data set
 #' data(NouraguesTrees)
@@ -87,114 +65,132 @@
 #' )
 #' }
 #' 
-#' # Compute the Wood Density up to the family level and then give the mean wood density per stand
-#' \donttest{
-#' WD <- getWoodDensity(
-#'   family = NouraguesTrees$family,
-#'   genus = NouraguesTrees$Genus,
-#'   species = NouraguesTrees$Species,
-#'   stand = NouraguesTrees$plotId
-#' )
-#' str(WD)
-#' }
-#' @seealso [wdData], [sd_10]
+#' @seealso [wsg_estimates]
 #' @keywords Wood density
-#' @importFrom data.table data.table := setDF setDT setkey chmatch %chin%
+#' @importFrom data.table data.table := setDF setnames setcolorder
 #'
-getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region = "World",
+getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
                            addWoodDensityData = NULL, verbose = TRUE) {
-
-
-  # Parameters verification -------------------------------------------------
-
+  
+  
+  # Parameters verification ----------------------------------------------------
+  
   if (length(genus) != length(species)) {
     stop("Your data (genus and species) do not have the same length")
   }
-
-  if (!is.null(family) && (length(genus) != length(family))) {
-    stop("Your family vector and your genus/species vectors do not have the same length")
-
+  
+  if (!is.null(family)) {
+    if( length(genus) != length(family) ) {
+      stop("Your family vector and your genus/species vectors do not have the same length")
+    }
     if (any(colSums(table(family, genus) > 0, na.rm = TRUE) >= 2)) {
       stop("Some genera are in two or more families")
     }
   }
-
+  
   if (!is.null(stand) && (length(genus) != length(stand))) {
     stop("Your stand vector and your genus/species vectors do not have the same length")
   }
-
-  if (!is.null(addWoodDensityData)) {
-    if (!(all(names(addWoodDensityData) %in% c("genus", "species", "wd", "family")) && length(names(addWoodDensityData)) %in% c(3, 4))) {
-      stop('The additional wood density database should be organized in a dataframe with three (or four) columns:
-           "genus","species","wd", and the column "family" is optional')
-    }
-  }
-
   
-  # Data processing ---------------------------------------------------------
-
-  # Load global wood density database downloaded from http://datadryad.org/handle/10255/dryad.235
-  wdData <- data.table(BIOMASS::wdData)
-
-  # Load the mean standard deviation observed at the species, Genus or Family level
-  # in the Dryad dataset when at least 10 individuals are considered
-  sd_10 <- data.table(BIOMASS::sd_10)
-  sd_tot <- sd(wdData$wd)
-
-  Region <- tolower(region)
-  if ((Region != "world") && any(is.na(chmatch(Region, tolower(wdData$regionId))))) {
-    stop("One of the region you entered is not recognized in the global wood density database")
-  }
-
-  subWdData <- wdData
-  if (!("world" %in% Region)) {
-    subWdData <- wdData[tolower(regionId) %chin% Region]
-  }
-
-  if (nrow(subWdData) < 1000 && is.null(addWoodDensityData)) {
-    warning(
-      "DRYAD data only stored ", nrow(subWdData), " wood density values in your region of interest. ",
-      'You could provide additional wood densities (parameter addWoodDensityData) or widen your region (region="World")'
-    )
-  }
-
   if (!is.null(addWoodDensityData)) {
-    setDT(addWoodDensityData)
-    if (!("family" %in% names(addWoodDensityData))) {
-      genusFamily <- data.table(BIOMASS::genusFamily)
-      addWoodDensityData[genusFamily, on = "genus", family := i.family]
+    if (!(all(names(addWoodDensityData) %in% c("genus", "species", "meanWD","sdWD", "family")) && length(names(addWoodDensityData)) %in% c(4, 5))) {
+      stop('The additional wood density database should be organized in a dataframe with four (or five) columns:
+           "genus","species","meanWD","sdWD", and the column "family" is optional')
     }
-    addWoodDensityData <- addWoodDensityData[!is.na(wd), ]
-    subWdData <- merge(subWdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
-    subWdData[!is.na(regionId), wd := wd.x][is.na(regionId), wd := wd.y][, ":="(wd.x = NULL, wd.y = NULL)]
   }
-
-  if (verbose) {
-    message("The reference dataset contains ", nrow(subWdData), " wood density values")
+  
+  
+  # Data processing ------------------------------------------------------------
+  
+  # Load global wood density estimates and uncertainties
+  wdData <- data.table(BIOMASS::wsg_estimates)
+  
+  # Adding addWoodDensityData to wdData
+  if (!is.null(addWoodDensityData)) {
+    # Formatting addWoodDensityData:
+    addWoodDensityData <- as.data.table(addWoodDensityData)
+    addWoodDensityData[,species := paste(genus, species)]
+    addWoodDensityData <- addWoodDensityData[!is.na(meanWD), ]
+    addWoodDensityData[!is.na(species), add_level_tax := "species"]
+    addWoodDensityData[is.na(species) & !is.na(genus), add_level_tax := "genus"]
+    if("family" %in% names(addWoodDensityData)) {
+      addWoodDensityData[is.na(species) & is.na(genus) & !is.na(family), add_level_tax := "family"]
+      wdData <- merge(wdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
+    }else{    
+      wdData <- merge(wdData, addWoodDensityData, by = c("genus", "species"), all = TRUE)
+    }
+    
+    wdData[!is.na(meanWD), wsg := meanWD]
+    wdData[!is.na(sdWD), sd := sdWD]
+    wdData[!is.na(add_level_tax), level_tax := add_level_tax]
+    wdData[, c("meanWD","sdWD") := NULL]
   }
-
-  # Creating an input dataframe
+  
+  # Creating an input data-table
   inputData <- data.table(genus = as.character(genus), species = as.character(species))
-
-
+  inputData[, binomial := paste(genus, species)] # a species name can be found in multiple genus, so we will match the binomial names instead of species names
+  
+  # Assign family if provided 
   if (!is.null(family)) {
     inputData[, family := as.character(family)]
-  } else {
-    if (!exists("genusFamily", inherits = FALSE)) {
-      genusFamily <- data.table(BIOMASS::genusFamily)
-    }
-    inputData[genusFamily, on = "genus", family := i.family]
   }
-
+  
+  # Assign stand if provided 
   if (!is.null(stand)) {
     inputData[, stand := as.character(stand)]
   }
-
-  taxa <- unique(inputData, by = c("family", "genus", "species"))
+  
+  taxa <- unique(inputData, by = c("binomial"))
   if (verbose) {
     message("Your taxonomic table contains ", nrow(taxa), " taxa")
   }
-
+  
+  # # If there is no genus or species level
+  # inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
+  # 
+  # if (nrow(meanWdData) == 0) {
+  #   stop("Our database have not any of your family, genus and species")
+  # }
+  
+  # if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
+  #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
+  #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
+  #   stop("There is no exact match among the family, genus and species, please check that 'genus' and 'species' doesn't contain any special character or provide 'addWoodDensity' dataset.")
+  # }
+  
+  
+  # Merging WdData with inputData ----------------------------------------------
+  
+  # At species level: 
+  inputData <- merge(x = inputData, y = wdData[, c("species","wsg","sd","level_tax")], all.x = TRUE, by.x = "binomial", by.y = "species")
+  
+  # At genus level: 
+  inputData[ is.na(level_tax) & !is.na(genus),
+             c("wsg", "sd", "level_tax") := wdData[is.na(species),][
+               .SD,
+               on = .(genus),
+               .(wsg, sd, level_tax)]
+  ]
+  
+  # At family level: 
+  if(!is.null(family)) {
+    inputData[ is.na(level_tax) & !is.na(family),
+               c("wsg", "sd", "level_tax") := wdData[is.na(genus),][
+                 .SD,
+                 on = .(family),
+                 .(wsg, sd, level_tax)]
+    ]
+  }
+  
+  # Warning when family is not provided and when all taxa are not matched
+  if(is.null(family) && sum(is.na(inputData$wsg)) != 0) {
+    warning( paste( sum(is.na(inputData$wsg)), "taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level." ) )
+  }
+  
+  
+  
+  # Compute wsg and sd at stand level ------------------------------------------
+  
   # utilitary function : paste y values inside x when one x value is NA
   coalesce <- function(x, y) {
     if (length(y) == 1) {
@@ -204,136 +200,52 @@ getWoodDensity <- function(genus, species, stand = NULL, family = NULL, region =
     x[where] <- y[where]
     x
   }
-
-  # Select only the relevant data
-  meanWdData <- subWdData[(family %in% taxa$family | genus %in% taxa$genus | species %in% taxa$species), ]
-
-  if (nrow(meanWdData) == 0) {
-    stop("Our database have not any of your family, genus and species")
-  }
-
-
-  # If there is no genus or species level
-  inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
-
-
-  if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
-    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
-    nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
-    stop("There is no exact match among the family, genus and species, try with 'addWoodDensity'
-         or inform the 'family' or increase the 'region'")
-  }
-
-  # Extracting data ---------------------------------------------------------
-
-  # compute mean at species level
-  sdSP <- sd_10[taxo == "species", sd]
-  meanSP <- meanWdData[,
-    by = c("family", "genus", "species"),
-    .(
-      meanWDsp = mean(wd),
-      nIndsp = .N,
-      sdWDsp = sdSP
-    )
-  ]
-  inputData[meanSP,
-    on = c("family", "genus", "species"), by = .EACHI,
-    `:=`(
-      meanWD = meanWDsp,
-      nInd = nIndsp,
-      sdWD = sdWDsp,
-      levelWD = "species"
-    )
-  ]
-
-  # mean at genus level
-  sdGN <- sd_10[taxo == "genus", sd]
-  meanGN <- meanSP[,
-    by = c("family", "genus"),
-    .(
-      meanWDgn = mean(meanWDsp),
-      nIndgn = .N,
-      sdWDgn = sdGN
-    )
-  ]
-  inputData[meanGN,
-    on = c("family", "genus"), by = .EACHI,
-    `:=`(
-      meanWD = coalesce(meanWD, meanWDgn),
-      nInd = coalesce(nInd, nIndgn),
-      sdWD = coalesce(sdWD, sdWDgn),
-      levelWD = coalesce(levelWD, "genus")
-    )
-  ]
-
-  # mean at family level if provided
-  if (!is.null(family)) {
-    sdFM <- sd_10[taxo == "family", sd]
-    meanFM <- meanGN[,
-      by = family,
-      .(
-        meanWDfm = mean(meanWDgn),
-        nIndfm = .N,
-        sdWDfm = sdFM
-      )
-    ]
-    inputData[meanFM,
-      on = "family", by = .EACHI,
-      `:=`(
-        meanWD = coalesce(meanWD, meanWDfm),
-        nInd = coalesce(nInd, nIndfm),
-        sdWD = coalesce(sdWD, sdWDfm),
-        levelWD = coalesce(levelWD, "family")
-      )
-    ]
-  }
-
-  # mean at stand level if provided
+  
+  # retrieve mean at stand level if provided
   if (!is.null(stand)) {
-    meanST <- inputData[!is.na(meanWD),
-      by = stand,
-      .(
-        meanWDst = mean(meanWD),
-        nIndst = .N,
-        sdWDst = sd(meanWD)
-      )
+    # Calculate mean(WD) and sd(WD) at stand level
+    meanST <- inputData[!is.na(wsg),
+                        by = stand,
+                        .(
+                          meanWDst = mean(wsg),
+                          sdWDst = sd(wsg)
+                        )
     ]
-    inputData[is.na(meanWD), levelWD := stand]
+    inputData[is.na(wsg), level_tax := stand]
     inputData[meanST,
-      on = "stand", by = .EACHI,
-      `:=`(
-        meanWD = coalesce(meanWD, meanWDst),
-        nInd = coalesce(nInd, nIndst),
-        sdWD = coalesce(sdWD, sdWDst)
-      )
+              on = "stand", by = .EACHI,
+              `:=`(
+                wsg = coalesce(wsg, meanWDst),
+                sd = coalesce(sd, sdWDst)
+              )
     ]
   }
-
+  
   # mean of whole dataset for remaining NA
   meanDS <- inputData[
-    !is.na(meanWD),
+    !is.na(wsg),
     .(
-      meanWDds = mean(meanWD),
-      nIndds = .N,
-      sdWDds = sd(meanWD)
+      meanWDds = mean(wsg),
+      sdWDds = sd(wsg)
     )
   ]
   inputData[
-    is.na(meanWD),
+    is.na(wsg),
     `:=`(
-      meanWD = meanDS$meanWDds,
-      nInd = meanDS$nIndds,
-      sdWD = meanDS$sdWDds,
-      levelWD = "dataset"
+      wsg = meanDS$meanWDds,
+      sd = meanDS$sdWDds,
+      level_tax = "dataset"
     )
   ]
-
-  # Deal with NA or zero values in sdWD (adopt the most conservative approach assigning the sd over the full wdData dataset)
-  #(very specific cases where no or only one species co-occur with unidentified individuals in the plot)
-  inputData[is.na(sdWD) | sdWD==0, sdWD:=sd_tot]
   
-  # Convert to a dataframe
-  result <- setDF(inputData[, .(family, genus, species, meanWD, sdWD, levelWD, nInd)])
+  # Formatting output ----------------------------------------------------------
   
-  return(result)
+  setnames(x = inputData, old = c("wsg","sd","level_tax"), new = c("meanWD","sdWD","levelWD"))
+  inputData[, binomial := NULL]
+  
+  if(!is.null(family)) { # family in first column if prodived
+    setcolorder(inputData, "family", before=1)
+  }
+  
+  return(setDF(inputData))
 }

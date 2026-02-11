@@ -43,6 +43,10 @@ If there are no outliers or rmOutliers = TRUE, a list with:
 }
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+\code{correctCoordGPS()} is deprecated and has been replaced by \code{check_plot_coord()}.
+Please see the vignette \verb{Spatialized trees and forest stand metrics with BIOMASS}
+
 This function builds the most probable GPS coordinates of the plot corners from multiple GPS measurements.
 }
 \details{

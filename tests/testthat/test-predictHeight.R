@@ -1,4 +1,3 @@
-context("Predict Height of the tree")
 
 data("NouraguesTrees")
 data("NouraguesHD")
@@ -40,7 +39,7 @@ for (method in c("log1", "log2", "weibull", "michaelis")) {
     )
     for (err in c(TRUE, FALSE)) {
       expect_length(predictHeight(as.matrix(NouraguesHD$D), HDmodel, err = err), length(NouraguesHD$D))
-      expect_is(predictHeight(as.matrix(NouraguesHD$D), HDmodel, err = err), "numeric")
+      expect_type(predictHeight(as.matrix(NouraguesHD$D), HDmodel, err = err), "double")
       
       if (err == TRUE) {
         H <- predictHeight(as.matrix(rep(10, 10)), HDmodel, err = err)

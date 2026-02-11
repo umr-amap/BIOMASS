@@ -3,8 +3,6 @@ D <- NouraguesTrees$D[1:50]
 data("NouraguesCoords")
 coord <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
-context("Function retriveH")
-
 test_that("With the HDmodel", {
   expect_error(retrieveH(D), "Either")
 
@@ -16,9 +14,9 @@ test_that("With the HDmodel", {
   )
 
   H <- retrieveH(D, model = HDmodel)
-  expect_is(H, "list")
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
+  expect_true(is.list(H))
+  expect_type(H$H, "double")
+  expect_type(H$RSE, "double")
   expect_length(H$H, length(D))
   expect_length(H$RSE, 1)
 
@@ -37,9 +35,9 @@ test_that("With the coordinates", {
   
   H <- retrieveH(D, coord = coord)
 
-  expect_is(H, "list")
+  expect_true(is.list(H))
   expect_length(H, 2)
-  expect_is(H$H, "numeric")
+  expect_type(H$H, "double")
   expect_equal(H$RSE, NA)
   expect_length(H$H, length(D))
   expect_length(H$RSE, 1)
@@ -54,9 +52,9 @@ test_that("With the region", {
 
   H <- retrieveH(D, region = "SEAsia")
 
-  expect_is(H, "list")
-  expect_is(H$H, "numeric")
-  expect_is(H$RSE, "numeric")
+  expect_true(is.list(H))
+  expect_type(H$H, "double")
+  expect_type(H$RSE, "double")
   expect_length(H$H, length(D))
   expect_length(H$RSE, 1)
 
