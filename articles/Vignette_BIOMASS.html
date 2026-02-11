@@ -201,9 +201,9 @@ this information.</p>
 <h2 id="wood-density">Wood density<a class="anchor" aria-label="anchor" href="#wood-density"></a>
 </h2>
 <p><strong>Wood density</strong> is estimated <strong>from tree
-taxonomy</strong>, using the <a href="https://datadryad.org/dataset/doi:10.5061/dryad.234" class="external-link">global wood
-density database</a> as a reference. So the first step might be to
-correct tree taxonomy.</p>
+taxonomy</strong>, using the <a href="https://zenodo.org/records/18262736" class="external-link">Global Wood Density Database
+v.2</a> as a reference. So the first step might be to correct tree
+taxonomy.</p>
 <div class="section level3">
 <h3 id="checking-and-retrieving-tree-taxonomy">Checking and retrieving tree taxonomy<a class="anchor" aria-label="anchor" href="#checking-and-retrieving-tree-taxonomy"></a>
 </h3>
@@ -211,15 +211,15 @@ correct tree taxonomy.</p>
 calling it, let’s speak about cache !</p>
 <p>When the function is called for the first time with the argument
 <code>useCache = TRUE</code>, a temporary file containing the request to
-<a href="https://tnrs.biendata.org/" class="external-link">TNRS</a> will be automatically
-created in an existing folder. Once this has been done, during the
-current session <strong>the use of <code>useCache = TRUE</code> will
-access the saved temporary file</strong> in order to avoid
-time-consuming replication of server requests. But <strong>by quitting
-the current R session, this temporary file will be removed</strong>. So
-before calling <code><a href="../reference/correctTaxo.html">correctTaxo()</a></code>, we advise you to define a
-folder which will host the cache file permanently, enabling to work
-offline.</p>
+<a href="https://www.worldfloraonline.org/" class="external-link">WFO</a> will be
+automatically created in an existing folder. Once this has been done,
+during the current session <strong>the use of
+<code>useCache = TRUE</code> will access the saved temporary
+file</strong> in order to avoid time-consuming replication of server
+requests. But <strong>by quitting the current R session, this temporary
+file will be removed</strong>. So before calling
+<code><a href="../reference/correctTaxo.html">correctTaxo()</a></code>, we advise you to define a folder which will
+host the cache file permanently, enabling to work offline.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># By default</span></span>
 <span><span class="fu"><a href="../reference/createCache.html">createCache</a></span><span class="op">(</span><span class="op">)</span> </span>
@@ -238,8 +238,8 @@ function:</p>
 <p>The corrected genus and species of the trees can now be added to the
 data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusCorrected</span></span>
-<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesCorrected</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusAccepted</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesAccepted</span></span></code></pre></div>
 <p>Here, as an example, the species name of the fourth tree has been
 corrected from “guyanensis” to “guianensis” (the fourth row of
 correctTaxo() output has a TRUE value for the column nameModified) :</p>
@@ -247,14 +247,16 @@ correctTaxo() output has a TRUE value for the column nameModified) :</p>
 <code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "guyanensis"</span></span>
 <span><span class="va">Taxo</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt;   genusCorrected speciesCorrected nameModified</span></span>
-<span><span class="co">#&gt; 4     Conceveiba       guianensis         TRUE</span></span></code></pre></div>
-<p>If you want (but this is optional for the rest), you can retrieve APG
-III families and orders from genus names.</p>
+<span><span class="co">#&gt;            nameOriginal         nameSubmitted           nameMatched</span></span>
+<span><span class="co">#&gt; 4 Conceveiba guyanensis conceveiba guyanensis Conceveiba guianensis</span></span>
+<span><span class="co">#&gt;            nameAccepted familyAccepted genusAccepted speciesAccepted</span></span>
+<span><span class="co">#&gt; 4 Conceveiba guianensis  Euphorbiaceae    Conceveiba      guianensis</span></span>
+<span><span class="co">#&gt;   nameModified</span></span>
+<span><span class="co">#&gt; 4         TRUE</span></span></code></pre></div>
+<p>You can also retrieve APG III families from genus names, in the
+familyAccepted column.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">APG</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span>, findOrder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">familyAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">family</span></span>
-<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">orderAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">order</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">familyAccepted</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="getting-wood-density">Getting wood density<a class="anchor" aria-label="anchor" href="#getting-wood-density"></a>
@@ -271,9 +273,9 @@ the stand-level mean wood density is assigned to the tree.</p>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
 <span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span> <span class="co"># for unidentified or non-documented trees in the reference database</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Your taxonomic table contains 408 taxa</span></span>
+<span><span class="co">#&gt; Your taxonomic table contains 379 taxa</span></span>
 <span><span class="co">#&gt; Warning in getWoodDensity(genus = NouraguesTrees$GenusCorrected, species =</span></span>
-<span><span class="co">#&gt; NouraguesTrees$SpeciesCorrected, : 142 taxa don't match the Global Wood Density</span></span>
+<span><span class="co">#&gt; NouraguesTrees$SpeciesCorrected, : 169 taxa don't match the Global Wood Density</span></span>
 <span><span class="co">#&gt; Database V2. You may provide 'family' to match wood density estimates at family</span></span>
 <span><span class="co">#&gt; level.</span></span>
 <span></span>
@@ -283,30 +285,31 @@ at the species, genus and plot level:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At species level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1647</span></span>
+<span><span class="co">#&gt; [1] 1635</span></span>
 <span><span class="co"># At genus level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"genus"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 261</span></span>
+<span><span class="co">#&gt; [1] 246</span></span>
 <span><span class="co"># At plot level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"genus"</span>, <span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 142</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 169</span></span></code></pre></div>
 <p>The <code>family</code> argument also assigns to the trees a
 family-level wood density average, but bear in mind that the
 taxon-average approach gives relatively poor estimates above the genus
 level (Flores &amp; Coomes 2011).</p>
-<p><strong>Additional wood density values can be added</strong> using
-the <code>addWoodDensityData</code> argument (here invented for the
-example):</p>
+<p><strong>Additional wood density values (mean and error) can be
+added</strong> using the <code>addWoodDensityData</code> argument (here
+invented for the example):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">LocalWoodDensity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Paloue"</span>, <span class="st">"Handroanthus"</span><span class="op">)</span>,</span>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"princeps"</span>, <span class="st">"serratifolius"</span><span class="op">)</span>,</span>
-<span>  wd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.72</span><span class="op">)</span> <span class="op">)</span></span>
+<span>  meanWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.72</span><span class="op">)</span>,</span>
+<span>  sdWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.061</span>, <span class="fl">0.042</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">add_wood_densities</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span>,</span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
-<span>  family <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">familyAPG</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span>,</span>
 <span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span>,</span>
 <span>  addWoodDensityData <span class="op">=</span> <span class="va">LocalWoodDensity</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -543,8 +546,8 @@ argument:</li>
 <span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Note that when HDmodel is not a bayesian model, uncertainties of the
-are not propagated during the error propagation of the AGBmonteCarlo()
-function.</p>
+parameters are not propagated during the error propagation of the
+AGBmonteCarlo() function.</p>
 <ul>
 <li>
 <strong>If tree heights have been estimated via the “Feldspausch”
@@ -584,17 +587,17 @@ of the trees) using the <code>coord</code> argument:</li>
 <span></span>
 <span><span class="va">error_prop</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $meanAGB</span></span>
-<span><span class="co">#&gt; [1] 1677.512</span></span>
+<span><span class="co">#&gt; [1] 1671.145</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $medAGB</span></span>
-<span><span class="co">#&gt; [1] 1675.369</span></span>
+<span><span class="co">#&gt; [1] 1670.682</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sdAGB</span></span>
-<span><span class="co">#&gt; [1] 47.52699</span></span>
+<span><span class="co">#&gt; [1] 46.33488</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $credibilityAGB</span></span>
-<span><span class="co">#&gt;    2.5%   97.5% </span></span>
-<span><span class="co">#&gt; 1588.23 1774.28</span></span></code></pre></div>
+<span><span class="co">#&gt;     2.5%    97.5% </span></span>
+<span><span class="co">#&gt; 1582.272 1764.058</span></span></code></pre></div>
 <p>The first four elements of the output contain the mean, median,
 standard deviation and credibility intervals of the total AGB of the
 dataset but nothing about the AGB at the plot level. To do this, you can

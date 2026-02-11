@@ -424,10 +424,10 @@ kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, capti
 | x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID  |
 |------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:------------|
 |   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_1 |
-|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 4.7 |         | subplot_0_3 |
+|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | subplot_0_3 |
 |   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_1 |
-|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.0 |         | NA          |
-|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.2 |         | subplot_0_1 |
+|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.1 |         | NA          |
+|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | subplot_0_1 |
 |  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA          |
 
 Head of the divide_plot()\$tree_data returns
