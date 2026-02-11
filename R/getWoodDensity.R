@@ -71,14 +71,14 @@
 #'
 getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
                            addWoodDensityData = NULL, verbose = TRUE) {
-
-
+  
+  
   # Parameters verification ----------------------------------------------------
-
+  
   if (length(genus) != length(species)) {
     stop("Your data (genus and species) do not have the same length")
   }
-
+  
   if (!is.null(family)) {
     if( length(genus) != length(family) ) {
       stop("Your family vector and your genus/species vectors do not have the same length")
@@ -87,24 +87,24 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
       stop("Some genera are in two or more families")
     }
   }
-
+  
   if (!is.null(stand) && (length(genus) != length(stand))) {
     stop("Your stand vector and your genus/species vectors do not have the same length")
   }
-
+  
   if (!is.null(addWoodDensityData)) {
     if (!(all(names(addWoodDensityData) %in% c("genus", "species", "meanWD","sdWD", "family")) && length(names(addWoodDensityData)) %in% c(4, 5))) {
       stop('The additional wood density database should be organized in a dataframe with four (or five) columns:
            "genus","species","meanWD","sdWD", and the column "family" is optional')
     }
   }
-
+  
   
   # Data processing ------------------------------------------------------------
-
+  
   # Load global wood density estimates and uncertainties
   wdData <- data.table(BIOMASS::wsg_estimates)
-
+  
   # Adding addWoodDensityData to wdData
   if (!is.null(addWoodDensityData)) {
     # Formatting addWoodDensityData:
@@ -115,15 +115,17 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
     addWoodDensityData[is.na(species) & !is.na(genus), add_level_tax := "genus"]
     if("family" %in% names(addWoodDensityData)) {
       addWoodDensityData[is.na(species) & is.na(genus) & !is.na(family), add_level_tax := "family"]
+      wdData <- merge(wdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
+    }else{    
+      wdData <- merge(wdData, addWoodDensityData, by = c("genus", "species"), all = TRUE)
     }
     
-    wdData <- merge(wdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
     wdData[!is.na(meanWD), wsg := meanWD]
     wdData[!is.na(sdWD), sd := sdWD]
     wdData[!is.na(add_level_tax), level_tax := add_level_tax]
     wdData[, c("meanWD","sdWD") := NULL]
   }
-
+  
   # Creating an input data-table
   inputData <- data.table(genus = as.character(genus), species = as.character(species))
   inputData[, binomial := paste(genus, species)] # a species name can be found in multiple genus, so we will match the binomial names instead of species names
@@ -132,33 +134,33 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   if (!is.null(family)) {
     inputData[, family := as.character(family)]
   }
-
+  
   # Assign stand if provided 
   if (!is.null(stand)) {
     inputData[, stand := as.character(stand)]
   }
-
+  
   taxa <- unique(inputData, by = c("binomial"))
   if (verbose) {
     message("Your taxonomic table contains ", nrow(taxa), " taxa")
   }
-
+  
   # # If there is no genus or species level
   # inputData[, ":="(meanWD = NA_real_, nInd = NA_integer_, sdWD = NA_real_, levelWD = NA_character_)]
   # 
   # if (nrow(meanWdData) == 0) {
   #   stop("Our database have not any of your family, genus and species")
   # }
-
+  
   # if (!((!is.null(family) && nrow(merge(inputData, meanWdData[, .N, by = .(family)], c("family"))) != 0) ||
   #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus)], c("family", "genus"))) != 0 ||
   #   nrow(merge(inputData, meanWdData[, .N, by = .(family, genus, species)], c("family", "genus", "species"))) != 0)) {
   #   stop("There is no exact match among the family, genus and species, please check that 'genus' and 'species' doesn't contain any special character or provide 'addWoodDensity' dataset.")
   # }
-
+  
   
   # Merging WdData with inputData ----------------------------------------------
-
+  
   # At species level: 
   inputData <- merge(x = inputData, y = wdData[, c("species","wsg","sd","level_tax")], all.x = TRUE, by.x = "binomial", by.y = "species")
   
@@ -182,7 +184,7 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   
   # Warning when family is not provided and when all taxa are not matched
   if(is.null(family) && sum(is.na(inputData$wsg)) != 0) {
-      warning( paste( sum(is.na(inputData$wsg)), "taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level." ) )
+    warning( paste( sum(is.na(inputData$wsg)), "taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level." ) )
   }
   
   
@@ -203,22 +205,22 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   if (!is.null(stand)) {
     # Calculate mean(WD) and sd(WD) at stand level
     meanST <- inputData[!is.na(wsg),
-      by = stand,
-      .(
-        meanWDst = mean(wsg),
-        sdWDst = sd(wsg)
-      )
+                        by = stand,
+                        .(
+                          meanWDst = mean(wsg),
+                          sdWDst = sd(wsg)
+                        )
     ]
     inputData[is.na(wsg), level_tax := stand]
     inputData[meanST,
-      on = "stand", by = .EACHI,
-      `:=`(
-        wsg = coalesce(wsg, meanWDst),
-        sd = coalesce(sd, sdWDst)
-      )
+              on = "stand", by = .EACHI,
+              `:=`(
+                wsg = coalesce(wsg, meanWDst),
+                sd = coalesce(sd, sdWDst)
+              )
     ]
   }
-
+  
   # mean of whole dataset for remaining NA
   meanDS <- inputData[
     !is.na(wsg),
