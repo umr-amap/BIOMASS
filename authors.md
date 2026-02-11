@@ -4,25 +4,29 @@
 
 - **Maxime Réjou-Méchain**. Author, data contributor.
 
-- **Guillaume Cornu**. Author. [](https://orcid.org/0000-0002-7523-5176)
-
 - **Dominique Lamonica**. Author, maintainer.
 
 - **Arthur Bailly**. Author.
+
+- **Guillaume Cornu**. Author. [](https://orcid.org/0000-0002-7523-5176)
 
 - **Arthur Pere**. Author.
 
 - **Ariane Tanguy**. Author.
 
-- **Jerome Chave**. Data contributor.
-
-- **Ted Feldpausch**. Data contributor.
-
-- **Philippe Verley**. Contributor.
-
 - **Camille Piponiot**. Author.
 
 - **Bruno Hérault**. Author.
+
+- **John Godlee**. Contributor.
+
+- **Fabian Fischer**. Contributor.
+
+- **Philippe Verley**. Contributor.
+
+- **Jerome Chave**. Data contributor.
+
+- **Ted Feldpausch**. Data contributor.
 
 ## Citation
 
