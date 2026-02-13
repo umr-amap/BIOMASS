@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
+    <li><a class="dropdown-item" href="../articles/Vignette_predict_map_AGBD.html">Predict maps of AGBD based on inventory and LiDAR data</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -58,7 +59,7 @@
 
 
 <dt id="arg-drawplot">drawPlot<a class="anchor" aria-label="anchor" href="#arg-drawplot"></a></dt>
-<dd><p>A logic indicating whether the graphic should be displayed or not</p></dd>
+<dd><p>A logical indicating whether the graphic should be displayed or not</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -101,10 +102,10 @@ to a plot at each iteration of the AGB monte Carlo approach.</p>
 <span class="r-in"><span>  <span class="co"># The summary by plot</span></span></span>
 <span class="r-in"><span>  <span class="fu">summaryByPlot</span><span class="op">(</span>AGB_val <span class="op">=</span> <span class="va">resultMC</span><span class="op">$</span><span class="va">AGB_simu</span>, plot <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   plot      AGB Cred_2.5 Cred_97.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  201 438.7537 401.1026  487.7125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  204 499.0911 454.3571  550.0836</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  213 400.0928 358.3293  453.6124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  223 271.7095 248.2426  299.5006</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  201 438.7902 396.9703  490.4543</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  204 500.2492 455.4215  551.6338</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  213 399.3600 358.4331  448.6508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  223 271.5251 249.0423  300.4295</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -114,7 +115,7 @@ to a plot at each iteration of the AGB monte Carlo approach.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Maxime Réjou-Méchain, Dominique Lamonica, Arthur Bailly, Guillaume Cornu, Arthur Pere, Ariane Tanguy, Camille Piponiot, Bruno Hérault.</p>
+  <p>Developed by Dominique Lamonica, Maxime Réjou-Méchain, Arthur Bailly, Guillaume Cornu, Arthur Pere, Ariane Tanguy, Camille Piponiot, Bruno Hérault.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -2,13 +2,19 @@
 
 ## Authors
 
-- **Maxime Réjou-Méchain**. Author, data contributor.
-
 - **Dominique Lamonica**. Author, maintainer.
+
+- **Maxime Réjou-Méchain**. Author, data contributor.
 
 - **Arthur Bailly**. Author.
 
 - **Guillaume Cornu**. Author. [](https://orcid.org/0000-0002-7523-5176)
+
+- **John Godlee**. Contributor.
+
+- **Fabian Fischer**. Contributor.
+
+- **Jerome Chave**. Contributor.
 
 - **Arthur Pere**. Author.
 
@@ -18,13 +24,7 @@
 
 - **Bruno Hérault**. Author.
 
-- **John Godlee**. Contributor.
-
-- **Fabian Fischer**. Contributor.
-
 - **Philippe Verley**. Contributor.
-
-- **Jerome Chave**. Data contributor.
 
 - **Ted Feldpausch**. Data contributor.
 

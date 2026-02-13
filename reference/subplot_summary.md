@@ -187,7 +187,8 @@ if (FALSE) { # \dontrun{
   res_summary <- subplot_summary(
     subplots = nouragues_subplots, 
     AGB_simu = resultMC$AGB_simu,
-    ref_raster = nouragues_raster, raster_fun = mean)
+    ref_raster = nouragues_raster,
+    raster_fun = mean, na.rm = TRUE)
     
   res_summary$tree_summary
   res_summary$plot_design[[1]]

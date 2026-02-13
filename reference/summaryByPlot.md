@@ -26,7 +26,7 @@ summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 
 - drawPlot:
 
-  A logic indicating whether the graphic should be displayed or not
+  A logical indicating whether the graphic should be displayed or not
 
 ## Value
 
@@ -73,9 +73,9 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesi
   # The summary by plot
   summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 #>   plot      AGB Cred_2.5 Cred_97.5
-#> 1  201 438.7537 401.1026  487.7125
-#> 2  204 499.0911 454.3571  550.0836
-#> 3  213 400.0928 358.3293  453.6124
-#> 4  223 271.7095 248.2426  299.5006
+#> 1  201 438.7902 396.9703  490.4543
+#> 2  204 500.2492 455.4215  551.6338
+#> 3  213 399.3600 358.4331  448.6508
+#> 4  223 271.5251 249.0423  300.4295
 # }
 ```

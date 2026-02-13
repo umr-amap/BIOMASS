@@ -1,6 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://umr-amap.github.io/BIOMASS/404.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/Vignette_BIOMASS.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/articles/Vignette_predict_map_AGBD.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/Vignette_spatialized_trees_and_forest_stand_metrics.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/articles/index.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/authors.html</loc></url>
@@ -18,6 +19,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/bilinear_interpolation.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cacheManager.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cachePath.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/calibrate_model.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/clearCache.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/computeAGB.html</loc></url>
@@ -40,6 +42,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/param_4.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/param_7.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/predictHeight.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/predict_map.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/procrust.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/retrieveH.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/subPattern.html</loc></url>

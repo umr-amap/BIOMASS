@@ -84,8 +84,6 @@ lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)
 # \donttest{
 bioclim <- getBioclimParam(coord)
-#> There appears to be a problem reaching the directory.
-#> Error in methods::as(x, "SpatRaster"): no method or default for coercing “NULL” to “SpatRaster”
 # }
 closeAllConnections()
 ```

@@ -56,6 +56,18 @@ AGB and its uncertainty
 - [`subplot_summary()`](https://umr-amap.github.io/BIOMASS/reference/subplot_summary.md)
   : Summarise and display tree information by subplot
 
+## Predict AGBD map based on inventory and LiDAR data
+
+### Calibrate AGBD-LiDAR log-log model
+
+- [`calibrate_model()`](https://umr-amap.github.io/BIOMASS/reference/calibrate_model.md)
+  : Calibrate a bayesian model to fit log(AGBD) ~ log(raster metric)
+
+### Predict AGBD map based on calibrated model
+
+- [`predict_map()`](https://umr-amap.github.io/BIOMASS/reference/predict_map.md)
+  : Predict map of AGBD and associated uncertainty
+
 ## Other functions
 
 - [`bilinear_interpolation()`](https://umr-amap.github.io/BIOMASS/reference/bilinear_interpolation.md)
