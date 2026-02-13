@@ -62,3 +62,6 @@ Or you can also run
 citation("BIOMASS")
 ```
 
+## Funders
+ESA (European Spatial Agency), IRD (Resarch Institute for Development), CIRAD (the French agricultural research and cooperation organization working for the sustainable development of tropical and Mediterranean regions)
+
