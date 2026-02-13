@@ -9,7 +9,8 @@
 #'     - On Windows 7 up to 10 : `C:\\Users\\<username>\\AppData\\Local\\R\\BIOMASS`
 #'     - On Windows XP : `C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS`
 #' 3. fallback to R session tempdir
-#'   
+#' 
+#' @author Guillaume CORNU  
 #' @param nameFile character. file to resolve cached path.
 #' @return file path of the resolved cached file.
 #' @importFrom utils download.file unzip

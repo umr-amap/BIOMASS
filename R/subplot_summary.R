@@ -22,7 +22,7 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly
+#' @author Arthur BAILLY
 #'
 #' @importFrom data.table data.table := set 
 #' @importFrom stats reshape setNames

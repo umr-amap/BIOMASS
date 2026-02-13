@@ -31,3 +31,6 @@ Cache path discovery protocol
 }
 }
 
+\author{
+Guillaume CORNU
+}

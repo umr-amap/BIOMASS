@@ -41,7 +41,7 @@ The data-table format of 'pred_raster', to which the following variables have be
 }
 }
 \description{
-As part of the FRM4BIOMASS project, this function enables to produce a map of
+This function enables to produce a map of
 the AGBD and associated uncertainty, using a spatially varying coefficient
 calibrated model created with the \code{\link[=calibrate_model]{calibrate_model()}} function.
 }
@@ -54,5 +54,5 @@ Speak about parallel computing ?
 }
 }
 \author{
-Arthur Bailly
+Arthur BAILLY, Dominique LAMONICA
 }

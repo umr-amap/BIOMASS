@@ -25,8 +25,8 @@ Useful links:
 Authors:
 \itemize{
   \item Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
-  \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
   \item Arthur Bailly \email{arthur.bailly@ird.fr}
+  \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
   \item Arthur Pere
   \item Ariane Tanguy
   \item Camille Piponiot
@@ -35,9 +35,11 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item Jerome Chave \email{jerome.chave@univ-tlse3.fr} [data contributor]
-  \item Ted Feldpausch \email{T.R.Feldpausch@exeter.ac.uk} [data contributor]
+  \item John Godlee \email{GodleeJ@si.edu} [contributor]
+  \item Fabian Fischer \email{f.fischer@bristol.ac.uk} [contributor]
+  \item Jerome Chave \email{jerome.chave@univ-tlse3.fr} [contributor]
   \item Philippe Verley \email{philippe.verley@ird.fr} [contributor]
+  \item Ted Feldpausch \email{T.R.Feldpausch@exeter.ac.uk} [data contributor]
 }
 
 }

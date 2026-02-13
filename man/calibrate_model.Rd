@@ -65,5 +65,5 @@ If useCache = NULL, the cache is first cleared before building the model.
 }
 }
 \author{
-Arthur Bailly
+Arthur BAILLY, Dominique LAMONICA
 }

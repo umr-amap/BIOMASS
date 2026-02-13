@@ -32,7 +32,7 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly, Dominique Lamonica
+#' @author Arthur BAILLY, Dominique LAMONICA
 #'
 #' @importFrom data.table is.data.table copy setnames
 #' 

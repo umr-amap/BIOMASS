@@ -26,7 +26,7 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly, Dominique Lamonica
+#' @author Arthur BAILLY, Dominique LAMONICA
 #'
 #' @importFrom data.table as.data.table
 #' @importFrom ggplot2 scale_fill_gradientn coord_fixed geom_raster labs

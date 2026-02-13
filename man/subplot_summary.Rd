@@ -141,5 +141,5 @@ subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FA
 }
 }
 \author{
-Arthur Bailly
+Arthur BAILLY
 }
