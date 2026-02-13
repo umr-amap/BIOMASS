@@ -85,14 +85,14 @@ predict_map <- function(fit_brms,
   # Formatting pred_raster -----------------------------------------------------
   if(!is.null(alignment_raster)) {
     # Set resolution of alignment_raster
-    res_alignment_raster <- raster::res(alignment_raster)
+    res_alignment_raster <- terra::res(alignment_raster)
     agg_fact <- res_alignment_raster / grid_size
     alignment_raster <- terra::disagg(alignment_raster, fact = agg_fact)
     # Resample pred_raster in alignment_raster with the desired function
     pred_raster <- terra::resample(x = pred_raster, y = alignment_raster, method = raster_fun)
   } else {
     # if missing alignment_raster, aggregate pred_raster to fit grid_size with the desired function
-    res_pred_raster <- raster::res(pred_raster)
+    res_pred_raster <- terra::res(pred_raster)
     agg_fact <- grid_size / res_pred_raster
     pred_raster <- terra::aggregate(x = pred_raster, fact = agg_fact, method = raster_fun, na.rm = TRUE)
   }
