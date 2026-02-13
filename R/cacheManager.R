@@ -62,6 +62,7 @@ cacheManager <- function(nameFile) {
     message("There appears to be a problem reaching the directory.")
     return(invisible(NULL))
   }
+  close(qryResult)
   
   if(!file.exists(cachePath(nameFile))) {
     dest <- tempfile(fileext = ".zip")
