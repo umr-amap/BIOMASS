@@ -70,10 +70,10 @@ Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
   useCache = TRUE, interactive = F, preferFuzzy = T)
-saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
 ```
 
 ```{r load_correctTaxo, include=FALSE}
+#saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
 Taxo <- readRDS(file = "saved_data/Taxo_vignette.rds")
 ```
 
@@ -91,7 +91,7 @@ NouraguesTrees$Species[4]
 Taxo[4,]
 ```
 
-You can also retrieve APG III families from genus names, in the familyAccepted column.
+You can also retrieve families from genus names in the familyAccepted column.
 
 ```{r get_family}
 NouraguesTrees$family <- Taxo$familyAccepted

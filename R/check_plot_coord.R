@@ -32,7 +32,6 @@
 #' @param threshold_tree a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.
 #' @param ask If TRUE and dealing with multiple plots, then prompt user before displaying each plot. 
 #'
-#' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
 #' @return Returns a list including :
 #'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot 
