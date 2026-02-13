@@ -108,7 +108,7 @@ building the model.
 
 ## Author
 
-Arthur Bailly
+Arthur BAILLY, Dominique LAMONICA
 
 ## Examples
 

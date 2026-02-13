@@ -27,10 +27,10 @@ Authors:
 
 - Maxime Réjou-Méchain <maxime.rejou@gmail.com> \[data contributor\]
 
+- Arthur Bailly <arthur.bailly@ird.fr>
+
 - Guillaume Cornu <gcornu@cirad.fr>
   ([ORCID](https://orcid.org/0000-0002-7523-5176))
-
-- Arthur Bailly <arthur.bailly@ird.fr>
 
 - Arthur Pere
 
@@ -42,8 +42,12 @@ Authors:
 
 Other contributors:
 
-- Jerome Chave <jerome.chave@univ-tlse3.fr> \[data contributor\]
+- John Godlee <GodleeJ@si.edu> \[contributor\]
 
-- Ted Feldpausch <T.R.Feldpausch@exeter.ac.uk> \[data contributor\]
+- Fabian Fischer <f.fischer@bristol.ac.uk> \[contributor\]
+
+- Jerome Chave <jerome.chave@univ-tlse3.fr> \[contributor\]
 
 - Philippe Verley <philippe.verley@ird.fr> \[contributor\]
+
+- Ted Feldpausch <T.R.Feldpausch@exeter.ac.uk> \[data contributor\]

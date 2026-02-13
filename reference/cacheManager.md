@@ -39,3 +39,7 @@ Cache path discovery protocol
       `C:\\Documents and Settings\\<username>\\Data\\R\\BIOMASS`
 
 3.  fallback to R session tempdir
+
+## Author
+
+Guillaume CORNU

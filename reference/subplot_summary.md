@@ -92,7 +92,7 @@ subplot and per simulation.
 
 ## Author
 
-Arthur Bailly
+Arthur BAILLY
 
 ## Examples
 

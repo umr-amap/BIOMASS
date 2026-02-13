@@ -1,8 +1,8 @@
 # Predict map of AGBD and associated uncertainty
 
-As part of the FRM4BIOMASS project, this function enables to produce a
-map of the AGBD and associated uncertainty, using a spatially varying
-coefficient calibrated model created with the
+This function enables to produce a map of the AGBD and associated
+uncertainty, using a spatially varying coefficient calibrated model
+created with the
 [`calibrate_model()`](https://umr-amap.github.io/BIOMASS/reference/calibrate_model.md)
 function.
 
@@ -86,7 +86,7 @@ Speak about parallel computing ?
 
 ## Author
 
-Arthur Bailly
+Arthur BAILLY, Dominique LAMONICA
 
 ## Examples
 

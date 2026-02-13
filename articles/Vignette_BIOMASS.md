@@ -83,7 +83,6 @@ Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
   useCache = TRUE, interactive = F, preferFuzzy = T)
-saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
 ```
 
 The corrected genus and species of the trees can now be added to the
@@ -110,8 +109,8 @@ Taxo[4,]
 #> 4         TRUE
 ```
 
-You can also retrieve APG III families from genus names, in the
-familyAccepted column.
+You can also retrieve families from genus names in the familyAccepted
+column.
 
 ``` r
 NouraguesTrees$family <- Taxo$familyAccepted

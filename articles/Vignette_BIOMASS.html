@@ -234,8 +234,7 @@ function:</p>
 <code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Genus</span>, <span class="co"># genus also accepts the whole species name (genus + species) or (genus + species + author) </span></span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span>, </span>
-<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">Taxo</span>, file <span class="op">=</span> <span class="st">"saved_data/Taxo_vignette.rds"</span><span class="op">)</span></span></code></pre></div>
+<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p>The corrected genus and species of the trees can now be added to the
 data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -254,8 +253,8 @@ correctTaxo() output has a TRUE value for the column nameModified) :</p>
 <span><span class="co">#&gt; 4 Conceveiba guianensis  Euphorbiaceae    Conceveiba      guianensis</span></span>
 <span><span class="co">#&gt;   nameModified</span></span>
 <span><span class="co">#&gt; 4         TRUE</span></span></code></pre></div>
-<p>You can also retrieve APG III families from genus names, in the
-familyAccepted column.</p>
+<p>You can also retrieve families from genus names in the familyAccepted
+column.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">familyAccepted</span></span></code></pre></div>
 </div>
