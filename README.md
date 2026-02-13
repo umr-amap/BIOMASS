@@ -16,7 +16,8 @@ The main implemented steps are as follows :
 2.  estimating wood density and its uncertainty;
 3.  building height-diameter models;
 4.  estimating above ground biomass/carbon at stand level with associated uncertainty;
-5.  managing tree and plot coordinates.
+5.  managing tree and plot coordinates;
+6.  predicting landscape maps of AGBD with associated uncertainties using LiDAR products.
 
 For more information, see [Réjou-Méchain et al. (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)
 
