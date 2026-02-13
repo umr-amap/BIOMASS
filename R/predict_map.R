@@ -101,6 +101,9 @@ predict_map <- function(fit_brms,
   dt_pred <- as.data.table(pred_raster, xy = T)
   dt_pred[ , log_CHM := log(dt_pred[[3]])] #change mean_logCHM to a more general name ????
   
+  # If 0s in pred_raster -> -Inf when log(), for now replaced with 0
+  dt_pred$log_CHM <- ifelse(is.infinite(dt_pred$log_CHM), 0, dt_pred$log_CHM)
+  
   # Predictions ----------------------------------------------------------------
   draw_size <- n_post_draws/n_cores
   draws_id_list <- split(1:n_post_draws, ceiling(seq_along(1:n_post_draws) / draw_size))
@@ -164,6 +167,7 @@ predict_map <- function(fit_brms,
   }
   
   # return dt_pred in a raster format
-  return(terra::rast(dt_pred, crs = terra::crs(ref_raster) ))
+  
+  return(terra::rast(dt_pred, crs = terra::crs(pred_raster) ))
   
 }
