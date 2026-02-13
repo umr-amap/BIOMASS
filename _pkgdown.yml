@@ -19,6 +19,7 @@ articles:
   contents:
   - Vignette_BIOMASS
   - Vignette_spatialized_trees_and_forest_stand_metrics
+  - Vignette_predict_map_AGBD
   
 reference: 
 - title: Estimate above ground biomass (ABG) and its uncertainty
@@ -55,6 +56,13 @@ reference:
 - subtile: Summarise and display tree information by subplot
   contents:
   - subplot_summary
+- title: Predict AGBD map based on inventory and LiDAR data
+- subtitle: Calibrate AGBD-LiDAR log-log model
+  contents:
+  - calibrate_model
+- subtitle: Predict AGBD map based on calibrated model
+  contents:
+  - predict_map
 
 - title: Other functions
 - subtile: Coordinate conversion from one system to another
