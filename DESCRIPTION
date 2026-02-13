@@ -4,18 +4,18 @@ Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
 Version: 3.0
 Date: 2026-02-11
 Authors@R: c(
-	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
 	person("Dominique", "Lamonica", email = "dominique.lamonica@ird.fr", role = c("aut","cre")),
+	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
 	person("Arthur", "Bailly", email = "arthur.bailly@ird.fr ", role = c("aut")),
 	person("Guillaume","Cornu", email = "gcornu@cirad.fr", role = c("aut"), comment = c(ORCID="0000-0002-7523-5176")),	
+	person("John", "Godlee", email = "GodleeJ@si.edu", role = c("ctb")),
+	person("Fabian", "Fischer", email = "f.fischer@bristol.ac.uk", role = c("ctb")),
+	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("ctb")),
 	person("Arthur", "Pere", role = c("aut")),
 	person("Ariane", "Tanguy", role = c("aut")),
 	person("Camille", "Piponiot", role = c("aut")),
 	person("Bruno", "Hérault", email = "bruno.herault@cirad.fr", role = c("aut")),
-	person("John", "Godlee", email = "GodleeJ@si.edu", role = c("ctb")),
-	person("Fabian", "Fischer", email = "f.fischer@bristol.ac.uk", role = c("ctb")),
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb")),
-	person("Jerome", "Chave", email = "jerome.chave@univ-tlse3.fr", role = c("dtc")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
   )
 Description: Contains functions for estimating above-ground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
