@@ -1,0 +1,28 @@
+---
+title: "Predict maps of AGBD based on inventory and LiDAR data"
+author: "Dominique Lamonica"
+date: "`r Sys.Date()`"
+output: 
+  prettydoc::html_pretty: 
+    number_sections: yes
+    toc: yes
+    highlight: vignette
+    self_contained: yes
+vignette: >
+  %\VignetteIndexEntry{Predict maps of AGBD based on inventory and Lidar data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, echo = TRUE,
+  comment = "#>", fig.align = "center"
+)
+require(BIOMASS)
+require(knitr)
+require(ggplot2)
+```
+
+# Overview
+
