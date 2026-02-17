@@ -37,23 +37,23 @@ cacheManager <- function(nameFile) {
   )
   url <- url[[nameFile]]
   
-  if(is.null(url)) {
-    stop(
-      "I don't know how to get this file!",
-      "\n  ", nameFile
-    )
-  }
-  
-  req <- httr2::request(url)
-  req <- httr2::req_error(req, function(response) FALSE)
-  qryResult <- httr2::req_perform_connection(req)
-  
-  if (httr2::resp_is_error(qryResult)) {
-    message("There appears to be a problem reaching the directory.")
-    return(invisible(NULL))
-  }
-  
   if(!file.exists(cachePath(nameFile))) {
+    if(is.null(url)) {
+      stop(
+        "I don't know how to get this file!",
+        "\n  ", nameFile
+      )
+    }
+    
+    req <- httr2::request(url)
+    req <- httr2::req_error(req, function(response) FALSE)
+    qryResult <- httr2::req_perform_connection(req)
+    
+    if (httr2::resp_is_error(qryResult)) {
+      message("There appears to be a problem reaching the directory.")
+      return(invisible(NULL))
+    }
+    
     dest <- tempfile(fileext = ".zip")
     on.exit(unlink(dest))
     
@@ -62,7 +62,7 @@ cacheManager <- function(nameFile) {
     unzip(dest, exdir = cachePath())
   }
   
-  if(!file.exists(cachePath(nameFile))) {
+  if (!file.exists(cachePath(nameFile))) {
     stop("Error while retrieving file ", nameFile)
   }
   
