@@ -353,16 +353,16 @@ kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, captio
 
 | plot_ID | subplot_ID  | x_rel | y_rel |   x_proj |   y_proj |
 |:--------|:------------|------:|------:|---------:|---------:|
-|         | subplot_0_0 |     0 |     0 | 313005.7 | 451723.2 |
-|         | subplot_0_0 |    25 |     0 | 312993.5 | 451699.9 |
-|         | subplot_0_0 |    25 |    25 | 313017.1 | 451686.2 |
-|         | subplot_0_0 |     0 |    25 | 313029.4 | 451708.9 |
-|         | subplot_1_0 |    25 |     0 | 312993.5 | 451699.9 |
-|         | subplot_1_0 |    50 |     0 | 312981.3 | 451676.7 |
-|         | subplot_1_0 |    50 |    25 | 313004.8 | 451663.6 |
-|         | subplot_1_0 |    25 |    25 | 313017.1 | 451686.2 |
-|         | subplot_2_0 |    50 |     0 | 312981.3 | 451676.7 |
-|         | subplot_2_0 |    75 |     0 | 312969.1 | 451653.5 |
+| subplot | subplot_0_0 |     0 |     0 | 313005.7 | 451723.2 |
+| subplot | subplot_0_0 |    25 |     0 | 312993.5 | 451699.9 |
+| subplot | subplot_0_0 |    25 |    25 | 313017.1 | 451686.2 |
+| subplot | subplot_0_0 |     0 |    25 | 313029.4 | 451708.9 |
+| subplot | subplot_1_0 |    25 |     0 | 312993.5 | 451699.9 |
+| subplot | subplot_1_0 |    50 |     0 | 312981.3 | 451676.7 |
+| subplot | subplot_1_0 |    50 |    25 | 313004.8 | 451663.6 |
+| subplot | subplot_1_0 |    25 |    25 | 313017.1 | 451686.2 |
+| subplot | subplot_2_0 |    50 |     0 | 312981.3 | 451676.7 |
+| subplot | subplot_2_0 |    75 |     0 | 312969.1 | 451653.5 |
 
 Head of the divide_plot()\$sub_corner_coord output.
 
@@ -421,14 +421,14 @@ The function now returns a list containing:
 kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-| x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID  |
-|------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:------------|
-|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_1 |
-|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | subplot_0_3 |
-|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_1 |
-|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.1 |         | NA          |
-|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | subplot_0_1 |
-|  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA          |
+| x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID |
+|------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:-----------|
+|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | NA         |
+|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | NA         |
+|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | NA         |
+|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.1 |         | NA         |
+|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | NA         |
+|  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA         |
 
 Head of the divide_plot()\$tree_data returns
 
