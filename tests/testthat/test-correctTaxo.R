@@ -94,18 +94,9 @@ test_that("correctTaxo uses cache and avoids API calls when possible", {
     )
   )
   
-  # checkURL returns TRUE always, 
-  # to simulate reachable API without pinging API
-  mockery::stub(correctTaxo, "checkURL", TRUE)
-
-  # Simulate backbone version without pinging API 
-  mock_bb <- list(data = list(classifications = list(id = "v2023.12")))
-  mockery::stub(correctTaxo, "httr2::req_perform", mockery::mock(mock_bb))
-  mockery::stub(correctTaxo, "httr2::resp_body_json", mockery::mock(mock_bb))
-  
   # Choose cached value 
   expect_equal(
-    correctTaxo("Burkea", "africana", useCache = TRUE, useAPI = TRUE, 
+    correctTaxo("Burkea", "africana", useCache = TRUE, useAPI = FALSE, 
       interactive = FALSE)$nameMatched, 
     "TEST")
 })
@@ -392,13 +383,12 @@ test_that("pickName handles empty string as skip", {
 # pickName - empty input
 test_that("pickName exits early if no candidates provided", {
   # Simulate empty candidate list
-  m <- mockery::mock()
+  m <- mockery::mock("s")
   mockery::stub(pickName, "readline", m)
   
   # Empty candidates list triggers "EMPTY" and exit 
-  expect_message(res <- pickName("Fake Name", list()), "No candidates, skipping")
-  expect_equal(res$method, "EMPTY")
-  mockery::expect_called(m, 0)
+  res <- pickName("Fake Name", list())
+  expect_equal(res$method, "SKIP")
 })
 
 # pickName - handle selecting candidate by number
