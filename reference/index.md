@@ -137,5 +137,3 @@ These functions are deprecated and will be removed in the version 3.0
 - [`numberCorner()`](https://umr-amap.github.io/BIOMASS/reference/numberCorner.md)
   **\[deprecated\]** : Get the UTM coordinates with the corner of the
   plot
-- [`getTaxonomy()`](https://umr-amap.github.io/BIOMASS/reference/getTaxonomy.md)
-  **\[deprecated\]** : Retrieve trees taxonomy

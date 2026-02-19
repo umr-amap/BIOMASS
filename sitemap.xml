@@ -13,7 +13,6 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/NouraguesHD.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/NouraguesPlot201.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/NouraguesTrees.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/reference/apgFamilies.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/attributeTree.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/attributeTreeCoord.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/bilinear_interpolation.html</loc></url>
@@ -31,9 +30,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/cutPlot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/divide_plot.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/feldCoef.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/reference/genusFamily.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/getBioclimParam.html</loc></url>
-<url><loc>https://umr-amap.github.io/BIOMASS/reference/getTaxonomy.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/getWoodDensity.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/index.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/latlong2UTM.html</loc></url>
