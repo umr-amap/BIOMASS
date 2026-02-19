@@ -33,7 +33,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Divides one ore more plots into subplots</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/divide_plot_fix_2026-02-18/R/divide_plot.R" class="external-link"><code>R/divide_plot.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/revert-88-correct_taxo_john/R/divide_plot.R" class="external-link"><code>R/divide_plot.R</code></a></small>
       <div class="d-none name"><code>divide_plot.Rd</code></div>
     </div>
 
@@ -152,22 +152,22 @@
 <span class="r-in"><span><span class="va">subplots_201</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sub_corner_coord</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    plot_ID  subplot_ID x_rel y_rel   x_proj   y_proj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot subplot_0_0     0     0 313005.7 451723.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot subplot_0_0    50     0 312981.3 451676.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot subplot_0_0    50    50 313028.4 451650.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot subplot_0_0     0    50 313053.1 451694.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot subplot_1_0    50     0 312981.3 451676.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot subplot_1_0   100     0 312956.9 451630.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot subplot_1_0   100    50 313003.6 451606.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot subplot_1_0    50    50 313028.4 451650.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot subplot_0_1     0    50 313053.1 451694.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot subplot_0_1    50    50 313028.4 451650.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot subplot_0_1    50   100 313075.4 451624.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot subplot_0_1     0   100 313100.5 451665.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot subplot_1_1    50    50 313028.4 451650.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot subplot_1_1   100    50 313003.6 451606.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot subplot_1_1   100   100 313050.2 451582.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 subplot subplot_1_1    50   100 313075.4 451624.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          subplot_0_0     0     0 313005.7 451723.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          subplot_0_0    50     0 312981.3 451676.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          subplot_0_0    50    50 313028.4 451650.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          subplot_0_0     0    50 313053.1 451694.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          subplot_1_0    50     0 312981.3 451676.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          subplot_1_0   100     0 312956.9 451630.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          subplot_1_0   100    50 313003.6 451606.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          subplot_1_0    50    50 313028.4 451650.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          subplot_0_1     0    50 313053.1 451694.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         subplot_0_1    50    50 313028.4 451650.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         subplot_0_1    50   100 313075.4 451624.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         subplot_0_1     0   100 313100.5 451665.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13         subplot_1_1    50    50 313028.4 451650.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14         subplot_1_1   100    50 313003.6 451606.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15         subplot_1_1   100   100 313050.2 451582.6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16         subplot_1_1    50   100 313075.4 451624.2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Assigning trees to subplots</span></span></span>
@@ -181,12 +181,12 @@
 <span class="r-in"><span>    tree_data <span class="op">=</span> <span class="va">plot201_trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots_201</span><span class="op">$</span><span class="va">sub_corner_coord</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   plot_ID  subplot_ID x_rel y_rel   x_proj   y_proj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 subplot subplot_0_0     0     0 313005.7 451723.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 subplot subplot_0_0    50     0 312981.3 451676.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 subplot subplot_0_0    50    50 313028.4 451650.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 subplot subplot_0_0     0    50 313053.1 451694.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 subplot subplot_1_0    50     0 312981.3 451676.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 subplot subplot_1_0   100     0 312956.9 451630.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         subplot_0_0     0     0 313005.7 451723.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         subplot_0_0    50     0 312981.3 451676.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         subplot_0_0    50    50 313028.4 451650.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         subplot_0_0     0    50 313053.1 451694.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         subplot_1_0    50     0 312981.3 451676.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         subplot_1_0   100     0 312956.9 451630.2</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots_201</span><span class="op">$</span><span class="va">tree_data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            Site Plot x_rel y_rel        Family               Genus     Species</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Petit_Plateau  201   0.0  31.5   Burseraceae             Protium surinamense</span>
@@ -195,13 +195,13 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 Petit_Plateau  201  -4.0  67.5 Euphorbiaceae          Conceveiba  guyanensis</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 Petit_Plateau  201   0.3  39.9   Burseraceae             Protium  altissimum</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 Petit_Plateau  201  -3.5  41.5 Euphorbiaceae               Mabea    speciosa</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      D plot_ID subplot_ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11.0               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 74.4               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 25.4               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 10.0               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.9               &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 10.0               &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      D plot_ID  subplot_ID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 11.0         subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 74.4         subplot_0_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 25.4         subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 10.0                &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 18.9         subplot_0_0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 10.0                &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># When grid dimensions (40m x 40m) don't fit perfectly plot dimensions</span></span></span>
 <span class="r-in"><span><span class="co"># an origin at (10 ; 10) will center the grid</span></span></span>
@@ -219,22 +219,22 @@
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> The y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sub_corner_coord</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    plot_ID  subplot_ID x_rel y_rel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  subplot subplot_0_0    10    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  subplot subplot_0_0    50    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  subplot subplot_0_0    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  subplot subplot_0_0    10    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  subplot subplot_1_0    50    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  subplot subplot_1_0    90    10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  subplot subplot_1_0    90    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  subplot subplot_1_0    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  subplot subplot_0_1    10    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 subplot subplot_0_1    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 subplot subplot_0_1    50    90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 subplot subplot_0_1    10    90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 subplot subplot_1_1    50    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 subplot subplot_1_1    90    50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 subplot subplot_1_1    90    90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 subplot subplot_1_1    50    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          subplot_0_0    10    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          subplot_0_0    50    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          subplot_0_0    50    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          subplot_0_0    10    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          subplot_1_0    50    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          subplot_1_0    90    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          subplot_1_0    90    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          subplot_1_0    50    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9          subplot_0_1    10    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         subplot_0_1    50    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         subplot_0_1    50    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12         subplot_0_1    10    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13         subplot_1_1    50    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14         subplot_1_1    90    50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15         subplot_1_1    90    90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16         subplot_1_1    50    90</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

@@ -31,7 +31,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/umr-amap/BIOMASS/blob/divide_plot_fix_2026-02-18/inst/CITATION)
+[`inst/CITATION`](https://github.com/umr-amap/BIOMASS/blob/revert-88-correct_taxo_john/inst/CITATION)
 
 Réjou-Méchain M, Tanguy A, Piponiot C, Chave J, Herault B (2017).
 “BIOMASS : an R package for estimating above-ground biomass and its
