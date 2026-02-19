@@ -55,33 +55,6 @@ test_that("getBioclimParam", {
 
 closeAllConnections()
 
-# test_that("Deprecated getTaxonomy - With finding the order", {
-#   withr::local_options(lifecycle_verbosity = "quiet")
-#   Taxo <- getTaxonomy(NouraguesTrees$Genus, findOrder = TRUE)
-#   expect_equal(Taxo[, 1], as.character(NouraguesTrees$Genus))
-# 
-#   expect_is(Taxo, "data.frame")
-#   expect_equal(dim(Taxo), c(50, 3))
-#   expect_is(Taxo[, 1], "character")
-#   expect_is(Taxo[, 2], "character")
-#   expect_is(Taxo[, 3], "character")
-# 
-#   Taxo <- Taxo[order(Taxo$inputGenus), ]
-# 
-#   res <- "inputGenus      family      order
-#   Abarema  Fabaceae      Fabales
-#   Amaioua Rubiaceae  Gentianales
-#   Amphirrhox Violaceae Malpighiales"
-# 
-#   expect_equivalent(unique(Taxo)[1:3,], fread(res, data.table = FALSE))
-# })
-
-test_that("getTaxonomy is deprecated", {
-  expect_warning(getTaxonomy(NouraguesTrees$Genus), regexp = "deprecated")
-})
-
-
-
 test_that("loglog function", {
   skip_if_not_function("loglogFunction")
 
