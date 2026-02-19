@@ -27,8 +27,7 @@ http://www.mobot.org/MOBOT/research/APweb/
 
 ``` r
 data(apgFamilies)
+#> Warning: data set ‘apgFamilies’ not found
 str(apgFamilies)
-#> 'data.frame':    502 obs. of  2 variables:
-#>  $ order : chr  "Acorales" "Alismatales" "Alismatales" "Alismatales" ...
-#>  $ famAPG: chr  "Acoraceae" "Alismataceae" "Aponogetonaceae" "Araceae" ...
+#> Error: object 'apgFamilies' not found
 ```

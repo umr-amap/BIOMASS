@@ -43,12 +43,10 @@ Ariane TANGUY, Arthur PERE, Maxime REJOU-MECHAIN
 getTaxonomy("Aphelandra")
 #> Warning: `getTaxonomy()` was deprecated in BIOMASS 2.2.8.
 #> ℹ Please use `correctTaxo()` instead.
-#>   inputGenus      family
-#> 1 Aphelandra Acanthaceae
+#> Error: 'genusFamily' is not an exported object from 'namespace:BIOMASS'
 # ... and the order
 # \donttest{
 getTaxonomy("Aphelandra", findOrder = TRUE)
-#>   inputGenus      family    order
-#> 1 Aphelandra Acanthaceae Lamiales
+#> Error: 'genusFamily' is not an exported object from 'namespace:BIOMASS'
 # }
 ```

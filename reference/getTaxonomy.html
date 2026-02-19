@@ -37,7 +37,7 @@ From given genus, the function finds the APG III family, and optionally the orde
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Retrieve trees taxonomy</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/revert-88-correct_taxo_john/R/getTaxonomy.R" class="external-link"><code>R/getTaxonomy.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/getTaxonomy.R" class="external-link"><code>R/getTaxonomy.R</code></a></small>
       <div class="d-none name"><code>getTaxonomy.Rd</code></div>
     </div>
 
@@ -79,13 +79,11 @@ From given genus, the function finds the APG III family, and optionally the orde
 <span class="r-in"><span><span class="fu">getTaxonomy</span><span class="op">(</span><span class="st">"Aphelandra"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`getTaxonomy()` was deprecated in BIOMASS 2.2.8.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `correctTaxo()` instead.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   inputGenus      family</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Aphelandra Acanthaceae</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'genusFamily' is not an exported object from 'namespace:BIOMASS'</span>
 <span class="r-in"><span><span class="co"># ... and the order</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">getTaxonomy</span><span class="op">(</span><span class="st">"Aphelandra"</span>, findOrder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   inputGenus      family    order</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Aphelandra Acanthaceae Lamiales</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'genusFamily' is not an exported object from 'namespace:BIOMASS'</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

@@ -33,8 +33,7 @@ http://www.theplantlist.org/ Retrieved 2016-08-25.
 
 ``` r
 data(genusFamily)
+#> Warning: data set ‘genusFamily’ not found
 str(genusFamily)
-#> 'data.frame':    31355 obs. of  2 variables:
-#>  $ family: chr  "Orchidaceae" "Euphorbiaceae" "Compositae" "Thelypteridaceae" ...
-#>  $ genus : chr  "Aa" "Aalius" "Aaronsohnia" "Abacopteris" ...
+#> Error: object 'genusFamily' not found
 ```
