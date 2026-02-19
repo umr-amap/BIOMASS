@@ -1,25 +1,3 @@
-#' Angiosperm Phylogeny Group (APG III) dataset
-#'
-#' APGIII Families taken from the Angiosperm Phylogeny Website (http://www.mobot.org/MOBOT/research/APweb/)
-#'
-#' @docType data
-#' @format
-#' A data frame with 502 observations on the following 2 variables:
-#'   - `order`: Vector of order
-#'   - `famAPG`: Vector of APGIII families
-#'
-#' @usage data("apgFamilies")
-#' @source Stevens, P. F. (2001 onwards). _Angiosperm Phylogeny Website_.
-#' Version 12, July 2012. Retrieved on 2016-07-25 http://www.mobot.org/MOBOT/research/APweb/
-#'
-#' @examples
-#' data(apgFamilies)
-#' str(apgFamilies)
-#' @keywords datasets internal
-#'
-"apgFamilies"
-
-
 #' Feldpausch et al. 2012 coefficients for generalized height-diameter models
 #'
 #' Weibull coefficients from a height-diameter model of the form \eqn{H = a(1-exp(-b*D^c))} given by Feldpausch
@@ -44,30 +22,6 @@
 #' str(feldCoef)
 #' @keywords datasets internal
 "feldCoef"
-
- 
-#' Genus Family database
-#'
-#' To create this database, we combined the genera from The Plant List (http://www.theplantlist.org/1.1/browse/-/-/)
-#' and the Vascular Plant Families and Genera from Kew (http://data.kew.org/vpfg1992/genlist.html).
-#' Families were checked against the APGIII families.
-#'
-#' @docType data
-#' @usage data("genusFamily")
-#' @format A data frame with 28107 observations on the following 2 variables:
-#'   - `family`: Vector of families APGIII corrected
-#'   - `genus`: Vector of genus
-#'
-#' @source
-#' WCSP (2015). _World Checklist of Selected Plant Families_.
-#' Facilitated by the Royal Botanic Gardens, Kew. Published on the Internet; http://apps.kew.org/wcsp/ Retrieved 2015-12-17.
-#'
-#' The Plant List (2013). Version 1.1. Published on the Internet; http://www.theplantlist.org/ Retrieved 2016-08-25.
-#' @examples
-#' data(genusFamily)
-#' str(genusFamily)
-#' @keywords datasets internal
-"genusFamily"
 
 
 #' Nouragues forest dataset
