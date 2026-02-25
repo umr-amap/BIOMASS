@@ -271,15 +271,6 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
   
   # Apply divide_plot_fct to all plots
   plot_grid <- corner_dt[, divide_plot_fct(.SD, grid_size, origin), by = plot_ID, .SDcols = colnames(corner_dt)]
-  # if just one plot, replace "subplot" by "" for the plot_ID column (before it goes in a list when coordinates uncertainties)
-  if (length(unique(corner_dt$plot_ID)) == 1) {
-    corner_dt[, plot_ID := ""]
-    plot_grid[, plot_ID := ""]
-    if(!is.null(sd_coord)) {
-      sd_coord$plot_ID <- ""
-    }
-  }
-  
   
   ### Calculates the projected coordinates of the grid points 
   project_coord_fct <- function(dat, plot_grid, uncertainty) { # dat = corner_dt[plot_ID==201,]
