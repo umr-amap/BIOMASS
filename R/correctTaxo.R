@@ -270,6 +270,7 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #'   \item{familyAccepted}{Family of accepted name}
 #'   \item{genusAccepted}{Genus of accepted name}
 #'   \item{speciesAccepted}{Species epithet of accepted name}
+#'   \item{authorAccepted}{Taxon authority information/source of accepted name}
 #'   \item{nameModified}{Flag indicating if `matchedName` is different from
 #'       `nameOriginal`, not including the removal of excess whitespace}
 #' }
