@@ -117,10 +117,10 @@ subplots_201_sum <- subplot_summary(subplots_201 , value = "D", draw_plot = FALS
 subplots_201_sum$tree_summary
 #>     subplot_ID D_sum_per_ha
 #>         <char>        <num>
-#> 1: subplot_0_0           NA
-#> 2: subplot_1_0           NA
-#> 3: subplot_0_1           NA
-#> 4: subplot_1_1           NA
+#> 1: subplot_0_0     10656.19
+#> 2: subplot_1_0     12103.82
+#> 3: subplot_0_1     10708.82
+#> 4: subplot_1_1     12972.33
 # \donttest{
   subplots_201_sum$plot_design
 
