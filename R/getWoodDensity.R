@@ -162,7 +162,7 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   # Merging WdData with inputData ----------------------------------------------
   
   # At species level: 
-  inputData <- merge(x = inputData, y = wdData[, c("species","wsg","sd","level_tax")], all.x = TRUE, by.x = "binomial", by.y = "species")
+  inputData <- merge(x = inputData, y = wdData[, c("species","wsg","sd","level_tax")], all.x = TRUE, by.x = "binomial", by.y = "species", sort = FALSE)
   
   # At genus level: 
   inputData[ is.na(level_tax) & !is.na(genus),
