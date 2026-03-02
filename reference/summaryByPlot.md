@@ -73,9 +73,9 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesi
   # The summary by plot
   summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 #>   plot      AGB Cred_2.5 Cred_97.5
-#> 1  201 439.5721 399.0864  493.1228
-#> 2  204 500.8183 456.9948  552.6980
-#> 3  213 399.1548 358.5400  445.7011
-#> 4  223 271.5084 246.8512  300.2784
+#> 1  201 451.1710 411.4641  504.0925
+#> 2  204 504.9957 459.1405  555.2641
+#> 3  213 364.6863 329.5406  404.7163
+#> 4  223 288.0213 261.2570  321.7180
 # }
 ```

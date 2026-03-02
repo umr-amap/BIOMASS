@@ -117,6 +117,10 @@ data.frame of taxonomic names with rows matching `genus` + `species`.
 
   Species epithet of accepted name
 
+- authorAccepted:
+
+  Taxon authority information/source of accepted name
+
 - nameModified:
 
   Flag indicating if `matchedName` is different from `nameOriginal`, not

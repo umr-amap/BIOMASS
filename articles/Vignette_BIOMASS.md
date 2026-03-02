@@ -451,17 +451,17 @@ error_prop <- AGBmonteCarlo(
 
 error_prop[(1:4)]
 #> $meanAGB
-#> [1] 1671.145
+#> [1] 1674.958
 #> 
 #> $medAGB
-#> [1] 1670.682
+#> [1] 1674.216
 #> 
 #> $sdAGB
-#> [1] 46.33488
+#> [1] 45.70764
 #> 
 #> $credibilityAGB
 #>     2.5%    97.5% 
-#> 1582.272 1764.058
+#> 1587.405 1769.685
 ```
 
 The first four elements of the output contain the mean, median, standard
