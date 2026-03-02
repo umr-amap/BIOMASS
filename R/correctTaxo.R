@@ -270,6 +270,7 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #'   \item{familyAccepted}{Family of accepted name}
 #'   \item{genusAccepted}{Genus of accepted name}
 #'   \item{speciesAccepted}{Species epithet of accepted name}
+#'   \item{authorAccepted}{Taxon authority information/source of accepted name}
 #'   \item{nameModified}{Flag indicating if `matchedName` is different from
 #'       `nameOriginal`, not including the removal of excess whitespace}
 #' }
@@ -561,7 +562,8 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
       nameAccepted = NA_character_,
       familyAccepted = NA_character_,
       genusAccepted = NA_character_,
-      speciesAccepted = NA_character_
+      speciesAccepted = NA_character_,
+      authorAccepted = NA_character_
     )
   } else {
     match_df <- do.call(rbind, lapply(match_list, function(i) { 
@@ -572,7 +574,9 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
           nameAccepted = null2na(i$currentPreferredUsage$hasName$fullNameStringNoAuthorsPlain),
           familyAccepted = null2na(i$familyAcc), 
           genusAccepted = null2na(i$genusAcc), 
-          speciesAccepted = null2na(i$speciesAcc))
+          speciesAccepted = null2na(i$speciesAcc),
+          authorAccepted = null2na(i$currentPreferredUsage$hasName$authorsString)
+        )
       } else { 
         data.frame(
           nameSubmitted = null2na(i$submitted_name),
@@ -580,7 +584,9 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
           nameAccepted = NA_character_,
           familyAccepted = NA_character_,
           genusAccepted = NA_character_,
-          speciesAccepted = NA_character_)
+          speciesAccepted = NA_character_,
+          authorAccepted = NA_character_
+        )
       }
     }))
   }
