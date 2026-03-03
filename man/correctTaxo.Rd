@@ -67,6 +67,7 @@ data.frame of taxonomic names with rows matching \code{genus} + \code{species}.
 \item{familyAccepted}{Family of accepted name}
 \item{genusAccepted}{Genus of accepted name}
 \item{speciesAccepted}{Species epithet of accepted name}
+\item{authorAccepted}{Taxon authority information/source of accepted name}
 \item{nameModified}{Flag indicating if \code{matchedName} is different from
 \code{nameOriginal}, not including the removal of excess whitespace}
 }
