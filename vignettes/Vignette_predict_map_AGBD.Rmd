@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 require(BIOMASS)
 require(knitr)
 require(ggplot2)
+require(dplyr)
 ```
 
 # Overview
@@ -50,7 +51,7 @@ brm_model <- modelHD(
   bayesian = TRUE, useCache = TRUE)
 
 # Wood density
-Taxo <- readRDS(file = "vignettes/saved_data/Taxo_vignette.rds")
+Taxo <- readRDS(file = "saved_data/Taxo_vignette.rds")
 NouraguesTrees$GenusCorrected <- Taxo$genusAccepted
 NouraguesTrees$SpeciesCorrected <- Taxo$speciesAccepted
 NouraguesTrees$family <- Taxo$familyAccepted
@@ -71,7 +72,7 @@ error_prop_4plots <- AGBmonteCarlo(
 error_prop_4plots$AGB_simu <- error_prop_4plots$AGB_simu[,1:50]
 ```
 ```{r load_error_prop, include=FALSE}
-error_prop4plots <- readRDS(file = "vignettes/saved_data/error_prop4plots.rds")
+error_prop4plots <- readRDS(file = "saved_data/error_prop4plots.rds")
 ```
 
 ## Spatialize AGBD
@@ -98,7 +99,7 @@ multiple_checks <- check_plot_coord(
 # compute AGBD estimates and their uncertainty per subplot
 subplot_AGBD <- subplot_summary(
   subplots = multiple_subplots,
-  AGB_simu = error_prop_4plots$AGB_simu, draw = F
+  AGB_simu = error_prop4plots$AGB_simu, draw = F
 )
 ```
 
@@ -112,7 +113,7 @@ points(NouraguesCoords$Xutm, NouraguesCoords$Yutm, col ="red", pch = 20)
 raster_summary <- subplot_summary(
   subplots = multiple_subplots,
   ref_raster = nouraguesRaster, raster_fun = median, na.rm = T)
-chm_subplot <- raster_summary$tree_summary %>%
+chm_subplot <- raster_summary$tree_summary |>
   rename(raster_metric = z2012_median)
 ```
 
@@ -132,7 +133,7 @@ model_cal <- calibrate_model(long_AGB_simu = data_for_calibration, nb_rep = 50, 
                             warmup = 500, cores = 4)
 ```
 ```{r load_brms_output, include=FALSE}
-model_cal <- readRDS(file = "vignettes/saved_data/nouragues_model_cal.rds")
+model_cal <- readRDS(file = "saved_data/nouragues_model_cal.rds")
 ```
 
 Let's check inference results:
