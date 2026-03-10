@@ -35,8 +35,15 @@ vignettes/BIOMASS_cache/html/
 
 \.~*\#
 
+tests/testthat/_snaps/
+
 # Web site
 docs
 
 # Build R WASM package
 .github/workflows/webr-pkgdown-build-and-deploy.yml
+
+# Some test files
+tests/testthat/_snaps/
+/doc/
+/Meta/
