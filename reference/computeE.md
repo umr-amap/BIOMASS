@@ -87,5 +87,4 @@ coord <- cbind(long, lat)
 # \donttest{
 E <- computeE(coord)
 # }
-closeAllConnections()
 ```

@@ -92,7 +92,7 @@ subplot and per simulation.
 
 ## Author
 
-Arthur BAILLY
+Arthur Bailly
 
 ## Examples
 
@@ -161,7 +161,7 @@ if (FALSE) { # \dontrun{
   )
   
   # Modelling height-diameter relationship
-  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
+  HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
   # Retrieving wood density values
   Nouragues201WD <- getWoodDensity(
     genus = NouraguesTrees201$Genus,
@@ -187,8 +187,7 @@ if (FALSE) { # \dontrun{
   res_summary <- subplot_summary(
     subplots = nouragues_subplots, 
     AGB_simu = resultMC$AGB_simu,
-    ref_raster = nouragues_raster,
-    raster_fun = mean, na.rm = TRUE)
+    ref_raster = nouragues_raster, raster_fun = mean)
     
   res_summary$tree_summary
   res_summary$plot_design[[1]]

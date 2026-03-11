@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,6 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
-    <li><a class="dropdown-item" href="../articles/Vignette_predict_map_AGBD.html">Predict maps of AGBD based on inventory and LiDAR data</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -70,9 +69,9 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2026-03-03</h4>
+            <h4 data-toc-skip class="date">2026-03-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/v2.2.7/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
     </div>
 
@@ -202,9 +201,9 @@ this information.</p>
 <h2 id="wood-density">Wood density<a class="anchor" aria-label="anchor" href="#wood-density"></a>
 </h2>
 <p><strong>Wood density</strong> is estimated <strong>from tree
-taxonomy</strong>, using the <a href="https://zenodo.org/records/18262736" class="external-link">Global Wood Density Database
-v.2</a> as a reference. So the first step might be to correct tree
-taxonomy.</p>
+taxonomy</strong>, using the <a href="https://datadryad.org/dataset/doi:10.5061/dryad.234" class="external-link">global wood
+density database</a> as a reference. So the first step might be to
+correct tree taxonomy.</p>
 <div class="section level3">
 <h3 id="checking-and-retrieving-tree-taxonomy">Checking and retrieving tree taxonomy<a class="anchor" aria-label="anchor" href="#checking-and-retrieving-tree-taxonomy"></a>
 </h3>
@@ -212,15 +211,15 @@ taxonomy.</p>
 calling it, let’s speak about cache !</p>
 <p>When the function is called for the first time with the argument
 <code>useCache = TRUE</code>, a temporary file containing the request to
-<a href="https://www.worldfloraonline.org/" class="external-link">WFO</a> will be
-automatically created in an existing folder. Once this has been done,
-during the current session <strong>the use of
-<code>useCache = TRUE</code> will access the saved temporary
-file</strong> in order to avoid time-consuming replication of server
-requests. But <strong>by quitting the current R session, this temporary
-file will be removed</strong>. So before calling
-<code><a href="../reference/correctTaxo.html">correctTaxo()</a></code>, we advise you to define a folder which will
-host the cache file permanently, enabling to work offline.</p>
+<a href="https://tnrs.biendata.org/" class="external-link">TNRS</a> will be automatically
+created in an existing folder. Once this has been done, during the
+current session <strong>the use of <code>useCache = TRUE</code> will
+access the saved temporary file</strong> in order to avoid
+time-consuming replication of server requests. But <strong>by quitting
+the current R session, this temporary file will be removed</strong>. So
+before calling <code><a href="../reference/correctTaxo.html">correctTaxo()</a></code>, we advise you to define a
+folder which will host the cache file permanently, enabling to work
+offline.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># By default</span></span>
 <span><span class="fu"><a href="../reference/createCache.html">createCache</a></span><span class="op">(</span><span class="op">)</span> </span>
@@ -234,12 +233,13 @@ function:</p>
 <code class="sourceCode R"><span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/correctTaxo.html">correctTaxo</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Genus</span>, <span class="co"># genus also accepts the whole species name (genus + species) or (genus + species + author) </span></span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span>, </span>
-<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, interactive <span class="op">=</span> <span class="cn">F</span>, preferFuzzy <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span>  useCache <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">saveRDS</a></span><span class="op">(</span><span class="va">Taxo</span>, file <span class="op">=</span> <span class="st">"saved_data/Taxo_vignette.rds"</span><span class="op">)</span></span></code></pre></div>
 <p>The corrected genus and species of the trees can now be added to the
 data:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusAccepted</span></span>
-<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesAccepted</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusCorrected</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesCorrected</span></span></code></pre></div>
 <p>Here, as an example, the species name of the fourth tree has been
 corrected from “guyanensis” to “guianensis” (the fourth row of
 correctTaxo() output has a TRUE value for the column nameModified) :</p>
@@ -247,16 +247,14 @@ correctTaxo() output has a TRUE value for the column nameModified) :</p>
 <code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Species</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "guyanensis"</span></span>
 <span><span class="va">Taxo</span><span class="op">[</span><span class="fl">4</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt;            nameOriginal         nameSubmitted           nameMatched</span></span>
-<span><span class="co">#&gt; 4 Conceveiba guyanensis conceveiba guyanensis Conceveiba guianensis</span></span>
-<span><span class="co">#&gt;            nameAccepted familyAccepted genusAccepted speciesAccepted</span></span>
-<span><span class="co">#&gt; 4 Conceveiba guianensis  Euphorbiaceae    Conceveiba      guianensis</span></span>
-<span><span class="co">#&gt;   nameModified</span></span>
-<span><span class="co">#&gt; 4         TRUE</span></span></code></pre></div>
-<p>You can also retrieve families from genus names in the familyAccepted
-column.</p>
+<span><span class="co">#&gt;   genusCorrected speciesCorrected nameModified</span></span>
+<span><span class="co">#&gt; 4     Conceveiba       guianensis         TRUE</span></span></code></pre></div>
+<p>If you want (but this is optional for the rest), you can retrieve APG
+III families and orders from genus names.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">familyAccepted</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">APG</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getTaxonomy.html">getTaxonomy</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span>, findOrder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">familyAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">family</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">orderAPG</span> <span class="op">&lt;-</span> <span class="va">APG</span><span class="op">$</span><span class="va">order</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="getting-wood-density">Getting wood density<a class="anchor" aria-label="anchor" href="#getting-wood-density"></a>
@@ -273,11 +271,8 @@ the stand-level mean wood density is assigned to the tree.</p>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
 <span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span> <span class="co"># for unidentified or non-documented trees in the reference database</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Your taxonomic table contains 379 taxa</span></span>
-<span><span class="co">#&gt; Warning in getWoodDensity(genus = NouraguesTrees$GenusCorrected, species =</span></span>
-<span><span class="co">#&gt; NouraguesTrees$SpeciesCorrected, : 169 taxa don't match the Global Wood Density</span></span>
-<span><span class="co">#&gt; Database V2. You may provide 'family' to match wood density estimates at family</span></span>
-<span><span class="co">#&gt; level.</span></span>
+<span><span class="co">#&gt; The reference dataset contains 16467 wood density values</span></span>
+<span><span class="co">#&gt; Your taxonomic table contains 408 taxa</span></span>
 <span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span> <span class="op">&lt;-</span> <span class="va">wood_densities</span><span class="op">$</span><span class="va">meanWD</span></span></code></pre></div>
 <p>For information, here are the number of wood density values estimated
@@ -285,31 +280,30 @@ at the species, genus and plot level:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># At species level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"species"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1635</span></span>
+<span><span class="co">#&gt; [1] 1291</span></span>
 <span><span class="co"># At genus level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op">==</span> <span class="st">"genus"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 246</span></span>
+<span><span class="co">#&gt; [1] 586</span></span>
 <span><span class="co"># At plot level</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="va">wood_densities</span><span class="op">$</span><span class="va">levelWD</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"genus"</span>, <span class="st">"species"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 169</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 173</span></span></code></pre></div>
 <p>The <code>family</code> argument also assigns to the trees a
 family-level wood density average, but bear in mind that the
 taxon-average approach gives relatively poor estimates above the genus
 level (Flores &amp; Coomes 2011).</p>
-<p><strong>Additional wood density values (mean and error) can be
-added</strong> using the <code>addWoodDensityData</code> argument (here
-invented for the example):</p>
+<p><strong>Additional wood density values can be added</strong> using
+the <code>addWoodDensityData</code> argument (here invented for the
+example):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">LocalWoodDensity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Paloue"</span>, <span class="st">"Handroanthus"</span><span class="op">)</span>,</span>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"princeps"</span>, <span class="st">"serratifolius"</span><span class="op">)</span>,</span>
-<span>  meanWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.72</span><span class="op">)</span>,</span>
-<span>  sdWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.061</span>, <span class="fl">0.042</span><span class="op">)</span><span class="op">)</span></span>
+<span>  wd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">0.72</span><span class="op">)</span> <span class="op">)</span></span>
 <span></span>
 <span><span class="va">add_wood_densities</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span></span>
 <span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span>,</span>
 <span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
-<span>  family <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">familyAPG</span>,</span>
 <span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span>,</span>
 <span>  addWoodDensityData <span class="op">=</span> <span class="va">LocalWoodDensity</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -354,9 +348,9 @@ Michaelis-Menten and Weibull models) :</p>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
 <span>  useWeight <span class="op">=</span> <span class="cn">TRUE</span>, drawGraph <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt; To build a HD model you must use the parameter 'method' in this function</span></span>
-<span></span>
-<span><span class="fu">kable</span><span class="op">(</span><span class="va">HD_res</span><span class="op">)</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu">kable</span><span class="op">(</span><span class="va">HD_res</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">method</th>
@@ -397,20 +391,17 @@ with the <code><a href="../reference/retrieveH.html">retrieveH()</a></code> func
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">HDmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span>, </span>
-<span>  bayesian <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>  method <span class="op">=</span> <span class="st">"log2"</span>, useWeight <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">H_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/retrieveH.html">retrieveH</a></span><span class="op">(</span></span>
 <span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>,</span>
 <span>  model <span class="op">=</span> <span class="va">HDmodel</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">H_model</span> <span class="op">&lt;-</span>  <span class="va">H_model</span><span class="op">$</span><span class="va">H</span></span></code></pre></div>
-<p>By default, <code>bayesian = TRUE</code> in <code><a href="../reference/modelHD.html">modelHD()</a></code>
-arguments. In this case, a Bayesian model will be fitted using the brms
-package (see section <a href="#bayesian-models">Building bayesian
-Height-Diameter models</a>), ensuring proper propagation of parameter
-uncertainties. As this method is more time-consuming, for educational
-purposes, we will set bayesian = FALSE.</p>
+<p>By setting <code>bayesian = TRUE</code> in <code><a href="../reference/modelHD.html">modelHD()</a></code>
+arguments, we could have built bayesian models using the brms package
+(see section <a href="#bayesian-models">Building bayesian
+Height-Diameter models</a>).</p>
 <p>Note that if some of the trees’ heights had been measured in the
 <code>NouraguesTrees</code> dataset, we could have provided these
 heights to <code><a href="../reference/modelHD.html">modelHD()</a></code>. In this case, we could also have
@@ -546,8 +537,8 @@ argument:</li>
 <span>  Dpropag <span class="op">=</span> <span class="fl">0</span> , errWD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">NouraguesTrees</span><span class="op">)</span><span class="op">)</span> <span class="co"># no error propagation on D and WD here</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Note that when HDmodel is not a bayesian model, uncertainties of the
-parameters are not propagated during the error propagation of the
-AGBmonteCarlo() function.</p>
+are not propagated during the error propagation of the AGBmonteCarlo()
+function.</p>
 <ul>
 <li>
 <strong>If tree heights have been estimated via the “Feldspausch”
@@ -587,17 +578,17 @@ of the trees) using the <code>coord</code> argument:</li>
 <span></span>
 <span><span class="va">error_prop</span><span class="op">[</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt; $meanAGB</span></span>
-<span><span class="co">#&gt; [1] 1674.958</span></span>
+<span><span class="co">#&gt; [1] 1703.035</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $medAGB</span></span>
-<span><span class="co">#&gt; [1] 1674.216</span></span>
+<span><span class="co">#&gt; [1] 1701.263</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sdAGB</span></span>
-<span><span class="co">#&gt; [1] 45.70764</span></span>
+<span><span class="co">#&gt; [1] 46.91725</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $credibilityAGB</span></span>
 <span><span class="co">#&gt;     2.5%    97.5% </span></span>
-<span><span class="co">#&gt; 1587.405 1769.685</span></span></code></pre></div>
+<span><span class="co">#&gt; 1614.013 1800.008</span></span></code></pre></div>
 <p>The first four elements of the output contain the mean, median,
 standard deviation and credibility intervals of the total AGB of the
 dataset but nothing about the AGB at the plot level. To do this, you can

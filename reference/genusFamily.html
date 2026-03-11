@@ -11,7 +11,7 @@ Families were checked against the APGIII families."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +23,6 @@ Families were checked against the APGIII families."><meta property="og:image" co
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
-    <li><a class="dropdown-item" href="../articles/Vignette_predict_map_AGBD.html">Predict maps of AGBD based on inventory and LiDAR data</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -37,7 +36,7 @@ Families were checked against the APGIII families."><meta property="og:image" co
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Genus Family database</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/data_documentation.R" class="external-link"><code>R/data_documentation.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/v2.2.7/R/data_documentation.R" class="external-link"><code>R/data_documentation.R</code></a></small>
       <div class="d-none name"><code>genusFamily.Rd</code></div>
     </div>
 
@@ -67,9 +66,10 @@ Facilitated by the Royal Botanic Gardens, Kew. Published on the Internet; http:/
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">genusFamily</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>data set ‘genusFamily’ not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">genusFamily</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'genusFamily' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	31355 obs. of  2 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ family: chr  "Orchidaceae" "Euphorbiaceae" "Compositae" "Thelypteridaceae" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ genus : chr  "Aa" "Aalius" "Aaronsohnia" "Abacopteris" ...</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

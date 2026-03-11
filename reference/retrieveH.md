@@ -93,7 +93,7 @@ Ariane TANGUY, Maxime REJOU-MECHAIN, Arthur PERE
 ``` r
 # Load a database
 data(NouraguesHD)
-model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
+model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
 
 # If any height model is available
 H <- retrieveH(D = NouraguesHD$D, model = model)
@@ -107,5 +107,4 @@ H <- retrieveH(D = NouraguesHD$D, coord = coord)
 
 # If the only data available is the region of your spot
 H <- retrieveH(D = NouraguesHD$D, region = "GuianaShield")
-closeAllConnections()
 ```

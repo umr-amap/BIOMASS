@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.2.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,7 +19,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
-    <li><a class="dropdown-item" href="../articles/Vignette_predict_map_AGBD.html">Predict maps of AGBD based on inventory and LiDAR data</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -55,14 +54,14 @@
           <code><a href="correctTaxo.html">correctTaxo()</a></code>
 
         </dt>
-        <dd>Correct and match taxonomic names to the World Flora Online database</dd>
+        <dd>Correct trees taxonomy</dd>
 
         <dt>
 
-          <code><a href="subPattern.html">subPattern()</a></code>
+          <code><a href="getTaxonomy.html">getTaxonomy()</a></code>
 
         </dt>
-        <dd>Common taxonomic name substitutions</dd>
+        <dd>Retrieve trees taxonomy</dd>
       </dl></div><div class="section level2">
 
       <h3 id="estimate-wood-density">Estimate wood density<a class="anchor" aria-label="anchor" href="#estimate-wood-density"></a></h3>
@@ -78,7 +77,7 @@
           <code><a href="getWoodDensity.html">getWoodDensity()</a></code>
 
         </dt>
-        <dd>Estimating wood density and associated uncertainties</dd>
+        <dd>Estimating wood density</dd>
       </dl></div><div class="section level2">
 
       <h3 id="estimate-tree-height">Estimate tree height<a class="anchor" aria-label="anchor" href="#estimate-tree-height"></a></h3>
@@ -198,43 +197,6 @@
 
         </dt>
         <dd>Summarise and display tree information by subplot</dd>
-      </dl></div><div class="section level2">
-      <h2 id="predict-agbd-map-based-on-inventory-and-lidar-data">Predict AGBD map based on inventory and LiDAR data<a class="anchor" aria-label="anchor" href="#predict-agbd-map-based-on-inventory-and-lidar-data"></a></h2>
-
-
-
-      <dl></dl></div><div class="section level2">
-
-      <h3 id="calibrate-agbd-lidar-log-log-model">Calibrate AGBD-LiDAR log-log model<a class="anchor" aria-label="anchor" href="#calibrate-agbd-lidar-log-log-model"></a></h3>
-
-
-      <dl></dl></div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="calibrate_model.html">calibrate_model()</a></code>
-
-        </dt>
-        <dd>Calibrate a bayesian model to fit log(AGBD) ~ log(raster metric)</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="predict-agbd-map-based-on-calibrated-model">Predict AGBD map based on calibrated model<a class="anchor" aria-label="anchor" href="#predict-agbd-map-based-on-calibrated-model"></a></h3>
-
-
-      <dl></dl></div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="predict_map.html">predict_map()</a></code>
-
-        </dt>
-        <dd>Predict map of AGBD and associated uncertainty</dd>
       </dl></div><div class="section level2">
       <h2 id="other-functions">Other functions<a class="anchor" aria-label="anchor" href="#other-functions"></a></h2>
 
@@ -409,35 +371,35 @@
       <dl><dt>
 
           <code><a href="attributeTree.html">attributeTree()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+
         </dt>
         <dd>Attribute trees to subplots</dd>
 
         <dt>
 
           <code><a href="attributeTreeCoord.html">attributeTreeCoord()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+
         </dt>
         <dd>Attribute GPS coordinates to trees</dd>
 
         <dt>
 
           <code><a href="correctCoordGPS.html">correctCoordGPS()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+
         </dt>
         <dd>Correct the GPS coordinates</dd>
 
         <dt>
 
           <code><a href="cutPlot.html">cutPlot()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+
         </dt>
         <dd>Divides one or more plots into subplots</dd>
 
         <dt>
 
           <code><a href="numberCorner.html">numberCorner()</a></code>
-          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+
         </dt>
         <dd>Get the UTM coordinates with the corner of the plot</dd>
       </dl></div>

@@ -106,5 +106,4 @@ coord <- cbind(long, lat)
 # \donttest{
 AGB <- computeAGB(D, WD, coord = coord)
 # }
-closeAllConnections()
 ```

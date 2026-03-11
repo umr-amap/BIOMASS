@@ -1,11 +1,5 @@
 # Correct the GPS coordinates
 
-**\[deprecated\]** `correctCoordGPS()` is deprecated and has been
-replaced by
-[`check_plot_coord()`](https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.md).
-Please see the vignette
-`Spatialized trees and forest stand metrics with BIOMASS`
-
 This function builds the most probable GPS coordinates of the plot
 corners from multiple GPS measurements.
 
@@ -113,6 +107,8 @@ aa <- correctCoordGPS(
 #> Warning: This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette
 #> Warning: 'correctCoordGPS()' has been replaced by `check_plot_coord()` function and will be removed in the next version.
 #> Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#> Warning: longer object length is not a multiple of shorter object length
+#> Warning: longer object length is not a multiple of shorter object length
 bb <- correctCoordGPS(
   projCoord = projCoord, coordRel = coordRel,
   rangeX = c(0, 100), rangeY = c(0, 100), rmOutliers = TRUE
@@ -120,6 +116,8 @@ bb <- correctCoordGPS(
 #> Warning: This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette
 #> Warning: 'correctCoordGPS()' has been replaced by `check_plot_coord()` function and will be removed in the next version.
 #> Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#> Warning: longer object length is not a multiple of shorter object length
+#> Warning: longer object length is not a multiple of shorter object length
 #> Warning: calling par(new=TRUE) with no plot
 # \donttest{
 correctCoordGPS(
@@ -129,46 +127,48 @@ correctCoordGPS(
 #> Warning: This function still work but will be removed (defunct) and replaced by checkCoordPlot in the next version. Please see VIGNETTENAME? vignette
 #> Warning: 'correctCoordGPS()' has been replaced by `check_plot_coord()` function and will be removed in the next version.
 #> Please see the vignette `Spatialized trees and forest stand metrics with BIOMASS`
+#> Warning: longer object length is not a multiple of shorter object length
+#> Warning: longer object length is not a multiple of shorter object length
 #> $cornerCoords
 #>          X        Y
-#> 1 1005.457 1006.966
-#> 2 1105.414 1004.032
-#> 3 1108.348 1103.989
-#> 4 1008.391 1106.923
+#> 1 1004.220 1006.113
+#> 2 1104.195 1008.373
+#> 3 1101.935 1108.347
+#> 4 1001.960 1106.087
 #> 
 #> $correctedCoord
 #>           X        Y
-#> 1  1005.457 1006.966
-#> 2  1005.457 1006.966
-#> 3  1005.457 1006.966
-#> 4  1005.457 1006.966
-#> 5  1005.457 1006.966
-#> 6  1008.391 1106.923
-#> 7  1008.391 1106.923
-#> 8  1008.391 1106.923
-#> 9  1008.391 1106.923
-#> 10 1008.391 1106.923
-#> 11 1105.414 1004.032
-#> 12 1105.414 1004.032
-#> 13 1105.414 1004.032
-#> 14 1105.414 1004.032
-#> 15 1105.414 1004.032
-#> 16 1108.348 1103.989
-#> 17 1108.348 1103.989
-#> 18 1108.348 1103.989
-#> 19 1108.348 1103.989
-#> 20 1108.348 1103.989
+#> 1  1004.220 1006.113
+#> 2  1004.220 1006.113
+#> 3  1004.220 1006.113
+#> 4  1004.220 1006.113
+#> 5  1004.220 1006.113
+#> 6  1001.960 1106.087
+#> 7  1001.960 1106.087
+#> 8  1001.960 1106.087
+#> 9  1001.960 1106.087
+#> 10 1001.960 1106.087
+#> 11 1104.195 1008.373
+#> 12 1104.195 1008.373
+#> 13 1104.195 1008.373
+#> 14 1104.195 1008.373
+#> 15 1104.195 1008.373
+#> 16 1101.935 1108.347
+#> 17 1101.935 1108.347
+#> 18 1101.935 1108.347
+#> 19 1101.935 1108.347
+#> 20 1101.935 1108.347
 #> 
 #> $polygon
 #> Geometry set for 1 feature 
 #> Geometry type: POLYGON
 #> Dimension:     XY
-#> Bounding box:  xmin: 1005.457 ymin: 1004.032 xmax: 1108.348 ymax: 1106.923
+#> Bounding box:  xmin: 1001.96 ymin: 1006.113 xmax: 1104.195 ymax: 1108.347
 #> CRS:           NA
-#> POLYGON ((1005.457 1006.966, 1105.414 1004.032,...
+#> POLYGON ((1004.22 1006.113, 1104.195 1008.373, ...
 #> 
 #> $outliers
-#> [1] 11 14 17
+#> [1]  6  7  9 10 17
 #> 
 # }
 
