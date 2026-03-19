@@ -24,11 +24,8 @@
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
 #' @return Returns a list  with (if Carbon is FALSE):
-#'   - `meanAGB`: Mean stand AGB value following the error propagation
-#'   - `medAGB`: Median stand AGB value following the error propagation
-#'   - `sdAGB`: Standard deviation of the stand AGB value following the error propagation
-#'   - `credibilityAGB`: Credibility interval at 95\% of the stand AGB value following the error propagation
 #'   - `AGB_simu`: Matrix with the AGB of the trees (rows) times the n iterations (columns)
+#'   - add mean, sd, quantiles at stem level
 #'
 #' @references Chave, J. et al. (2004). _Error propagation and scaling for tropical forest biomass estimates_.
 #' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
@@ -92,10 +89,19 @@
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL) {
+                          Carbon = FALSE, Dlim = NULL,
+                          
+                          ## fit object
+                          fitted_allom = NULL, volume_allom = FALSE
+                          
+                          ## formula: more complex than fit object, leave it for now
+                          # formula = NULL, parameter_set = NULL,
+                         ) {
+  
   len <- length(D)
   
   # parameters verification -------------------------------------------------
+  # this will change according to formula & fit object 
   
   if (n > 1000 | n < 50) {
     stop("n cannot be smaller than 50 or larger than 1000")
@@ -149,6 +155,14 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
              having the same number of rows as the number of trees (length(D))")
   }
   
+  if (!is.null(fitted_allom)){
+   
+    # if one predictor not in c("D", "H", "WD", "logD", "logH"), stop here
+    # attr(terms.formula(fitted_allom$formula$formula), "term.labels") %in% c("D", "H", "WD", "logD", "logH")
+    
+    # check for missing predictors in the arguments, stop if some
+  }
+  
   
   # function truncated random gausian law -----------------------------------
   myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
@@ -189,9 +203,9 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
   WD_simu <- suppressWarnings(replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39)))
   
-  
-  # --------------------- H ---------------------
-  
+
+    # --------------------- H ---------------------
+  # need to separate H evaluation from chave2014 computation
   # if there is data for H
   if (!is.null(HDmodel) | !is.null(H)) {
     if (!is.null(HDmodel)) {
@@ -212,80 +226,117 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       H_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)))
     }
     
-    # --------------------- AGB ---------------------
+  } #H evaluation
+  
+  # more checks according to variables used ???
+  
+  # --------------------- AGB prediction ---------------------
+  
+  if (is.null(fitted_allom)){ # then chave2014, if H or no H
     
-    param_4 <- BIOMASS::param_4
-    selec <- sample(1:nrow(param_4), n)
-    RSE <- param_4[selec, "sd"]
+    if (!is.null(HDmodel) | !is.null(H)){ # if H
+      
+      param_4 <- BIOMASS::param_4
+      selec <- sample(1:nrow(param_4), n)
+      RSE <- param_4[selec, "sd"]
+      
+      # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
+      matRSE <- mapply(function(y) {
+        rnorm(sd = y, n = len)
+      }, y = RSE)
+      
+      # Posterior model parameters
+      Ealpha <- param_4[selec, "intercept"]
+      Ebeta <- param_4[selec, "logagbt"]
+      
+      # Propagation of the error using simulated parameters
+      Comp <- t(log(WD_simu * H_simu * D_simu^2)) * Ebeta + Ealpha
+      Comp <- t(Comp) + matRSE
+      
+      # Backtransformation
+      AGB_simu <- exp(Comp) / 1000
+    }else{ #no H
+      
+      # --------------------- Coordinates ---------------------
+      
+      # If there is no data for H, but site coordinates
+      if (!is.null(coord)) {
+        if (is.null(dim(coord))) {
+          coord <- as.matrix(t(coord))
+        }
+        
+        bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
+        
+        if (nrow(bioclimParams) == 1) {
+          bioclimParams <- bioclimParams[rep(1, len), ]
+        }
+        
+        # Equ 7
+        # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)
+        param_7 <- BIOMASS::param_7
+        selec <- sample(1:nrow(param_7), n)
+        
+        # Posterior model parameters
+        RSE <- param_7[selec, "sd"] # vector of simulated RSE values
+        
+        # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
+        Esim <- tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
+        
+        # Applying AGB formula over simulated matrices and vectors
+        AGB_simu <- t(t(log(WD_simu)) * param_7[selec, "logwsg"] +
+                        t(log(D_simu)) * param_7[selec, "logdbh"] +
+                        t(log(D_simu)^2) * param_7[selec, "logdbh2"] +
+                        Esim * -param_7[selec, "E"] +
+                        param_7[selec, "intercept"])
+        
+        # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
+        matRSE <- mapply(function(y) {
+          rnorm(sd = y, n = len)
+        }, y = RSE)
+        AGB_simu <- AGB_simu + matRSE
+        AGB_simu <- exp(AGB_simu) / 1000
+      }
+    }#chave2014 without H
+  }#fitted_allom NULL, chave2014
+  
+  # if (!is.null(formula)){
+  #   ## compute predicted variable according to formula & parameter_set
+  #   # AGB_simu <- predicted_variable
+  # }
+  
+  if (!is.null(fitted_allom)){
+    ## predict variables according to brmsfit object
     
-    # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
-    matRSE <- mapply(function(y) {
-      rnorm(sd = y, n = len)
-    }, y = RSE)
+    #1) build "newdata" arg for prediction, need for cases if H or WD not provided
+    # newdata_for_pred <- data.frame(D = Dsim, H = Hsim, WD = WD_simu, 
+    #                     logD = log(Dsim), logH = log(Hsim))
+   
+    #2) predict response with newdata, treeID preservation to be checked
+    # predicted <- brms::predict(object = fitted_allom, newdata = newdata_for_pred, summary = F, ndraws = 1)
     
-    # Posterior model parameters
-    Ealpha <- param_4[selec, "intercept"]
-    Ebeta <- param_4[selec, "logagbt"]
-    
-    # Propagation of the error using simulated parameters
-    Comp <- t(log(WD_simu * H_simu * D_simu^2)) * Ebeta + Ealpha
-    Comp <- t(Comp) + matRSE
-    
-    # Backtransformation
-    AGB_simu <- exp(Comp) / 1000
+    #3) if fitted_allom$formula$family$link == "log" back transform predicted
   }
   
-  # --------------------- Coordinates ---------------------
   
-  # If there is no data for H, but site coordinates
-  if (!is.null(coord)) {
-    if (is.null(dim(coord))) {
-      coord <- as.matrix(t(coord))
-    }
+  if (volume_allom == TRUE){ # lets multiply predicted variable by WD_simu 
     
-    bioclimParams <- getBioclimParam(coord) # get bioclim variables corresponding to the coordinates
-    
-    if (nrow(bioclimParams) == 1) {
-      bioclimParams <- bioclimParams[rep(1, len), ]
-    }
-    
-    # Equ 7
-    # Log(agb) = -1.803 - 0.976 (0.178TS - 0.938CWD - 6.61PS) + 0.976log(WD) + 2.673log(D) -0.0299log(D2)
-    param_7 <- BIOMASS::param_7
-    selec <- sample(1:nrow(param_7), n)
-    
-    # Posterior model parameters
-    RSE <- param_7[selec, "sd"] # vector of simulated RSE values
-    
-    # Recalculating n E values based on posterior parameters associated with the bioclimatic variables
-    Esim <- tcrossprod(as.matrix(param_7[selec, c("temp", "prec", "cwd")]), as.matrix(bioclimParams))
-    
-    # Applying AGB formula over simulated matrices and vectors
-    AGB_simu <- t(t(log(WD_simu)) * param_7[selec, "logwsg"] +
-                    t(log(D_simu)) * param_7[selec, "logdbh"] +
-                    t(log(D_simu)^2) * param_7[selec, "logdbh2"] +
-                    Esim * -param_7[selec, "E"] +
-                    param_7[selec, "intercept"])
-    
-    # Construct a matrix where each column contains random errors taken from N(0,RSEi) with i varying between 1 and n
-    matRSE <- mapply(function(y) {
-      rnorm(sd = y, n = len)
-    }, y = RSE)
-    AGB_simu <- AGB_simu + matRSE
-    AGB_simu <- exp(AGB_simu) / 1000
+    # AGB_simu <- AGB_simu * WD_simu
   }
   
-  if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0
-  AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA
+  if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0 # ok keep
+  AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA # ok keep
   
   if (Carbon == FALSE) {
     sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE)
     res <- list(
-      meanAGB = mean(sum_AGB_simu),
-      medAGB = median(sum_AGB_simu),
-      sdAGB = sd(sum_AGB_simu),
-      credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025, 0.975)),
-      AGB_simu = AGB_simu
+      # meanAGB = mean(sum_AGB_simu),
+      # medAGB = median(sum_AGB_simu),
+      # sdAGB = sd(sum_AGB_simu),
+      # credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025, 0.975)),
+      
+      # instead row_sum, then compute mean, med, sd, CI PER STEM (as a table) 
+      
+      AGB_simu = AGB_simu # ok keep
     )
   } else {
     # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical
