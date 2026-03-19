@@ -210,8 +210,14 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     proj_coord <- latlong2UTM(dat[, c("long","lat")])
     UTM_code <- unique(proj_coord[, "codeUTM"])
     if(length(UTM_code)>1) {
-      stop(paste(unique(dat$plot_ID), "More than one UTM zone are detected. This may be due to an error in the long/lat coordinates, or if the parcel is located right between two UTM zones. In this case, please convert yourself your long/lat coordinates into any projected coordinates which have the same dimension than your local coordinates"))
-    }
+      warning(paste(unique(dat$plot_ID), "More than one UTM zone are detected. The most frequent UTM zone will be used to convert coordinates."))
+      ## here we need to retrieve the most frequent UTM zone and set it to UTM_code 
+      utm_freq <- numeric(length = length(UTM_code))
+      for (i in 1:length(UTM_code)){
+        utm_freq[i] <- length(which(proj_coord[, "codeUTM"] == UTM_code[i]))
+      }
+      UTM_code <- UTM_code[which.max(utm_freq)]
+      }
     corner_dt[plot_ID %in% dat$plot_ID, c("x_proj", "y_proj") := list(x_proj = proj_coord$X, y_proj = proj_coord$Y)]
     return(data.frame(UTM_code = UTM_code))
   }
