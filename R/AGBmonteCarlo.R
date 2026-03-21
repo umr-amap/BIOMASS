@@ -93,7 +93,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
                           WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL,
                          
-                          fitted_allom = "chave2014"
+                          fitted_allom = "chave2014",
                           ## "chave2014"
                           
                           # has to be AGB ~ or volume ~ , group level effect not supported
@@ -104,13 +104,19 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
                           #  formula = ~ param 1 * variable, variable among H,D,WD
                           #  parameters = data.frame(param1 = , param2 = , sigma =) 
                           # link = NULL or "log"
+                          
+                          # additional args to match brms.fit variables names (response & predictors)
+                          var_in_data = NULL
+                          # a vector of colnames among : AGB, logAGB, V, logV, H, logH, D, logD, WD
+                          # MUST be the order of colnames(fitted_allom$data)
 
                          ) {
   
   
-  if(fitted_allom == "chave2014"){
+  if(all(fitted_allom == "chave2014")){
     
-    if(volume_allom == TRUE){stop()}
+    # set volume_allom to FALSE when chave's allometry is used
+    volume_allom <- FALSE
     
     #call to AGBmonteCarlo_chave2014
     AGB_sim <- AGBmonteCarlo_chave2014(
@@ -148,13 +154,24 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
     
 
     if(class(fitted_allom) == "brmsfit"){
+
+        # id response variable in brmsfit
+      var_names_allom <- colnames(fitted_allom$data)
+      resp_name_allom <- all.vars(fitted_allom$formula$formula)[1]
       
+     if(var_in_data[which(var_names_allom == resp_name_allom)] %in% c("AGB", "logAGB", "V", "logV") == FALSE){
+       stop("Response/predicted variable is not among AGB, logAGB, V, logV")
+     }
+      
+      predictor_names <- var_in_data[which(var_names_allom != resp_name_allom)]
+  
       # check that data for prediction are in args
-    if(all(all.vars(fitted_allom$formula$formula)[-1] %in% c("D", "H", "WD")) == FALSE){
-      stop("Variable not among D, H, WD")
-      
+    if(all(predictor_names %in% c("D", "H", "WD", "logD", "logH")) == FALSE){
+      stop("Predictors are not among D, H, WD, logD, logH")
     }
      
+      predictor_names_allom <- var_names_allom[var_names_allom != resp_name_allom]
+      names(predictor_names) <- predictor_names_allom
     }
     
     if(length(fitted_allom) == 2){
@@ -277,23 +294,33 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
   
   if (class(fitted_allom) == "brmsfit"){
     
-    newdata_for_pred <- data.frame(D = as.vector(t(D_simu)),
-                                   H = as.vector(t(H_simu)), 
-                                   WD = as.vector(t(WD_simu)))
-    # ordered as replicates nested in trees
     
+    newdata_for_pred <- data.table(D = as.vector(t(D_simu)),
+                                   H = as.vector(t(H_simu)), 
+                                   WD = as.vector(t(WD_simu)),
+                                   logD = log(as.vector(t(D_simu))),
+                                   logH = log(as.vector(t(H_simu)))
+                                   )
+    # ordered as replicates nested in trees
+   
+    # replace colnames to match brms.fit data names
+    colnames(newdata_for_pred) <- names(predictor_names)[match(colnames(newdata_for_pred), predictor_names)]
+   
+    nb_draws <- 20
     #predict response with newdata, treeID preservation to be checked
-     predicted_response_brms <- predict(object = fitted_allom, newdata = newdata_for_pred, summary = F, ndraws = 50)
+     predicted_response_brms <- predict(object = fitted_allom, newdata = newdata_for_pred, summary = F, ndraws = nb_draws)
+     # nb_draws rows, columns are len times (tree with n replicates)
      
      # randomly select a row for each tree x replicate
-     row_index_to_keep <- sample(x = 1:50, size = nrow(newdata_for_pred), replace = TRUE)
+     row_index_to_keep <- sample(x = 1:nb_draws, size = nrow(newdata_for_pred), replace = TRUE)
      AGB_simu <- matrix(predicted_response_brms[cbind(row_index_to_keep, 1:ncol(predicted_response_brms))],
-                                  ncol = n, nrow = len)
+                                  ncol = n, nrow = len, byrow = TRUE)
      
     #3) if fitted_allom$formula$family$link == "log" back transform predicted
     
-     if(fitted_allom$formula$family$link == "log"){AGB_simu <- exp(AGB_simu)}
-     # here check the structure of predicted_response, need #trees in row, replicates columns
+     if(fitted_allom$formula$family$link == "log"|"logAGB" %in% var_in_data|"logV" %in% var_in_data){
+       AGB_simu <- exp(AGB_simu)
+       }
   }
  
   
@@ -307,7 +334,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
      AGB_simu <- AGB_simu * WD_simu
   }
   
-  
+  AGB_simu <- AGB_simu / 1000
   if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0 # ok keep
   AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA # ok keep
   
@@ -323,7 +350,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
        
        AGB_simu = AGB_simu, # ok keep
        
-       AGB_simu_per_stem <- data.frame( # stem level
+       AGB_simu_per_stem = data.frame( # stem level
          meanAGB = apply(X = AGB_simu, MARGIN = 1, FUN = mean, na.rm = T),
          medAGB = apply(X = AGB_simu, MARGIN = 1, FUN = median, na.rm = T),
          sdAGB = apply(X = AGB_simu, MARGIN = 1, FUN = sd, na.rm = T),
@@ -346,7 +373,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
       
       AGC_simu = AGC_simu,
       
-      AGC_simu_per_stem <- data.frame( # stem level
+      AGC_simu_per_stem = data.frame( # stem level
         meanAGC = apply(X = AGC_simu, MARGIN = 1, FUN = mean, na.rm = T),
         medAGC = apply(X = AGC_simu, MARGIN = 1, FUN = median, na.rm = T),
         sdAGC = apply(X = AGC_simu, MARGIN = 1, FUN = sd, na.rm = T),
