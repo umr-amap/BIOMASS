@@ -20,7 +20,6 @@
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
-#' @param volume_allom (logical) Whether the response of the allometry model is AGB or volume (V). By default `volume_allom = FALSE`
 #' @param fitted_allom Can be three types of values, indicating the AGB allometry that will be used to compute tree AGB: 
 #' `"chave2014"` (pantropical Chave's allometry, default value), or a brms.fit object of a fitted allometry, or a list of 3 objects 
 #' (a formula, a data.frame of fitted parameters values, a character value specifying if the response is log scaled). 
@@ -28,7 +27,8 @@
 #' @param var_in_data (Needed when `"fitted_allom"` is a brms.fit object) A vector of characters among : 
 #' `"AGB"`, `"logAGB"`, `"V"`, `"logV"`, `"H"`, `"logH"`, `"D"`, `"logD"`, `"WD"` standing for variables (including response & predictors) 
 #' used in fitting procedure, corresponding to `"fitted_allom$data"`, variables order MUST match variables order of `"colnames(fitted_allom$data)"`.
-#'
+#' @param volume_allom (logical) Whether the response of the allometry model is AGB or volume (V). By default `volume_allom = FALSE`
+#' @param return_volume (logical) Whether the returned output should be AGB or volume (V). By default `return_volume = FALSE`
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #' @details Supported types of allometry, and how to properly specify the allometry:
@@ -102,19 +102,20 @@
 #' @importFrom stats pnorm qnorm runif
 #' @export
 
-AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL, volume_allom = FALSE,
-                          WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-                          HDmodel = NULL, coord = NULL,
+AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
+                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
+                          Carbon = FALSE, Dlim = NULL,
                           fitted_allom = "chave2014",
-                          var_in_data = NULL
+                          var_in_data = NULL,
+                          volume_allom = FALSE, return_volume = FALSE
                          ) {
   
   
   if(all(fitted_allom == "chave2014")){
     
-    # set volume_allom to FALSE when chave's allometry is used
+    # set volume_allom & return_volume to FALSE when chave's allometry is used
     volume_allom <- FALSE
+    return_volume <- FALSE
     
     #call to AGBmonteCarlo_chave2014
     AGB_sim <- AGBmonteCarlo_chave2014(
@@ -122,6 +123,10 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
     D = D, Dpropag = Dpropag, n =n, Dlim = Dlim)
     
   }else{
+    
+    if (volume_allom == FALSE & return_volume == T){
+      stop("You need to provide a volume allometry to get volume estimates")
+    }
     
     # parameters verification -------------------------------------------------
     ## checks that are shared by formula or fit object
@@ -331,15 +336,44 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
   
   #----------- AGB_simu management
   
-  if (volume_allom == TRUE){ # lets multiply predicted variable by WD_simu 
+  if (volume_allom == TRUE & return_volume == FALSE){ # lets multiply predicted variable by WD_simu 
     
      AGB_simu <- AGB_simu * WD_simu
   }
   
-  AGB_simu <- AGB_simu / 1000
+  
   if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0 # ok keep
   AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA # ok keep
   
+  
+  if (volume_allom == TRUE & return_volume == TRUE){
+ 
+    sum_V_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
+    
+    res <- list(
+      meanV = mean(sum_V_simu),
+      medV = median(sum_V_simu),
+      sdV = sd(sum_V_simu),
+      credibilityV = quantile(sum_V_simu, probs = c(0.025, 0.975)),
+      
+      V_simu = V_simu, # ok keep
+      
+      V_simu_per_stem = data.frame( # stem level
+        meanV = apply(X = V_simu, MARGIN = 1, FUN = mean, na.rm = T),
+        medV = apply(X = V_simu, MARGIN = 1, FUN = median, na.rm = T),
+        sdV = apply(X = V_simu, MARGIN = 1, FUN = sd, na.rm = T),
+        lower_CI_V = apply(X = V_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
+        upper_CI_V = apply(X = V_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
+      )
+      
+    )
+    
+   
+     }else{
+      
+  AGB_simu <- AGB_simu / 1000
+ 
+
   if (Carbon == FALSE) {
    
     sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
@@ -385,5 +419,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
       
     )
   }
+  
+     }
   return(res)
 }
