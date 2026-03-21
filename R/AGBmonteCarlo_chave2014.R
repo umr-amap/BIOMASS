@@ -17,18 +17,12 @@
 #' with the diameter measurements or `"chave2004"` (an important error on 5 percent of the measures, a smaller error on
 #' 95 percent of the trees).
 #' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
-#' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 #'
-#' @return Returns a list  with (if Carbon is FALSE):
-#'   - `meanAGB`: Mean stand AGB value following the error propagation
-#'   - `medAGB`: Median stand AGB value following the error propagation
-#'   - `sdAGB`: Standard deviation of the stand AGB value following the error propagation
-#'   - `credibilityAGB`: Credibility interval at 95\% of the stand AGB value following the error propagation
-#'   - `AGB_simu`: Matrix with the AGB of the trees (rows) times the n iterations (columns)
+#' @return Returns a matrix with the AGB of the trees (rows) times the n iterations (columns)
 #'
 #' @references Chave, J. et al. (2004). _Error propagation and scaling for tropical forest biomass estimates_.
 #' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
@@ -86,7 +80,7 @@
 #' }
 #' closeAllConnections()
 #' 
-#' @keywords Monte Carlo
+#' @keywords Monte Carlo internal
 #' @importFrom stats pnorm qnorm runif
 #' @export
 

@@ -1,6 +1,6 @@
 #' Propagating above ground biomass (AGB) or carbon (AGC) errors to the stand level
 #'
-#' @description Propagation of the errors throughout the steps needed to compute AGB or AGC.
+#' @description Propagation of the errors throughout the steps needed to compute AGB or AGC, supporting user AGB allometry.
 #'
 #' @param D Vector of tree diameters (in cm)
 #' @param WD Vector of wood density estimates (in g/cm3)
@@ -9,7 +9,7 @@
 #' @param errH (if `H`) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 #' values (in the latter case the vector should be of the same length as `H`).
 #' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example).
-#' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
+#' @param coord (option 3, only used with `"chave2014"` allometry) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 #' height-diameter allometry with bioclimatic variables.
 #' @param Dpropag This variable can take three kind of values, indicating how to propagate the errors on diameter measurements:
@@ -20,20 +20,35 @@
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
+#' @param volume_allom (logical) Whether the response of the allometry model is AGB or volume (V). By default `volume_allom = FALSE`
+#' @param fitted_allom Can be three types of values, indicating the AGB allometry that will be used to compute tree AGB: 
+#' `"chave2014"` (pantropical Chave's allometry, default value), or a brms.fit object of a fitted allometry, or a list of 3 objects 
+#' (a formula, a data.frame of fitted parameters values, a character value specifying if the response is log scaled). 
+#' See Details below for supported user allometries.
+#' @param var_in_data (Needed when `"fitted_allom"` is a brms.fit object) A vector of characters among : 
+#' `"AGB"`, `"logAGB"`, `"V"`, `"logV"`, `"H"`, `"logH"`, `"D"`, `"logD"`, `"WD"` standing for variables (including response & predictors) 
+#' used in fitting procedure, corresponding to `"fitted_allom$data"`, variables order MUST match variables order of `"colnames(fitted_allom$data)"`.
+#'
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
+#' @details Supported types of allometry, and how to properly specify the allometry:
+#'  - brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD; 
+#'   group level effect not supported;
+#'  - formula & parameters: list(formula = NULL, parameters = NULL, link = NULL)
+#'   formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL or "log";
+#'   variables in the formula must be among `"H"`, `"D"`, `"WD"`; column names of parameters must match parameters names in formula;
+#'   a Gaussian error model is assumed on mean response, with `"sigma"` as standard deviation.
 #'
 #' @return Returns a list  with (if Carbon is FALSE):
+#'   - `meanAGB`: Mean stand AGB value following the error propagation
+#'   - `medAGB`: Median stand AGB value following the error propagation
+#'   - `sdAGB`: Standard deviation of the stand AGB value following the error propagation
+#'   - `credibilityAGB`: Credibility interval at 95\% of the stand AGB value following the error propagation
 #'   - `AGB_simu`: Matrix with the AGB of the trees (rows) times the n iterations (columns)
-#'   - add mean, sd, quantiles at stem level
+#'   - `AGB_simu_per_stem`: Dataframe with mean, median, sd, 2.5 and 97.5\% quantiles of AGB value 
+#'   following the error propagation at individual tree level.
 #'
-#' @references Chave, J. et al. (2004). _Error propagation and scaling for tropical forest biomass estimates_.
-#' Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
-#' @references Rejou-Mechain et al. (2017).
-#' _BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests_.
-#' Methods in Ecology and Evolution, 8 (9), 1163-1167.
-#'
-#' @author Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
+#' @author Dominique LAMONICA, Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
 #'
 #' @examples
 #' # Load a database
@@ -89,27 +104,10 @@
 
 AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
                           Carbon = FALSE, Dlim = NULL, volume_allom = FALSE,
-                          
                           WD = NULL, errWD = NULL, H = NULL, errH = NULL,
                           HDmodel = NULL, coord = NULL,
-                         
                           fitted_allom = "chave2014",
-                          ## "chave2014"
-                          
-                          # has to be AGB ~ or volume ~ , group level effect not supported
-                          ## brms.fit object
-                          
-                          ## formula & parameters
-                          # list(formula = NULL, parameters = NULL, link = NULL)
-                          #  formula = ~ param 1 * variable, variable among H,D,WD
-                          #  parameters = data.frame(param1 = , param2 = , sigma =) 
-                          # link = NULL or "log"
-                          
-                          # additional args to match brms.fit variables names (response & predictors)
                           var_in_data = NULL
-                          # a vector of colnames among : AGB, logAGB, V, logV, H, logH, D, logD, WD
-                          # MUST be the order of colnames(fitted_allom$data)
-
                          ) {
   
   
@@ -143,7 +141,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
     }
     
     if (is.null(WD) & volume_allom == TRUE) {
-      stop("When the model predicts volume, WD is needed.")
+      stop("When the model predicts volume, WD is needed")
     }
     
     if (!is.null(WD)){
@@ -158,6 +156,10 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
         # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
       resp_name_allom <- all.vars(fitted_allom$formula$formula)[1]
+      
+     if(length(var_names_allom) != var_in_data){
+       stop("The length of variable names do not match the number of columns found in brms.fit object data")
+     }
       
      if(var_in_data[which(var_names_allom == resp_name_allom)] %in% c("AGB", "logAGB", "V", "logV") == FALSE){
        stop("Response/predicted variable is not among AGB, logAGB, V, logV")
@@ -183,7 +185,7 @@ AGBmonteCarlo <- function(D, Dpropag = NULL, n = 1000,
       
       # check that there is a residual parameter sigma
       if (!("sigma" %in% names(fitted_allom$parameters))){
-        stop("A residual error parameter should be provided.")
+        stop("A residual error parameter named sigma should be provided.")
       }
       
       # check for parameter sample size
