@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Dominique
 Lamonica</h4>
             
-            <h4 data-toc-skip class="date">2026-03-03</h4>
+            <h4 data-toc-skip class="date">2026-03-21</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_predict_map_AGBD.Rmd" class="external-link"><code>vignettes/Vignette_predict_map_AGBD.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_predict_map_AGBD.Rmd</code></div>
@@ -76,14 +76,255 @@ Lamonica</h4>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<ul>
+<li>what data + updated workflow</li>
+<li>bayesian method to propagate uncertainties, using brms (ref),
+parallel using doFuture (ref)</li>
+<li>mathematical model, ref Hunka</li>
+<li>example with 4 plots to illustrate, but keep in mind it is very
+likely not enough data to get proper and reliable final predictions
+!</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="previous-steps-see-other-vignettes-for-details">Previous steps (see other vignettes for details)<a class="anchor" aria-label="anchor" href="#previous-steps-see-other-vignettes-for-details"></a>
+</h2>
+<div class="section level3">
+<h3 id="load-inventory-plot-coordinates-and-lidar-data">Load inventory, plot coordinates and LiDAR data<a class="anchor" aria-label="anchor" href="#load-inventory-plot-coordinates-and-lidar-data"></a>
+</h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NouraguesTrees"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NouraguesCoords"</span><span class="op">)</span></span>
+<span><span class="va">nouraguesRaster</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"NouraguesRaster.tif"</span>,package <span class="op">=</span> <span class="st">"BIOMASS"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="compute-agbd">Compute AGBD<a class="anchor" aria-label="anchor" href="#compute-agbd"></a>
+</h3>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Height</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NouraguesHD"</span><span class="op">)</span></span>
+<span><span class="va">brm_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/modelHD.html">modelHD</a></span><span class="op">(</span></span>
+<span>  D <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">D</span>, H <span class="op">=</span> <span class="va">NouraguesHD</span><span class="op">$</span><span class="va">H</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"log2"</span>,</span>
+<span>  bayesian <span class="op">=</span> <span class="cn">TRUE</span>, useCache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Wood density</span></span>
+<span><span class="va">Taxo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"saved_data/Taxo_vignette.rds"</span><span class="op">)</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">genusAccepted</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">speciesAccepted</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">Taxo</span><span class="op">$</span><span class="va">familyAccepted</span></span>
+<span><span class="va">wood_densities</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getWoodDensity.html">getWoodDensity</a></span><span class="op">(</span></span>
+<span>  genus <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">GenusCorrected</span>,</span>
+<span>  species <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">SpeciesCorrected</span>,</span>
+<span>  family <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">family</span>,</span>
+<span>  stand <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">Plot</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span> <span class="op">&lt;-</span> <span class="va">wood_densities</span><span class="op">$</span><span class="va">meanWD</span></span>
+<span></span>
+<span><span class="va">error_prop_4plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/AGBmonteCarlo.html">AGBmonteCarlo</a></span><span class="op">(</span></span>
+<span>  D <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">D</span>, WD <span class="op">=</span> <span class="va">NouraguesTrees</span><span class="op">$</span><span class="va">WD</span>,</span>
+<span>  HDmodel <span class="op">=</span> <span class="va">brm_model</span>,</span>
+<span>  Dpropag <span class="op">=</span> <span class="st">"chave2004"</span>,</span>
+<span>  errWD <span class="op">=</span> <span class="va">wood_densities</span><span class="op">$</span><span class="va">sdWD</span><span class="op">)</span></span>
+<span><span class="co"># keep only 50 iterations per tree for vignette example</span></span>
+<span><span class="va">error_prop_4plots</span><span class="op">$</span><span class="va">AGB_simu</span> <span class="op">&lt;-</span> <span class="va">error_prop_4plots</span><span class="op">$</span><span class="va">AGB_simu</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="spatialize-agbd">Spatialize AGBD<a class="anchor" aria-label="anchor" href="#spatialize-agbd"></a>
+</h3>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># divide plots into subplots</span></span>
+<span><span class="va">multiple_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
+<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, </span>
+<span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>,</span>
+<span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, corner_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
+<span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in divide_plot(grid_size = 25, corner_data = NouraguesCoords, rel_coord</span></span>
+<span><span class="co">#&gt; = c("Xfield", : One or more trees could not be assigned to a subplot (not in a</span></span>
+<span><span class="co">#&gt; subplot area)</span></span>
+<span></span>
+<span><span class="co"># check with raster, optional</span></span>
+<span><span class="va">multiple_checks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_plot_coord.html">check_plot_coord</a></span><span class="op">(</span></span>
+<span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>, <span class="co"># NouraguesCoords contains 4 plots</span></span>
+<span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>, <span class="st">"Yutm"</span><span class="op">)</span>, rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>, <span class="st">"Yfield"</span><span class="op">)</span>,</span>
+<span>  trust_GPS_corners <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
+<span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span>
+<span>  prop_tree <span class="op">=</span> <span class="st">"D"</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span><span class="op">)</span></span>
+<span><span class="co">#&gt; In plot 201 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
+<span><span class="co">#&gt; In plot 213 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span>
+<span><span class="co">#&gt; In plot 223 : Be careful, one or more trees are not inside the plot defined by rel_coord (see is_in_plot column of tree_data output)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_agbd-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_agbd-2.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_agbd-3.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_agbd-4.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># compute AGBD estimates and their uncertainty per subplot</span></span>
+<span><span class="va">subplot_AGBD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
+<span>  AGB_simu <span class="op">=</span> <span class="va">error_prop4plots</span><span class="op">$</span><span class="va">AGB_simu</span>, draw <span class="op">=</span> <span class="cn">F</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; AGB uncertainties will be propagated without propagation of corner GPS measurement uncertainties.</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="spatialize-lidar-metric">Spatialize LiDAR metric<a class="anchor" aria-label="anchor" href="#spatialize-lidar-metric"></a>
+</h3>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># quick plot to visualise plot corners in the landscape</span></span>
+<span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">nouraguesRaster</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">NouraguesCoords</span><span class="op">$</span><span class="va">Xutm</span>, <span class="va">NouraguesCoords</span><span class="op">$</span><span class="va">Yutm</span>, col <span class="op">=</span><span class="st">"red"</span>, pch <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># get CHM median values for each suplot</span></span>
+<span><span class="va">raster_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
+<span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
+<span>  ref_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>, raster_fun <span class="op">=</span> <span class="va">median</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Extracting raster metric...Extracting raster metric done.</span></span>
+<span><span class="co">#&gt; [[1]]</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-2.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]</span></span></code></pre>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-3.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]</span></span></code></pre>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-4.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[1]]</span></span></code></pre>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-5.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">chm_subplot</span> <span class="op">&lt;-</span> <span class="va">raster_summary</span><span class="op">$</span><span class="va">tree_summary</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">rename</span><span class="op">(</span>raster_metric <span class="op">=</span> <span class="va">z2012_median</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="calibrate-model">Calibrate model<a class="anchor" aria-label="anchor" href="#calibrate-model"></a>
 </h2>
+<p>Gather data for agbd-chm model inference (ie join
+predictor-predicted):</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">agbd_subplot</span> <span class="op">&lt;-</span> <span class="va">subplot_AGBD</span><span class="op">$</span><span class="va">long_AGB_simu</span></span>
+<span><span class="va">dt_inf</span> <span class="op">&lt;-</span> <span class="va">agbd_subplot</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">chm_subplot</span>, by <span class="op">=</span> <span class="st">"subplot_ID"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">subplot_ID</span><span class="op">)</span></span></code></pre></div>
+<p>then run calibration function, here parallelized on four CPUs:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model_cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_model.html">calibrate_model</a></span><span class="op">(</span>long_AGB_simu <span class="op">=</span> <span class="va">dt_inf</span>, nb_rep <span class="op">=</span> <span class="fl">50</span>, useCache <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                            plot_model <span class="op">=</span> <span class="cn">TRUE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>                            warmup <span class="op">=</span> <span class="fl">500</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p>Let’s check inference results:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model_cal</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  Family: gaussian </span></span>
+<span><span class="co">#&gt;   Links: mu = identity </span></span>
+<span><span class="co">#&gt; Formula: log_AGBD ~ 0 + betatilde * log_CHM </span></span>
+<span><span class="co">#&gt;          betatilde ~ 1 + gp(x, y, gr = T, scale = T, cov = "matern32")</span></span>
+<span><span class="co">#&gt;    Data: dt_inf (Number of observations: 3200) </span></span>
+<span><span class="co">#&gt;   Draws: 4 chains, each with iter = 2500; warmup = 500; thin = 20;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 400</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Gaussian Process Hyperparameters:</span></span>
+<span><span class="co">#&gt;                        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS</span></span>
+<span><span class="co">#&gt; sdgp(betatilde_gpxy)       0.12      0.01     0.09     0.14 1.02      293</span></span>
+<span><span class="co">#&gt; lscale(betatilde_gpxy)     0.04      0.01     0.03     0.05 1.01      325</span></span>
+<span><span class="co">#&gt;                        Tail_ESS</span></span>
+<span><span class="co">#&gt; sdgp(betatilde_gpxy)        223</span></span>
+<span><span class="co">#&gt; lscale(betatilde_gpxy)      359</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Regression Coefficients:</span></span>
+<span><span class="co">#&gt;                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; betatilde_Intercept     1.70      0.02     1.66     1.73 1.01      238      248</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Further Distributional Parameters:</span></span>
+<span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
+<span><span class="co">#&gt; sigma     0.18      0.00     0.17     0.18 1.00      392      328</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
+<span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
+<span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
+<p>Parameters explained</p>
+<p>Things to look at : Rhat (should be below 1.05, more generally, the
+closest to 1.00), Bulk and Tail ESS (should be the closest possible to
+“total post-warmup draws”)</p>
+<p>Let’s have a look at the posterior predictive check:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pp_check</span><span class="op">(</span><span class="va">model_cal</span>, ndraws <span class="op">=</span> <span class="fl">50</span>, type <span class="op">=</span> <span class="st">"scatter_avg"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/mod_ppcheck-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
-<h2 id="predict-map">Predict map<a class="anchor" aria-label="anchor" href="#predict-map"></a>
+<h2 id="predict-agbd-map-on-the-lidar-footprint">Predict AGBD map on the LiDAR footprint<a class="anchor" aria-label="anchor" href="#predict-agbd-map-on-the-lidar-footprint"></a>
 </h2>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">map_agbd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_map.html">predict_map</a></span><span class="op">(</span>fit_brms <span class="op">=</span> <span class="va">model_cal</span>,</span>
+<span>                         pred_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>,</span>
+<span>                         grid_size <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>                         raster_fun <span class="op">=</span> <span class="va">median</span>,</span>
+<span>                         n_cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                         n_post_draws <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>                         alignment_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                         plot_maps <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<p>If you want to predict on another footprint, you can supply the
+raster footprint with <code>alignment_raster</code> argument.</p>
+</div>
+<div class="section level2">
+<h2 id="what-about-validation">What about validation ?<a class="anchor" aria-label="anchor" href="#what-about-validation"></a>
+</h2>
+<p>We suggest to validate the model by subsetting your subplot dataset
+in two: a calibration dataset with about 70% of the subplots, and a
+validation dataset with the rest. We have 4 plots divided in 16
+subplots, so we need to set aside 45 subplots for the calibration step,
+the rest will be used to validate.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># let's select subplots for each step</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<span><span class="va">vector_of_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">dt_inf</span><span class="op">$</span><span class="va">subplot_ID</span><span class="op">)</span></span>
+<span><span class="va">calibration_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">vector_of_subplots</span>, <span class="fl">45</span><span class="op">)</span></span>
+<span><span class="va">validation_subplots</span> <span class="op">&lt;-</span> <span class="va">vector_of_subplots</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">vector_of_subplots</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">calibration_subplots</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># then divide our complete dataset</span></span>
+<span><span class="va">dt_calibration</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">subplot_ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">calibration_subplots</span><span class="op">)</span></span>
+<span><span class="va">dt_validation</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">subplot_ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">validation_subplots</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="co"># change in column names to make predict function work</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_center</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="va">y_center</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>log_CHM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">raster_metric</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Now we can calibrate the model (ie run the inference) with the
+calibration dataset:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cal_step1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_model.html">calibrate_model</a></span><span class="op">(</span>long_AGB_simu <span class="op">=</span> <span class="va">dt_calibration</span>, nb_rep <span class="op">=</span> <span class="fl">50</span>, useCache <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                            plot_model <span class="op">=</span> <span class="cn">TRUE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>                            warmup <span class="op">=</span> <span class="fl">500</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p>Now we are going to predict the model outputs (namely AGBD) at
+observed data points using the parameters that we inferred at step 1
+when calibrating. For that we use the predict function of brms (link to
+help):</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">val_step2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal_step1</span>, newdata <span class="op">=</span> <span class="va">dt_validation</span>, ndraws <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>Now we may compare those values predicted by the model, which was
+calibrated with the calibration dataset, with observed values from the
+validation dataset:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dt_validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">dt_validation</span>, logAGBD_pred <span class="op">=</span> <span class="va">val_step2</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">dt_validation</span>, <span class="fu">aes</span><span class="op">(</span> x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">AGBD</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">logAGBD_pred</span>, colour <span class="op">=</span> <span class="va">subplot_ID</span><span class="op">)</span><span class="op">)</span><span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">geom_abline</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="fl">2</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Observed log AGBD"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Predicted log AGBD"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_val-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;">
+Here we can see that predictions are overall satisfying, except for 3
+subplots. It could be wise to re-run the validation step with a
+different split of the original dataset, and to dig into those plots.
+When you are good with your validation results, you infer the model
+<em>with the entire dataset</em>, and then predict a robust AGBD
+map.</p>
+<p>Let’s keep in mind that in this vignette example we are working with
+a very small number of inventory plots: we lack of data to get robust
+AGBD map predictions, and properly conduct the validation step. But we
+encourage BIOMASS users to run that validation procedure, or another one
+that is suitable to your data!</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

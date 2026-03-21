@@ -184,8 +184,6 @@ contained in corner_data.
 
 ## Author
 
-Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
-
 Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN
 
 ## Examples

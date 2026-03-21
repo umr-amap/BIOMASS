@@ -26,7 +26,7 @@ summaryByPlot(AGB_val, plot, drawPlot = FALSE)
 
 - drawPlot:
 
-  A logic indicating whether the graphic should be displayed or not
+  A logical indicating whether the graphic should be displayed or not
 
 ## Value
 
@@ -54,14 +54,14 @@ data(NouraguesHD)
 data(NouraguesTrees)
 
 # Modelling height-diameter relationship
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 
 # Retrieving wood density values
 # \donttest{
   NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
                                 stand = NouraguesTrees$plotId)
-#> The reference dataset contains 16467 wood density values
 #> Your taxonomic table contains 409 taxa
+#> Warning: 142 taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level.
 # }
 
 # Propagating errors
@@ -73,9 +73,9 @@ HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
   # The summary by plot
   summaryByPlot(AGB_val = resultMC$AGB_simu, plot = NouraguesTrees$Plot)
 #>   plot      AGB Cred_2.5 Cred_97.5
-#> 1  201 458.0110 416.6221  513.6844
-#> 2  204 511.0156 467.4786  560.3149
-#> 3  213 373.5338 335.5389  418.2946
-#> 4  223 290.9378 266.6484  322.4985
+#> 1  201 451.8593 411.4524  504.7708
+#> 2  204 503.0753 459.4554  550.9980
+#> 3  213 366.2011 330.1491  409.3536
+#> 4  223 287.4248 263.2135  318.0187
 # }
 ```

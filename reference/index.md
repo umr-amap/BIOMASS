@@ -9,14 +9,14 @@ AGB and its uncertainty
 ### Correct tree taxonomy
 
 - [`correctTaxo()`](https://umr-amap.github.io/BIOMASS/reference/correctTaxo.md)
-  : Correct trees taxonomy
-- [`getTaxonomy()`](https://umr-amap.github.io/BIOMASS/reference/getTaxonomy.md)
-  : Retrieve trees taxonomy
+  : Correct and match taxonomic names to the World Flora Online database
+- [`subPattern()`](https://umr-amap.github.io/BIOMASS/reference/subPattern.md)
+  : Common taxonomic name substitutions
 
 ### Estimate wood density
 
 - [`getWoodDensity()`](https://umr-amap.github.io/BIOMASS/reference/getWoodDensity.md)
-  : Estimating wood density
+  : Estimating wood density and associated uncertainties
 
 ### Estimate tree height
 
@@ -55,6 +55,18 @@ AGB and its uncertainty
 
 - [`subplot_summary()`](https://umr-amap.github.io/BIOMASS/reference/subplot_summary.md)
   : Summarise and display tree information by subplot
+
+## Predict AGBD map based on inventory and LiDAR data
+
+### Calibrate AGBD-LiDAR log-log model
+
+- [`calibrate_model()`](https://umr-amap.github.io/BIOMASS/reference/calibrate_model.md)
+  : Calibrate a bayesian model to fit log(AGBD) ~ log(raster metric)
+
+### Predict AGBD map based on calibrated model
+
+- [`predict_map()`](https://umr-amap.github.io/BIOMASS/reference/predict_map.md)
+  : Predict map of AGBD and associated uncertainty
 
 ## Other functions
 
@@ -115,12 +127,13 @@ The four datasets used for examples and vignettes
 These functions are deprecated and will be removed in the version 3.0
 
 - [`attributeTree()`](https://umr-amap.github.io/BIOMASS/reference/attributeTree.md)
-  : Attribute trees to subplots
+  **\[deprecated\]** : Attribute trees to subplots
 - [`attributeTreeCoord()`](https://umr-amap.github.io/BIOMASS/reference/attributeTreeCoord.md)
-  : Attribute GPS coordinates to trees
+  **\[deprecated\]** : Attribute GPS coordinates to trees
 - [`correctCoordGPS()`](https://umr-amap.github.io/BIOMASS/reference/correctCoordGPS.md)
-  : Correct the GPS coordinates
+  **\[deprecated\]** : Correct the GPS coordinates
 - [`cutPlot()`](https://umr-amap.github.io/BIOMASS/reference/cutPlot.md)
-  : Divides one or more plots into subplots
+  **\[deprecated\]** : Divides one or more plots into subplots
 - [`numberCorner()`](https://umr-amap.github.io/BIOMASS/reference/numberCorner.md)
-  : Get the UTM coordinates with the corner of the plot
+  **\[deprecated\]** : Get the UTM coordinates with the corner of the
+  plot

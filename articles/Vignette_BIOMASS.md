@@ -43,9 +43,8 @@ information.
 
 ## Wood density
 
-**Wood density** is estimated **from tree taxonomy**, using the [global
-wood density
-database](https://datadryad.org/dataset/doi:10.5061/dryad.234) as a
+**Wood density** is estimated **from tree taxonomy**, using the [Global
+Wood Density Database v.2](https://zenodo.org/records/18262736) as a
 reference. So the first step might be to correct tree taxonomy.
 
 ### Checking and retrieving tree taxonomy
@@ -56,12 +55,12 @@ function, but before calling it, let’s speak about cache !
 
 When the function is called for the first time with the argument
 `useCache = TRUE`, a temporary file containing the request to
-[TNRS](https://tnrs.biendata.org/) will be automatically created in an
-existing folder. Once this has been done, during the current session
-**the use of `useCache = TRUE` will access the saved temporary file** in
-order to avoid time-consuming replication of server requests. But **by
-quitting the current R session, this temporary file will be removed**.
-So before calling
+[WFO](https://www.worldfloraonline.org/) will be automatically created
+in an existing folder. Once this has been done, during the current
+session **the use of `useCache = TRUE` will access the saved temporary
+file** in order to avoid time-consuming replication of server requests.
+But **by quitting the current R session, this temporary file will be
+removed**. So before calling
 [`correctTaxo()`](https://umr-amap.github.io/BIOMASS/reference/correctTaxo.md),
 we advise you to define a folder which will host the cache file
 permanently, enabling to work offline.
@@ -83,16 +82,15 @@ function:
 Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
-  useCache = TRUE, verbose = FALSE)
-saveRDS(Taxo, file = "saved_data/Taxo_vignette.rds")
+  useCache = TRUE, interactive = F, preferFuzzy = T)
 ```
 
 The corrected genus and species of the trees can now be added to the
 data:
 
 ``` r
-NouraguesTrees$GenusCorrected <- Taxo$genusCorrected
-NouraguesTrees$SpeciesCorrected <- Taxo$speciesCorrected
+NouraguesTrees$GenusCorrected <- Taxo$genusAccepted
+NouraguesTrees$SpeciesCorrected <- Taxo$speciesAccepted
 ```
 
 Here, as an example, the species name of the fourth tree has been
@@ -103,17 +101,19 @@ correctTaxo() output has a TRUE value for the column nameModified) :
 NouraguesTrees$Species[4]
 #> [1] "guyanensis"
 Taxo[4,]
-#>   genusCorrected speciesCorrected nameModified
-#> 4     Conceveiba       guianensis         TRUE
+#>            nameOriginal         nameSubmitted           nameMatched
+#> 4 Conceveiba guyanensis conceveiba guyanensis Conceveiba guianensis
+#>            nameAccepted familyAccepted genusAccepted speciesAccepted
+#> 4 Conceveiba guianensis  Euphorbiaceae    Conceveiba      guianensis
+#>   nameModified
+#> 4         TRUE
 ```
 
-If you want (but this is optional for the rest), you can retrieve APG
-III families and orders from genus names.
+You can also retrieve families from genus names in the familyAccepted
+column.
 
 ``` r
-APG <- getTaxonomy(NouraguesTrees$GenusCorrected, findOrder = TRUE)
-NouraguesTrees$familyAPG <- APG$family
-NouraguesTrees$orderAPG <- APG$order
+NouraguesTrees$family <- Taxo$familyAccepted
 ```
 
 ### Getting wood density
@@ -132,8 +132,11 @@ wood_densities <- getWoodDensity(
   species = NouraguesTrees$SpeciesCorrected,
   stand = NouraguesTrees$Plot # for unidentified or non-documented trees in the reference database
 )
-#> The reference dataset contains 16467 wood density values
-#> Your taxonomic table contains 408 taxa
+#> Your taxonomic table contains 379 taxa
+#> Warning in getWoodDensity(genus = NouraguesTrees$GenusCorrected, species =
+#> NouraguesTrees$SpeciesCorrected, : 169 taxa don't match the Global Wood Density
+#> Database V2. You may provide 'family' to match wood density estimates at family
+#> level.
 
 NouraguesTrees$WD <- wood_densities$meanWD
 ```
@@ -144,32 +147,33 @@ the species, genus and plot level:
 ``` r
 # At species level
 sum(wood_densities$levelWD == "species")
-#> [1] 1291
+#> [1] 1635
 # At genus level
 sum(wood_densities$levelWD == "genus")
-#> [1] 586
+#> [1] 246
 # At plot level
 sum(!wood_densities$levelWD %in% c("genus", "species"))
-#> [1] 173
+#> [1] 169
 ```
 
 The `family` argument also assigns to the trees a family-level wood
 density average, but bear in mind that the taxon-average approach gives
 relatively poor estimates above the genus level (Flores & Coomes 2011).
 
-**Additional wood density values can be added** using the
-`addWoodDensityData` argument (here invented for the example):
+**Additional wood density values (mean and error) can be added** using
+the `addWoodDensityData` argument (here invented for the example):
 
 ``` r
 LocalWoodDensity <- data.frame(
   genus = c("Paloue", "Handroanthus"),
   species = c("princeps", "serratifolius"),
-  wd = c(0.65, 0.72) )
+  meanWD = c(0.65, 0.72),
+  sdWD = c(0.061, 0.042))
 
 add_wood_densities <- getWoodDensity(
   genus = NouraguesTrees$GenusCorrected,
   species = NouraguesTrees$SpeciesCorrected,
-  family = NouraguesTrees$familyAPG,
+  family = NouraguesTrees$family,
   stand = NouraguesTrees$Plot,
   addWoodDensityData = LocalWoodDensity
 )
@@ -220,10 +224,9 @@ HD_res <- modelHD(
 
 ![](Vignette_BIOMASS_files/figure-html/multiple_modelHD-1.png)
 
-``` r
+    #> To build a HD model you must use the parameter 'method' in this function
 
-kable(HD_res)
-```
+    kable(HD_res)
 
 | method    |      RSE |    RSElog | Average_bias |
 |:----------|---------:|----------:|-------------:|
@@ -240,7 +243,8 @@ function:
 ``` r
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
-  method = "log2", useWeight = TRUE)
+  method = "log2", useWeight = TRUE, 
+  bayesian = FALSE)
 
 H_model <- retrieveH(
   D = NouraguesTrees$D,
@@ -249,11 +253,13 @@ H_model <- retrieveH(
 NouraguesTrees$H_model <-  H_model$H
 ```
 
-By setting `bayesian = TRUE` in
+By default, `bayesian = TRUE` in
 [`modelHD()`](https://umr-amap.github.io/BIOMASS/reference/modelHD.md)
-arguments, we could have built bayesian models using the brms package
-(see section [Building bayesian Height-Diameter
-models](#bayesian-models)).
+arguments. In this case, a Bayesian model will be fitted using the brms
+package (see section [Building bayesian Height-Diameter
+models](#bayesian-models)), ensuring proper propagation of parameter
+uncertainties. As this method is more time-consuming, for educational
+purposes, we will set bayesian = FALSE.
 
 Note that if some of the trees’ heights had been measured in the
 `NouraguesTrees` dataset, we could have provided these heights to
@@ -403,9 +409,9 @@ H_model_error_prop <- AGBmonteCarlo(
 )
 ```
 
-Note that when HDmodel is not a bayesian model, uncertainties of the are
-not propagated during the error propagation of the AGBmonteCarlo()
-function.
+Note that when HDmodel is not a bayesian model, uncertainties of the
+parameters are not propagated during the error propagation of the
+AGBmonteCarlo() function.
 
 - **If tree heights have been estimated via the “Feldspausch” method**,
   the user has to provide the output of the
@@ -445,17 +451,17 @@ error_prop <- AGBmonteCarlo(
 
 error_prop[(1:4)]
 #> $meanAGB
-#> [1] 1703.035
+#> [1] 1674.958
 #> 
 #> $medAGB
-#> [1] 1701.263
+#> [1] 1674.216
 #> 
 #> $sdAGB
-#> [1] 46.91725
+#> [1] 45.70764
 #> 
 #> $credibilityAGB
 #>     2.5%    97.5% 
-#> 1614.013 1800.008
+#> 1587.405 1769.685
 ```
 
 The first four elements of the output contain the mean, median, standard
