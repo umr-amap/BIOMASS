@@ -145,8 +145,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       }
     }
     
-    if (is.null(WD) & volume_allom == TRUE) {
-      stop("When the model predicts volume, WD is needed")
+    if (is.null(WD) & volume_allom == TRUE & return_volume == FALSE) {
+      stop("WD should be provided when AGB must be returned while the model predicts volume")
     }
     
     if (!is.null(WD)){
