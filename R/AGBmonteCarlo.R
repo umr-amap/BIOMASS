@@ -103,28 +103,26 @@
 #' @export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
-                          HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
-                          Carbon = FALSE, Dlim = NULL,
-                          fitted_allom = "chave2014",
-                          var_in_data = NULL,
-                          volume_allom = FALSE, return_volume = FALSE
-                         ) {
+  HDmodel = NULL, coord = NULL, Dpropag = NULL, n = 1000,
+  Carbon = FALSE, Dlim = NULL,
+  fitted_allom = "chave2014",
+  var_in_data = NULL,
+  volume_allom = FALSE, return_volume = FALSE) {
   
-  
-  if(all(fitted_allom == "chave2014")){
+  if (all(fitted_allom == "chave2014")) {
     
     # set volume_allom & return_volume to FALSE when chave's allometry is used
     volume_allom <- FALSE
     return_volume <- FALSE
     
-    #call to AGBmonteCarlo_chave2014
-    AGB_sim <- AGBmonteCarlo_chave2014(
+    # call to AGBmonteCarlo_chave2014
+    AGB_simu <- AGBmonteCarlo_chave2014(
     WD = WD, errWD = errWD, H = H, errH = errH, HDmodel = HDmodel, coord = coord, 
     D = D, Dpropag = Dpropag, n =n, Dlim = Dlim)
     
-  }else{
+  } else {
     
-    if (volume_allom == FALSE & return_volume == T){
+    if (volume_allom == FALSE & return_volume == TRUE) {
       stop("You need to provide a volume allometry to get volume estimates")
     }
     
@@ -150,203 +148,203 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     
     if (!is.null(WD)){
-    if (len != length(WD) || len != length(errWD)) {
-      stop("One of vector WD or errWD does not have the same length as D")
-    }
+      if (len != length(WD) || len != length(errWD)) {
+        stop("One of vector WD or errWD does not have the same length as D")
+      }
     }
     
 
-    if(class(fitted_allom) == "brmsfit"){
+    if (class(fitted_allom) == "brmsfit") {
 
-        # id response variable in brmsfit
+      # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
       resp_name_allom <- all.vars(fitted_allom$formula$formula)[1]
       
-     if(length(var_names_allom) != var_in_data){
+     if (length(var_names_allom) != var_in_data) {
        stop("The length of variable names do not match the number of columns found in brms.fit object data")
      }
       
-     if(var_in_data[which(var_names_allom == resp_name_allom)] %in% c("AGB", "logAGB", "V", "logV") == FALSE){
-       stop("Response/predicted variable is not among AGB, logAGB, V, logV")
+     if (var_in_data[which(var_names_allom == resp_name_allom)] %in% 
+       c("AGB", "logAGB", "V", "logV") == FALSE) {
+         stop("Response/predicted variable is not among AGB, logAGB, V, logV")
      }
       
       predictor_names <- var_in_data[which(var_names_allom != resp_name_allom)]
   
       # check that data for prediction are in args
-    if(all(predictor_names %in% c("D", "H", "WD", "logD", "logH")) == FALSE){
-      stop("Predictors are not among D, H, WD, logD, logH")
-    }
+      if (all(predictor_names %in% c("D", "H", "WD", "logD", "logH")) == FALSE) {
+        stop("Predictors are not among D, H, WD, logD, logH")
+      }
      
       predictor_names_allom <- var_names_allom[var_names_allom != resp_name_allom]
       names(predictor_names) <- predictor_names_allom
     }
     
-    if(length(fitted_allom) == 2){
+    if (length(fitted_allom) == 2) {
       
       # check that formula is composed of variables among D, H, WD and parameters from the provided list
-      if(all(all.vars(fitted_allom$formula) %in% c("D", "H", "WD", names(fitted_allom$parameters))) == FALSE){
+      if (all(all.vars(fitted_allom$formula) %in% 
+          c("D", "H", "WD", names(fitted_allom$parameters))) == FALSE) {
         stop("Parameters in formula not provided, or variable not among D, H, WD.")
       }
       
       # check that there is a residual parameter sigma
-      if (!("sigma" %in% names(fitted_allom$parameters))){
+      if (!("sigma" %in% names(fitted_allom$parameters))) {
         stop("A residual error parameter named sigma should be provided.")
       }
       
       # check for parameter sample size
-      if(n<= nrow(fitted_allom$parameters)){
-      params <- fitted_allom$parameters[1:n,]
-      }else{ #resample to get enough parameter combinations
+      if (n <= nrow(fitted_allom$parameters)) {
+        params <- fitted_allom$parameters[1:n,]
+      } else { #resample to get enough parameter combinations
         params <- rbind(fitted_allom$parameters, 
-                        fitted_allom$parameters[sample(1:nrow(fitted_allom$parameters), n - nrow(fitted_allom$parameters), replace = T),]
-                        )
+          fitted_allom$parameters[sample(1:nrow(fitted_allom$parameters), 
+            n - nrow(fitted_allom$parameters), replace = T),]
+        )
       }
-      
     }
   
-  ### Propagate error with Markov Chain Monte Carlo approach
+    ### Propagate error with Markov Chain Monte Carlo approach
   
-  # function truncated random gausian law -----------------------------------
-  myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
-    qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
-  }
+    # function truncated random gausian law -----------------------------------
+    myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
+      qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
+    }
   
+    # --------------------- D ---------------------
   
-  # --------------------- D ---------------------
-  
-  if (!is.null(Dpropag)) {
-    if (length(Dpropag) == 1 && tolower(Dpropag) == "chave2004") {
-      # Propagation of the measurement error on D: based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B.
-      fivePercent <- round(len * 5 / 100)
-      chaveError <- function(x, len) {
-        ## Assigning large errors on 5% of the trees
-        largeErrSample <- sample(len, fivePercent)
-        
-        D_sd <- 0.0062 * x + 0.0904 # Assigning small errors on the remaining 95% trees
-        D_sd[largeErrSample] <- 4.64
-        
-        x <- myrtruncnorm(n = len, mean = x, sd = D_sd, lower = 0.1, upper = 500)
-        return(x)
+    if (!is.null(Dpropag)) {
+      if (length(Dpropag) == 1 && tolower(Dpropag) == "chave2004") {
+        # Propagation of the measurement error on D: based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B.
+        fivePercent <- round(len * 5 / 100)
+        chaveError <- function(x, len) {
+          ## Assigning large errors on 5% of the trees
+          largeErrSample <- sample(len, fivePercent)
+          
+          D_sd <- 0.0062 * x + 0.0904 # Assigning small errors on the remaining 95% trees
+          D_sd[largeErrSample] <- 4.64
+          
+          x <- myrtruncnorm(n = len, mean = x, sd = D_sd, lower = 0.1, upper = 500)
+          return(x)
+        }
+        D_simu <- suppressWarnings(replicate(n, chaveError(D, len)))
+      } else {
+        D_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = D, 
+              sd = Dpropag, lower = 0.1, upper = 500)))
       }
-      D_simu <- suppressWarnings(replicate(n, chaveError(D, len)))
+    } else {
+      D_simu <- replicate(n, D)
     }
-    else {
-      D_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500)))
+  
+    # --------------------- WD ---------------------
+    
+    #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
+    if (!is.null(WD)) {
+      WD_simu <- suppressWarnings(replicate(n, myrtruncnorm(n = len, mean = WD, 
+            sd = errWD, lower = 0.08, upper = 1.39)))
+    } else {
+      WD_simu <- NA
     }
-  } else {
-    D_simu <- replicate(n, D)
-  }
-  
-  
-  # --------------------- WD ---------------------
-  
-  #### Below 0.08 and 1.39 are the minimum and the Maximum WD value from the global wood density database respectively
- if(!is.null(WD)){
-   WD_simu <- suppressWarnings(replicate(n, myrtruncnorm(n = len, mean = WD, sd = errWD, lower = 0.08, upper = 1.39)))
- }else{WD_simu <- NA}
 
     # --------------------- H ---------------------
 
     # if there is data for H
-  if (!is.null(HDmodel) | !is.null(H)) {
-    if (!is.null(HDmodel)) {
-      # Propagation of the error thanks to the H-D local model
+    if (!is.null(HDmodel) | !is.null(H)) {
+      if (!is.null(HDmodel)) {
+        # Propagation of the error thanks to the H-D local model
+        
+        # If HDmodel is a list of stand-specific hd-models, get back the plotID vector
+        if (!identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
+          plotID <- do.call(c , lapply(names(HDmodel), function(x) {
+            rep(x , length(HDmodel[[x]]$input$D))
+          }))
+        } else plotID <- NULL
+        
+        H_simu <- predictHeight(D_simu, HDmodel, err = TRUE, plot = plotID)
       
-      # If HDmodel is a list of stand-specific hd-models, get back the plotID vector
-      if (!identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
-        plotID <- do.call(c , lapply(names(HDmodel), function(x) {
-          rep(x , length(HDmodel[[x]]$input$D))
-        }))
-      } else plotID <- NULL
-      
-      H_simu <- predictHeight(D_simu, HDmodel, err = TRUE, plot = plotID)
-      
-    } else {
-      # Propagation of the error using the errH value(s)
-      upper <- max(H, na.rm = TRUE) + 15
-      H_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = H, sd = errH, lower = 1.3, upper = upper)))
-    }
+      } else {
+        # Propagation of the error using the errH value(s)
+        upper <- max(H, na.rm = TRUE) + 15
+        H_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = H, 
+              sd = errH, lower = 1.3, upper = upper)))
+      }
     
-  }else{H_simu <- NA} #H evaluation
+    } else { 
+      H_simu <- NA
+    } #H evaluation
 
-  
-  
-  # --------------------- AGB prediction ---------------------
+    # --------------------- AGB prediction ---------------------
  
-   if (length(fitted_allom) == 2){
+    if (length(fitted_allom) == 2) {
+      compute_pred <- function(formula, data, params) {
+        call = rlang::f_rhs(formula)
+        data = as.list(data)
+        envir = c(data, params)
+        eval(call, envir = envir)
+      }
+     
+      # names D_simu, H_simu in data vs D, H in the formula
+      predicted_response <- compute_pred(formula = fitted_allom$formula, 
+        data = list(D = D_simu, H = H_simu, WD = WD_simu), 
+        params = fitted_allom$parameters)
+       #trees in row, replicates columns -> ok same as AGBmC_chave2014
+       # residual error
+
+      AGB_simu <- t(apply(MARGIN = 1, X = predicted_response,
+          FUN = rnorm, n = nrow(params), sd = fitted_allom$parameters$sigma
+      ))
+     
+      if (fitted_allom$link == "log") {
+        AGB_simu <- exp(AGB_simu)
+      }
+    }
   
-     compute_pred <- function(formula, data, params)
-     {
-       call = rlang::f_rhs(formula)
-       data = as.list(data)
-       envir = c(data, params)
-       eval(call, envir = envir)
-     }
-     
-     # names D_simu, H_simu in data vs D, H in the formula
-     predicted_response <- compute_pred(formula = fitted_allom$formula, 
-                             data = list(D = D_simu, H = H_simu, WD = WD_simu), 
-                  params = fitted_allom$parameters)
-     #trees in row, replicates columns -> ok same as AGBmC_chave2014
-     # residual error
-     AGB_simu <- t(apply(MARGIN = 1, X = predicted_response,
-                       FUN = rnorm, n = nrow(params), sd = fitted_allom$parameters$sigma
-     ))
-     
-     if (fitted_allom$link == "log"){
-       AGB_simu <- exp(AGB_simu)
-     }
-     
-  }
-  
-  if (class(fitted_allom) == "brmsfit"){
-    
-    
-    newdata_for_pred <- data.table(D = as.vector(t(D_simu)),
-                                   H = as.vector(t(H_simu)), 
-                                   WD = as.vector(t(WD_simu)),
-                                   logD = log(as.vector(t(D_simu))),
-                                   logH = log(as.vector(t(H_simu)))
-                                   )
-    # ordered as replicates nested in trees
+    if (class(fitted_allom) == "brmsfit") {
+      newdata_for_pred <- data.table(
+        D = as.vector(t(D_simu)),
+        H = as.vector(t(H_simu)), 
+        WD = as.vector(t(WD_simu)),
+        logD = log(as.vector(t(D_simu))),
+        logH = log(as.vector(t(H_simu)))
+      )
+      # ordered as replicates nested in trees
    
-    # replace colnames to match brms.fit data names
-    colnames(newdata_for_pred) <- names(predictor_names)[match(colnames(newdata_for_pred), predictor_names)]
+      # replace colnames to match brms.fit data names
+      colnames(newdata_for_pred) <- names(predictor_names)[
+        match(colnames(newdata_for_pred), predictor_names)]
    
-    nb_draws <- 20
-    #predict response with newdata, treeID preservation to be checked
-     predicted_response_brms <- predict(object = fitted_allom, newdata = newdata_for_pred, summary = F, ndraws = nb_draws)
-     # nb_draws rows, columns are len times (tree with n replicates)
+      nb_draws <- 20
+      #predict response with newdata, treeID preservation to be checked
+      predicted_response_brms <- predict(object = fitted_allom, 
+        newdata = newdata_for_pred, summary = FALSE, ndraws = nb_draws)
+      # nb_draws rows, columns are len times (tree with n replicates)
      
-     # randomly select a row for each tree x replicate
-     row_index_to_keep <- sample(x = 1:nb_draws, size = nrow(newdata_for_pred), replace = TRUE)
-     AGB_simu <- matrix(predicted_response_brms[cbind(row_index_to_keep, 1:ncol(predicted_response_brms))],
-                                  ncol = n, nrow = len, byrow = TRUE)
+      # randomly select a row for each tree x replicate
+      row_index_to_keep <- sample(x = 1:nb_draws, size = nrow(newdata_for_pred), replace = TRUE)
+      AGB_simu <- matrix(
+        predicted_response_brms[cbind(row_index_to_keep, 1:ncol(predicted_response_brms))], 
+        ncol = n, nrow = len, byrow = TRUE)
      
-    #3) if fitted_allom$formula$family$link == "log" back transform predicted
+      #3) if fitted_allom$formula$family$link == "log" back transform predicted
     
-     if(fitted_allom$formula$family$link == "log"|"logAGB" %in% var_in_data|"logV" %in% var_in_data){
-       AGB_simu <- exp(AGB_simu)
-       }
+      if (fitted_allom$formula$family$link == "log" | 
+        "logAGB" %in% var_in_data | 
+        "logV" %in% var_in_data) {
+          AGB_simu <- exp(AGB_simu)
+      }
+    }
   }
- 
-  
-  }
-  
   
   #----------- AGB_simu management
   
-  if (volume_allom == TRUE & return_volume == FALSE){ # lets multiply predicted variable by WD_simu 
-    
+  if (volume_allom == TRUE & return_volume == FALSE) { # lets multiply predicted variable by WD_simu 
      AGB_simu <- AGB_simu * WD_simu
   }
   
-  
   if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0 # ok keep
-  AGB_simu[ which(is.infinite(AGB_simu)) ] <- NA # ok keep
+  AGB_simu[which(is.infinite(AGB_simu))] <- NA # ok keep
   
-  
-  if (volume_allom == TRUE & return_volume == TRUE){
+  if (volume_allom == TRUE & return_volume == TRUE) {
  
     sum_V_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
     
@@ -368,58 +366,49 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       
     )
     
-   
-     }else{
-      
-  AGB_simu <- AGB_simu / 1000
- 
-
-  if (Carbon == FALSE) {
-   
-    sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
-    
-    res <- list(
-       meanAGB = mean(sum_AGB_simu),
-       medAGB = median(sum_AGB_simu),
-       sdAGB = sd(sum_AGB_simu),
-       credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025, 0.975)),
-       
-       AGB_simu = AGB_simu, # ok keep
-       
-       AGB_simu_per_stem = data.frame( # stem level
-         meanAGB = apply(X = AGB_simu, MARGIN = 1, FUN = mean, na.rm = T),
-         medAGB = apply(X = AGB_simu, MARGIN = 1, FUN = median, na.rm = T),
-         sdAGB = apply(X = AGB_simu, MARGIN = 1, FUN = sd, na.rm = T),
-         lower_CI_AGB = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
-         upper_CI_AGB = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
-       )
-  
-    )
   } else {
-    # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical
-    # angiosperm stems carbon content)
-    AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
-    
-    sum_AGC_simu <- colSums(AGC_simu, na.rm = TRUE)
-    res <- list(
-      meanAGC = mean(sum_AGC_simu),
-      medAGC = median(sum_AGC_simu),
-      sdAGC = sd(sum_AGC_simu),
-      credibilityAGC = quantile(sum_AGC_simu, probs = c(0.025, 0.975)),
       
-      AGC_simu = AGC_simu,
+    AGB_simu <- AGB_simu / 1000
+
+    if (Carbon == FALSE) {
+      sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
       
-      AGC_simu_per_stem = data.frame( # stem level
-        meanAGC = apply(X = AGC_simu, MARGIN = 1, FUN = mean, na.rm = T),
-        medAGC = apply(X = AGC_simu, MARGIN = 1, FUN = median, na.rm = T),
-        sdAGC = apply(X = AGC_simu, MARGIN = 1, FUN = sd, na.rm = T),
-        lower_CI_AGC = apply(X = AGC_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
-        upper_CI_AGC = apply(X = AGC_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
+      res <- list(
+        meanAGB = mean(sum_AGB_simu),
+        medAGB = median(sum_AGB_simu),
+        sdAGB = sd(sum_AGB_simu),
+        credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025, 0.975)),
+        AGB_simu = AGB_simu, # ok keep
+        AGB_simu_per_stem = data.frame( # stem level
+          meanAGB = apply(X = AGB_simu, MARGIN = 1, FUN = mean, na.rm = T),
+          medAGB = apply(X = AGB_simu, MARGIN = 1, FUN = median, na.rm = T),
+          sdAGB = apply(X = AGB_simu, MARGIN = 1, FUN = sd, na.rm = T),
+          lower_CI_AGB = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
+          upper_CI_AGB = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
+        )
       )
-      
-    )
+    } else {
+      # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical
+      # angiosperm stems carbon content)
+      AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
+      sum_AGC_simu <- colSums(AGC_simu, na.rm = TRUE)
+      res <- list(
+        meanAGC = mean(sum_AGC_simu),
+        medAGC = median(sum_AGC_simu),
+        sdAGC = sd(sum_AGC_simu),
+        credibilityAGC = quantile(sum_AGC_simu, probs = c(0.025, 0.975)),
+        AGC_simu = AGC_simu,
+        AGC_simu_per_stem = data.frame( # stem level
+          meanAGC = apply(X = AGC_simu, MARGIN = 1, FUN = mean, na.rm = T),
+          medAGC = apply(X = AGC_simu, MARGIN = 1, FUN = median, na.rm = T),
+          sdAGC = apply(X = AGC_simu, MARGIN = 1, FUN = sd, na.rm = T),
+          lower_CI_AGC = apply(X = AGC_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
+          upper_CI_AGC = apply(X = AGC_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
+        )
+      )
+    }
   }
-  
-     }
+
+  # Return
   return(res)
 }
