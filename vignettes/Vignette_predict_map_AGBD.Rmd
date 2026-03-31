@@ -28,14 +28,24 @@ require(brms)
 
 # Overview
 
-- what data + updated workflow
-- bayesian method to propagate uncertainties, using brms (ref), parallel using doFuture (ref)
-- mathematical model, ref Hunka
-- example with 4 plots to illustrate, but keep in mind it is very likely not enough data to get proper and reliable final predictions !
+BIOMASS enables users to predict AGBD maps at the landscape level, with uncertainties per pixel. For that, both inventory and LiDAR data are required.
+
+To predict AGBD maps, we are going to calibrate a model describing the relationship between AGBD estimated at plot level, and the corresponding value of one LiDAR metric (a Canopy Height Model - CHM, for example). Once this model has been calibrated using AGBD and CHM values of each plot, AGBD is computed for each pixel of the landscape based on the LiDAR metric value at the pixel, according to the model.
+
+In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below Run prediction in parallel section.
+
+## Mathematical modelling 
+-  Hunka
+
+## Warning on vignette example
+
+- example with 4 plots to illustrate, but keep in mind it is very likely not enough data to get proper and reliable final predictions!
+- some quality checks you can run (chm vs tree height distributions, range of distances between plots)
 
 # Previous steps (see other vignettes for details)
 
 ## Load inventory, plot coordinates and LiDAR data
+
 ```{r, load_data}
 data("NouraguesTrees")
 data("NouraguesCoords")
@@ -43,6 +53,7 @@ nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",pack
 ```
 
 ## Compute AGBD
+
 ```{r, compute_agbd, eval=FALSE}
 # Height
 data("NouraguesHD")
@@ -105,6 +116,7 @@ subplot_AGBD <- subplot_summary(
 ```
 
 ## Spatialize LiDAR metric
+
 ```{r, spatial_lidar}
 # quick plot to visualise plot corners in the landscape
 terra::plot(nouraguesRaster)
@@ -119,7 +131,9 @@ chm_subplot <- raster_summary$tree_summary |>
 ```
 
 # Calibrate model
+
 Gather data for agbd-chm model inference (ie join predictor-predicted):
+
 ```{r, data_cal}
 agbd_subplot <- subplot_AGBD$long_AGB_simu
 dt_inf <- agbd_subplot %>%
@@ -128,6 +142,7 @@ dt_inf <- agbd_subplot %>%
 ```
 
 then run calibration function, here parallelized on four CPUs:
+
 ```{r, eval=FALSE}
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
                             plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
@@ -138,20 +153,22 @@ model_cal <- readRDS(file = "saved_data/nouragues_model_cal.rds")
 ```
 
 Let's check inference results:
+
 ```{r, summary_mod_cal}
 summary(model_cal)
 ```
-Parameters explained
-
-Things to look at : Rhat (should be below 1.05, more generally, the closest to 1.00), Bulk and Tail ESS (should be the closest possible to "total post-warmup draws")
+- Parameters explained
+- Things to look at : Rhat (should be below 1.05, more generally, the closest to 1.00), Bulk and Tail ESS (should be the closest possible to "total post-warmup draws")
 
 Let's have a look at the posterior predictive check:
+
 ```{r, mod_ppcheck}
-pp_check(model_cal, ndraws = 50, type = "scatter_avg")
+pp_check(model_cal, ndraws = 50)
 ```
 
 
 # Predict AGBD map on the LiDAR footprint
+
 ```{r, pred_map, eval=FALSE}
 map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
@@ -164,11 +181,18 @@ map_agbd <- predict_map(fit_brms = model_cal,
 ```
 ```{r load_predicted_map, include=FALSE}
 map_agbd <- readRDS(file = "saved_data/nouragues_map_pred.rds")
+plot(map_agbd)
 ```
+
 If you want to predict on another footprint, you can supply the raster footprint with `alignment_raster` argument.
 
+## Run prediction in parallel 
+- doFuture syntax
+
 # What about validation ?
+
 We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. We have 4 plots divided in 16 subplots, so we need to set aside 45 subplots for the calibration step, the rest will be used to validate.
+
 ```{r, val_datasets}
 # let's select subplots for each step
 set.seed(1234)
@@ -188,6 +212,7 @@ dt_validation <- dt_inf %>%
 ```
 
 Now we can calibrate the model (ie run the inference) with the calibration dataset:
+
 ```{r, eval=FALSE}
 cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCache = T,
                             plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
@@ -198,6 +223,7 @@ cal_step1 <- readRDS(file = "saved_data/nouragues_cal_step1.rds")
 ```
 
 Now we are going to predict the model outputs (namely AGBD) at observed data points using the parameters that we inferred at step 1 when calibrating. For that we use the predict function of brms (link to help):
+
 ```{r, eval=FALSE}
 val_step2 <- predict(cal_step1, newdata = dt_validation, ndraws = 1)
 ```
@@ -206,6 +232,7 @@ val_step2 <- readRDS(file = "saved_data/nouragues_val_step2.rds")
 ```
 
 Now we may compare those values predicted by the model, which was calibrated with the calibration dataset, with observed values from the validation dataset:
+
 ```{r, plot_val}
 dt_validation <- cbind(dt_validation, logAGBD_pred = val_step2[,1])
 
@@ -215,7 +242,10 @@ ggplot(dt_validation, aes( x = log(AGBD), y = logAGBD_pred, colour = subplot_ID)
   xlab("Observed log AGBD")+
   ylab("Predicted log AGBD")
 ```
+
 Here we can see that predictions are overall satisfying, except for 3 subplots. It could be wise to re-run the validation step with a different split of the original dataset, and to dig into those plots. When you are good with your validation results, you infer the model *with the entire dataset*, and then predict a robust AGBD map.
 
 Let's keep in mind that in this vignette example we are working with a very small number of inventory plots: we lack of data to get robust AGBD map predictions, and properly conduct the validation step. But we encourage BIOMASS users to run that validation procedure, or another one that is suitable to your data!
+
+
 
