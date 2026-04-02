@@ -24,6 +24,7 @@ require(knitr)
 require(ggplot2)
 require(dplyr)
 require(brms)
+require(terra)
 ```
 
 # Overview
@@ -32,7 +33,7 @@ BIOMASS enables users to predict AGBD maps at the landscape level, with uncertai
 
 To predict AGBD maps, we are going to calibrate a model describing the relationship between AGBD estimated at plot level, and the corresponding value of one LiDAR metric (a Canopy Height Model - CHM, for example). Once this model has been calibrated using AGBD and CHM values of each plot, AGBD is computed for each pixel of the landscape based on the LiDAR metric value at the pixel, according to the model.
 
-In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below Run prediction in parallel section.
+In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below `Run prediction` in parallel section.
 
 ## Mathematical modelling 
 -  Hunka
@@ -84,7 +85,7 @@ error_prop_4plots <- AGBmonteCarlo(
 error_prop_4plots$AGB_simu <- error_prop_4plots$AGB_simu[,1:50]
 ```
 ```{r load_error_prop, include=FALSE}
-error_prop4plots <- readRDS(file = "saved_data/error_prop4plots.rds")
+error_prop_4plots <- readRDS(file = "saved_data/error_prop_4plots.rds")
 ```
 
 ## Spatialize AGBD
@@ -111,7 +112,7 @@ multiple_checks <- check_plot_coord(
 # compute AGBD estimates and their uncertainty per subplot
 subplot_AGBD <- subplot_summary(
   subplots = multiple_subplots,
-  AGB_simu = error_prop4plots$AGB_simu, draw = F
+  AGB_simu = error_prop_4plots$AGB_simu, draw = F
 )
 ```
 
@@ -145,7 +146,7 @@ then run calibration function, here parallelized on four CPUs:
 
 ```{r, eval=FALSE}
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
-                            plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
+                            plot_model = TRUE, chains = 4, thin = 20, iter = 3000,
                             warmup = 500, cores = 4)
 ```
 ```{r load_brms_output, include=FALSE}
@@ -165,7 +166,7 @@ Let's have a look at the posterior predictive check:
 ```{r, mod_ppcheck}
 pp_check(model_cal, ndraws = 50)
 ```
-
+- how to read the plot
 
 # Predict AGBD map on the LiDAR footprint
 
@@ -180,8 +181,10 @@ map_agbd <- predict_map(fit_brms = model_cal,
                          plot_maps = T)
 ```
 ```{r load_predicted_map, include=FALSE}
-map_agbd <- readRDS(file = "saved_data/nouragues_map_pred.rds")
-plot(map_agbd)
+map_agbd <- terra::rast("saved_data/nouragues_map_pred.tif")
+terra::plot(map_agbd$post_median_AGBD, main = "Median of posterior\nAGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD, main = "Sd of posterior\nAGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD/map_agbd$post_median_AGBD, main = "CV of posterior\nAGBD distributions")
 ```
 
 If you want to predict on another footprint, you can supply the raster footprint with `alignment_raster` argument.
