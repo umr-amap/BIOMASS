@@ -33,9 +33,10 @@ BIOMASS enables users to predict AGBD maps at the landscape level, with uncertai
 
 To predict AGBD maps, we are going to calibrate a model describing the relationship between AGBD estimated at plot level, and the corresponding value of one LiDAR metric (a Canopy Height Model - CHM, for example). Once this model has been calibrated using AGBD and CHM values of each plot, AGBD is computed for each pixel of the landscape based on the LiDAR metric value at the pixel, according to the model.
 
-In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below `Run prediction` in parallel section.
+In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below "Run prediction in parallel" section.
 
 ## Mathematical modelling 
+
 -  Hunka
 
 ## Warning on vignette example
@@ -93,7 +94,7 @@ error_prop_4plots <- readRDS(file = "saved_data/error_prop_4plots.rds")
 ```{r, spatial_agbd}
 # divide plots into subplots
 multiple_subplots <- divide_plot(
-  grid_size = 25, 
+  grid_size = 50, 
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
@@ -146,8 +147,8 @@ then run calibration function, here parallelized on four CPUs:
 
 ```{r, eval=FALSE}
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
-                            plot_model = TRUE, chains = 4, thin = 20, iter = 3000,
-                            warmup = 500, cores = 4)
+                            plot_model = FALSE, chains = 4, thin = 20, iter = 4000,
+                            warmup = 1000, cores = 4)
 ```
 ```{r load_brms_output, include=FALSE}
 model_cal <- readRDS(file = "saved_data/nouragues_model_cal.rds")
@@ -158,45 +159,54 @@ Let's check inference results:
 ```{r, summary_mod_cal}
 summary(model_cal)
 ```
-- Parameters explained
+- sdgp(betatilde_gpxy), lscale(betatilde_gpxy), betatilde_Intercept, sigma 
 - Things to look at : Rhat (should be below 1.05, more generally, the closest to 1.00), Bulk and Tail ESS (should be the closest possible to "total post-warmup draws")
 
 Let's have a look at the posterior predictive check:
 
 ```{r, mod_ppcheck}
-pp_check(model_cal, ndraws = 50)
+pp_check(model_cal, ndraws = 100)
 ```
-- how to read the plot
+
+This posterior predictive check enables to quickly visualise if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination.
 
 # Predict AGBD map on the LiDAR footprint
 
 ```{r, pred_map, eval=FALSE}
 map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
-                         grid_size = 25,
+                         grid_size = 50,
                          raster_fun = median,
                          n_cores = 4,
                          n_post_draws = 100,
                          alignment_raster = NULL,
-                         plot_maps = T)
+                         plot_maps = F)
 ```
-```{r load_predicted_map, include=FALSE}
+```{r load_predicted_map, include = FALSE}
 map_agbd <- terra::rast("saved_data/nouragues_map_pred.tif")
-terra::plot(map_agbd$post_median_AGBD, main = "Median of posterior\nAGBD distributions")
-terra::plot(map_agbd$post_sd_AGBD, main = "Sd of posterior\nAGBD distributions")
-terra::plot(map_agbd$post_sd_AGBD/map_agbd$post_median_AGBD, main = "CV of posterior\nAGBD distributions")
+```
+
+```{r plot_predicted_map, include = T}
+terra::plot(map_agbd$post_median_AGBD, main = "Median of posterior AGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD, main = "Sd of posterior AGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD/map_agbd$post_median_AGBD, main = "CV of posterior AGBD distributions")
 ```
 
 If you want to predict on another footprint, you can supply the raster footprint with `alignment_raster` argument.
 
 ## Run prediction in parallel 
-- doFuture syntax
+
+Parallelisation of `predict_map` function is handled by the `future` framework. So to compute the map predictions in parallel you only need to add
+
+```{r parallel_pred_map}
+
+```
 
 # What about validation ?
 
 We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. We have 4 plots divided in 16 subplots, so we need to set aside 45 subplots for the calibration step, the rest will be used to validate.
 
-```{r, val_datasets}
+```{r, val_datasets, eval = F}
 # let's select subplots for each step
 set.seed(1234)
 vector_of_subplots <- unique(dt_inf$subplot_ID)
@@ -236,7 +246,7 @@ val_step2 <- readRDS(file = "saved_data/nouragues_val_step2.rds")
 
 Now we may compare those values predicted by the model, which was calibrated with the calibration dataset, with observed values from the validation dataset:
 
-```{r, plot_val}
+```{r, plot_val, eval = F}
 dt_validation <- cbind(dt_validation, logAGBD_pred = val_step2[,1])
 
 ggplot(dt_validation, aes( x = log(AGBD), y = logAGBD_pred, colour = subplot_ID))+ 
