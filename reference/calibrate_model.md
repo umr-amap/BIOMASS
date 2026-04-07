@@ -14,11 +14,11 @@ calibrate_model(
   nb_rep = 30,
   useCache = FALSE,
   plot_model = TRUE,
-  chains = 4,
+  chains = 3,
   thin = 20,
-  iter = 2300,
-  warmup = 300,
-  cores = 4,
+  iter = 3000,
+  warmup = 1000,
+  cores = 3,
   ...
 )
 ```
@@ -33,8 +33,9 @@ calibrate_model(
 
 - nb_rep:
 
-  Number of simulation to provide in the brms fit (nb_rep \> 50 will not
-  improved significantly the model and will be much longer to fit).
+  Number of simulation to provide in the brms fit (defaults to 30;
+  nb_rep \> 50 will not improved significantly the model and will be
+  much longer to fit).
 
 - useCache:
 
@@ -43,7 +44,8 @@ calibrate_model(
 
 - plot_model:
 
-  A logical indicating whether the model should be plot.
+  A logical indicating whether the model should be plotted (defaults to
+  TRUE).
 
 - chains:
 
@@ -52,13 +54,13 @@ calibrate_model(
 
 - thin:
 
-  Thinning rate, see
+  Thinning rate (defaults to 20), see
   [`brms::brm()`](https://paulbuerkner.com/brms/reference/brm.html)
 
 - iter:
 
   Number of total iterations per chain (including warmup; defaults to
-  5000), see
+  3000), see
   [`brms::brm()`](https://paulbuerkner.com/brms/reference/brm.html)
 
 - warmup:
@@ -68,7 +70,8 @@ calibrate_model(
 
 - cores:
 
-  Number of cores to use when executing the chains in parallel, see
+  Number of cores to use when executing the chains in parallel (defaults
+  to 3), see
   [`brms::brm()`](https://paulbuerkner.com/brms/reference/brm.html)
 
 - ...:
@@ -94,9 +97,31 @@ extension containing the following variables:
 
 - 'raster_metric': the raster metric value of the simulation.
 
-Speak about the model (fixed intercept), capturing the spatial
-autocorrelation, and cite Gelfand et al. 2003 (Spatial modeling with
-spatially varying coefficient processes)
+The model describing the relationship between plot-level AGBD and LiDAR
+metrics is a log-log regression, with a Gaussian error model. To capture
+the spatial structure that may exists in the data, we use a Spatially
+Varying Coefficient (SVC) regression with Gaussian random fields
+(Gelfand et al. 2003, Spatial modeling with spatially varying
+coefficient processes).
+
+The general equation can be written as follow, for a subplot \\s_i\\:
+
+\\Y_i \sim \mathrm{N}(\mu_i, \sigma)\\
+
+\\\mu_i = (\beta_1 + \eta_i) \times X_i\\
+
+\\\eta_i \sim \mathrm{MVNormal}(0, \Sigma)\\
+
+\\X_i\\ stands for the logarithm of plot-level AGBD, \\Y_i\\ is the
+logarithm of a LiDAR metric measurement for the corresponding plot.
+
+\\\Sigma\\, the covariance matrix, is defined by the \\\frac{3}{2}\\
+Matern kernel between two locations \\s_i\\ and \\s_j\\:
+\\k(\mathbf{s}\_i, \mathbf{s}\_j) = \psi^2 \left( 1 +
+\frac{\sqrt{3}d\_{i,j}}{l} \right) \exp \left(
+-\frac{\sqrt{3}d\_{i,j}}{l} \right)\\ \\d\_{i,j}\\ is the distance
+between locations \\s_i\\ and \\s_j\\, parameter \\\psi\\ controls the
+magnitude and parameter \\l\\ the range of the kernel.
 
 If useCache = TRUE and this is the first time the model is being built,
 the model will be saved as a .rds file in the defined cache path (see
@@ -109,11 +134,3 @@ building the model.
 ## Author
 
 Arthur BAILLY, Dominique LAMONICA
-
-## Examples
-
-``` r
-if (FALSE) { # \dontrun{
-
-} # }
-```

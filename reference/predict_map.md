@@ -14,7 +14,7 @@ predict_map(
   pred_raster,
   grid_size,
   raster_fun = mean,
-  n_cores = getOption("mc.cores", 1),
+  n_cores = 1,
   n_post_draws = 50,
   alignment_raster = NULL,
   plot_maps = TRUE
@@ -25,41 +25,39 @@ predict_map(
 
 - fit_brms:
 
-  a brmsfit object, output of the
+  A brmsfit object, output of the
   [`calibrate_model()`](https://umr-amap.github.io/BIOMASS/reference/calibrate_model.md)
   function.
 
 - pred_raster:
 
-  filename (character) or a SpatRaster object from terra package: the
-  raster to predict using fit_brms (typically a CHM raster created from
-  LiDAR data)
+  A SpatRaster object from terra package: the raster to predict using
+  fit_brms (typically a CHM raster derived from LiDAR data)
 
 - grid_size:
 
-  a numeric indicating the dimension of grid cells. Must be identical to
+  A numeric indicating the dimension of grid cells. Must be identical to
   'grid_size' used in
   [`divide_plot()`](https://umr-amap.github.io/BIOMASS/reference/divide_plot.md)
 
 - raster_fun:
 
-  the function to apply to summarize the values of 'pred_raster'. Must
+  The function to apply to summarize the values of 'pred_raster'. Must
   be identical to 'raster_fun' used in
   [`subplot_summary()`](https://umr-amap.github.io/BIOMASS/reference/subplot_summary.md)
 
 - n_cores:
 
-  number of cores to use for predictions
+  The number of cores to use for predictions when run in parallel
 
 - n_post_draws:
 
-  positive integer indicating how many posterior draws should be used
+  A positive integer indicating how many posterior draws should be used
 
 - alignment_raster:
 
-  filename (character) or a SpatRaster object from terra package: a
-  raster whose coordinates will be used to align the coordinates of the
-  predicted raster.
+  A SpatRaster object from terra package: a raster whose coordinates
+  will be used to align the coordinates of the predicted raster
 
 - plot_maps:
 
@@ -82,16 +80,13 @@ have been added:
 
 ## Details
 
-Speak about parallel computing ?
+Parallelisation of the function is handled by the `future` framework .
+In order to compute the map predictions in parallel you need to: (i) set
+the `plan` to `multisession` with the numbers of `workers` you want (see
+[`future::plan()`](https://future.futureverse.org/reference/plan.html)),
+and (ii) set the `n_cores` argument from `predict_map` to the number of
+workers.
 
 ## Author
 
 Arthur BAILLY, Dominique LAMONICA
-
-## Examples
-
-``` r
-if (FALSE) { # \dontrun{
-
-} # }
-```

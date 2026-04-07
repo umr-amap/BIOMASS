@@ -48,11 +48,11 @@
 <span>  nb_rep <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  useCache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_model <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  chains <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  chains <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  thin <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  iter <span class="op">=</span> <span class="fl">2300</span>,</span>
-<span>  warmup <span class="op">=</span> <span class="fl">300</span>,</span>
-<span>  cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  iter <span class="op">=</span> <span class="fl">3000</span>,</span>
+<span>  warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  cores <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -66,7 +66,7 @@
 
 
 <dt id="arg-nb-rep">nb_rep<a class="anchor" aria-label="anchor" href="#arg-nb-rep"></a></dt>
-<dd><p>Number of simulation to provide in the brms fit (nb_rep &gt; 50 will not improved significantly the model and will be much longer to fit).</p></dd>
+<dd><p>Number of simulation to provide in the brms fit (defaults to 30; nb_rep &gt; 50 will not improved significantly the model and will be much longer to fit).</p></dd>
 
 
 <dt id="arg-usecache">useCache<a class="anchor" aria-label="anchor" href="#arg-usecache"></a></dt>
@@ -74,7 +74,7 @@
 
 
 <dt id="arg-plot-model">plot_model<a class="anchor" aria-label="anchor" href="#arg-plot-model"></a></dt>
-<dd><p>A logical indicating whether the model should be plot.</p></dd>
+<dd><p>A logical indicating whether the model should be plotted (defaults to TRUE).</p></dd>
 
 
 <dt id="arg-chains">chains<a class="anchor" aria-label="anchor" href="#arg-chains"></a></dt>
@@ -82,11 +82,11 @@
 
 
 <dt id="arg-thin">thin<a class="anchor" aria-label="anchor" href="#arg-thin"></a></dt>
-<dd><p>Thinning rate, see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
+<dd><p>Thinning rate (defaults to 20), see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
 
 
 <dt id="arg-iter">iter<a class="anchor" aria-label="anchor" href="#arg-iter"></a></dt>
-<dd><p>Number of total iterations per chain (including warmup; defaults to 5000), see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
+<dd><p>Number of total iterations per chain (including warmup; defaults to 3000), see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
 
 
 <dt id="arg-warmup">warmup<a class="anchor" aria-label="anchor" href="#arg-warmup"></a></dt>
@@ -94,7 +94,7 @@
 
 
 <dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
-<dd><p>Number of cores to use when executing the chains in parallel, see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
+<dd><p>Number of cores to use when executing the chains in parallel (defaults to 3), see <code><a href="https://paulbuerkner.com/brms/reference/brm.html" class="external-link">brms::brm()</a></code></p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -111,7 +111,21 @@
 <li><p>'x_center' and 'y_center': the coordinates of the plots/subplots in the projected coordinate system.</p></li>
 <li><p>'AGBD': the AGBD value of the simulation.</p></li>
 <li><p>'raster_metric': the raster metric value of the simulation.</p></li>
-</ul><p>Speak about the model (fixed intercept), capturing the spatial autocorrelation, and cite Gelfand et al. 2003 (Spatial modeling with spatially varying coefficient processes)</p>
+</ul><p>The model describing the relationship between plot-level AGBD and LiDAR metrics is a log-log regression,
+with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a
+Spatially Varying Coefficient (SVC) regression with Gaussian random fields (Gelfand et al. 2003,
+Spatial modeling with spatially varying coefficient processes).</p>
+<p>The general equation can be written as follow, for a subplot \(s_i\):</p>
+<p>\(Y_i \sim \mathrm{N}(\mu_i, \sigma)\)</p>
+<p>\(\mu_i = (\beta_1 + \eta_i) \times X_i\)</p>
+<p>\(\eta_i \sim \mathrm{MVNormal}(0, \Sigma)\)</p>
+<p>\(X_i\) stands for the logarithm of plot-level AGBD, \(Y_i\) is the logarithm of
+a LiDAR metric measurement for the corresponding plot.</p>
+<p>\(\Sigma\), the covariance matrix, is defined by the \(\frac{3}{2}\) Matern kernel between
+two locations \(s_i\) and \(s_j\):
+\(k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)\)
+\(d_{i,j}\) is the distance between locations \(s_i\) and \(s_j\), parameter \(\psi\) controls
+the magnitude and parameter \(l\) the range of the kernel.</p>
 <p>If useCache = TRUE and this is the first time the model is being built, the model will be saved as a .rds file in the defined cache path (see <code><a href="createCache.html">createCache()</a></code>).
 If useCache = TRUE and the model has already been built using the user cache, the model will be loaded and updated to avoid wasting time re-compiling it.
 If useCache = NULL, the cache is first cleared before building the model.</p>
@@ -121,13 +135,6 @@ If useCache = NULL, the cache is first cleared before building the model.</p>
     <p>Arthur BAILLY, Dominique LAMONICA</p>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
