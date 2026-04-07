@@ -5,17 +5,19 @@
 #' the AGBD and associated uncertainty, using a spatially varying coefficient
 #' calibrated model created with the [calibrate_model()] function.
 #'
-#' @param fit_brms a brmsfit object, output of the [calibrate_model()] function.
-#' @param pred_raster filename (character) or a SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster created from LiDAR data)
-#' @param grid_size a numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in [divide_plot()]
-#' @param raster_fun the function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in [subplot_summary()]
-#' @param n_cores number of cores to use for predictions
-#' @param n_post_draws positive integer indicating how many posterior draws should be used 
-#' @param alignment_raster filename (character) or a SpatRaster object from terra package: a raster whose coordinates will be used to align the coordinates of the predicted raster.
+#' @param fit_brms A brmsfit object, output of the [calibrate_model()] function.
+#' @param pred_raster A SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)
+#' @param grid_size A numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in [divide_plot()]
+#' @param raster_fun The function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in [subplot_summary()]
+#' @param n_cores The number of cores to use for predictions when run in parallel
+#' @param n_post_draws A positive integer indicating how many posterior draws should be used 
+#' @param alignment_raster A SpatRaster object from terra package: a raster whose coordinates will be used to align the coordinates of the predicted raster
 #' @param plot_maps A logical indicating whether the maps should be displayed (median, sd and CV of AGBD posterior distributions)
 #'
 #' @details
-#' Speak about parallel computing ?
+#' Parallelisation of the function is handled by the `future` framework . In order to compute the map predictions in parallel
+#' you need to: (i) set the `plan` to `multisession` with the numbers of `workers` you want (see [future::plan()]), 
+#' and (ii) set the `n_cores` argument from `predict_map` to the number of workers.
 #' 
 #' @return 
 #' The data-table format of 'pred_raster', to which the following variables have been added: 
@@ -23,7 +25,6 @@
 #'  - post_sd_AGBD: the sd of the posterior distributions of the predicted AGBDs
 #'  - post_cred_2.5_AGBD and post_cred_97.5_AGBD: the 2.5 and 97.5 quantiles of the posterior distributions of the predicted AGBDs
 #' 
-#'
 #' @export
 #' 
 #' @author Arthur BAILLY, Dominique LAMONICA
@@ -31,26 +32,36 @@
 #' @importFrom data.table as.data.table
 #' @importFrom ggplot2 scale_fill_gradientn coord_fixed geom_raster labs
 #'
-#' @examples
-#' \dontrun{
-#' 
-#' }
 
 predict_map <- function(fit_brms,
                         pred_raster,
                         grid_size,
                         raster_fun = mean,
-                        n_cores = getOption("mc.cores", 1), # NOT SURE ABOUT THAT
-                        n_post_draws = 50, # NOT SURE ABOUT THAT
+                        n_cores = 1,
+                        n_post_draws = 50,
                         alignment_raster = NULL,
                         plot_maps = TRUE) {
   
   # Checking arguments ---------------------------------------------------------
+  
+  # Load raster
+  
   # Check that CRS of pred_raster and alignment_raster are the same
-  # Check that CRS of pred_raster is in projected coordinates (we need to provide a grid_size in meters to divide it)
+  if (!is.null(alignment_raster)){
+    if (terra::crs(alignment_raster != terra::crs(pred_raster))){
+      stop('alignment_raster and pred_raster should have the same Coordinate Reference System')
+    }
+  }
   
-  # Check that n_post_draws is < total post-warmup draws of fit_brms
+  # Check that CRS of pred_raster is in projected coordinates 
+  # (we need to provide a grid_size in meters to divide it)
   
+  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster") ) {
+    stop("ref_raster is not recognised as a SpatRaster of terra package")
+  }
+  
+  
+
   # Check if package brms is available
   if (!requireNamespace("foreach", quietly = TRUE)) {
     warning(
