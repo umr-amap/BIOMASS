@@ -177,7 +177,6 @@ map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
                          grid_size = 50,
                          raster_fun = median,
-                         n_cores = 4,
                          n_post_draws = 100,
                          alignment_raster = NULL,
                          plot_maps = F)
@@ -196,21 +195,30 @@ If you want to predict on another footprint, you can supply the raster footprint
 
 ## Run prediction in parallel 
 
-Parallelisation of `predict_map` function is handled by the `future` framework. So to compute the map predictions in parallel you only need to add
+Parallelisation of `predict_map` function is handled by the `future` framework. So to compute the map predictions in parallel you only need to set the `plan` to `multisession` with the numbers of workers, *i.e.* CPUs, you want to use before calling `predict_map` function:
 
-```{r parallel_pred_map}
-
+```{r parallel_pred_map, eval = FALSE}
+plan(multisession, workers = 4)
+map_agbd <- predict_map(fit_brms = model_cal,
+                         pred_raster = nouraguesRaster,
+                         grid_size = 50,
+                         raster_fun = median,
+                         n_post_draws = 100,
+                         alignment_raster = NULL,
+                         plot_maps = F)
 ```
 
 # What about validation ?
 
-We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. We have 4 plots divided in 16 subplots, so we need to set aside 45 subplots for the calibration step, the rest will be used to validate.
+We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. 
 
-```{r, val_datasets, eval = F}
+We have 4 plots divided in 4 subplots, so we need to set aside 11 subplots for the calibration step, the rest will be used to validate.
+
+```{r, val_datasets}
 # let's select subplots for each step
 set.seed(1234)
 vector_of_subplots <- unique(dt_inf$subplot_ID)
-calibration_subplots <- sample(vector_of_subplots, 45)
+calibration_subplots <- sample(vector_of_subplots, 11)
 validation_subplots <- vector_of_subplots[!(vector_of_subplots %in% calibration_subplots)]
 
 # then divide our complete dataset
@@ -224,7 +232,7 @@ dt_validation <- dt_inf %>%
   mutate(log_CHM = log(raster_metric))
 ```
 
-Now we can calibrate the model (ie run the inference) with the calibration dataset:
+Now we can calibrate the model (*i.e.* run the inference) with the calibration dataset:
 
 ```{r, eval=FALSE}
 cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCache = T,
@@ -235,28 +243,32 @@ cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCac
 cal_step1 <- readRDS(file = "saved_data/nouragues_cal_step1.rds")
 ```
 
-Now we are going to predict the model outputs (namely AGBD) at observed data points using the parameters that we inferred at step 1 when calibrating. For that we use the predict function of brms (link to help):
+Now we are going to predict the model outputs (namely AGBD) for each remaining subplot using the parameters that we inferred at step 1 when calibrating. For that we use the predict function of brms (link to help):
 
-```{r, eval=FALSE}
-val_step2 <- predict(cal_step1, newdata = dt_validation, ndraws = 1)
-```
-```{r load_val_step2, include=FALSE}
-val_step2 <- readRDS(file = "saved_data/nouragues_val_step2.rds")
+```{r, validate}
+val_step2 <- predict(cal_step1, newdata = dt_validation[dt_validation$N_simu == 1], ndraws = 100)
 ```
 
 Now we may compare those values predicted by the model, which was calibrated with the calibration dataset, with observed values from the validation dataset:
 
-```{r, plot_val, eval = F}
-dt_validation <- cbind(dt_validation, logAGBD_pred = val_step2[,1])
+```{r, plot_val}
+dt_plot_val <- dt_validation %>%
+  group_by(subplot_ID) %>%
+  summarise(median_obs = median(AGBD), inf_obs = quantile(AGBD, probs = 0.025), 
+            sup_obs = quantile(AGBD, probs = 0.975))
 
-ggplot(dt_validation, aes( x = log(AGBD), y = logAGBD_pred, colour = subplot_ID))+ 
+dt_plot_val <- cbind(dt_plot_val, AGBD_pred = exp(val_step2[,-2]))
+
+ggplot(dt_plot_val, aes( x = median_obs, y = AGBD_pred.Estimate, colour = subplot_ID))+ 
   geom_point(shape = 1)+
+  geom_segment(aes(y = AGBD_pred.Estimate, yend = AGBD_pred.Estimate, x = inf_obs, xend = sup_obs))+
+  geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs))+
   geom_abline(colour = "red", linetype = 2, linewidth = 1.2)+
   xlab("Observed log AGBD")+
   ylab("Predicted log AGBD")
 ```
 
-Here we can see that predictions are overall satisfying, except for 3 subplots. It could be wise to re-run the validation step with a different split of the original dataset, and to dig into those plots. When you are good with your validation results, you infer the model *with the entire dataset*, and then predict a robust AGBD map.
+Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
 
 Let's keep in mind that in this vignette example we are working with a very small number of inventory plots: we lack of data to get robust AGBD map predictions, and properly conduct the validation step. But we encourage BIOMASS users to run that validation procedure, or another one that is suitable to your data!
 
