@@ -56,7 +56,7 @@ predict_map <- function(fit_brms,
   # Check that CRS of pred_raster is in projected coordinates 
   # (we need to provide a grid_size in meters to divide it)
   
-  if(!is.null(ref_raster) && !is(ref_raster, "SpatRaster") ) {
+  if(!is.null(pred_raster) && !is(pred_raster, "SpatRaster") ) {
     stop("ref_raster is not recognised as a SpatRaster of terra package")
   }
   
