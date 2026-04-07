@@ -34,7 +34,7 @@
 #' @param rel_col character vector of length 2 specifying the column names (resp. x, y) of the corner relative coordinates (that of the field, ie, the local ones).
 #' @param proj_col (optional, if `lonlat_col` is not provided) character vector of length 2, specifying the column names (resp. x, y) of the corner projected coordinates.
 #' @param lonlat_col (optional, if `proj_col` is not provided) character vector of length 2 specifying the column names of the corner geographic coordinates (long,lat).
-#' @param type_col (optional) character indicating the column name in `point_data` that defines the point type (e.g., "corner"). Useful if the dataset contains non-corner reference points.
+#' @param corner_col (optional) character indicating the column name in `point_data` that defines points as corners (`TRUE`) or not corners (`FALSE`). Useful if the dataset contains non-corner reference points.
 #' @param plot_col if dealing with multiple plots: a character indicating the variable name for plot IDs in `point_data`.
 #' @param tree_data data frame containing the relative coordinates (field/local coordinates) of the trees and optional other tree metrics.
 #' @param tree_rel_col character vector specifying the column names of the tree relative coordinates.
@@ -113,7 +113,7 @@
 #' 
 plotPolygonFit <- function(point_data, 
   method = c("exact", "affine", "procrustes"), 
-  rel_col, proj_col = NULL, lonlat_col = NULL, type_col = NULL, plot_col = NULL, 
+  rel_col, proj_col = NULL, lonlat_col = NULL, corner_col = NULL, plot_col = NULL, 
   tree_data = NULL, tree_rel_col = NULL, tree_plot_col = NULL, 
   max_dist = 10, rm_outliers = TRUE, 
   raster = NULL, shapefile = NULL, prop_tree = NULL, threshold_tree = NULL, 
@@ -123,7 +123,7 @@ plotPolygonFit <- function(point_data,
   pdt <- point_data
 
   # Match arguments
-  method <- match.arg(method)
+  method <- match.arg(method, choices = c("exact", "affine", "procrustes"))
   
   # Check arguments ------------------------------------------------------------
   
@@ -196,8 +196,8 @@ plotPolygonFit <- function(point_data,
     stop("Missing values detected in point longitude/latitude coordinates, these rows will be discarded.")
   }
 
-  if (!is.null(type_col)) {
-    cdt_test <- pdt[pdt[[type_col]] == "corner", ] 
+  if (!is.null(corner_col)) {
+    cdt_test <- pdt[pdt[[corner_col]] == TRUE, ] 
   } else { 
     cdt_test <- pdt
   }
@@ -247,11 +247,15 @@ plotPolygonFit <- function(point_data,
         collapse = " "), "\n"))
   }
   
-  if (is.null(type_col)) { 
+  if (is.null(corner_col)) { 
     un_pts <- unique(pdt[, c(plot_col, rel_col)])
-    points_un_plot <- aggregate(un_pts[[rel_col[1]]] ~ un_pts[[plot_col]], FUN = length)
-    names(points_un_plot) <- c(plot_col, "N")
-    if (any(points_un_plot$x_rel < 3 | points_un_plot$y_rel < 3)) { 
+    if (is.null(plot_col)) { 
+      points_un_plot <- data.frame(n = nrow(un_pts))
+    } else {
+      points_un_plot <- aggregate(un_pts[[rel_col[1]]] ~ un_pts[[plot_col]], FUN = length)
+      names(points_un_plot) <- c(plot_col, "n")
+    }
+    if (any(points_un_plot$n < 3)) { 
       stop("At least three corners per plot required to define a polygon")
     }
   }
@@ -272,8 +276,8 @@ plotPolygonFit <- function(point_data,
     names(pdt)[names(pdt) == lonlat_col[2]] <- "lat"
   }
 
-  if (!is.null(type_col)) {
-    names(pdt)[names(pdt) == type_col] <- "type"
+  if (!is.null(corner_col)) {
+    names(pdt)[names(pdt) == corner_col] <- "type"
   }
   
   if (!is.null(plot_col)) {
@@ -361,8 +365,8 @@ plotPolygonFit <- function(point_data,
   }
 
   # Extract corners and aggregate to 1 row per unique corner
-  if (!is.null(type_col)) {
-    cdt <- pdt[pdt$type == "corner", ] 
+  if (!is.null(corner_col)) {
+    cdt <- pdt[pdt$type == TRUE, ] 
   } else { 
     cdt <- pdt
   }
@@ -510,16 +514,31 @@ plotPolygonFit <- function(point_data,
           p <- p + geom_sf(data = shp_crop, fill = NA, color = "darkgreen")
         }
       }
-      
-      # Extract the original (pre-fitted) corner measurements for this plot
-      sub_orig <- cdt[cdt$plot_ID == pid, ]
 
       poly_df <- rbind(sub_corners, sub_corners[1, ])
+
+      # Add fitted polygon
       p <- p + 
-        geom_path(data = poly_df, aes(x = x_proj, y = y_proj), linewidth = 1.2, color = "black") +
-        # Layer 1: Original GPS measurements (Open Triangles)
-        geom_point(data = sub_orig, aes(x = x_proj, y = y_proj), shape = 2, size = 2, color = "black") +
-        # Layer 2: Final Fitted Corners (Filled Squares)
+        geom_path(data = poly_df, aes(x = x_proj, y = y_proj), linewidth = 1.2, color = "black")
+
+      # Extract the original (pre-fitted) corner measurements for this plot
+      corner_orig <- cdt[cdt$plot_ID == pid, ]
+
+      if (!is.null(corner_col)) { 
+        other_orig <- pdt[pdt$plot_ID == pid & pdt$type == FALSE, ]
+        p <- p + 
+          # Layer 1: Original other GPS measurements (Open circles)
+          geom_point(data = other_orig, aes(x = x_proj, y = y_proj), shape = 1, size = 2, color = "black") +
+          # Layer 2: Original corner GPS measurements (Open triangles)
+          geom_point(data = corner_orig, aes(x = x_proj, y = y_proj), shape = 2, size = 3, color = "black")
+      } else { 
+        p <- p + 
+          # Layer 1: Original corner GPS measurements (Open circles)
+          geom_point(data = corner_orig, aes(x = x_proj, y = y_proj), shape = 2, size = 3, color = "black")
+      }
+
+      # Add final fitted corners
+      p <- p + 
         geom_point(data = sub_corners, aes(x = x_proj, y = y_proj), shape = 15, size = 3, color = "black")
 
       # Add blue orientation arrows for the local grid (x_rel, y_rel)
