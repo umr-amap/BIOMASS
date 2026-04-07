@@ -9,26 +9,26 @@ predict_map(
   pred_raster,
   grid_size,
   raster_fun = mean,
-  n_cores = getOption("mc.cores", 1),
+  n_cores = 1,
   n_post_draws = 50,
   alignment_raster = NULL,
   plot_maps = TRUE
 )
 }
 \arguments{
-\item{fit_brms}{a brmsfit object, output of the \code{\link[=calibrate_model]{calibrate_model()}} function.}
+\item{fit_brms}{A brmsfit object, output of the \code{\link[=calibrate_model]{calibrate_model()}} function.}
 
-\item{pred_raster}{filename (character) or a SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster created from LiDAR data)}
+\item{pred_raster}{A SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)}
 
-\item{grid_size}{a numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in \code{\link[=divide_plot]{divide_plot()}}}
+\item{grid_size}{A numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in \code{\link[=divide_plot]{divide_plot()}}}
 
-\item{raster_fun}{the function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in \code{\link[=subplot_summary]{subplot_summary()}}}
+\item{raster_fun}{The function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in \code{\link[=subplot_summary]{subplot_summary()}}}
 
-\item{n_cores}{number of cores to use for predictions}
+\item{n_cores}{The number of cores to use for predictions when run in parallel}
 
-\item{n_post_draws}{positive integer indicating how many posterior draws should be used}
+\item{n_post_draws}{A positive integer indicating how many posterior draws should be used}
 
-\item{alignment_raster}{filename (character) or a SpatRaster object from terra package: a raster whose coordinates will be used to align the coordinates of the predicted raster.}
+\item{alignment_raster}{A SpatRaster object from terra package: a raster whose coordinates will be used to align the coordinates of the predicted raster}
 
 \item{plot_maps}{A logical indicating whether the maps should be displayed (median, sd and CV of AGBD posterior distributions)}
 }
@@ -46,12 +46,9 @@ the AGBD and associated uncertainty, using a spatially varying coefficient
 calibrated model created with the \code{\link[=calibrate_model]{calibrate_model()}} function.
 }
 \details{
-Speak about parallel computing ?
-}
-\examples{
-\dontrun{
-
-}
+Parallelisation of the function is handled by the \code{future} framework . In order to compute the map predictions in parallel
+you need to: (i) set the \code{plan} to \code{multisession} with the numbers of \code{workers} you want (see \code{\link[future:plan]{future::plan()}}),
+and (ii) set the \code{n_cores} argument from \code{predict_map} to the number of workers.
 }
 \author{
 Arthur BAILLY, Dominique LAMONICA

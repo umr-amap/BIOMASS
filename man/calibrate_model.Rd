@@ -9,32 +9,32 @@ calibrate_model(
   nb_rep = 30,
   useCache = FALSE,
   plot_model = TRUE,
-  chains = 4,
+  chains = 3,
   thin = 20,
-  iter = 2300,
-  warmup = 300,
-  cores = 4,
+  iter = 3000,
+  warmup = 1000,
+  cores = 3,
   ...
 )
 }
 \arguments{
 \item{long_AGB_simu}{The '$long_AGB_simu' output of the \code{\link[=subplot_summary]{subplot_summary()}} function (see Details).}
 
-\item{nb_rep}{Number of simulation to provide in the brms fit (nb_rep > 50 will not improved significantly the model and will be much longer to fit).}
+\item{nb_rep}{Number of simulation to provide in the brms fit (defaults to 30; nb_rep > 50 will not improved significantly the model and will be much longer to fit).}
 
 \item{useCache}{A logical that determines wether to use the cache when building a Bayesian model (see Details).}
 
-\item{plot_model}{A logical indicating whether the model should be plot.}
+\item{plot_model}{A logical indicating whether the model should be plotted (defaults to TRUE).}
 
 \item{chains}{Number of Markov chains (defaults to 3), see \code{\link[brms:brm]{brms::brm()}}}
 
-\item{thin}{Thinning rate, see \code{\link[brms:brm]{brms::brm()}}}
+\item{thin}{Thinning rate (defaults to 20), see \code{\link[brms:brm]{brms::brm()}}}
 
-\item{iter}{Number of total iterations per chain (including warmup; defaults to 5000), see \code{\link[brms:brm]{brms::brm()}}}
+\item{iter}{Number of total iterations per chain (including warmup; defaults to 3000), see \code{\link[brms:brm]{brms::brm()}}}
 
 \item{warmup}{Number of warmup (aka burnin) iterations (defaults to 1000), see \code{\link[brms:brm]{brms::brm()}}}
 
-\item{cores}{Number of cores to use when executing the chains in parallel, see \code{\link[brms:brm]{brms::brm()}}}
+\item{cores}{Number of cores to use when executing the chains in parallel (defaults to 3), see \code{\link[brms:brm]{brms::brm()}}}
 
 \item{...}{Further arguments passed to \code{brm()}, e.g: prior, cores, etc. See \code{\link[brms:brm]{brms::brm()}}}
 }
@@ -53,16 +53,31 @@ The 'long_AGB_simu' argument must be a data frame or data frame extension contai
 \item 'raster_metric': the raster metric value of the simulation.
 }
 
-Speak about the model (fixed intercept), capturing the spatial autocorrelation, and cite Gelfand et al. 2003 (Spatial modeling with spatially varying coefficient processes)
+The model describing the relationship between plot-level AGBD and LiDAR metrics is a log-log regression,
+with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a
+Spatially Varying Coefficient (SVC) regression with Gaussian random fields (Gelfand et al. 2003,
+Spatial modeling with spatially varying coefficient processes).
+
+The general equation can be written as follow, for a subplot \eqn{s_i}:
+
+\eqn{Y_i \sim \mathrm{N}(\mu_i, \sigma)}
+
+\eqn{\mu_i = (\beta_1 + \eta_i) \times X_i}
+
+\eqn{\eta_i \sim \mathrm{MVNormal}(0, \Sigma)}
+
+\eqn{X_i} stands for the logarithm of plot-level AGBD, \eqn{Y_i} is the logarithm of
+a LiDAR metric measurement for the corresponding plot.
+
+\eqn{\Sigma}, the covariance matrix, is defined by the \eqn{\frac{3}{2}} Matern kernel between
+two locations \eqn{s_i} and \eqn{s_j}:
+\eqn{k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)}
+\eqn{d_{i,j}} is the distance between locations \eqn{s_i} and \eqn{s_j}, parameter \eqn{\psi} controls
+the magnitude and parameter \eqn{l} the range of the kernel.
 
 If useCache = TRUE and this is the first time the model is being built, the model will be saved as a .rds file in the defined cache path (see \code{\link[=createCache]{createCache()}}).
 If useCache = TRUE and the model has already been built using the user cache, the model will be loaded and updated to avoid wasting time re-compiling it.
 If useCache = NULL, the cache is first cleared before building the model.
-}
-\examples{
-\dontrun{
-
-}
 }
 \author{
 Arthur BAILLY, Dominique LAMONICA
