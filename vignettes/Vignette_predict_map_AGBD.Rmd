@@ -33,18 +33,38 @@ BIOMASS enables users to predict AGBD maps at the landscape level, with uncertai
 
 To predict AGBD maps, we are going to calibrate a model describing the relationship between AGBD estimated at plot level, and the corresponding value of one LiDAR metric (a Canopy Height Model - CHM, for example). Once this model has been calibrated using AGBD and CHM values of each plot, AGBD is computed for each pixel of the landscape based on the LiDAR metric value at the pixel, according to the model.
 
-In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms package (ref). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture package (ref), see below "Run prediction in parallel" section.
+In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms [package](https://paulbuerkner.com/brms/index.html). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture [package](https://future.futureverse.org/index.html), see below "Run prediction in parallel" section.
 
 ## Mathematical modelling 
 
--  Hunka
+The model we chose to describe the relationship between plot-level AGBD and LiDAR metrics is a log-log regression, with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a Spatially Varying Coefficient (SVC) regression with Gaussian random fields [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557).
+
+The general equation can be written as follow, for a subplot $s_i$:
+
+$$
+Y_i \sim \mathrm{N}(\mu_i, \sigma) \\
+\mu_i = (\beta_1 + \eta_i) \times X_i \\
+\eta_i \sim \mathrm{MVNormal}(0, \Sigma) \\
+$$
+$\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$ M\'{a}tern kernel between two locations $s_i$ and $s_j$:
+
+$$
+k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)
+$$
+$d_{i,j}$ is the distance between locations $s_i$ and $s_j$, parameter $\psi$ controls the magnitude and parameter $l$ the range of the kernel.
+
+In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. 
 
 ## Warning on vignette example
 
-- example with 4 plots to illustrate, but keep in mind it is very likely not enough data to get proper and reliable final predictions!
-- some quality checks you can run (chm vs tree height distributions, range of distances between plots)
+In order to keep this vignette light and usable, the procedure is displayed and illustrated using a very small dataset. The dataset comprises 4 one hectare plots, the plots being very close together in space, and the CHM raster of the rectangular extent around the plots, at 1m resolution, as LiDAR data. Obviously, predicting biomass map on such a small landscape does not make sense. However, predicting a sensibly larger map based on the same plot data would not be better since it is definitely not enough, both in terms of data quantity and spatial arrangement quality, to obtain robust and reliable final predictions! So keep in mind that this data case scenario is only here to illustrate the functions.
 
-# Previous steps (see other vignettes for details)
+You may run some quick quality checks to assess if a dataset is appropriate for such a regression, *e.g.* looking at CHM distribution against tree height distribution, checking LiDAR metric range in your calibration dataset vs. in the entire landscape, looking at the plots spatial arrangement in the landscape, checking that pairwise distances between inventory plots are more or less regularly distributed along the range.
+
+
+# Previous steps 
+
+Those steps of the procedure are detailed in the two other vignettes.
 
 ## Load inventory, plot coordinates and LiDAR data
 
@@ -134,7 +154,7 @@ chm_subplot <- raster_summary$tree_summary |>
 
 # Calibrate model
 
-Gather data for agbd-chm model inference (ie join predictor-predicted):
+Gather data for agbd-chm model inference (*i.e.* join predictor-predicted):
 
 ```{r, data_cal}
 agbd_subplot <- subplot_AGBD$long_AGB_simu
@@ -159,16 +179,37 @@ Let's check inference results:
 ```{r, summary_mod_cal}
 summary(model_cal)
 ```
-- sdgp(betatilde_gpxy), lscale(betatilde_gpxy), betatilde_Intercept, sigma 
-- Things to look at : Rhat (should be below 1.05, more generally, the closest to 1.00), Bulk and Tail ESS (should be the closest possible to "total post-warmup draws")
 
-Let's have a look at the posterior predictive check:
+The parameters to be read in the summary are the following:
+
+- sdgp(betatilde_gpxy) is $\psi$ the magnitude of the covariance kernel,
+- lscale(betatilde_gpxy) is $l$ the range of the covariance kernel (in the distance unit you have chosen),
+- betatilde_Intercept is $\beta_1$ the fixed part of the regression coefficient,
+- sigma is $\sigma$ the Gaussian residual standard deviation of the predicted variable (do not forget it is log scaled).
+
+To properly use inference results, it is necessary to make sure that (i) convergence between chains is met, and (ii) parameters samples are big enough and not autocorrelated. For that the indicators you need to look at are (i) Rhat, which should be below 1.05, and more generally the closest to 1.00, and (ii) Bulk and Tail ESS, which should be the closest possible to "total post-warmup draws". To check for within-chain autocorrelation, you can also use the `acf` function from `tseries` package, such as:
+
+```{r, mod_autocor}
+require(tseries)
+lapply(model_cal$fit@sim$samples[[1]][1:4], acf, plot = F) # check the first chain
+```
+
+Here we can see that at the first lag we still have high within-chain autocorrelation (> 0.2) for some parameters, indicating that re-inferring the model with the `thin` argument set to a higher value, *e.g.* 30, will be beneficial.
+
+You may also want to check correlations between estimated parameters. They are not "bad" *per se*, since the information is comprised in the inference output, and taken into account when predicting maps. But they may interfere with the inference march and make it difficult to converge.
+
+```{r, mod_paramcor}
+require(GGally)
+ggpairs(as.data.frame(model_cal$fit@sim$samples[[1]][1:4]))
+```
+
+Now, let's have a look at the posterior predictive check:
 
 ```{r, mod_ppcheck}
 pp_check(model_cal, ndraws = 100)
 ```
 
-This posterior predictive check enables to quickly visualise if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination.
+This posterior predictive check enables to quickly visualise if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination. Hence, it is an indicator of the goodness of fit of the model to the data.
 
 # Predict AGBD map on the LiDAR footprint
 
