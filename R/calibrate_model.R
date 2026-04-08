@@ -105,9 +105,10 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
   }
   
   if (intercept){
-    bf_formula <- brms::bf(log_AGBD  ~  1 + betatilde * log_CHM,
+    bf_formula <- brms::bf(log_AGBD  ~ beta0 + betatilde * log_CHM,
                            betatilde ~ 1 + gp(x, y, gr = T, scale = T,
                                               cov = "matern32"),
+                           beta0 ~ 1,
                            nl = T
     )
     
