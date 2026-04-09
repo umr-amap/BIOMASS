@@ -24,18 +24,50 @@ require(knitr)
 require(ggplot2)
 require(dplyr)
 require(brms)
+require(terra)
 ```
 
 # Overview
 
-- what data + updated workflow
-- bayesian method to propagate uncertainties, using brms (ref), parallel using doFuture (ref)
-- mathematical model, ref Hunka
-- example with 4 plots to illustrate, but keep in mind it is very likely not enough data to get proper and reliable final predictions !
+BIOMASS enables users to predict AGBD maps at the landscape level, with uncertainties per pixel. For that, both inventory and LiDAR data are required.
 
-# Previous steps (see other vignettes for details)
+To predict AGBD maps, we are going to calibrate a model describing the relationship between AGBD estimated at plot level, and the corresponding value of one LiDAR metric (a Canopy Height Model - CHM, for example). Once this model has been calibrated using AGBD and CHM values of each plot, AGBD is computed for each pixel of the landscape based on the LiDAR metric value at the pixel, according to the model.
+
+In order to easily propagate AGBD uncertainties that have been propagated through the previous steps in BIOMASS model calibration and prediction is done within Bayesian framework using brms [package](https://paulbuerkner.com/brms/index.html). Since prediction can be quite time consuming, depending on landscape size and chosen resolution, it is possible to run parallel using doFuture [package](https://future.futureverse.org/index.html), see below "Run prediction in parallel" section.
+
+## Mathematical modelling 
+
+The model we chose to describe the relationship between plot-level AGBD and LiDAR metrics is a log-log regression, with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a Spatially Varying Coefficient (SVC) regression with Gaussian random fields [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557).
+
+The general equation can be written as follow, for a subplot $s_i$:
+
+$$
+Y_i \sim \mathrm{N}(\mu_i, \sigma) \\
+\mu_i = (\beta_1 + \eta_i) \times X_i \\
+\eta_i \sim \mathrm{MVNormal}(0, \Sigma) \\
+$$
+$\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$ M\'{a}tern kernel between two locations $s_i$ and $s_j$:
+
+$$
+k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)
+$$
+$d_{i,j}$ is the distance between locations $s_i$ and $s_j$, parameter $\psi$ controls the magnitude and parameter $l$ the range of the kernel.
+
+In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. 
+
+## Warning on vignette example
+
+In order to keep this vignette light and usable, the procedure is displayed and illustrated using a very small dataset. The dataset comprises 4 one hectare plots, the plots being very close together in space, and the CHM raster of the rectangular extent around the plots, at 1m resolution, as LiDAR data. Obviously, predicting biomass map on such a small landscape does not make sense. However, predicting a sensibly larger map based on the same plot data would not be better since it is definitely not enough, both in terms of data quantity and spatial arrangement quality, to obtain robust and reliable final predictions! So keep in mind that this data case scenario is only here to illustrate the functions.
+
+You may run some quick quality checks to assess if a dataset is appropriate for such a regression, *e.g.* looking at CHM distribution against tree height distribution, checking LiDAR metric range in your calibration dataset vs. in the entire landscape, looking at the plots spatial arrangement in the landscape, checking that pairwise distances between inventory plots are more or less regularly distributed along the range.
+
+
+# Previous steps 
+
+Those steps of the procedure are detailed in the two other vignettes.
 
 ## Load inventory, plot coordinates and LiDAR data
+
 ```{r, load_data}
 data("NouraguesTrees")
 data("NouraguesCoords")
@@ -43,6 +75,7 @@ nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",pack
 ```
 
 ## Compute AGBD
+
 ```{r, compute_agbd, eval=FALSE}
 # Height
 data("NouraguesHD")
@@ -73,7 +106,7 @@ error_prop_4plots <- AGBmonteCarlo(
 error_prop_4plots$AGB_simu <- error_prop_4plots$AGB_simu[,1:50]
 ```
 ```{r load_error_prop, include=FALSE}
-error_prop4plots <- readRDS(file = "saved_data/error_prop4plots.rds")
+error_prop_4plots <- readRDS(file = "saved_data/error_prop_4plots.rds")
 ```
 
 ## Spatialize AGBD
@@ -81,7 +114,7 @@ error_prop4plots <- readRDS(file = "saved_data/error_prop4plots.rds")
 ```{r, spatial_agbd}
 # divide plots into subplots
 multiple_subplots <- divide_plot(
-  grid_size = 25, 
+  grid_size = 50, 
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
@@ -100,11 +133,12 @@ multiple_checks <- check_plot_coord(
 # compute AGBD estimates and their uncertainty per subplot
 subplot_AGBD <- subplot_summary(
   subplots = multiple_subplots,
-  AGB_simu = error_prop4plots$AGB_simu, draw = F
+  AGB_simu = error_prop_4plots$AGB_simu, draw = F
 )
 ```
 
 ## Spatialize LiDAR metric
+
 ```{r, spatial_lidar}
 # quick plot to visualise plot corners in the landscape
 terra::plot(nouraguesRaster)
@@ -119,7 +153,9 @@ chm_subplot <- raster_summary$tree_summary |>
 ```
 
 # Calibrate model
-Gather data for agbd-chm model inference (ie join predictor-predicted):
+
+Gather data for agbd-chm model inference (*i.e.* join predictor-predicted):
+
 ```{r, data_cal}
 agbd_subplot <- subplot_AGBD$long_AGB_simu
 dt_inf <- agbd_subplot %>%
@@ -128,52 +164,102 @@ dt_inf <- agbd_subplot %>%
 ```
 
 then run calibration function, here parallelized on four CPUs:
+
 ```{r, eval=FALSE}
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
-                            plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
-                            warmup = 500, cores = 4)
+                            plot_model = FALSE, chains = 4, thin = 20, iter = 4000,
+                            warmup = 1000, cores = 4)
 ```
 ```{r load_brms_output, include=FALSE}
 model_cal <- readRDS(file = "saved_data/nouragues_model_cal.rds")
 ```
 
 Let's check inference results:
+
 ```{r, summary_mod_cal}
 summary(model_cal)
 ```
-Parameters explained
 
-Things to look at : Rhat (should be below 1.05, more generally, the closest to 1.00), Bulk and Tail ESS (should be the closest possible to "total post-warmup draws")
+The parameters to be read in the summary are the following:
 
-Let's have a look at the posterior predictive check:
-```{r, mod_ppcheck}
-pp_check(model_cal, ndraws = 50, type = "scatter_avg")
+- sdgp(betatilde_gpxy) is $\psi$ the magnitude of the covariance kernel,
+- lscale(betatilde_gpxy) is $l$ the range of the covariance kernel (in the distance unit you have chosen),
+- betatilde_Intercept is $\beta_1$ the fixed part of the regression coefficient,
+- sigma is $\sigma$ the Gaussian residual standard deviation of the predicted variable (do not forget it is log scaled).
+
+To properly use inference results, it is necessary to make sure that (i) convergence between chains is met, and (ii) parameters samples are big enough and not autocorrelated. For that the indicators you need to look at are (i) Rhat, which should be below 1.05, and more generally the closest to 1.00, and (ii) Bulk and Tail ESS, which should be the closest possible to "total post-warmup draws". To check for within-chain autocorrelation, you can also use the `acf` function from `tseries` package, such as:
+
+```{r, mod_autocor}
+require(tseries)
+lapply(model_cal$fit@sim$samples[[1]][1:4], acf, plot = F) # check the first chain
 ```
 
+Here we can see that at the first lag we still have high within-chain autocorrelation (> 0.2) for some parameters, indicating that re-inferring the model with the `thin` argument set to a higher value, *e.g.* 30, will be beneficial.
+
+You may also want to check correlations between estimated parameters. They are not "bad" *per se*, since the information is comprised in the inference output, and taken into account when predicting maps. But they may interfere with the inference march and make it difficult to converge.
+
+```{r, mod_paramcor}
+require(GGally)
+ggpairs(as.data.frame(model_cal$fit@sim$samples[[1]][1:4]))
+```
+
+Now, let's have a look at the posterior predictive check:
+
+```{r, mod_ppcheck}
+pp_check(model_cal, ndraws = 100)
+```
+
+This posterior predictive check enables to quickly visualise if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination. Hence, it is an indicator of the goodness of fit of the model to the data.
 
 # Predict AGBD map on the LiDAR footprint
+
 ```{r, pred_map, eval=FALSE}
 map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
-                         grid_size = 25,
+                         grid_size = 50,
                          raster_fun = median,
-                         n_cores = 4,
                          n_post_draws = 100,
                          alignment_raster = NULL,
-                         plot_maps = T)
+                         plot_maps = F)
 ```
-```{r load_predicted_map, include=FALSE}
-map_agbd <- readRDS(file = "saved_data/nouragues_map_pred.rds")
+```{r load_predicted_map, include = FALSE}
+map_agbd <- terra::rast("saved_data/nouragues_map_pred.tif")
 ```
+
+```{r plot_predicted_map, include = T}
+terra::plot(map_agbd$post_median_AGBD, main = "Median of posterior AGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD, main = "Sd of posterior AGBD distributions")
+terra::plot(map_agbd$post_sd_AGBD/map_agbd$post_median_AGBD, main = "CV of posterior AGBD distributions")
+```
+
 If you want to predict on another footprint, you can supply the raster footprint with `alignment_raster` argument.
 
+## Run prediction in parallel 
+
+Parallelisation of `predict_map` function is handled by the `future` framework. So to compute the map predictions in parallel you only need to set the `plan` to `multisession` with the numbers of workers, *i.e.* CPUs, you want to use before calling `predict_map` function:
+
+```{r parallel_pred_map, eval = FALSE}
+plan(multisession, workers = 4)
+map_agbd <- predict_map(fit_brms = model_cal,
+                         pred_raster = nouraguesRaster,
+                         grid_size = 50,
+                         raster_fun = median,
+                         n_post_draws = 100,
+                         alignment_raster = NULL,
+                         plot_maps = F)
+```
+
 # What about validation ?
-We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. We have 4 plots divided in 16 subplots, so we need to set aside 45 subplots for the calibration step, the rest will be used to validate.
+
+We suggest to validate the model by subsetting your subplot dataset in two: a calibration dataset with about 70% of the subplots, and a validation dataset with the rest. 
+
+We have 4 plots divided in 4 subplots, so we need to set aside 11 subplots for the calibration step, the rest will be used to validate.
+
 ```{r, val_datasets}
 # let's select subplots for each step
 set.seed(1234)
 vector_of_subplots <- unique(dt_inf$subplot_ID)
-calibration_subplots <- sample(vector_of_subplots, 45)
+calibration_subplots <- sample(vector_of_subplots, 11)
 validation_subplots <- vector_of_subplots[!(vector_of_subplots %in% calibration_subplots)]
 
 # then divide our complete dataset
@@ -187,7 +273,8 @@ dt_validation <- dt_inf %>%
   mutate(log_CHM = log(raster_metric))
 ```
 
-Now we can calibrate the model (ie run the inference) with the calibration dataset:
+Now we can calibrate the model (*i.e.* run the inference) with the calibration dataset:
+
 ```{r, eval=FALSE}
 cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCache = T,
                             plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
@@ -197,25 +284,34 @@ cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCac
 cal_step1 <- readRDS(file = "saved_data/nouragues_cal_step1.rds")
 ```
 
-Now we are going to predict the model outputs (namely AGBD) at observed data points using the parameters that we inferred at step 1 when calibrating. For that we use the predict function of brms (link to help):
-```{r, eval=FALSE}
-val_step2 <- predict(cal_step1, newdata = dt_validation, ndraws = 1)
-```
-```{r load_val_step2, include=FALSE}
-val_step2 <- readRDS(file = "saved_data/nouragues_val_step2.rds")
+Now we are going to predict the model outputs (namely AGBD) for each remaining subplot using the parameters that we inferred at step 1 when calibrating. For that we use the predict function of brms (link to help):
+
+```{r, validate}
+val_step2 <- predict(cal_step1, newdata = dt_validation[dt_validation$N_simu == 1], ndraws = 100)
 ```
 
 Now we may compare those values predicted by the model, which was calibrated with the calibration dataset, with observed values from the validation dataset:
-```{r, plot_val}
-dt_validation <- cbind(dt_validation, logAGBD_pred = val_step2[,1])
 
-ggplot(dt_validation, aes( x = log(AGBD), y = logAGBD_pred, colour = subplot_ID))+ 
+```{r, plot_val}
+dt_plot_val <- dt_validation %>%
+  group_by(subplot_ID) %>%
+  summarise(median_obs = median(AGBD), inf_obs = quantile(AGBD, probs = 0.025), 
+            sup_obs = quantile(AGBD, probs = 0.975))
+
+dt_plot_val <- cbind(dt_plot_val, AGBD_pred = exp(val_step2[,-2]))
+
+ggplot(dt_plot_val, aes( x = median_obs, y = AGBD_pred.Estimate, colour = subplot_ID))+ 
   geom_point(shape = 1)+
+  geom_segment(aes(y = AGBD_pred.Estimate, yend = AGBD_pred.Estimate, x = inf_obs, xend = sup_obs))+
+  geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs))+
   geom_abline(colour = "red", linetype = 2, linewidth = 1.2)+
   xlab("Observed log AGBD")+
   ylab("Predicted log AGBD")
 ```
-Here we can see that predictions are overall satisfying, except for 3 subplots. It could be wise to re-run the validation step with a different split of the original dataset, and to dig into those plots. When you are good with your validation results, you infer the model *with the entire dataset*, and then predict a robust AGBD map.
+
+Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
 
 Let's keep in mind that in this vignette example we are working with a very small number of inventory plots: we lack of data to get robust AGBD map predictions, and properly conduct the validation step. But we encourage BIOMASS users to run that validation procedure, or another one that is suitable to your data!
+
+
 
