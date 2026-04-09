@@ -18,9 +18,9 @@ predict_map(
 \arguments{
 \item{fit_brms}{A brmsfit object, output of the \code{\link[=calibrate_model]{calibrate_model()}} function.}
 
-\item{pred_raster}{A SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)}
+\item{pred_raster}{A SpatRaster object from terra package, with projected coordinates in meters: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)}
 
-\item{grid_size}{A numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in \code{\link[=divide_plot]{divide_plot()}}}
+\item{grid_size}{A numeric indicating the dimension of grid cells in meters. Must be identical to 'grid_size' used in \code{\link[=divide_plot]{divide_plot()}}}
 
 \item{raster_fun}{The function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in \code{\link[=subplot_summary]{subplot_summary()}}}
 

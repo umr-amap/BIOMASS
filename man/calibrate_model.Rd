@@ -9,6 +9,7 @@ calibrate_model(
   nb_rep = 30,
   useCache = FALSE,
   plot_model = TRUE,
+  intercept = FALSE,
   chains = 3,
   thin = 20,
   iter = 3000,
@@ -25,6 +26,8 @@ calibrate_model(
 \item{useCache}{A logical that determines wether to use the cache when building a Bayesian model (see Details).}
 
 \item{plot_model}{A logical indicating whether the model should be plotted (defaults to TRUE).}
+
+\item{intercept}{A logical indicating whether the regression model should include an intercept (defaults to FALSE).}
 
 \item{chains}{Number of Markov chains (defaults to 3), see \code{\link[brms:brm]{brms::brm()}}}
 
@@ -62,7 +65,7 @@ The general equation can be written as follow, for a subplot \eqn{s_i}:
 
 \eqn{Y_i \sim \mathrm{N}(\mu_i, \sigma)}
 
-\eqn{\mu_i = (\beta_1 + \eta_i) \times X_i}
+\eqn{\mu_i = \beta_0 + (\beta_1 + \eta_i) \times X_i}
 
 \eqn{\eta_i \sim \mathrm{MVNormal}(0, \Sigma)}
 

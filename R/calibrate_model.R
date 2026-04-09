@@ -7,7 +7,7 @@
 #' @param nb_rep Number of simulation to provide in the brms fit (defaults to 30; nb_rep > 50 will not improved significantly the model and will be much longer to fit).
 #' @param useCache A logical that determines wether to use the cache when building a Bayesian model (see Details).
 #' @param plot_model A logical indicating whether the model should be plotted (defaults to TRUE).
-#' @param intercept A logical indicating whether the regression model should include an intercept  (defaults to FALSE).
+#' @param intercept A logical indicating whether the regression model should include an intercept (defaults to FALSE).
 #' @param chains Number of Markov chains (defaults to 3), see [brms::brm()]
 #' @param thin Thinning rate (defaults to 20), see [brms::brm()]
 #' @param iter Number of total iterations per chain (including warmup; defaults to 3000), see [brms::brm()]
