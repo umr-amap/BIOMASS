@@ -6,8 +6,8 @@
 #' calibrated model created with the [calibrate_model()] function.
 #'
 #' @param fit_brms A brmsfit object, output of the [calibrate_model()] function.
-#' @param pred_raster A SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)
-#' @param grid_size A numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in [divide_plot()]
+#' @param pred_raster A SpatRaster object from terra package, with projected coordinates in meters: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)
+#' @param grid_size A numeric indicating the dimension of grid cells in meters. Must be identical to 'grid_size' used in [divide_plot()]
 #' @param raster_fun The function to apply to summarize the values of 'pred_raster'. Must be identical to 'raster_fun' used in [subplot_summary()]
 #' @param n_cores The number of cores to use for predictions when run in parallel
 #' @param n_post_draws A positive integer indicating how many posterior draws should be used 
@@ -44,23 +44,30 @@ predict_map <- function(fit_brms,
   
   # Checking arguments ---------------------------------------------------------
   
-  # Load raster
+  # Check that rasters are rasters
+  if(!is.null(pred_raster) && !is(pred_raster, "SpatRaster") ) {
+    stop("pred_raster is not recognised as a SpatRaster of terra package")
+  }
+  if(!is.null(alignment_raster) && !is(alignment_raster, "SpatRaster") ) {
+    stop("alignment_raster is not recognised as a SpatRaster of terra package")
+  }
   
   # Check that CRS of pred_raster and alignment_raster are the same
   if (!is.null(alignment_raster)){
+    
+    if (terra::crs(alignment_raster) == "" | terra::crs(pred_raster) == ""){
+      stop('both alignment_raster and pred_raster should have Coordinate Reference Systems')
+    }
+    
     if (terra::crs(alignment_raster != terra::crs(pred_raster))){
-      stop('alignment_raster and pred_raster should have the same Coordinate Reference System')
+      stop('alignment_raster and pred_raster should have the same Coordinate Reference Systems')
     }
   }
   
-  # Check that CRS of pred_raster is in projected coordinates 
-  # (we need to provide a grid_size in meters to divide it)
-  
-  if(!is.null(pred_raster) && !is(pred_raster, "SpatRaster") ) {
-    stop("ref_raster is not recognised as a SpatRaster of terra package")
+  # Warning if CRS of pred_raster is empty
+  if (is.null(alignment_raster) & terra::crs(pred_raster) == ""){
+    warning('pred_raster does not have Coordinate Reference System, be careful \n coordinates will be processed as projected coordinates in meters')
   }
-  
-  
 
   # Check if package brms is available
   if (!requireNamespace("foreach", quietly = TRUE)) {
