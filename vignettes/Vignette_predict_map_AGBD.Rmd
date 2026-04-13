@@ -299,17 +299,19 @@ dt_plot_val <- dt_validation %>%
             sup_obs = quantile(AGBD, probs = 0.975))
 
 dt_plot_val <- cbind(dt_plot_val, AGBD_pred = exp(val_step2[,-2]))
+axis_lims <- range(with(dt_plot_val, c(inf_obs,  sup_obs, AGBD_pred.Q2.5, AGBD_pred.Q97.5)))
 
-ggplot(dt_plot_val, aes( x = median_obs, y = AGBD_pred.Estimate, colour = subplot_ID))+ 
-  geom_point(shape = 1)+
-  geom_segment(aes(y = AGBD_pred.Estimate, yend = AGBD_pred.Estimate, x = inf_obs, xend = sup_obs))+
-  geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs))+
-  geom_abline(colour = "red", linetype = 2, linewidth = 1.2)+
-  xlab("Observed log AGBD")+
-  ylab("Predicted log AGBD")
+ggplot(dt_plot_val)+ 
+  geom_abline(aes(intercept = 1, slope = 1), color = "black",  linetype = 2)+
+  geom_point(aes( x = median_obs, y = AGBD_pred.Estimate, colour = subplot_ID), shape = 1)+
+  geom_segment(aes(y = AGBD_pred.Estimate, yend = AGBD_pred.Estimate, x = inf_obs, xend = sup_obs, colour = subplot_ID))+
+  geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs, colour = subplot_ID))+
+  xlab("Observed AGBD")+
+  ylab("Predicted AGBD")+
+  coord_cartesian(xlim = axis_lims, ylim = axis_lims)
 ```
 
-Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
+Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments, the black dotted line is the identity line. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
 
 Let's keep in mind that in this vignette example we are working with a very small number of inventory plots: we lack of data to get robust AGBD map predictions, and properly conduct the validation step. But we encourage BIOMASS users to run that validation procedure, or another one that is suitable to your data!
 
