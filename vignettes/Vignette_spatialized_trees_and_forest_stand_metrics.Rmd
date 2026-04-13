@@ -90,6 +90,8 @@ Two situations may occur:
 
 In both cases, the use of the `check_plot_coord()` function is recommended as a first step.
 
+Note that BIOMASS can handle measurement points which are not the 4 corners of the plot, for instance points along the plot sides. However this case will be handled only within the second situation where **the shape of the plot measured on the field is considered to be accurate**.
+
 ## Checking the corners of the plot
 
 The `check_plot_coord()` function handles both situations using the `trust_GPS_corners` argument (= TRUE or FALSE).
@@ -225,7 +227,7 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25 # or c(25,25)
+  grid_size = 50 # or c(50,50)
   )
 
 kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$sub_corner_coord output.")
@@ -284,7 +286,7 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25, # or c(25,25)
+  grid_size = 50, # or c(50,50)
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield")
   )
 ```
@@ -305,7 +307,7 @@ Of course, the function can handle as many plots as you want, using the `corner_
 multiple_subplots <- divide_plot(
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
-  grid_size = 25, 
+  grid_size = 50, 
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
 )
 ```
@@ -317,7 +319,7 @@ sd_coord_subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25, # or c(25,25)
+  grid_size = 50, # or c(50,50)
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"),
   sd_coord = check_plot_trust_GPS$sd_coord, n = 50
   )
