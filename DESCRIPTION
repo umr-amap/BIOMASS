@@ -61,6 +61,7 @@ Suggests:
 	progressr,
 	mockery,
 	lifecycle,
-	jsonlite
+	jsonlite,
+	GGally
 RoxygenNote: 7.3.3
 Config/testthat/edition: 3
