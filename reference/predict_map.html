@@ -70,11 +70,11 @@ calibrated model created with the <code><a href="calibrate_model.html">calibrate
 
 
 <dt id="arg-pred-raster">pred_raster<a class="anchor" aria-label="anchor" href="#arg-pred-raster"></a></dt>
-<dd><p>A SpatRaster object from terra package: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)</p></dd>
+<dd><p>A SpatRaster object from terra package, with projected coordinates in meters: the raster to predict using fit_brms (typically a CHM raster derived from LiDAR data)</p></dd>
 
 
 <dt id="arg-grid-size">grid_size<a class="anchor" aria-label="anchor" href="#arg-grid-size"></a></dt>
-<dd><p>A numeric indicating the dimension of grid cells. Must be identical to 'grid_size' used in <code><a href="divide_plot.html">divide_plot()</a></code></p></dd>
+<dd><p>A numeric indicating the dimension of grid cells in meters. Must be identical to 'grid_size' used in <code><a href="divide_plot.html">divide_plot()</a></code></p></dd>
 
 
 <dt id="arg-raster-fun">raster_fun<a class="anchor" aria-label="anchor" href="#arg-raster-fun"></a></dt>

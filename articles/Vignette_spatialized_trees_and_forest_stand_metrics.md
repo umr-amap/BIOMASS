@@ -130,6 +130,11 @@ In both cases, the use of the
 [`check_plot_coord()`](https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.md)
 function is recommended as a first step.
 
+Note that BIOMASS can handle measurement points which are not the 4
+corners of the plot, for instance points along the plot sides. However
+this case will be handled only within the second situation where **the
+shape of the plot measured on the field is considered to be accurate**.
+
 ### Checking the corners of the plot
 
 The
@@ -345,7 +350,7 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25 # or c(25,25)
+  grid_size = 50 # or c(50,50)
   )
 
 kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$sub_corner_coord output.")
@@ -354,15 +359,15 @@ kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, captio
 | plot_ID | subplot_ID  | x_rel | y_rel |   x_proj |   y_proj |
 |:--------|:------------|------:|------:|---------:|---------:|
 |         | subplot_0_0 |     0 |     0 | 313005.7 | 451723.2 |
-|         | subplot_0_0 |    25 |     0 | 312993.5 | 451699.9 |
-|         | subplot_0_0 |    25 |    25 | 313017.1 | 451686.2 |
-|         | subplot_0_0 |     0 |    25 | 313029.4 | 451708.9 |
-|         | subplot_1_0 |    25 |     0 | 312993.5 | 451699.9 |
+|         | subplot_0_0 |    50 |     0 | 312981.3 | 451676.7 |
+|         | subplot_0_0 |    50 |    50 | 313028.4 | 451650.5 |
+|         | subplot_0_0 |     0 |    50 | 313053.1 | 451694.5 |
 |         | subplot_1_0 |    50 |     0 | 312981.3 | 451676.7 |
-|         | subplot_1_0 |    50 |    25 | 313004.8 | 451663.6 |
-|         | subplot_1_0 |    25 |    25 | 313017.1 | 451686.2 |
-|         | subplot_2_0 |    50 |     0 | 312981.3 | 451676.7 |
-|         | subplot_2_0 |    75 |     0 | 312969.1 | 451653.5 |
+|         | subplot_1_0 |   100 |     0 | 312956.9 | 451630.2 |
+|         | subplot_1_0 |   100 |    50 | 313003.6 | 451606.4 |
+|         | subplot_1_0 |    50 |    50 | 313028.4 | 451650.5 |
+|         | subplot_0_1 |     0 |    50 | 313053.1 | 451694.5 |
+|         | subplot_0_1 |    50 |    50 | 313028.4 | 451650.5 |
 
 Head of the divide_plot()\$sub_corner_coord output.
 
@@ -403,7 +408,7 @@ subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25, # or c(25,25)
+  grid_size = 50, # or c(50,50)
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield")
   )
 #> Warning in divide_plot(corner_data = check_plot_trust_GPS$corner_coord, : One
@@ -423,11 +428,11 @@ kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, capti
 
 | x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID  |
 |------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:------------|
-|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_1 |
-|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | subplot_0_3 |
-|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_1 |
+|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_0 |
+|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | subplot_0_1 |
+|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_0 |
 |  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.1 |         | NA          |
-|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | subplot_0_1 |
+|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | subplot_0_0 |
 |  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA          |
 
 Head of the divide_plot()\$tree_data returns
@@ -439,7 +444,7 @@ Of course, the function can handle as many plots as you want, using the
 multiple_subplots <- divide_plot(
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
-  grid_size = 25, 
+  grid_size = 50, 
   tree_data = NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot"
 )
 #> Warning in divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield", :
@@ -457,7 +462,7 @@ sd_coord_subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
   proj_coord = c("x_proj","y_proj"),
-  grid_size = 25, # or c(25,25)
+  grid_size = 50, # or c(50,50)
   tree_data = plot201Trees, tree_coords = c("Xfield","Yfield"),
   sd_coord = check_plot_trust_GPS$sd_coord, n = 50
   )

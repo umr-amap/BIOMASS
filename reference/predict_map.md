@@ -31,13 +31,14 @@ predict_map(
 
 - pred_raster:
 
-  A SpatRaster object from terra package: the raster to predict using
-  fit_brms (typically a CHM raster derived from LiDAR data)
+  A SpatRaster object from terra package, with projected coordinates in
+  meters: the raster to predict using fit_brms (typically a CHM raster
+  derived from LiDAR data)
 
 - grid_size:
 
-  A numeric indicating the dimension of grid cells. Must be identical to
-  'grid_size' used in
+  A numeric indicating the dimension of grid cells in meters. Must be
+  identical to 'grid_size' used in
   [`divide_plot()`](https://umr-amap.github.io/BIOMASS/reference/divide_plot.md)
 
 - raster_fun:

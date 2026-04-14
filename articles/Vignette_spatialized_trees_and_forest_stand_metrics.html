@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2026-04-09</h4>
+            <h4 data-toc-skip class="date">2026-04-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd" class="external-link"><code>vignettes/Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_spatialized_trees_and_forest_stand_metrics.Rmd</code></div>
@@ -427,6 +427,11 @@ plot. See <a href="#trustPlotShape">3.1.2</a></p></li>
 </ul>
 <p>In both cases, the use of the <code><a href="../reference/check_plot_coord.html">check_plot_coord()</a></code>
 function is recommended as a first step.</p>
+<p>Note that BIOMASS can handle measurement points which are not the 4
+corners of the plot, for instance points along the plot sides. However
+this case will be handled only within the second situation where
+<strong>the shape of the plot measured on the field is considered to be
+accurate</strong>.</p>
 <div class="section level3">
 <h3 id="checking-the-corners-of-the-plot">Checking the corners of the plot<a class="anchor" aria-label="anchor" href="#checking-the-corners-of-the-plot"></a>
 </h3>
@@ -684,7 +689,7 @@ you can also display it using the <code>shapefile</code> argument.</p>
 to change the plot title:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_to_change</span> <span class="op">&lt;-</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">plot_design</span></span>
-<span><span class="va">plot_to_change</span> <span class="op">&lt;-</span> <span class="va">plot_to_change</span> <span class="op">+</span> <span class="fu">ggtitle</span><span class="op">(</span><span class="st">"A custom title"</span><span class="op">)</span></span>
+<span><span class="va">plot_to_change</span> <span class="op">&lt;-</span> <span class="va">plot_to_change</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"A custom title"</span><span class="op">)</span></span>
 <span><span class="va">plot_to_change</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 </div>
@@ -746,7 +751,7 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span> <span class="co"># or c(25,25)</span></span>
+<span>  grid_size <span class="op">=</span> <span class="fl">50</span> <span class="co"># or c(50,50)</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu">kable</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">subplots</span><span class="op">$</span><span class="va">sub_corner_coord</span>, <span class="fl">10</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">1</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, caption <span class="op">=</span> <span class="st">"Head of the divide_plot()$sub_corner_coord output."</span><span class="op">)</span></span></code></pre></div>
@@ -772,38 +777,6 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 <tr class="even">
 <td align="left"></td>
 <td align="left">subplot_0_0</td>
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">312993.5</td>
-<td align="right">451699.9</td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left">subplot_0_0</td>
-<td align="right">25</td>
-<td align="right">25</td>
-<td align="right">313017.1</td>
-<td align="right">451686.2</td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left">subplot_0_0</td>
-<td align="right">0</td>
-<td align="right">25</td>
-<td align="right">313029.4</td>
-<td align="right">451708.9</td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td align="left">subplot_1_0</td>
-<td align="right">25</td>
-<td align="right">0</td>
-<td align="right">312993.5</td>
-<td align="right">451699.9</td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td align="left">subplot_1_0</td>
 <td align="right">50</td>
 <td align="right">0</td>
 <td align="right">312981.3</td>
@@ -811,23 +784,23 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td align="left">subplot_1_0</td>
+<td align="left">subplot_0_0</td>
 <td align="right">50</td>
-<td align="right">25</td>
-<td align="right">313004.8</td>
-<td align="right">451663.6</td>
+<td align="right">50</td>
+<td align="right">313028.4</td>
+<td align="right">451650.5</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td align="left">subplot_1_0</td>
-<td align="right">25</td>
-<td align="right">25</td>
-<td align="right">313017.1</td>
-<td align="right">451686.2</td>
+<td align="left">subplot_0_0</td>
+<td align="right">0</td>
+<td align="right">50</td>
+<td align="right">313053.1</td>
+<td align="right">451694.5</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td align="left">subplot_2_0</td>
+<td align="left">subplot_1_0</td>
 <td align="right">50</td>
 <td align="right">0</td>
 <td align="right">312981.3</td>
@@ -835,11 +808,43 @@ coordinates system</strong>, <em>i.e.</em> have 4 right angles:</p>
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td align="left">subplot_2_0</td>
-<td align="right">75</td>
+<td align="left">subplot_1_0</td>
+<td align="right">100</td>
 <td align="right">0</td>
-<td align="right">312969.1</td>
-<td align="right">451653.5</td>
+<td align="right">312956.9</td>
+<td align="right">451630.2</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">subplot_1_0</td>
+<td align="right">100</td>
+<td align="right">50</td>
+<td align="right">313003.6</td>
+<td align="right">451606.4</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">subplot_1_0</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="right">313028.4</td>
+<td align="right">451650.5</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">subplot_0_1</td>
+<td align="right">0</td>
+<td align="right">50</td>
+<td align="right">313053.1</td>
+<td align="right">451694.5</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">subplot_0_1</td>
+<td align="right">50</td>
+<td align="right">50</td>
+<td align="right">313028.4</td>
+<td align="right">451650.5</td>
 </tr>
 </tbody>
 </table>
@@ -875,7 +880,7 @@ arguments</strong>:</p>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>, </span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, <span class="co"># or c(25,25)</span></span>
+<span>  grid_size <span class="op">=</span> <span class="fl">50</span>, <span class="co"># or c(50,50)</span></span>
 <span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in divide_plot(corner_data = check_plot_trust_GPS$corner_coord, : One</span></span>
@@ -920,7 +925,7 @@ previously</p></li>
 <td align="left">surinamense</td>
 <td align="right">0.1</td>
 <td align="left"></td>
-<td align="left">subplot_0_1</td>
+<td align="left">subplot_0_0</td>
 </tr>
 <tr class="even">
 <td align="right">0.1</td>
@@ -930,7 +935,7 @@ previously</p></li>
 <td align="left">guianensis</td>
 <td align="right">7.3</td>
 <td align="left"></td>
-<td align="left">subplot_0_3</td>
+<td align="left">subplot_0_1</td>
 </tr>
 <tr class="odd">
 <td align="right">0.2</td>
@@ -940,7 +945,7 @@ previously</p></li>
 <td align="left">Indet.</td>
 <td align="right">0.6</td>
 <td align="left"></td>
-<td align="left">subplot_0_1</td>
+<td align="left">subplot_0_0</td>
 </tr>
 <tr class="even">
 <td align="right">-4.0</td>
@@ -960,7 +965,7 @@ previously</p></li>
 <td align="left">altissimum</td>
 <td align="right">0.3</td>
 <td align="left"></td>
-<td align="left">subplot_0_1</td>
+<td align="left">subplot_0_0</td>
 </tr>
 <tr class="even">
 <td align="right">-3.5</td>
@@ -981,7 +986,7 @@ arguments:</p>
 <code class="sourceCode R"><span><span class="va">multiple_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, corner_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, </span>
+<span>  grid_size <span class="op">=</span> <span class="fl">50</span>, </span>
 <span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in divide_plot(corner_data = NouraguesCoords, rel_coord = c("Xfield", :</span></span>
@@ -997,7 +1002,7 @@ and Y- axis will be equal to the value of sd_coord:</p>
 <span>  corner_data <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">corner_coord</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_rel"</span>,<span class="st">"y_rel"</span><span class="op">)</span>,</span>
 <span>  proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x_proj"</span>,<span class="st">"y_proj"</span><span class="op">)</span>,</span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, <span class="co"># or c(25,25)</span></span>
+<span>  grid_size <span class="op">=</span> <span class="fl">50</span>, <span class="co"># or c(50,50)</span></span>
 <span>  tree_data <span class="op">=</span> <span class="va">plot201Trees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>,</span>
 <span>  sd_coord <span class="op">=</span> <span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">sd_coord</span>, n <span class="op">=</span> <span class="fl">50</span></span>
 <span>  <span class="op">)</span></span>
@@ -1141,16 +1146,16 @@ corners and summarise the following information:</p>
 <span><span class="va">custom_plot</span> <span class="op">&lt;-</span> <span class="va">subplot_metric</span><span class="op">$</span><span class="va">plot_design</span></span>
 <span><span class="co"># Change the title and legend:</span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
-<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Nouragues plot"</span> , fill<span class="op">=</span><span class="st">"Sum of AGB per hectare"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Nouragues plot"</span> , fill<span class="op">=</span><span class="st">"Sum of AGB per hectare"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-2.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Display trees with diameter as size and transparency (and a smaller legend on the right): </span></span>
 <span><span class="va">custom_plot</span> <span class="op">+</span> </span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>data<span class="op">=</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span>, mapping <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_proj</span>, y <span class="op">=</span> <span class="va">y_proj</span>, size <span class="op">=</span> <span class="va">D</span>, alpha<span class="op">=</span> <span class="va">D</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span>,<span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">labs</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Sum of AGB per hectare"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">guides</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span>,</span>
-<span>         size <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span>, legend.key.size <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">0.5</span>, <span class="st">'cm'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">check_plot_trust_GPS</span><span class="op">$</span><span class="va">tree_data</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_proj</span>, y <span class="op">=</span> <span class="va">y_proj</span>, size <span class="op">=</span> <span class="va">D</span>, alpha<span class="op">=</span> <span class="va">D</span><span class="op">)</span>, shape<span class="op">=</span><span class="fl">1</span>,<span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Sum of AGB per hectare"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span>,</span>
+<span>         size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Diameter (cm)"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span>, legend.key.size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="st">'cm'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-3.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 </div>
 </div>

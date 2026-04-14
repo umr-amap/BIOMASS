@@ -48,6 +48,7 @@
 <span>  nb_rep <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  useCache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_model <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  intercept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  chains <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  thin <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">3000</span>,</span>
@@ -75,6 +76,10 @@
 
 <dt id="arg-plot-model">plot_model<a class="anchor" aria-label="anchor" href="#arg-plot-model"></a></dt>
 <dd><p>A logical indicating whether the model should be plotted (defaults to TRUE).</p></dd>
+
+
+<dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
+<dd><p>A logical indicating whether the regression model should include an intercept (defaults to FALSE).</p></dd>
 
 
 <dt id="arg-chains">chains<a class="anchor" aria-label="anchor" href="#arg-chains"></a></dt>
@@ -117,7 +122,7 @@ Spatially Varying Coefficient (SVC) regression with Gaussian random fields (Gelf
 Spatial modeling with spatially varying coefficient processes).</p>
 <p>The general equation can be written as follow, for a subplot \(s_i\):</p>
 <p>\(Y_i \sim \mathrm{N}(\mu_i, \sigma)\)</p>
-<p>\(\mu_i = (\beta_1 + \eta_i) \times X_i\)</p>
+<p>\(\mu_i = \beta_0 + (\beta_1 + \eta_i) \times X_i\)</p>
 <p>\(\eta_i \sim \mathrm{MVNormal}(0, \Sigma)\)</p>
 <p>\(X_i\) stands for the logarithm of plot-level AGBD, \(Y_i\) is the logarithm of
 a LiDAR metric measurement for the corresponding plot.</p>

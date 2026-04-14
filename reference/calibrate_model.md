@@ -14,6 +14,7 @@ calibrate_model(
   nb_rep = 30,
   useCache = FALSE,
   plot_model = TRUE,
+  intercept = FALSE,
   chains = 3,
   thin = 20,
   iter = 3000,
@@ -46,6 +47,11 @@ calibrate_model(
 
   A logical indicating whether the model should be plotted (defaults to
   TRUE).
+
+- intercept:
+
+  A logical indicating whether the regression model should include an
+  intercept (defaults to FALSE).
 
 - chains:
 
@@ -108,7 +114,7 @@ The general equation can be written as follow, for a subplot \\s_i\\:
 
 \\Y_i \sim \mathrm{N}(\mu_i, \sigma)\\
 
-\\\mu_i = (\beta_1 + \eta_i) \times X_i\\
+\\\mu_i = \beta_0 + (\beta_1 + \eta_i) \times X_i\\
 
 \\\eta_i \sim \mathrm{MVNormal}(0, \Sigma)\\
 

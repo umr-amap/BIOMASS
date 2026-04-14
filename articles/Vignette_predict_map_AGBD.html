@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Dominique
 Lamonica</h4>
             
-            <h4 data-toc-skip class="date">2026-04-09</h4>
+            <h4 data-toc-skip class="date">2026-04-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_predict_map_AGBD.Rmd" class="external-link"><code>vignettes/Vignette_predict_map_AGBD.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_predict_map_AGBD.Rmd</code></div>
@@ -76,19 +76,93 @@ Lamonica</h4>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<ul>
-<li>what data + updated workflow</li>
-<li>bayesian method to propagate uncertainties, using brms (ref),
-parallel using doFuture (ref)</li>
-<li>mathematical model, ref Hunka</li>
-<li>example with 4 plots to illustrate, but keep in mind it is very
-likely not enough data to get proper and reliable final predictions
-!</li>
-</ul>
+<p>BIOMASS enables users to predict AGBD maps at the landscape level,
+with uncertainties per pixel. For that, both inventory and LiDAR data
+are required.</p>
+<p>To predict AGBD maps, we are going to calibrate a model describing
+the relationship between AGBD estimated at plot level, and the
+corresponding value of one LiDAR metric (a Canopy Height Model - CHM,
+for example). Once this model has been calibrated using AGBD and CHM
+values of each plot, AGBD is computed for each pixel of the landscape
+based on the LiDAR metric value at the pixel, according to the
+model.</p>
+<p>In order to easily propagate AGBD uncertainties that have been
+propagated through the previous steps in BIOMASS model calibration and
+prediction is done within Bayesian framework using brms <a href="https://paulbuerkner.com/brms/index.html" class="external-link">package</a>. Since
+prediction can be quite time consuming, depending on landscape size and
+chosen resolution, it is possible to run parallel using doFuture <a href="https://future.futureverse.org/index.html" class="external-link">package</a>, see below
+“Run prediction in parallel” section.</p>
+<div class="section level3">
+<h3 id="mathematical-modelling">Mathematical modelling<a class="anchor" aria-label="anchor" href="#mathematical-modelling"></a>
+</h3>
+<p>The model we chose to describe the relationship between plot-level
+AGBD and LiDAR metrics is a log-log regression, with a Gaussian error
+model. To capture the spatial structure that may exists in the data, we
+use a Spatially Varying Coefficient (SVC) regression with Gaussian
+random fields <a href="https://doi.org/10.1016/j.rse.2024.114557" class="external-link">Hunka
+et al., 2025</a>.</p>
+<p>The general equation can be written as follow, for a subplot
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>:</p>
+<p><span class="math display">$$
+Y_i \sim \mathrm{N}(\mu_i, \sigma) \\
+\mu_i = (\beta_1 + \eta_i) \times X_i \\
+\eta_i \sim \mathrm{MVNormal}(0, \Sigma) \\
+$$</span>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>,
+the covariance matrix, is defined by the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>3</mn><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{3}{2}</annotation></semantics></math>
+M'{a}tern kernel between two locations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>j</mi></msub><annotation encoding="application/x-tex">s_j</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐬</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐬</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>ψ</mi><mn>2</mn></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><mrow><msqrt><mn>3</mn></msqrt><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow><mi>l</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mfrac><mrow><msqrt><mn>3</mn></msqrt><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow><mi>l</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)
+</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">d_{i,j}</annotation></semantics></math>
+is the distance between locations
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>j</mi></msub><annotation encoding="application/x-tex">s_j</annotation></semantics></math>,
+parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+controls the magnitude and parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>
+the range of the kernel.</p>
+<p>In our case
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+stands for the logarithm of plot-level AGBD, while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+is the logarithm of a LiDAR metric measurement for the corresponding
+plot, for instance the mean of the Canopy Height Model on the plot
+surface.</p>
+</div>
+<div class="section level3">
+<h3 id="warning-on-vignette-example">Warning on vignette example<a class="anchor" aria-label="anchor" href="#warning-on-vignette-example"></a>
+</h3>
+<p>In order to keep this vignette light and usable, the procedure is
+displayed and illustrated using a very small dataset. The dataset
+comprises 4 one hectare plots, the plots being very close together in
+space, and the CHM raster of the rectangular extent around the plots, at
+1m resolution, as LiDAR data. Obviously, predicting biomass map on such
+a small landscape does not make sense. However, predicting a sensibly
+larger map based on the same plot data would not be better since it is
+definitely not enough, both in terms of data quantity and spatial
+arrangement quality, to obtain robust and reliable final predictions! So
+keep in mind that this data case scenario is only here to illustrate the
+functions.</p>
+<p>You may run some quick quality checks to assess if a dataset is
+appropriate for such a regression, <em>e.g.</em> looking at CHM
+distribution against tree height distribution, checking LiDAR metric
+range in your calibration dataset vs. in the entire landscape, looking
+at the plots spatial arrangement in the landscape, checking that
+pairwise distances between inventory plots are more or less regularly
+distributed along the range.</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="previous-steps-see-other-vignettes-for-details">Previous steps (see other vignettes for details)<a class="anchor" aria-label="anchor" href="#previous-steps-see-other-vignettes-for-details"></a>
+<h2 id="previous-steps">Previous steps<a class="anchor" aria-label="anchor" href="#previous-steps"></a>
 </h2>
+<p>Those steps of the procedure are detailed in the two other
+vignettes.</p>
 <div class="section level3">
 <h3 id="load-inventory-plot-coordinates-and-lidar-data">Load inventory, plot coordinates and LiDAR data<a class="anchor" aria-label="anchor" href="#load-inventory-plot-coordinates-and-lidar-data"></a>
 </h3>
@@ -135,12 +209,12 @@ likely not enough data to get proper and reliable final predictions
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># divide plots into subplots</span></span>
 <span><span class="va">multiple_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/divide_plot.html">divide_plot</a></span><span class="op">(</span></span>
-<span>  grid_size <span class="op">=</span> <span class="fl">25</span>, </span>
+<span>  grid_size <span class="op">=</span> <span class="fl">50</span>, </span>
 <span>  corner_data <span class="op">=</span> <span class="va">NouraguesCoords</span>,</span>
 <span>  rel_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, proj_coord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xutm"</span>,<span class="st">"Yutm"</span><span class="op">)</span>, corner_plot_ID <span class="op">=</span> <span class="st">"Plot"</span>,</span>
 <span>  tree_data <span class="op">=</span> <span class="va">NouraguesTrees</span>, tree_coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Xfield"</span>,<span class="st">"Yfield"</span><span class="op">)</span>, tree_plot_ID <span class="op">=</span> <span class="st">"Plot"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in divide_plot(grid_size = 25, corner_data = NouraguesCoords, rel_coord</span></span>
+<span><span class="co">#&gt; Warning in divide_plot(grid_size = 50, corner_data = NouraguesCoords, rel_coord</span></span>
 <span><span class="co">#&gt; = c("Xfield", : One or more trees could not be assigned to a subplot (not in a</span></span>
 <span><span class="co">#&gt; subplot area)</span></span>
 <span></span>
@@ -162,7 +236,7 @@ likely not enough data to get proper and reliable final predictions
 <span><span class="co"># compute AGBD estimates and their uncertainty per subplot</span></span>
 <span><span class="va">subplot_AGBD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/subplot_summary.html">subplot_summary</a></span><span class="op">(</span></span>
 <span>  subplots <span class="op">=</span> <span class="va">multiple_subplots</span>,</span>
-<span>  AGB_simu <span class="op">=</span> <span class="va">error_prop4plots</span><span class="op">$</span><span class="va">AGB_simu</span>, draw <span class="op">=</span> <span class="cn">F</span></span>
+<span>  AGB_simu <span class="op">=</span> <span class="va">error_prop_4plots</span><span class="op">$</span><span class="va">AGB_simu</span>, draw <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; AGB uncertainties will be propagated without propagation of corner GPS measurement uncertainties.</span></span></code></pre></div>
 </div>
@@ -200,7 +274,7 @@ likely not enough data to get proper and reliable final predictions
 <div class="section level2">
 <h2 id="calibrate-model">Calibrate model<a class="anchor" aria-label="anchor" href="#calibrate-model"></a>
 </h2>
-<p>Gather data for agbd-chm model inference (ie join
+<p>Gather data for agbd-chm model inference (<em>i.e.</em> join
 predictor-predicted):</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">agbd_subplot</span> <span class="op">&lt;-</span> <span class="va">subplot_AGBD</span><span class="op">$</span><span class="va">long_AGB_simu</span></span>
@@ -210,8 +284,8 @@ predictor-predicted):</p>
 <p>then run calibration function, here parallelized on four CPUs:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_model.html">calibrate_model</a></span><span class="op">(</span>long_AGB_simu <span class="op">=</span> <span class="va">dt_inf</span>, nb_rep <span class="op">=</span> <span class="fl">50</span>, useCache <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>                            plot_model <span class="op">=</span> <span class="cn">TRUE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">2500</span>,</span>
-<span>                            warmup <span class="op">=</span> <span class="fl">500</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<span>                            plot_model <span class="op">=</span> <span class="cn">FALSE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">4000</span>,</span>
+<span>                            warmup <span class="op">=</span> <span class="fl">1000</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s check inference results:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model_cal</span><span class="op">)</span></span>
@@ -219,107 +293,239 @@ predictor-predicted):</p>
 <span><span class="co">#&gt;   Links: mu = identity </span></span>
 <span><span class="co">#&gt; Formula: log_AGBD ~ 0 + betatilde * log_CHM </span></span>
 <span><span class="co">#&gt;          betatilde ~ 1 + gp(x, y, gr = T, scale = T, cov = "matern32")</span></span>
-<span><span class="co">#&gt;    Data: dt_inf (Number of observations: 3200) </span></span>
-<span><span class="co">#&gt;   Draws: 4 chains, each with iter = 2500; warmup = 500; thin = 20;</span></span>
-<span><span class="co">#&gt;          total post-warmup draws = 400</span></span>
+<span><span class="co">#&gt;    Data: dt_inf (Number of observations: 800) </span></span>
+<span><span class="co">#&gt;   Draws: 4 chains, each with iter = 4000; warmup = 1000; thin = 20;</span></span>
+<span><span class="co">#&gt;          total post-warmup draws = 600</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Gaussian Process Hyperparameters:</span></span>
 <span><span class="co">#&gt;                        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS</span></span>
-<span><span class="co">#&gt; sdgp(betatilde_gpxy)       0.12      0.01     0.09     0.14 1.02      293</span></span>
-<span><span class="co">#&gt; lscale(betatilde_gpxy)     0.04      0.01     0.03     0.05 1.01      325</span></span>
+<span><span class="co">#&gt; sdgp(betatilde_gpxy)       0.06      0.02     0.03     0.11 1.00      521</span></span>
+<span><span class="co">#&gt; lscale(betatilde_gpxy)     0.22      0.08     0.10     0.42 1.00      743</span></span>
 <span><span class="co">#&gt;                        Tail_ESS</span></span>
-<span><span class="co">#&gt; sdgp(betatilde_gpxy)        223</span></span>
-<span><span class="co">#&gt; lscale(betatilde_gpxy)      359</span></span>
+<span><span class="co">#&gt; sdgp(betatilde_gpxy)        568</span></span>
+<span><span class="co">#&gt; lscale(betatilde_gpxy)      639</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Regression Coefficients:</span></span>
 <span><span class="co">#&gt;                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; betatilde_Intercept     1.70      0.02     1.66     1.73 1.01      238      248</span></span>
+<span><span class="co">#&gt; betatilde_Intercept     1.72      0.03     1.66     1.79 1.01      555      588</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Further Distributional Parameters:</span></span>
 <span><span class="co">#&gt;       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS</span></span>
-<span><span class="co">#&gt; sigma     0.18      0.00     0.17     0.18 1.00      392      328</span></span>
+<span><span class="co">#&gt; sigma     0.10      0.00     0.09     0.10 1.00      637      486</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS</span></span>
 <span><span class="co">#&gt; and Tail_ESS are effective sample size measures, and Rhat is the potential</span></span>
 <span><span class="co">#&gt; scale reduction factor on split chains (at convergence, Rhat = 1).</span></span></code></pre></div>
-<p>Parameters explained</p>
-<p>Things to look at : Rhat (should be below 1.05, more generally, the
-closest to 1.00), Bulk and Tail ESS (should be the closest possible to
-“total post-warmup draws”)</p>
-<p>Let’s have a look at the posterior predictive check:</p>
+<p>The parameters to be read in the summary are the following:</p>
+<ul>
+<li>sdgp(betatilde_gpxy) is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+the magnitude of the covariance kernel,</li>
+<li>lscale(betatilde_gpxy) is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>
+the range of the covariance kernel (in the distance unit you have
+chosen),</li>
+<li>betatilde_Intercept is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
+the fixed part of the regression coefficient,</li>
+<li>sigma is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+the Gaussian residual standard deviation of the predicted variable (do
+not forget it is log scaled).</li>
+</ul>
+<p>To properly use inference results, it is necessary to make sure that
+(i) convergence between chains is met, and (ii) parameters samples are
+big enough and not autocorrelated. For that the indicators you need to
+look at are (i) Rhat, which should be below 1.05, and more generally the
+closest to 1.00, and (ii) Bulk and Tail ESS, which should be the closest
+possible to “total post-warmup draws”. To check for within-chain
+autocorrelation, you can also use the <code>acf</code> function from
+<code>tseries</code> package, such as:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">pp_check</span><span class="op">(</span><span class="va">model_cal</span>, ndraws <span class="op">=</span> <span class="fl">50</span>, type <span class="op">=</span> <span class="st">"scatter_avg"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">tseries</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: tseries</span></span>
+<span><span class="co">#&gt; Warning in library(package, lib.loc = lib.loc, character.only = TRUE,</span></span>
+<span><span class="co">#&gt; logical.return = TRUE, : there is no package called 'tseries'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">model_cal</span><span class="op">$</span><span class="va">fit</span><span class="op">@</span><span class="va">sim</span><span class="op">$</span><span class="va">samples</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span>, <span class="va">acf</span>, plot <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># check the first chain</span></span>
+<span><span class="co">#&gt; $b_betatilde_Intercept</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Autocorrelations of series 'X[[i]]', by lag</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      0      1      2      3      4      5      6      7      8      9     10 </span></span>
+<span><span class="co">#&gt;  1.000  0.486  0.011  0.003  0.006  0.007 -0.004 -0.004 -0.007 -0.011 -0.019 </span></span>
+<span><span class="co">#&gt;     11     12     13     14     15     16     17     18     19     20     21 </span></span>
+<span><span class="co">#&gt; -0.028 -0.011 -0.012 -0.007 -0.001 -0.003  0.007  0.003 -0.002  0.003  0.020 </span></span>
+<span><span class="co">#&gt;     22     23 </span></span>
+<span><span class="co">#&gt;  0.022 -0.007 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sdgp_betatilde_gpxy</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Autocorrelations of series 'X[[i]]', by lag</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      0      1      2      3      4      5      6      7      8      9     10 </span></span>
+<span><span class="co">#&gt;  1.000  0.420 -0.003 -0.008 -0.004 -0.005 -0.006  0.002 -0.005  0.001  0.004 </span></span>
+<span><span class="co">#&gt;     11     12     13     14     15     16     17     18     19     20     21 </span></span>
+<span><span class="co">#&gt; -0.004 -0.002 -0.004 -0.003 -0.004 -0.005 -0.004  0.003  0.003 -0.003 -0.001 </span></span>
+<span><span class="co">#&gt;     22     23 </span></span>
+<span><span class="co">#&gt;  0.011 -0.001 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $lscale_betatilde_gpxy</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Autocorrelations of series 'X[[i]]', by lag</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      0      1      2      3      4      5      6      7      8      9     10 </span></span>
+<span><span class="co">#&gt;  1.000  0.192 -0.001 -0.006 -0.001 -0.008  0.005 -0.004 -0.001 -0.012 -0.005 </span></span>
+<span><span class="co">#&gt;     11     12     13     14     15     16     17     18     19     20     21 </span></span>
+<span><span class="co">#&gt;  0.008  0.005  0.006 -0.004  0.000  0.003 -0.001  0.000  0.010 -0.010  0.013 </span></span>
+<span><span class="co">#&gt;     22     23 </span></span>
+<span><span class="co">#&gt; -0.002  0.007 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sigma</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Autocorrelations of series 'X[[i]]', by lag</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      0      1      2      3      4      5      6      7      8      9     10 </span></span>
+<span><span class="co">#&gt;  1.000  0.018  0.000  0.000  0.001  0.000  0.000  0.000  0.000 -0.001  0.000 </span></span>
+<span><span class="co">#&gt;     11     12     13     14     15     16     17     18     19     20     21 </span></span>
+<span><span class="co">#&gt; -0.001 -0.001 -0.001  0.001  0.000  0.000  0.000  0.000  0.001 -0.001 -0.001 </span></span>
+<span><span class="co">#&gt;     22     23 </span></span>
+<span><span class="co">#&gt; -0.001 -0.001</span></span></code></pre></div>
+<p>Here we can see that at the first lag we still have high within-chain
+autocorrelation (&gt; 0.2) for some parameters, indicating that
+re-inferring the model with the <code>thin</code> argument set to a
+higher value, <em>e.g.</em> 30, will be beneficial.</p>
+<p>You may also want to check correlations between estimated parameters.
+They are not “bad” <em>per se</em>, since the information is comprised
+in the inference output, and taken into account when predicting maps.
+But they may interfere with the inference march and make it difficult to
+converge.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://ggobi.github.io/ggally/" class="external-link">GGally</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: GGally</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'GGally'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:terra':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     wrap</span></span>
+<span><span class="fu"><a href="https://ggobi.github.io/ggally/reference/ggpairs.html" class="external-link">ggpairs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">model_cal</span><span class="op">$</span><span class="va">fit</span><span class="op">@</span><span class="va">sim</span><span class="op">$</span><span class="va">samples</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/mod_paramcor-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<p>Now, let’s have a look at the posterior predictive check:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pp_check</span><span class="op">(</span><span class="va">model_cal</span>, ndraws <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Vignette_predict_map_AGBD_files/figure-html/mod_ppcheck-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<p>This posterior predictive check enables to quickly visualise if the
+distribution of observed data <code>y</code>, blue bold line, matches
+the distributions of data predicted by the calibrated model
+<code>y_rep</code>, light blue lines - one per parameter draw or
+combination. Hence, it is an indicator of the goodness of fit of the
+model to the data.</p>
 </div>
 <div class="section level2">
 <h2 id="predict-agbd-map-on-the-lidar-footprint">Predict AGBD map on the LiDAR footprint<a class="anchor" aria-label="anchor" href="#predict-agbd-map-on-the-lidar-footprint"></a>
 </h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">map_agbd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_map.html">predict_map</a></span><span class="op">(</span>fit_brms <span class="op">=</span> <span class="va">model_cal</span>,</span>
 <span>                         pred_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>,</span>
-<span>                         grid_size <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>                         grid_size <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>                         raster_fun <span class="op">=</span> <span class="va">median</span>,</span>
-<span>                         n_cores <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>                         n_post_draws <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>                         alignment_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                         plot_maps <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<span>                         plot_maps <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_agbd</span><span class="op">$</span><span class="va">post_median_AGBD</span>, main <span class="op">=</span> <span class="st">"Median of posterior AGBD distributions"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_predicted_map-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_agbd</span><span class="op">$</span><span class="va">post_sd_AGBD</span>, main <span class="op">=</span> <span class="st">"Sd of posterior AGBD distributions"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_predicted_map-2.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_agbd</span><span class="op">$</span><span class="va">post_sd_AGBD</span><span class="op">/</span><span class="va">map_agbd</span><span class="op">$</span><span class="va">post_median_AGBD</span>, main <span class="op">=</span> <span class="st">"CV of posterior AGBD distributions"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_predicted_map-3.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p>If you want to predict on another footprint, you can supply the
 raster footprint with <code>alignment_raster</code> argument.</p>
+<div class="section level3">
+<h3 id="run-prediction-in-parallel">Run prediction in parallel<a class="anchor" aria-label="anchor" href="#run-prediction-in-parallel"></a>
+</h3>
+<p>Parallelisation of <code>predict_map</code> function is handled by
+the <code>future</code> framework. So to compute the map predictions in
+parallel you only need to set the <code>plan</code> to
+<code>multisession</code> with the numbers of workers, <em>i.e.</em>
+CPUs, you want to use before calling <code>predict_map</code>
+function:</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">plan</span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">map_agbd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_map.html">predict_map</a></span><span class="op">(</span>fit_brms <span class="op">=</span> <span class="va">model_cal</span>,</span>
+<span>                         pred_raster <span class="op">=</span> <span class="va">nouraguesRaster</span>,</span>
+<span>                         grid_size <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>                         raster_fun <span class="op">=</span> <span class="va">median</span>,</span>
+<span>                         n_post_draws <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>                         alignment_raster <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>                         plot_maps <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="what-about-validation">What about validation ?<a class="anchor" aria-label="anchor" href="#what-about-validation"></a>
 </h2>
 <p>We suggest to validate the model by subsetting your subplot dataset
 in two: a calibration dataset with about 70% of the subplots, and a
-validation dataset with the rest. We have 4 plots divided in 16
-subplots, so we need to set aside 45 subplots for the calibration step,
-the rest will be used to validate.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+validation dataset with the rest.</p>
+<p>We have 4 plots divided in 4 subplots, so we need to set aside 11
+subplots for the calibration step, the rest will be used to
+validate.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># let's select subplots for each step</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span><span class="va">vector_of_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">dt_inf</span><span class="op">$</span><span class="va">subplot_ID</span><span class="op">)</span></span>
-<span><span class="va">calibration_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">vector_of_subplots</span>, <span class="fl">45</span><span class="op">)</span></span>
+<span><span class="va">calibration_subplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">vector_of_subplots</span>, <span class="fl">11</span><span class="op">)</span></span>
 <span><span class="va">validation_subplots</span> <span class="op">&lt;-</span> <span class="va">vector_of_subplots</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">vector_of_subplots</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">calibration_subplots</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># then divide our complete dataset</span></span>
-<span><span class="va">dt_calibration</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op">%&gt;%</span> </span>
+<span><span class="va">dt_calibration</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">subplot_ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">calibration_subplots</span><span class="op">)</span></span>
-<span><span class="va">dt_validation</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">subplot_ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">validation_subplots</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">dt_validation</span> <span class="op">&lt;-</span> <span class="va">dt_inf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">subplot_ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">validation_subplots</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># change in column names to make predict function work</span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_center</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="va">y_center</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_center</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>y <span class="op">=</span> <span class="va">y_center</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu">mutate</span><span class="op">(</span>log_CHM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">raster_metric</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Now we can calibrate the model (ie run the inference) with the
-calibration dataset:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p>Now we can calibrate the model (<em>i.e.</em> run the inference) with
+the calibration dataset:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cal_step1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_model.html">calibrate_model</a></span><span class="op">(</span>long_AGB_simu <span class="op">=</span> <span class="va">dt_calibration</span>, nb_rep <span class="op">=</span> <span class="fl">50</span>, useCache <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                            plot_model <span class="op">=</span> <span class="cn">TRUE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">2500</span>,</span>
 <span>                            warmup <span class="op">=</span> <span class="fl">500</span>, cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<p>Now we are going to predict the model outputs (namely AGBD) at
-observed data points using the parameters that we inferred at step 1
-when calibrating. For that we use the predict function of brms (link to
+<p>Now we are going to predict the model outputs (namely AGBD) for each
+remaining subplot using the parameters that we inferred at step 1 when
+calibrating. For that we use the predict function of brms (link to
 help):</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">val_step2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal_step1</span>, newdata <span class="op">=</span> <span class="va">dt_validation</span>, ndraws <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">val_step2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal_step1</span>, newdata <span class="op">=</span> <span class="va">dt_validation</span><span class="op">[</span><span class="va">dt_validation</span><span class="op">$</span><span class="va">N_simu</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span>, ndraws <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p>Now we may compare those values predicted by the model, which was
 calibrated with the calibration dataset, with observed values from the
 validation dataset:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dt_validation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">dt_validation</span>, logAGBD_pred <span class="op">=</span> <span class="va">val_step2</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dt_plot_val</span> <span class="op">&lt;-</span> <span class="va">dt_validation</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">subplot_ID</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>median_obs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">AGBD</span><span class="op">)</span>, inf_obs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">AGBD</span>, probs <span class="op">=</span> <span class="fl">0.025</span><span class="op">)</span>, </span>
+<span>            sup_obs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">AGBD</span>, probs <span class="op">=</span> <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">dt_validation</span>, <span class="fu">aes</span><span class="op">(</span> x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">AGBD</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">logAGBD_pred</span>, colour <span class="op">=</span> <span class="va">subplot_ID</span><span class="op">)</span><span class="op">)</span><span class="op">+</span> </span>
-<span>  <span class="fu">geom_point</span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu">geom_abline</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"red"</span>, linetype <span class="op">=</span> <span class="fl">2</span>, linewidth <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu">xlab</span><span class="op">(</span><span class="st">"Observed log AGBD"</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Predicted log AGBD"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_val-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;">
-Here we can see that predictions are overall satisfying, except for 3
-subplots. It could be wise to re-run the validation step with a
-different split of the original dataset, and to dig into those plots.
-When you are good with your validation results, you infer the model
-<em>with the entire dataset</em>, and then predict a robust AGBD
-map.</p>
+<span><span class="va">dt_plot_val</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">dt_plot_val</span>, AGBD_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">val_step2</span><span class="op">[</span>,<span class="op">-</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">axis_lims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dt_plot_val</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">inf_obs</span>,  <span class="va">sup_obs</span>, <span class="va">AGBD_pred.Q2.5</span>, <span class="va">AGBD_pred.Q97.5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dt_plot_val</span><span class="op">)</span><span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>intercept <span class="op">=</span> <span class="fl">1</span>, slope <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"black"</span>,  linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span> x <span class="op">=</span> <span class="va">median_obs</span>, y <span class="op">=</span> <span class="va">AGBD_pred.Estimate</span>, colour <span class="op">=</span> <span class="va">subplot_ID</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">AGBD_pred.Estimate</span>, yend <span class="op">=</span> <span class="va">AGBD_pred.Estimate</span>, x <span class="op">=</span> <span class="va">inf_obs</span>, xend <span class="op">=</span> <span class="va">sup_obs</span>, colour <span class="op">=</span> <span class="va">subplot_ID</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">AGBD_pred.Q2.5</span>, yend <span class="op">=</span> <span class="va">AGBD_pred.Q97.5</span>, x <span class="op">=</span> <span class="va">median_obs</span>, xend <span class="op">=</span> <span class="va">median_obs</span>, colour <span class="op">=</span> <span class="va">subplot_ID</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Observed AGBD"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Predicted AGBD"</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="va">axis_lims</span>, ylim <span class="op">=</span> <span class="va">axis_lims</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Vignette_predict_map_AGBD_files/figure-html/plot_val-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
+<p>Uncertainties on the prediction are represented by the vertical
+segments, while the original uncertainties on data, namely subplot level
+AGBD, are represented by the horizontal segments, the black dotted line
+is the identity line. When you are good with your validation results,
+you infer the model <strong>with the entire dataset</strong>, and then
+predict a robust AGBD map.</p>
 <p>Let’s keep in mind that in this vignette example we are working with
 a very small number of inventory plots: we lack of data to get robust
 AGBD map predictions, and properly conduct the validation step. But we
