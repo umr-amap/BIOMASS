@@ -32,14 +32,20 @@ fields [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557).
 
 The general equation can be written as follow, for a subplot $s_{i}$:
 
-\$\$ Y_i \sim \mathrm{N}(\mu_i, \sigma) \\ \mu_i = (\beta_1 + \eta_i)
-\times X_i \\ \eta_i \sim \mathrm{MVNormal}(0, \Sigma) \\ \$\$ $\Sigma$,
-the covariance matrix, is defined by the $\frac{3}{2}$ M'{a}tern kernel
-between two locations $s_{i}$ and $s_{j}$:
+\$\$ Y_i (\_i, ) \\
 
-$$k\left( \mathbf{s}_{i},\mathbf{s}_{j} \right) = \psi^{2}\left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right)\exp\left( - \frac{\sqrt{3}d_{i,j}}{l} \right)$$$d_{i,j}$
-is the distance between locations $s_{i}$ and $s_{j}$, parameter $\psi$
-controls the magnitude and parameter $l$ the range of the kernel.
+\_i = \_0 + (\_1 + \_i) X_i \\
+
+\_i (0, ) \\ \$\$
+
+$\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$
+M'{a}tern kernel between two locations $s_{i}$ and $s_{j}$:
+
+$$k\left( \mathbf{s}_{i},\mathbf{s}_{j} \right) = \psi^{2}\left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right)\exp\left( - \frac{\sqrt{3}d_{i,j}}{l} \right)$$
+
+$d_{i,j}$ is the distance between locations $s_{i}$ and $s_{j}$,
+parameter $\psi$ controls the magnitude and parameter $l$ the range of
+the kernel.
 
 In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$
 is the logarithm of a LiDAR metric measurement for the corresponding
@@ -206,7 +212,8 @@ dt_inf <- agbd_subplot %>%
   arrange(subplot_ID)
 ```
 
-then run calibration function, here parallelized on four CPUs:
+then run calibration function, here parallelized on 4 CPUs thanks to
+argument `cores` set to 4:
 
 ``` r
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,

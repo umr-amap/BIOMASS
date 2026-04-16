@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Dominique
 Lamonica</h4>
             
-            <h4 data-toc-skip class="date">2026-04-14</h4>
+            <h4 data-toc-skip class="date">2026-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_predict_map_AGBD.Rmd" class="external-link"><code>vignettes/Vignette_predict_map_AGBD.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_predict_map_AGBD.Rmd</code></div>
@@ -103,12 +103,10 @@ random fields <a href="https://doi.org/10.1016/j.rse.2024.114557" class="externa
 et al., 2025</a>.</p>
 <p>The general equation can be written as follow, for a subplot
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>:</p>
-<p><span class="math display">$$
-Y_i \sim \mathrm{N}(\mu_i, \sigma) \\
-\mu_i = (\beta_1 + \eta_i) \times X_i \\
-\eta_i \sim \mathrm{MVNormal}(0, \Sigma) \\
-$$</span>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>,
+<p>$$ Y_i (_i, ) \</p>
+<p>_i = _0 + (_1 + _i) X_i \</p>
+<p>_i (0, ) \ $$</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Σ</mi><annotation encoding="application/x-tex">\Sigma</annotation></semantics></math>,
 the covariance matrix, is defined by the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mn>3</mn><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{3}{2}</annotation></semantics></math>
 M'{a}tern kernel between two locations
@@ -117,7 +115,8 @@ and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>j</mi></msub><annotation encoding="application/x-tex">s_j</annotation></semantics></math>:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐬</mi><mi>i</mi></msub><mo>,</mo><msub><mi>𝐬</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msup><mi>ψ</mi><mn>2</mn></msup><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><mrow><msqrt><mn>3</mn></msqrt><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow><mi>l</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><mfrac><mrow><msqrt><mn>3</mn></msqrt><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow><mi>l</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)
-</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">d_{i,j}</annotation></semantics></math>
+</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">d_{i,j}</annotation></semantics></math>
 is the distance between locations
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>s</mi><mi>i</mi></msub><annotation encoding="application/x-tex">s_i</annotation></semantics></math>
 and
@@ -281,7 +280,8 @@ predictor-predicted):</p>
 <span><span class="va">dt_inf</span> <span class="op">&lt;-</span> <span class="va">agbd_subplot</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">chm_subplot</span>, by <span class="op">=</span> <span class="st">"subplot_ID"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">subplot_ID</span><span class="op">)</span></span></code></pre></div>
-<p>then run calibration function, here parallelized on four CPUs:</p>
+<p>then run calibration function, here parallelized on 4 CPUs thanks to
+argument <code>cores</code> set to 4:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrate_model.html">calibrate_model</a></span><span class="op">(</span>long_AGB_simu <span class="op">=</span> <span class="va">dt_inf</span>, nb_rep <span class="op">=</span> <span class="fl">50</span>, useCache <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                            plot_model <span class="op">=</span> <span class="cn">FALSE</span>, chains <span class="op">=</span> <span class="fl">4</span>, thin <span class="op">=</span> <span class="fl">20</span>, iter <span class="op">=</span> <span class="fl">4000</span>,</span>
