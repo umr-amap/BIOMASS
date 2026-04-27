@@ -134,7 +134,7 @@ calibrate_model <- function(long_AGB_simu, nb_rep = 30, useCache = FALSE, plot_m
                           family = gaussian(link = "identity"),
                           formula = bf_formula,
                           iter = iter, warmup = warmup, chains = chains, cores = cores, thin = thin,
-                          control = list(adapt_delta = 0.9, max_treedepth = 14 )
+                          control = list(adapt_delta = 0.92, max_treedepth = 14 )
     )
     if(useCache) {
       saveRDS(fit_brms, file = cache_path)
