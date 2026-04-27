@@ -34,15 +34,11 @@ fields (see [Gelfand et al.,
 
 The general equation can be written as follow, for a subplot $s_{i}$:
 
-\$\$
-
-Y_i (\_i, ) \\
-
-\_i = \_0 + (\_1 + \_i) X_i \\
-
-\_i (0, )
-
-\$\$
+$$\begin{aligned}
+Y_{i} & {\sim N\left( \mu_{i},\sigma \right)} \\
+\mu_{i} & {= \beta_{0} + \left( \beta_{1} + \eta_{i} \right) \times X_{i}} \\
+\eta_{i} & {\sim {MVNormal}(0,\Sigma)}
+\end{aligned}$$
 
 where $\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$
 Màtern kernel between two locations $s_{i}$ and $s_{j}$:
