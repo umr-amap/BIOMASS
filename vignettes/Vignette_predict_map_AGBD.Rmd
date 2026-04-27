@@ -41,15 +41,11 @@ The model we chose to describe the relationship between plot-level AGBD and LiDA
 
 The general equation can be written as follow, for a subplot $s_i$:
 
-$$
-
-Y_i \sim \mathrm{N}(\mu_i, \sigma) \\
-
-\mu_i = \beta_0 + (\beta_1 + \eta_i) \times X_i \\
-
-\eta_i \sim \mathrm{MVNormal}(0, \Sigma)
-
-$$
+\begin{align*}
+Y_i &\sim \mathrm{N}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + (\beta_1 + \eta_i) \times X_i \\
+\eta_i &\sim \mathrm{MVNormal}(0, \Sigma)
+\end{align*}
 
 where $\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$ Màtern kernel between two locations $s_i$ and $s_j$:
 
