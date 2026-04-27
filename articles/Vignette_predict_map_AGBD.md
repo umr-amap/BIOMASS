@@ -222,36 +222,39 @@ argument `cores` set to 4, and without the intercept $\beta_{0}$
 ``` r
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T, 
                              plot_model = FALSE, intercept = FALSE, chains = 4, 
-                             thin = 20, iter = 4000, warmup = 1000, cores = 4)
+                             thin = 10, iter = 3500, warmup = 1500, cores = 4)
 ```
 
 Let’s check inference results:
 
 ``` r
 summary(model_cal)
+#> Warning: There were 1 divergent transitions after warmup. Increasing
+#> adapt_delta above 0.9 may help. See
+#> http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 #>  Family: gaussian 
 #>   Links: mu = identity 
 #> Formula: log_AGBD ~ 0 + betatilde * log_CHM 
 #>          betatilde ~ 1 + gp(x, y, gr = T, scale = T, cov = "matern32")
 #>    Data: dt_inf (Number of observations: 800) 
-#>   Draws: 4 chains, each with iter = 4000; warmup = 1000; thin = 20;
-#>          total post-warmup draws = 600
+#>   Draws: 4 chains, each with iter = 3500; warmup = 1500; thin = 10;
+#>          total post-warmup draws = 800
 #> 
 #> Gaussian Process Hyperparameters:
 #>                        Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
-#> sdgp(betatilde_gpxy)       0.06      0.02     0.03     0.11 1.00      521
-#> lscale(betatilde_gpxy)     0.22      0.08     0.10     0.42 1.00      743
+#> sdgp(betatilde_gpxy)       0.05      0.02     0.03     0.10 1.00      869
+#> lscale(betatilde_gpxy)     0.21      0.08     0.10     0.43 1.00      872
 #>                        Tail_ESS
-#> sdgp(betatilde_gpxy)        568
-#> lscale(betatilde_gpxy)      639
+#> sdgp(betatilde_gpxy)        774
+#> lscale(betatilde_gpxy)      816
 #> 
 #> Regression Coefficients:
 #>                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> betatilde_Intercept     1.72      0.03     1.66     1.79 1.01      555      588
+#> betatilde_Intercept     1.72      0.03     1.67     1.80 1.00      749      727
 #> 
 #> Further Distributional Parameters:
 #>       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-#> sigma     0.10      0.00     0.09     0.10 1.00      637      486
+#> sigma     0.10      0.00     0.09     0.10 1.00      824      860
 #> 
 #> Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
 #> and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -268,6 +271,13 @@ The parameters to be read in the summary are the following:
 - sigma is $\sigma$ the Gaussian residual standard deviation of the
   predicted variable (do not forget it is log scaled).
 
+Joint posterior distribution values (for our 4 parameters of interest)
+are available through the following `brms` function:
+
+``` r
+draws_fit <- as_draws_df(model_cal)[,1:4]
+```
+
 To properly use inference results, it is necessary to make sure that (i)
 convergence between chains is met, and (ii) parameters samples are big
 enough and not autocorrelated. For that the indicators you need to look
@@ -275,63 +285,63 @@ at are (i) Rhat, which should be below 1.05, and more generally the
 closest to 1.00, and (ii) Bulk and Tail ESS, which should be the closest
 possible to “total post-warmup draws”. To check for within-chain
 autocorrelation, you can also use the `acf` function from `tseries`
-package, such as:
+package (chain by chain, not all together), such as:
 
 ``` r
 require(tseries)
 #> Loading required package: tseries
 #> Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
 #> logical.return = TRUE, : there is no package called 'tseries'
-lapply(model_cal$fit@sim$samples[[1]][1:4], acf, plot = F) # check the first chain
+lapply(draws_fit[1:200,], acf, plot = F) # check the first chain, i.e. the first 200 rows
 #> $b_betatilde_Intercept
 #> 
 #> Autocorrelations of series 'X[[i]]', by lag
 #> 
 #>      0      1      2      3      4      5      6      7      8      9     10 
-#>  1.000  0.486  0.011  0.003  0.006  0.007 -0.004 -0.004 -0.007 -0.011 -0.019 
+#>  1.000 -0.023  0.036 -0.086 -0.032 -0.065 -0.057 -0.010 -0.010  0.077 -0.034 
 #>     11     12     13     14     15     16     17     18     19     20     21 
-#> -0.028 -0.011 -0.012 -0.007 -0.001 -0.003  0.007  0.003 -0.002  0.003  0.020 
+#>  0.166  0.004 -0.081 -0.046  0.074  0.020  0.008 -0.022 -0.089  0.024 -0.101 
 #>     22     23 
-#>  0.022 -0.007 
+#>  0.133 -0.038 
 #> 
 #> $sdgp_betatilde_gpxy
 #> 
 #> Autocorrelations of series 'X[[i]]', by lag
 #> 
 #>      0      1      2      3      4      5      6      7      8      9     10 
-#>  1.000  0.420 -0.003 -0.008 -0.004 -0.005 -0.006  0.002 -0.005  0.001  0.004 
+#>  1.000  0.008 -0.094 -0.085 -0.024 -0.024  0.070 -0.027  0.019 -0.027 -0.093 
 #>     11     12     13     14     15     16     17     18     19     20     21 
-#> -0.004 -0.002 -0.004 -0.003 -0.004 -0.005 -0.004  0.003  0.003 -0.003 -0.001 
+#> -0.004  0.032  0.020  0.081  0.013 -0.024  0.061 -0.099 -0.056 -0.007  0.010 
 #>     22     23 
-#>  0.011 -0.001 
+#>  0.154 -0.005 
 #> 
 #> $lscale_betatilde_gpxy
 #> 
 #> Autocorrelations of series 'X[[i]]', by lag
 #> 
 #>      0      1      2      3      4      5      6      7      8      9     10 
-#>  1.000  0.192 -0.001 -0.006 -0.001 -0.008  0.005 -0.004 -0.001 -0.012 -0.005 
+#>  1.000  0.033 -0.047 -0.046 -0.104 -0.034  0.038 -0.054 -0.091 -0.058 -0.067 
 #>     11     12     13     14     15     16     17     18     19     20     21 
-#>  0.008  0.005  0.006 -0.004  0.000  0.003 -0.001  0.000  0.010 -0.010  0.013 
+#>  0.139  0.028  0.057  0.026 -0.034 -0.060  0.060 -0.101 -0.011  0.008 -0.143 
 #>     22     23 
-#> -0.002  0.007 
+#>  0.076  0.000 
 #> 
 #> $sigma
 #> 
 #> Autocorrelations of series 'X[[i]]', by lag
 #> 
 #>      0      1      2      3      4      5      6      7      8      9     10 
-#>  1.000  0.018  0.000  0.000  0.001  0.000  0.000  0.000  0.000 -0.001  0.000 
+#>  1.000  0.033 -0.056 -0.054  0.093 -0.056 -0.014  0.003 -0.061  0.034  0.016 
 #>     11     12     13     14     15     16     17     18     19     20     21 
-#> -0.001 -0.001 -0.001  0.001  0.000  0.000  0.000  0.000  0.001 -0.001 -0.001 
+#> -0.081 -0.040  0.053  0.182 -0.053 -0.025 -0.058  0.140 -0.098 -0.156 -0.104 
 #>     22     23 
-#> -0.001 -0.001
+#> -0.024 -0.059
 ```
 
-Here we can see that at the first lag we still have high within-chain
-autocorrelation (\> 0.2) for some parameters, indicating that
+Here we can see that at the first lag we have low within-chain
+autocorrelation (\< 0.2) for all parameters. If it was not the case,
 re-inferring the model with the `thin` argument set to a higher value,
-*e.g.* 30, will be beneficial.
+*e.g.* 20, would be beneficial.
 
 You may also want to check correlations between estimated parameters.
 They are not “bad” *per se*, since the information is comprised in the
@@ -347,7 +357,7 @@ require(GGally)
 #> The following object is masked from 'package:terra':
 #> 
 #>     wrap
-ggpairs(as.data.frame(model_cal$fit@sim$samples[[1]][1:4]))
+ggpairs(draws_fit)
 ```
 
 ![](Vignette_predict_map_AGBD_files/figure-html/mod_paramcor-1.png)
@@ -402,9 +412,10 @@ footprint with `alignment_raster` argument.
 ### Run prediction in parallel
 
 Parallelisation of `predict_map` function is handled by the `future`
-framework. So to compute the map predictions in parallel you only need
-to set the `plan` to `multisession` with the numbers of workers, *i.e.*
-CPUs, you want to use before calling `predict_map` function:
+framework. So to compute the map predictions in parallel you need 1) to
+set the `plan` to `multisession` with the numbers of workers, *i.e.*
+CPUs, you want to use (before the call to `predict_map` function), and
+2) set the `n_cores` argument of `predict_map` to the same number:
 
 ``` r
 plan(multisession, workers = 4)
@@ -414,7 +425,8 @@ map_agbd <- predict_map(fit_brms = model_cal,
                          raster_fun = median,
                          n_post_draws = 100,
                          alignment_raster = NULL,
-                         plot_maps = F)
+                         plot_maps = F,
+                         n_cores = 4)
 ```
 
 ## What about validation ?
@@ -449,8 +461,8 @@ calibration dataset:
 
 ``` r
 cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCache = T,
-                            plot_model = TRUE, chains = 4, thin = 20, iter = 2500,
-                            warmup = 500, cores = 4)
+                            plot_model = TRUE, chains = 4, thin = 10, iter = 4000,
+                            warmup = 2000, cores = 4)
 ```
 
 Now we are going to predict the model outputs (namely AGBD) for each
