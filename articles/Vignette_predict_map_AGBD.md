@@ -34,14 +34,18 @@ fields (see [Gelfand et al.,
 
 The general equation can be written as follow, for a subplot $s_{i}$:
 
-\$\$ Y_i (\_i, ) \\
+\$\$
+
+Y_i (\_i, ) \\
 
 \_i = \_0 + (\_1 + \_i) X_i \\
 
-\_i (0, ) \\ \$\$
+\_i (0, )
 
-$\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$
-M'{a}tern kernel between two locations $s_{i}$ and $s_{j}$:
+\$\$
+
+where $\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$
+Màtern kernel between two locations $s_{i}$ and $s_{j}$:
 
 $$k\left( \mathbf{s}_{i},\mathbf{s}_{j} \right) = \psi^{2}\left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right)\exp\left( - \frac{\sqrt{3}d_{i,j}}{l} \right)$$
 
