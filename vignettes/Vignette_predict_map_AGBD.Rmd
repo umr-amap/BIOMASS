@@ -37,7 +37,7 @@ In order to easily propagate AGBD uncertainties that have been propagated throug
 
 ## Mathematical modelling 
 
-The model we chose to describe the relationship between plot-level AGBD and LiDAR metrics is a log-log regression, with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a Spatially Varying Coefficient (SVC) regression with Gaussian random fields [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557).
+The model we chose to describe the relationship between plot-level AGBD and LiDAR metrics is a log-log regression, with a Gaussian error model. To capture the spatial structure that may exists in the data, we use a Spatially Varying Coefficient (SVC) regression with Gaussian random fields (see [Gelfand et al., 2003](https://doi.org/10.1198/016214503000170) and [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557)).
 
 The general equation can be written as follow, for a subplot $s_i$:
 
@@ -57,7 +57,7 @@ $$
 
 $d_{i,j}$ is the distance between locations $s_i$ and $s_j$, parameter $\psi$ controls the magnitude and parameter $l$ the range of the kernel.
 
-In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. 
+In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. The intercept $\beta_0$ can be removed from the model (as by default).
 
 ## Warning on vignette example
 
@@ -167,12 +167,12 @@ dt_inf <- agbd_subplot %>%
   arrange(subplot_ID)
 ```
 
-then run calibration function, here parallelized on 4 CPUs thanks to argument `cores` set to 4:
+then run calibration function, here parallelized on 4 CPUs thanks to argument `cores` set to 4, and without the intercept $\beta_0$ (argument `intercept` set to FALSE):
 
 ```{r, eval=FALSE}
-model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
-                            plot_model = FALSE, chains = 4, thin = 20, iter = 4000,
-                            warmup = 1000, cores = 4)
+model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T, 
+                             plot_model = FALSE, intercept = FALSE, chains = 4, 
+                             thin = 20, iter = 4000, warmup = 1000, cores = 4)
 ```
 ```{r load_brms_output, include=FALSE}
 model_cal <- readRDS(file = "saved_data/nouragues_model_cal.rds")
@@ -318,6 +318,3 @@ ggplot(dt_plot_val)+
 Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments, the black dotted line is the identity line. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
 
 Let's keep in mind that in this vignette example we are working with a very small number of inventory plots: we lack of data to get robust AGBD map predictions, and properly conduct the validation step. But we encourage BIOMASS users to run that validation procedure, or another one that is suitable to your data!
-
-
-
