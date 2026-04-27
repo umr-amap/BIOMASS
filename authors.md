@@ -36,7 +36,7 @@ Source:
 Réjou-Méchain M, Tanguy A, Piponiot C, Chave J, Herault B (2017).
 “BIOMASS : an R package for estimating above-ground biomass and its
 uncertainty in tropical forests.” *Methods in Ecology and Evolution*,
-**8**(9). ISSN 2041210X,
+**8**(9). ISSN 2041210X.
 [doi:10.1111/2041-210X.12753](https://doi.org/10.1111/2041-210X.12753).
 
     @Article{,

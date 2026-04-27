@@ -28,7 +28,9 @@ The model we chose to describe the relationship between plot-level AGBD
 and LiDAR metrics is a log-log regression, with a Gaussian error model.
 To capture the spatial structure that may exists in the data, we use a
 Spatially Varying Coefficient (SVC) regression with Gaussian random
-fields [Hunka et al., 2025](https://doi.org/10.1016/j.rse.2024.114557).
+fields (see [Gelfand et al.,
+2003](https://doi.org/10.1198/016214503000170) and [Hunka et al.,
+2025](https://doi.org/10.1016/j.rse.2024.114557)).
 
 The general equation can be written as follow, for a subplot $s_{i}$:
 
@@ -50,7 +52,8 @@ the kernel.
 In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$
 is the logarithm of a LiDAR metric measurement for the corresponding
 plot, for instance the mean of the Canopy Height Model on the plot
-surface.
+surface. The intercept $\beta_{0}$ can be removed from the model (as by
+default).
 
 ### Warning on vignette example
 
@@ -213,12 +216,13 @@ dt_inf <- agbd_subplot %>%
 ```
 
 then run calibration function, here parallelized on 4 CPUs thanks to
-argument `cores` set to 4:
+argument `cores` set to 4, and without the intercept $\beta_{0}$
+(argument `intercept` set to FALSE):
 
 ``` r
-model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
-                            plot_model = FALSE, chains = 4, thin = 20, iter = 4000,
-                            warmup = 1000, cores = 4)
+model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T, 
+                             plot_model = FALSE, intercept = FALSE, chains = 4, 
+                             thin = 20, iter = 4000, warmup = 1000, cores = 4)
 ```
 
 Let’s check inference results:
@@ -478,7 +482,8 @@ ggplot(dt_plot_val)+
   geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs, colour = subplot_ID))+
   xlab("Observed AGBD")+
   ylab("Predicted AGBD")+
-  coord_cartesian(xlim = axis_lims, ylim = axis_lims)
+  coord_cartesian(xlim = axis_lims, ylim = axis_lims)+
+  theme_minimal()
 ```
 
 ![](Vignette_predict_map_AGBD_files/figure-html/plot_val-1.png)
