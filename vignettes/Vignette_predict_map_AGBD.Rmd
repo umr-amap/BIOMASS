@@ -312,7 +312,8 @@ ggplot(dt_plot_val)+
   geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs, colour = subplot_ID))+
   xlab("Observed AGBD")+
   ylab("Predicted AGBD")+
-  coord_cartesian(xlim = axis_lims, ylim = axis_lims)
+  coord_cartesian(xlim = axis_lims, ylim = axis_lims)+
+  theme_minimal()
 ```
 
 Uncertainties on the prediction are represented by the vertical segments, while the original uncertainties on data, namely subplot level AGBD, are represented by the horizontal segments, the black dotted line is the identity line. When you are good with your validation results, you infer the model **with the entire dataset**, and then predict a robust AGBD map.
