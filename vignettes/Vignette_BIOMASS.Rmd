@@ -24,11 +24,15 @@ require(knitr)
 require(BIOMASS)
 ```
 
-# General workflow and required data
+# Complete BIOMASS workflow and vignette organisation
 
-For the sake of clarity, and to be consistent with the BIOMASS paper ([Réjou-Méchain et al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)), this vignette follows the same workflow as presented in the paper:
+For the sake of clarity, and to be consistent with the BIOMASS paper ([Réjou-Méchain et al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)), the three articles comprised in the vignette follow the same workflow as presented in the paper:
 
 ![](img/BIOMASS_workflow.png)
+The first vignette (BIOMASS, the current one) is dedicated to compute above ground biomass (AGB) and its associated uncertainty from plot inventory data. The second one (Spatialize trees and forest stand metrics) explains how to manage plot coordinates and summarize AGB and/or LiDAR metrics at subplot level. The third one (Predict maps of AGBD based on inventory and LiDAR data) guides the user through the last steps of the workflow to get AGBD maps from spatialized AGBD and spatialized LiDAR metrics.
+
+
+# General workflow and required data
 
 As can be seen, the **estimate of the above ground biomass** (AGB) of a tree, and **its associated uncertainty**, is based on its **wood density**, **diameter**, and **height**.
 
