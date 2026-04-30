@@ -397,6 +397,29 @@ plotPolygonFit <- function(point_data,
   }
   rownames(corner_checked) <- NULL
 
+  # Prep original order from cdt 
+  cdt$pos <- seq_len(nrow(cdt))
+  orig_ord <- aggregate(pos ~ plot_ID + x_rel + y_rel, data = cdt, FUN = min)
+
+  # For each plot
+  corner_checked_split <- split(corner_checked, corner_checked$plot_ID)
+  corner_checked <- do.call(rbind, lapply(corner_checked_split, function(i) {
+    
+    # For rectangular plots
+    if (nrow(i) <= 4) {
+      i[chull(i$x_proj, i$y_proj), ]
+    } else {
+      # For other irregular plots
+      # Merge with original cdt order, sort sequentially, and clean up
+      merged_sub <- merge(i, orig_ord, by = c("plot_ID", "x_rel", "y_rel"), all.x = TRUE)
+      merged_sub <- merged_sub[order(merged_sub$pos), ]
+      merged_sub$pos <- NULL 
+      merged_sub
+    }
+  }))
+  rownames(corner_checked) <- NULL
+  cdt$pos <- NULL 
+
 
   # Tree projection ------------------------------------------------------------
 
