@@ -175,6 +175,7 @@ Maxime REJOU-MECHAIN, Arthur PERE, Ariane TANGUY, Arthur Bailly
 ## Examples
 
 ``` r
+
 # Load a data set
 data(NouraguesHD)
 

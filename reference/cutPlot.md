@@ -74,6 +74,7 @@ Arthur PERE
 ## Examples
 
 ``` r
+
 coord <- data.frame(X = c(0, 200, 0, 200), Y = c(0, 0, 200, 200)) + 5000
 cornerNum <- c(1, 2, 4, 3)
 plot <- rep("plot1", 4)

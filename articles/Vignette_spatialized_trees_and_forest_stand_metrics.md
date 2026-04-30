@@ -42,6 +42,7 @@ forest](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/
     **one plot with repeated GPS measurements of each corner**:
 
 ``` r
+
 data("NouraguesPlot201")
 
 kable(head(NouraguesPlot201), digits = 5, row.names = FALSE, caption = "Head of NouraguesPlot201")
@@ -56,13 +57,14 @@ kable(head(NouraguesPlot201), digits = 5, row.names = FALSE, caption = "Head of 
 | Petit_Plateau |  201 |      0 |      0 | 313005.8 | 451722.1 | -52.68448 | 4.08503 |
 | Petit_Plateau |  201 |      0 |      0 | 313010.5 | 451736.0 | -52.68444 | 4.08516 |
 
-Head of NouraguesPlot201
+Head of NouraguesPlot201 {.table}
 
 2.  **NouraguesCoords** which contains corner coordinates of **four
     plots with a single GPS measurement of each corner**, also derived
     from Nouragues forest:
 
 ``` r
+
 data("NouraguesCoords")
 
 kable(head(NouraguesCoords), digits = 5, row.names = FALSE, caption = "Head of NouraguesCoords")
@@ -77,7 +79,7 @@ kable(head(NouraguesCoords), digits = 5, row.names = FALSE, caption = "Head of N
 | Petit_Plateau |  204 |      0 |    300 | 313271.5 | 451574.0 | -52.68208 | 4.08370 |
 | Petit_Plateau |  204 |      0 |    400 | 313359.4 | 451526.3 | -52.68129 | 4.08327 |
 
-Head of NouraguesCoords
+Head of NouraguesCoords {.table}
 
 - The data frame including the **tree coordinates**, must contain at
   least:
@@ -88,21 +90,22 @@ Head of NouraguesCoords
     height, AGB, etc. (see BIOMASS vignette)
 
 ``` r
+
 data("NouraguesTrees")
 
 kable(head(NouraguesTrees), digits = 3, row.names = FALSE, caption = "Head of the table trees")
 ```
 
-| Site          | Plot | Xfield | Yfield | Family        | Genus               | Species     |    D |
-|:--------------|-----:|-------:|-------:|:--------------|:--------------------|:------------|-----:|
-| Petit_Plateau |  201 |    0.0 |   31.5 | Burseraceae   | Protium             | surinamense | 11.0 |
-| Petit_Plateau |  201 |    0.1 |   75.2 | Anacardiaceae | Tapirira            | guianensis  | 74.4 |
-| Petit_Plateau |  201 |    0.2 |   27.6 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 25.4 |
-| Petit_Plateau |  201 |   -4.0 |   67.5 | Euphorbiaceae | Conceveiba          | guyanensis  | 10.0 |
-| Petit_Plateau |  201 |    0.3 |   39.9 | Burseraceae   | Protium             | altissimum  | 18.9 |
-| Petit_Plateau |  201 |   -3.5 |   41.5 | Euphorbiaceae | Mabea               | speciosa    | 10.0 |
+| Site | Plot | Xfield | Yfield | Family | Genus | Species | D |
+|:---|---:|---:|---:|:---|:---|:---|---:|
+| Petit_Plateau | 201 | 0.0 | 31.5 | Burseraceae | Protium | surinamense | 11.0 |
+| Petit_Plateau | 201 | 0.1 | 75.2 | Anacardiaceae | Tapirira | guianensis | 74.4 |
+| Petit_Plateau | 201 | 0.2 | 27.6 | Lecythidaceae | Indet.Lecythidaceae | Indet. | 25.4 |
+| Petit_Plateau | 201 | -4.0 | 67.5 | Euphorbiaceae | Conceveiba | guyanensis | 10.0 |
+| Petit_Plateau | 201 | 0.3 | 39.9 | Burseraceae | Protium | altissimum | 18.9 |
+| Petit_Plateau | 201 | -3.5 | 41.5 | Euphorbiaceae | Mabea | speciosa | 10.0 |
 
-Head of the table trees
+Head of the table trees {.table style="width:100%;"}
 
 This dataset is also derived from the [2012 Nouragues forest
 dataset](https://dataverse.cirad.fr/dataset.xhtml?persistentId=doi:10.18167/DVN1/TZ1RL9),
@@ -161,6 +164,7 @@ corner coordinates.
   outliers using the ‘rm_outliers’ and ‘max_dist’ arguments.
 
 ``` r
+
 check_plot_trust_GPS <- check_plot_coord(
   corner_data = NouraguesPlot201,
   longlat = c("Long", "Lat"),  # or proj_coord = c("Xutm", "Yutm"), 
@@ -181,6 +185,7 @@ Let’s degrade the data to mimic the case where we only have 8 unreliable
 GPS coordinates.
 
 ``` r
+
 degraded_corner_coord <- NouraguesPlot201[c(1:2,11:12,21:22,31:32),]
 
 check_plot_trust_field <- check_plot_coord(
@@ -206,6 +211,7 @@ Reference corner coordinates are returned by the function via the
 processing.
 
 ``` r
+
 kable(check_plot_trust_GPS$corner_coord, row.names = FALSE, caption = "Reference corner coordinates")
 ```
 
@@ -216,12 +222,13 @@ kable(check_plot_trust_GPS$corner_coord, row.names = FALSE, caption = "Reference
 |   100 |   100 | 313050.2 | 451582.6 | -52.68408 | 4.083769 |
 |     0 |   100 | 313100.5 | 451665.9 | -52.68363 | 4.084524 |
 
-Reference corner coordinates
+Reference corner coordinates {.table}
 
 The associated polygon is returned via the `$polygon` output and can be
 saved into a shapefile as follows:
 
 ``` r
+
 sf::st_write(check_plot_trust_GPS$polygon, "your_directory/plot201.shp")
 ```
 
@@ -240,6 +247,7 @@ their relative coordinates using the `tree_data` and `tree_coords`
 arguments.
 
 ``` r
+
 plot201Trees <- NouraguesTrees[NouraguesTrees$Plot==201,]
 
 check_plot_trust_GPS <- check_plot_coord(
@@ -257,6 +265,7 @@ data-frame and returned by the output `$tree_data` (columns x_proj/long
 and y_proj/lat).
 
 ``` r
+
 kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = FALSE, caption = "Head of the $tree_data output")
 ```
 
@@ -269,7 +278,7 @@ kable(head(check_plot_trust_GPS$tree_data[,-c(5,6,7)]), digits = 3, row.names = 
 | Petit_Plateau |  201 |   0.3 |  39.9 | 18.9 | 313043.4 | 451700.1 | TRUE       | -52.684 | 4.085 |
 | Petit_Plateau |  201 |  -3.5 |  41.5 | 10.0 | 313046.8 | 451702.5 | FALSE      | -52.684 | 4.085 |
 
-Head of the \$tree_data output
+Head of the \$tree_data output {.table}
 
 The output of the function also standardises the names of the relative
 tree coordinates (to `x_rel` and `y_rel`) and adds the `is_in_plot`
@@ -282,6 +291,7 @@ Finally, you can access and modify the plot via the `$plot_design`
 output which is a ggplot object. For example, to change the plot title:
 
 ``` r
+
 plot_to_change <- check_plot_trust_GPS$plot_design
 plot_to_change <- plot_to_change + ggtitle("A custom title")
 plot_to_change
@@ -296,6 +306,7 @@ you want to compare with a tree metric, this can be done with the
 `ref_raster`, `prop_tree` and `threshold_tree` arguments.
 
 ``` r
+
 # Load internal CHM raster
 nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",package = "BIOMASS", mustWork = TRUE))
 
@@ -318,6 +329,7 @@ supply the column names containing the plots IDs of the corners and the
 trees via the `plot_ID` and `tree_plot_ID` arguments:
 
 ``` r
+
 multiple_checks <- check_plot_coord(
   corner_data = NouraguesCoords, # NouraguesCoords contains 4 plots
   proj_coord = c("Xutm", "Yutm"), rel_coord = c("Xfield", "Yfield"),
@@ -346,6 +358,7 @@ rectangular in the plot’s relative coordinates system**, *i.e.* have 4
 right angles:
 
 ``` r
+
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
@@ -369,7 +382,7 @@ kable(head(subplots$sub_corner_coord, 10), digits = 1, row.names = FALSE, captio
 |         | subplot_0_1 |     0 |    50 | 313053.1 | 451694.5 |
 |         | subplot_0_1 |    50 |    50 | 313028.4 | 451650.5 |
 
-Head of the divide_plot()\$sub_corner_coord output.
+Head of the divide_plot()\$sub_corner_coord output. {.table}
 
 If you want to stay in the plot’s relative coordinate system, just set
 `proj_coord` = NULL.
@@ -379,6 +392,7 @@ The function also handles imperfect cuts with the `origin` and
 coordinates set at (10 ; 5).
 
 ``` r
+
 subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
@@ -400,6 +414,7 @@ but can also **assign to each tree its subplot** with the **`tree_data`
 and `tree_coords` arguments**:
 
 ``` r
+
 # Add AGB predictions (calculated in Vignette BIOMASS) to plot201Trees
 AGB_data <- readRDS("saved_data/NouraguesTreesAGB.rds")
 plot201Trees <- merge(plot201Trees , AGB_data[c("Xfield","Yfield","D","AGB")], sort=FALSE)
@@ -423,24 +438,26 @@ The function now returns a list containing:
   column**
 
 ``` r
+
 kable(head(subplots$tree_data[,-c(2,3,4)]), digits = 1, row.names = FALSE, caption = "Head of the divide_plot()$tree_data returns")
 ```
 
-| x_rel | Plot | Family        | Genus               | Species     | AGB | plot_ID | subplot_ID  |
-|------:|-----:|:--------------|:--------------------|:------------|----:|:--------|:------------|
-|   0.0 |  201 | Burseraceae   | Protium             | surinamense | 0.1 |         | subplot_0_0 |
-|   0.1 |  201 | Anacardiaceae | Tapirira            | guianensis  | 7.3 |         | subplot_0_1 |
-|   0.2 |  201 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 0.6 |         | subplot_0_0 |
-|  -4.0 |  201 | Euphorbiaceae | Conceveiba          | guyanensis  | 0.1 |         | NA          |
-|   0.3 |  201 | Burseraceae   | Protium             | altissimum  | 0.3 |         | subplot_0_0 |
-|  -3.5 |  201 | Euphorbiaceae | Mabea               | speciosa    | 0.1 |         | NA          |
+| x_rel | Plot | Family | Genus | Species | AGB | plot_ID | subplot_ID |
+|---:|---:|:---|:---|:---|---:|:---|:---|
+| 0.0 | 201 | Burseraceae | Protium | surinamense | 0.1 |  | subplot_0_0 |
+| 0.1 | 201 | Anacardiaceae | Tapirira | guianensis | 7.3 |  | subplot_0_1 |
+| 0.2 | 201 | Lecythidaceae | Indet.Lecythidaceae | Indet. | 0.6 |  | subplot_0_0 |
+| -4.0 | 201 | Euphorbiaceae | Conceveiba | guyanensis | 0.1 |  | NA |
+| 0.3 | 201 | Burseraceae | Protium | altissimum | 0.3 |  | subplot_0_0 |
+| -3.5 | 201 | Euphorbiaceae | Mabea | speciosa | 0.1 |  | NA |
 
-Head of the divide_plot()\$tree_data returns
+Head of the divide_plot()\$tree_data returns {.table}
 
 Of course, the function can handle as many plots as you want, using the
 `corner_plot_ID` and `tree_plot_ID` arguments:
 
 ``` r
+
 multiple_subplots <- divide_plot(
   corner_data = NouraguesCoords,
   rel_coord = c("Xfield","Yfield"), proj_coord = c("Xutm","Yutm"), corner_plot_ID = "Plot",
@@ -458,6 +475,7 @@ corner coordinates using the `sd_coord` and `n` arguments. In this case,
 along the X- and Y- axis will be equal to the value of sd_coord:
 
 ``` r
+
 sd_coord_subplots <- divide_plot(
   corner_data = check_plot_trust_GPS$corner_coord,
   rel_coord = c("x_rel","y_rel"),
@@ -482,6 +500,7 @@ tree metric at the subplot level with the
 function.
 
 ``` r
+
 subplot_metric <- subplot_summary(
   subplots = subplots,
   value = "AGB", # AGB was added before applying divide_plot()
@@ -498,6 +517,7 @@ and choose between a raw or a per hectare summary using `per_ha`
 argument.
 
 ``` r
+
 subplot_metric <- subplot_summary(
   subplots = subplots,
   value = "AGB",
@@ -520,6 +540,7 @@ The output of the function is a list containing:
 The returned **polygons can be saved into a shapefile** like this:
 
 ``` r
+
 # Set the CRS of the polygons
 subplot_polygons <- sf::st_set_crs(
   subplot_metric$polygon ,
@@ -533,6 +554,7 @@ And of course, the function can handle **as many plots as provided in
 divide_plot()**:
 
 ``` r
+
 multiple_subplot_metric <- subplot_summary(
   subplots = multiple_subplots, draw_plot = FALSE,
   value = "D", fun = mean, per_ha = FALSE)
@@ -550,6 +572,7 @@ The function also handles uncertainty in corner coordinates if the
 argument (optional):
 
 ``` r
+
 subplot_AGBD <- subplot_summary(
   subplots = sd_coord_subplots,
   AGB_simu = error_prop$AGB_simu # error_prop has been created in the previous vignette
@@ -572,6 +595,7 @@ raster obtained from LiDAR data) by providing the `ref_raster` and the
 `raster_fun` arguments:
 
 ``` r
+
 raster_summary <- subplot_summary(
   subplots = subplots,
   ref_raster = nouraguesRaster, raster_fun = median)
@@ -591,6 +615,7 @@ and summarise the following information:
 - the mean raster values
 
 ``` r
+
 subplot_metric <- subplot_summary(
   subplots = sd_coord_subplots,
   value = "D", fun = sd, per_ha = TRUE,
@@ -621,6 +646,7 @@ Here are some examples to custom the ggplot of the
 function:
 
 ``` r
+
 subplot_metric <- subplot_summary(subplots = subplots,
                                   value = "AGB") 
 #> [[1]]
@@ -629,6 +655,7 @@ subplot_metric <- subplot_summary(subplots = subplots,
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-1.png)
 
 ``` r
+
 
 custom_plot <- subplot_metric$plot_design
 # Change the title and legend:
@@ -639,6 +666,7 @@ custom_plot +
 ![](Vignette_spatialized_trees_and_forest_stand_metrics_files/figure-html/customize_plot-2.png)
 
 ``` r
+
 # Display trees with diameter as size and transparency (and a smaller legend on the right): 
 custom_plot + 
   geom_point(data=check_plot_trust_GPS$tree_data, mapping = aes(x = x_proj, y = y_proj, size = D, alpha= D), shape=1,) +

@@ -49,6 +49,7 @@ iteration of the AGB monte Carlo approach.
 ## Examples
 
 ``` r
+
 # Load a database
 data(NouraguesHD)
 data(NouraguesTrees)

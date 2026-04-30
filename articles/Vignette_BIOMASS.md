@@ -1,4 +1,4 @@
-# Estimating stand biomass
+# Estimate stand biomass
 
 ## Complete BIOMASS workflow and vignette organisation
 
@@ -8,14 +8,14 @@ al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.127
 the three articles comprised in the vignette follow the same workflow as
 presented in the paper:
 
-![](img/BIOMASS_workflow.png) The first vignette (BIOMASS, the current
-one) is dedicated to compute above ground biomass (AGB) and its
-associated uncertainty from plot inventory data. The second one
-(Spatialize trees and forest stand metrics) explains how to manage plot
-coordinates and summarize AGB and/or LiDAR metrics at subplot level. The
-third one (Predict maps of AGBD based on inventory and LiDAR data)
-guides the user through the last steps of the workflow to get AGBD maps
-from spatialized AGBD and spatialized LiDAR metrics.
+![](img/BIOMASS_workflow.png) The first vignette (Estimate stand
+biomass, the current one) is dedicated to compute above ground biomass
+(AGB) and its associated uncertainty from plot inventory data. The
+second one (Spatialize trees and forest stand metrics) explains how to
+manage plot coordinates and summarize AGB and/or LiDAR metrics at
+subplot level. The third one (Predict maps of AGBD based on inventory
+and LiDAR data) guides the user through the last steps of the workflow
+to get AGBD maps from spatialized AGBD and spatialized LiDAR metrics.
 
 ## General workflow and required data
 
@@ -34,18 +34,19 @@ conducted in 2012 in the Nouragues forest (French Guiana). For
 educational purpose, some virtual trees have been added to the data.
 
 ``` r
+
 data("NouraguesTrees")
 knitr::kable(head(NouraguesTrees))
 ```
 
-|       | Site          | Plot | Xfield | Yfield | Family        | Genus               | Species     |    D |
-|:------|:--------------|-----:|-------:|-------:|:--------------|:--------------------|:------------|-----:|
-| 14    | Petit_Plateau |  201 |    0.0 |   31.5 | Burseraceae   | Protium             | surinamense | 11.0 |
-| 44    | Petit_Plateau |  201 |    0.1 |   75.2 | Anacardiaceae | Tapirira            | guianensis  | 74.4 |
-| 13    | Petit_Plateau |  201 |    0.2 |   27.6 | Lecythidaceae | Indet.Lecythidaceae | Indet.      | 25.4 |
-| 2810  | Petit_Plateau |  201 |   -4.0 |   67.5 | Euphorbiaceae | Conceveiba          | guyanensis  | 10.0 |
-| 24    | Petit_Plateau |  201 |    0.3 |   39.9 | Burseraceae   | Protium             | altissimum  | 18.9 |
-| 12100 | Petit_Plateau |  201 |   -3.5 |   41.5 | Euphorbiaceae | Mabea               | speciosa    | 10.0 |
+|  | Site | Plot | Xfield | Yfield | Family | Genus | Species | D |
+|:---|:---|---:|---:|---:|:---|:---|:---|---:|
+| 14 | Petit_Plateau | 201 | 0.0 | 31.5 | Burseraceae | Protium | surinamense | 11.0 |
+| 44 | Petit_Plateau | 201 | 0.1 | 75.2 | Anacardiaceae | Tapirira | guianensis | 74.4 |
+| 13 | Petit_Plateau | 201 | 0.2 | 27.6 | Lecythidaceae | Indet.Lecythidaceae | Indet. | 25.4 |
+| 2810 | Petit_Plateau | 201 | -4.0 | 67.5 | Euphorbiaceae | Conceveiba | guyanensis | 10.0 |
+| 24 | Petit_Plateau | 201 | 0.3 | 39.9 | Burseraceae | Protium | altissimum | 18.9 |
+| 12100 | Petit_Plateau | 201 | -3.5 | 41.5 | Euphorbiaceae | Mabea | speciosa | 10.0 |
 
 These data do not contain any information on wood density or height of
 trees. Only diameter is known, as no estimate can be made without this
@@ -76,6 +77,7 @@ we advise you to define a folder which will host the cache file
 permanently, enabling to work offline.
 
 ``` r
+
 # By default
 createCache() 
 # Or if you want to set your own cache folder
@@ -89,6 +91,7 @@ That said, let’s continue with the call to
 function:
 
 ``` r
+
 Taxo <- correctTaxo(
   genus = NouraguesTrees$Genus, # genus also accepts the whole species name (genus + species) or (genus + species + author) 
   species = NouraguesTrees$Species, 
@@ -99,6 +102,7 @@ The corrected genus and species of the trees can now be added to the
 data:
 
 ``` r
+
 NouraguesTrees$GenusCorrected <- Taxo$genusAccepted
 NouraguesTrees$SpeciesCorrected <- Taxo$speciesAccepted
 ```
@@ -108,6 +112,7 @@ corrected from “guyanensis” to “guianensis” (the fourth row of
 correctTaxo() output has a TRUE value for the column nameModified) :
 
 ``` r
+
 NouraguesTrees$Species[4]
 #> [1] "guyanensis"
 Taxo[4,]
@@ -123,6 +128,7 @@ You can also retrieve families from genus names in the familyAccepted
 column.
 
 ``` r
+
 NouraguesTrees$family <- Taxo$familyAccepted
 ```
 
@@ -137,6 +143,7 @@ unidentified trees or if the genus is missing in the reference database,
 the stand-level mean wood density is assigned to the tree.
 
 ``` r
+
 wood_densities <- getWoodDensity(
   genus = NouraguesTrees$GenusCorrected,
   species = NouraguesTrees$SpeciesCorrected,
@@ -155,6 +162,7 @@ For information, here are the number of wood density values estimated at
 the species, genus and plot level:
 
 ``` r
+
 # At species level
 sum(wood_densities$levelWD == "species")
 #> [1] 1635
@@ -174,6 +182,7 @@ relatively poor estimates above the genus level (Flores & Coomes 2011).
 the `addWoodDensityData` argument (here invented for the example):
 
 ``` r
+
 LocalWoodDensity <- data.frame(
   genus = c("Paloue", "Handroanthus"),
   species = c("princeps", "serratifolius"),
@@ -214,6 +223,7 @@ we will use the `NouraguesHD` dataset which contains the height and
 diameter measurements of two 1-ha plots from the Nouragues forest.
 
 ``` r
+
 data("NouraguesHD")
 ```
 
@@ -227,6 +237,7 @@ log^1 and log^2 models) or nonlinear least squares estimates (for
 Michaelis-Menten and Weibull models) :
 
 ``` r
+
 HD_res <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   useWeight = TRUE, drawGraph = T)
@@ -251,6 +262,7 @@ As the log2 model has the lowest RSE, we will build this model using the
 function:
 
 ``` r
+
 HDmodel <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   method = "log2", useWeight = TRUE, 
@@ -289,6 +301,7 @@ proposed by Feldspausch et al. are directly retrieved by the
 function. Simply indicate the region concerned:
 
 ``` r
+
 H_feldspausch <- retrieveH(
   D = NouraguesTrees$D,
   region = "GuianaShield")
@@ -307,6 +320,7 @@ function. Coordinates of the plot (or trees) in a longitude/latitude
 format must be provided.
 
 ``` r
+
 data("NouraguesCoords") #contains corner coordinates
 coords <- apply(NouraguesCoords[c("Long","Lat")] , 2, mean) # compute the mean of the corner coordinates
 
@@ -327,6 +341,7 @@ can be used with the
 function, where AGB values are reported in Mg instead of in kg:
 
 ``` r
+
 NouraguesTrees$AGB <- computeAGB(
   D = NouraguesTrees$D,
   WD = NouraguesTrees$WD,
@@ -339,6 +354,7 @@ For AGB estimates using tree heights obtained by the “Chave method”
 instead of the tree height estimates:
 
 ``` r
+
 NouraguesTrees$AGB_Chave <- computeAGB(
     D = NouraguesTrees$D,
     WD = NouraguesTrees$WD,
@@ -373,6 +389,7 @@ function, the user can set diameter measurement errors by:
   trees and large errors to the remaining 5%
 
 ``` r
+
 D_error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
   Dpropag = "chave2004",
@@ -392,6 +409,7 @@ at the species, genus and family levels.
 This output can be provided through the `errWD` argument:
 
 ``` r
+
 WD_error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD, H = NouraguesTrees$H_model,
   errWD = wood_densities$sdWD,
@@ -412,6 +430,7 @@ argument.
   function using the `modelHD` argument:
 
 ``` r
+
 H_model_error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
   HDmodel = HDmodel, # but we provide HDmodel
@@ -429,6 +448,7 @@ AGBmonteCarlo() function.
   function for the `errH` argument:
 
 ``` r
+
 H_feld_error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD,
   H = NouraguesTrees$H_feldspausch, errH = H_feldspausch$RSE, # we provide H and errH
@@ -441,6 +461,7 @@ H_feld_error_prop <- AGBmonteCarlo(
   using the `coord` argument:
 
 ``` r
+
 H_chave_error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
   coord = coords, # but we provide the vector of median coordinates of the plots
@@ -453,6 +474,7 @@ H_chave_error_prop <- AGBmonteCarlo(
 Let’s propagate all sources of errors using the HD-model:
 
 ``` r
+
 error_prop <- AGBmonteCarlo(
   D = NouraguesTrees$D, WD = NouraguesTrees$WD, # we do not provide H
   HDmodel = HDmodel, # but we provide HDmodel
@@ -481,6 +503,7 @@ nothing about the AGB at the plot level. To do this, you can use the
 function:
 
 ``` r
+
 AGB_by_plot <- summaryByPlot(AGB_val = error_prop$AGB_simu, plot = NouraguesTrees$Plot, drawPlot = TRUE)
 ```
 
@@ -502,6 +525,7 @@ ones, you can proceed as follows:
     directly measured trees
 
 ``` r
+
 # NouraguesHD contains 163 trees that were not measured
 NouraguesHD$Hmix <- NouraguesHD$H
 NouraguesHD$RSEmix <- 0.5
@@ -515,6 +539,7 @@ NouraguesHD$RSEmix[filt] <- HDmodel$RSE
     estimated)
 
 ``` r
+
 wd <- getWoodDensity(NouraguesHD$genus, NouraguesHD$species)
 resultMC <- AGBmonteCarlo(
   D = NouraguesHD$D, WD = wd$meanWD, errWD = wd$sdWD,
@@ -537,6 +562,7 @@ path, meaning that next time, the model will simply be loaded and
 updated, bypassing the compilation stage.
 
 ``` r
+
 # First, define the user cache path
 createCache("the_path_to_your_cache_folder") 
 # Or 
@@ -559,6 +585,7 @@ identify numerous **local minima for the estimated parameters**. Here is
 an example of the Weibull method being used with the default arguments:
 
 ``` r
+
 brm_model <- modelHD(
   D = NouraguesHD$D, H = NouraguesHD$H,
   method = "weibull",
@@ -571,8 +598,10 @@ plot(brm_model$model)
 
 As one can see, the two first parameters a and b (resp. called
 `b_a_Intercept` and `b_b_Intercept`) of the Weibull equation:
-$$H = a \cdot \left( 1 - exp\left( - (D/b)^{c} \right) \right)$$ are
-strongly correlated. Therefore, it is strongly recommended to define
+``` math
+H=a  \cdot (1-exp(-(D/b)^c))
+```
+are strongly correlated. Therefore, it is strongly recommended to define
 priors that do not allow for unrealistic values. To do this, we need to
 examine the meanings of the Weibull parameters:
 
@@ -594,6 +623,7 @@ above) can be provided to
 [`modelHD()`](https://umr-amap.github.io/BIOMASS/reference/modelHD.md):
 
 ``` r
+
 weibull_priors <- c(
   set_prior(prior = "uniform(0,80)", lb = 0, ub = 80, class = "b",nlpar = "a"),
   set_prior(prior = "uniform(0,100)", lb = 0, ub = 100, class = "b",nlpar = "b"),

@@ -32,6 +32,7 @@ a data frame with :
 ## Examples
 
 ``` r
+
 long <- c(-52.68, -51.12, -53.11)
 lat <- c(4.08, 3.98, 4.12)
 coord <- cbind(long, lat)

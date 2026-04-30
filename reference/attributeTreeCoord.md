@@ -44,6 +44,7 @@ absolute coordinate system
 ## Examples
 
 ``` r
+
 # Trees relative coordinates
 xy <- data.frame(x = runif(200, min = 0, max = 200), y = runif(200, min = 0, max = 200))
 

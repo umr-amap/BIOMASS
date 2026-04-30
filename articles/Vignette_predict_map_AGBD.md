@@ -32,28 +32,32 @@ fields (see [Gelfand et al.,
 2003](https://doi.org/10.1198/016214503000170) and [Hunka et al.,
 2025](https://doi.org/10.1016/j.rse.2024.114557)).
 
-The general equation can be written as follow, for a subplot $s_{i}$:
+The general equation can be written as follow, for a subplot $`s_i`$:
 
-$$\begin{aligned}
-Y_{i} & {\sim N\left( \mu_{i},\sigma \right)} \\
-\mu_{i} & {= \beta_{0} + \left( \beta_{1} + \eta_{i} \right) \times X_{i}} \\
-\eta_{i} & {\sim {MVNormal}(0,\Sigma)}
-\end{aligned}$$
+``` math
+\begin{align*}
+Y_i &\sim \mathrm{N}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + (\beta_1 + \eta_i) \times X_i \\
+\eta_i &\sim \mathrm{MVNormal}(0, \Sigma)
+\end{align*}
+```
 
-where $\Sigma$, the covariance matrix, is defined by the $\frac{3}{2}$
-Màtern kernel between two locations $s_{i}$ and $s_{j}$:
+where $`\Sigma`$, the covariance matrix, is defined by the
+$`\frac{3}{2}`$ Màtern kernel between two locations $`s_i`$ and $`s_j`$:
 
-$$k\left( \mathbf{s}_{i},\mathbf{s}_{j} \right) = \psi^{2}\left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right)\exp\left( - \frac{\sqrt{3}d_{i,j}}{l} \right)$$
+``` math
+k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)
+```
 
-$d_{i,j}$ is the distance between locations $s_{i}$ and $s_{j}$,
-parameter $\psi$ controls the magnitude and parameter $l$ the range of
-the kernel.
+$`d_{i,j}`$ is the distance between locations $`s_i`$ and $`s_j`$,
+parameter $`\psi`$ controls the magnitude and parameter $`l`$ the range
+of the kernel.
 
-In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$
-is the logarithm of a LiDAR metric measurement for the corresponding
-plot, for instance the mean of the Canopy Height Model on the plot
-surface. The intercept $\beta_{0}$ can be removed from the model (as by
-default).
+In our case $`X`$ stands for the logarithm of plot-level AGBD, while
+$`Y`$ is the logarithm of a LiDAR metric measurement for the
+corresponding plot, for instance the mean of the Canopy Height Model on
+the plot surface. The intercept $`\beta_0`$ can be removed from the
+model (as by default).
 
 ### Warning on vignette example
 
@@ -84,6 +88,7 @@ Those steps of the procedure are detailed in the two other vignettes.
 ### Load inventory, plot coordinates and LiDAR data
 
 ``` r
+
 data("NouraguesTrees")
 data("NouraguesCoords")
 nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",package = "BIOMASS", mustWork = TRUE))
@@ -92,6 +97,7 @@ nouraguesRaster <- terra::rast(system.file("extdata", "NouraguesRaster.tif",pack
 ### Compute AGBD
 
 ``` r
+
 # Height
 data("NouraguesHD")
 brm_model <- modelHD(
@@ -124,6 +130,7 @@ error_prop_4plots$AGB_simu <- error_prop_4plots$AGB_simu[,1:50]
 ### Spatialize AGBD
 
 ``` r
+
 # divide plots into subplots
 multiple_subplots <- divide_plot(
   grid_size = 50, 
@@ -153,6 +160,7 @@ multiple_checks <- check_plot_coord(
 
 ``` r
 
+
 # compute AGBD estimates and their uncertainty per subplot
 subplot_AGBD <- subplot_summary(
   subplots = multiple_subplots,
@@ -164,6 +172,7 @@ subplot_AGBD <- subplot_summary(
 ### Spatialize LiDAR metric
 
 ``` r
+
 # quick plot to visualise plot corners in the landscape
 terra::plot(nouraguesRaster)
 points(NouraguesCoords$Xutm, NouraguesCoords$Yutm, col ="red", pch = 20)
@@ -172,6 +181,7 @@ points(NouraguesCoords$Xutm, NouraguesCoords$Yutm, col ="red", pch = 20)
 ![](Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-1.png)
 
 ``` r
+
 
 # get CHM median values for each suplot
 raster_summary <- subplot_summary(
@@ -199,6 +209,7 @@ raster_summary <- subplot_summary(
 ![](Vignette_predict_map_AGBD_files/figure-html/spatial_lidar-5.png)
 
 ``` r
+
 chm_subplot <- raster_summary$tree_summary |>
   rename(raster_metric = z2012_median)
 ```
@@ -209,6 +220,7 @@ Gather data for agbd-chm model inference (*i.e.* join
 predictor-predicted):
 
 ``` r
+
 agbd_subplot <- subplot_AGBD$long_AGB_simu
 dt_inf <- agbd_subplot %>%
   left_join(chm_subplot, by = "subplot_ID") %>%
@@ -216,10 +228,11 @@ dt_inf <- agbd_subplot %>%
 ```
 
 then run calibration function, here parallelized on 4 CPUs thanks to
-argument `cores` set to 4, and without the intercept $\beta_{0}$
+argument `cores` set to 4, and without the intercept $`\beta_0`$
 (argument `intercept` set to FALSE):
 
 ``` r
+
 model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T, 
                              plot_model = FALSE, intercept = FALSE, chains = 4, 
                              thin = 10, iter = 3500, warmup = 1500, cores = 4)
@@ -228,6 +241,7 @@ model_cal <- calibrate_model(long_AGB_simu = dt_inf, nb_rep = 50, useCache = T,
 Let’s check inference results:
 
 ``` r
+
 summary(model_cal)
 #> Warning: There were 1 divergent transitions after warmup. Increasing
 #> adapt_delta above 0.9 may help. See
@@ -263,18 +277,20 @@ summary(model_cal)
 
 The parameters to be read in the summary are the following:
 
-- sdgp(betatilde_gpxy) is $\psi$ the magnitude of the covariance kernel,
-- lscale(betatilde_gpxy) is $l$ the range of the covariance kernel (in
+- sdgp(betatilde_gpxy) is $`\psi`$ the magnitude of the covariance
+  kernel,
+- lscale(betatilde_gpxy) is $`l`$ the range of the covariance kernel (in
   the distance unit you have chosen),
-- betatilde_Intercept is $\beta_{1}$ the fixed part of the regression
+- betatilde_Intercept is $`\beta_1`$ the fixed part of the regression
   coefficient,
-- sigma is $\sigma$ the Gaussian residual standard deviation of the
+- sigma is $`\sigma`$ the Gaussian residual standard deviation of the
   predicted variable (do not forget it is log scaled).
 
 Joint posterior distribution values (for our 4 parameters of interest)
 are available through the following `brms` function:
 
 ``` r
+
 draws_fit <- as_draws_df(model_cal)[,1:4]
 ```
 
@@ -288,6 +304,7 @@ autocorrelation, you can also use the `acf` function from `tseries`
 package (chain by chain, not all together), such as:
 
 ``` r
+
 require(tseries)
 #> Loading required package: tseries
 #> Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
@@ -350,6 +367,7 @@ may interfere with the inference march and make it difficult to
 converge.
 
 ``` r
+
 require(GGally)
 #> Loading required package: GGally
 #> 
@@ -365,6 +383,7 @@ ggpairs(draws_fit)
 Now, let’s have a look at the posterior predictive check:
 
 ``` r
+
 pp_check(model_cal, ndraws = 100)
 ```
 
@@ -379,6 +398,7 @@ indicator of the goodness of fit of the model to the data.
 ## Predict AGBD map on the LiDAR footprint
 
 ``` r
+
 map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
                          grid_size = 50,
@@ -389,18 +409,21 @@ map_agbd <- predict_map(fit_brms = model_cal,
 ```
 
 ``` r
+
 terra::plot(map_agbd$post_median_AGBD, main = "Median of posterior AGBD distributions")
 ```
 
 ![](Vignette_predict_map_AGBD_files/figure-html/plot_predicted_map-1.png)
 
 ``` r
+
 terra::plot(map_agbd$post_sd_AGBD, main = "Sd of posterior AGBD distributions")
 ```
 
 ![](Vignette_predict_map_AGBD_files/figure-html/plot_predicted_map-2.png)
 
 ``` r
+
 terra::plot(map_agbd$post_sd_AGBD/map_agbd$post_median_AGBD, main = "CV of posterior AGBD distributions")
 ```
 
@@ -418,6 +441,7 @@ CPUs, you want to use (before the call to `predict_map` function), and
 2) set the `n_cores` argument of `predict_map` to the same number:
 
 ``` r
+
 plan(multisession, workers = 4)
 map_agbd <- predict_map(fit_brms = model_cal,
                          pred_raster = nouraguesRaster,
@@ -439,6 +463,7 @@ We have 4 plots divided in 4 subplots, so we need to set aside 11
 subplots for the calibration step, the rest will be used to validate.
 
 ``` r
+
 # let's select subplots for each step
 set.seed(1234)
 vector_of_subplots <- unique(dt_inf$subplot_ID)
@@ -460,6 +485,7 @@ Now we can calibrate the model (*i.e.* run the inference) with the
 calibration dataset:
 
 ``` r
+
 cal_step1 <- calibrate_model(long_AGB_simu = dt_calibration, nb_rep = 50, useCache = T,
                             plot_model = TRUE, chains = 4, thin = 10, iter = 4000,
                             warmup = 2000, cores = 4)
@@ -471,6 +497,7 @@ calibrating. For that we use the predict function of brms (link to
 help):
 
 ``` r
+
 val_step2 <- predict(cal_step1, newdata = dt_validation[dt_validation$N_simu == 1], ndraws = 100)
 ```
 
@@ -479,6 +506,7 @@ calibrated with the calibration dataset, with observed values from the
 validation dataset:
 
 ``` r
+
 dt_plot_val <- dt_validation %>%
   group_by(subplot_ID) %>%
   summarise(median_obs = median(AGBD), inf_obs = quantile(AGBD, probs = 0.025), 

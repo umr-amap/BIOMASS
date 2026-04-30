@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Estimating stand biomass • BIOMASS</title>
+<title>Estimate stand biomass • BIOMASS</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -15,10 +15,10 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Estimating stand biomass">
-<meta name="description" content="Estimating above ground biomass with BIOMASS
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Estimate stand biomass">
+<meta name="description" content="Estime above ground biomass with BIOMASS
 ">
-<meta property="og:description" content="Estimating above ground biomass with BIOMASS
+<meta property="og:description" content="Estime above ground biomass with BIOMASS
 ">
 <meta property="og:image" content="https://umr-amap.github.io/BIOMASS/logo.png">
 </head>
@@ -42,7 +42,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimating stand biomass</a></li>
+<li><a class="dropdown-item" href="../articles/Vignette_BIOMASS.html">Estimate stand biomass</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_spatialized_trees_and_forest_stand_metrics.html">Spatialize trees and forest stand metrics with BIOMASS</a></li>
     <li><a class="dropdown-item" href="../articles/Vignette_predict_map_AGBD.html">Predict maps of AGBD based on inventory and LiDAR data</a></li>
   </ul>
@@ -66,11 +66,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Estimating stand biomass</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Estimate stand biomass</h1>
                         <h4 data-toc-skip class="author">Arthur
 Bailly</h4>
             
-            <h4 data-toc-skip class="date">2026-04-28</h4>
+            <h4 data-toc-skip class="date">2026-04-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_BIOMASS.Rmd" class="external-link"><code>vignettes/Vignette_BIOMASS.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_BIOMASS.Rmd</code></div>
@@ -85,14 +85,15 @@ Bailly</h4>
 (<a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753" class="external-link">Réjou-Méchain
 et al. 2017</a>), the three articles comprised in the vignette follow
 the same workflow as presented in the paper:</p>
-<p><img src="img/BIOMASS_workflow.png"> The first vignette (BIOMASS,
-the current one) is dedicated to compute above ground biomass (AGB) and
-its associated uncertainty from plot inventory data. The second one
-(Spatialize trees and forest stand metrics) explains how to manage plot
-coordinates and summarize AGB and/or LiDAR metrics at subplot level. The
-third one (Predict maps of AGBD based on inventory and LiDAR data)
-guides the user through the last steps of the workflow to get AGBD maps
-from spatialized AGBD and spatialized LiDAR metrics.</p>
+<p><img src="img/BIOMASS_workflow.png"> The first vignette (Estimate
+stand biomass, the current one) is dedicated to compute above ground
+biomass (AGB) and its associated uncertainty from plot inventory data.
+The second one (Spatialize trees and forest stand metrics) explains how
+to manage plot coordinates and summarize AGB and/or LiDAR metrics at
+subplot level. The third one (Predict maps of AGBD based on inventory
+and LiDAR data) guides the user through the last steps of the workflow
+to get AGBD maps from spatialized AGBD and spatialized LiDAR
+metrics.</p>
 </div>
 <div class="section level2">
 <h2 id="general-workflow-and-required-data">General workflow and required data<a class="anchor" aria-label="anchor" href="#general-workflow-and-required-data"></a>
@@ -696,7 +697,7 @@ with the default arguments:</p>
 <p>As one can see, the two first parameters a and b (resp. called
 <code>b_a_Intercept</code> and <code>b_b_Intercept</code>) of the
 Weibull equation:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>=</mo><mi>a</mi><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>−</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>D</mi><mi>/</mi><mi>b</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>c</mi></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">H=a  \cdot (1-exp(-(D/b)^c))</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>=</mo><mi>a</mi><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>e</mi><mi>x</mi><mi>p</mi><mo stretchy="false" form="prefix">(</mo><mi>−</mi><mo stretchy="false" form="prefix">(</mo><mi>D</mi><mi>/</mi><mi>b</mi><msup><mo stretchy="false" form="postfix">)</mo><mi>c</mi></msup><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">H=a  \cdot (1-exp(-(D/b)^c))</annotation></semantics></math>
 are strongly correlated. Therefore, it is strongly recommended to define
 priors that do not allow for unrealistic values. To do this, we need to
 examine the meanings of the Weibull parameters:</p>

@@ -29,12 +29,14 @@ al. (2017)](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.1
 The latest released version from CRAN:
 
 ``` r
+
 install.packages("BIOMASS")
 ```
 
 The latest version from Github (in development):
 
 ``` r
+
 install.packages("remotes")
 remotes::install_github('umr-amap/BIOMASS')
 ```
@@ -42,6 +44,7 @@ remotes::install_github('umr-amap/BIOMASS')
 To use it :
 
 ``` r
+
 library("BIOMASS")
 ```
 
@@ -68,6 +71,7 @@ uncertainty in tropical forests.” *Methods in Ecology and Evolution*,
 Or you can also run
 
 ``` r
+
 citation("BIOMASS")
 ```
 
