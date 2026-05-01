@@ -368,8 +368,6 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     
   } else {
       
-    AGB_simu <- AGB_simu / 1000
-
     if (Carbon == FALSE) {
       sum_AGB_simu <- colSums(AGB_simu, na.rm = TRUE) #stand level
       
