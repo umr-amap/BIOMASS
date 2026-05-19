@@ -302,7 +302,7 @@ plotPolygonFit <- function(point_data,
   
   # Transform lat-lon coordinates to UTM if provided
   if (!is.null(lonlat_col)) { 
-    UTM_code <- getUTM(pdt$lon, pdt$lat, type = "proj")
+    UTM_code <- getUTM(pdt[,c("lon", "lat")])
     if (length(unique(UTM_code)) > 1) {
       message("More than one UTM zone detected. Latitude-longitude coordinates will be transformed to the most frequent UTM zone across plots.")
     }
