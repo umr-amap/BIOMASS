@@ -25,6 +25,8 @@ Useful links:
 
 Authors:
 
+- Dominique Lamonica <dominique.lamonica@ird.fr>
+
 - Maxime Réjou-Méchain <maxime.rejou@gmail.com> \[data contributor\]
 
 - Arthur Bailly <arthur.bailly@ird.fr>
