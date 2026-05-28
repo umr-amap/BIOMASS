@@ -9,7 +9,8 @@
 checkURL <- function(x) {
   tryCatch(
     {
-      req <- httr2::request(x)
+      req <- httr2::request(x) 
+      req <- httr2::req_options(req, ssl_verifypeer = 0) 
       req <- httr2::req_method(req, "HEAD")
       httr2::req_perform(req)
       TRUE
@@ -79,8 +80,8 @@ callAPI <- function(vars, query, capacity = 60, fill_time_s = 60, timeout = 10) 
 
   # Create request 
   req <- httr2::request(getOption("wfo.api_uri"))
-  req_options(.req, ssl_verifypeer = 0)
-
+  req <- httr2::req_options(req, ssl_verifypeer = 0) 
+ 
   payload <- list(query = query, variables = vars)
 
   # Set body
@@ -394,6 +395,8 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
   if (useAPI && length(xun) > 0) {
     # Get current WFO backbone version
     req <- httr2::request(getOption("wfo.api_uri"))
+    req <- httr2::req_options(req, ssl_verifypeer = 0) 
+    
     bb_payload <- list(query = query_classifications())
     bb_req <- httr2::req_body_json(req, bb_payload, auto_unbox = TRUE)
     bb_resp <- httr2::req_perform(bb_req)
