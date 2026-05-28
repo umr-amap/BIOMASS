@@ -79,6 +79,7 @@ callAPI <- function(vars, query, capacity = 60, fill_time_s = 60, timeout = 10) 
 
   # Create request 
   req <- httr2::request(getOption("wfo.api_uri"))
+  req_options(.req, ssl_verifypeer = 0)
 
   payload <- list(query = query, variables = vars)
 
