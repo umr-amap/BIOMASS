@@ -307,8 +307,14 @@ package (chain by chain, not all together), such as:
 
 require(tseries)
 #> Loading required package: tseries
-#> Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
-#> logical.return = TRUE, : there is no package called 'tseries'
+#> Registered S3 method overwritten by 'quantmod':
+#>   method            from
+#>   as.zoo.data.frame zoo
+#> 
+#> Attaching package: 'tseries'
+#> The following object is masked from 'package:brms':
+#> 
+#>     arma
 lapply(draws_fit[1:200,], acf, plot = F) # check the first chain, i.e. the first 200 rows
 #> $b_betatilde_Intercept
 #> 

@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Dominique
 Lamonica</h4>
             
-            <h4 data-toc-skip class="date">2026-05-28</h4>
+            <h4 data-toc-skip class="date">2026-06-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/vignettes/Vignette_predict_map_AGBD.Rmd" class="external-link"><code>vignettes/Vignette_predict_map_AGBD.Rmd</code></a></small>
       <div class="d-none name"><code>Vignette_predict_map_AGBD.Rmd</code></div>
@@ -361,8 +361,14 @@ as:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va">tseries</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: tseries</span></span>
-<span><span class="co">#&gt; Warning in library(package, lib.loc = lib.loc, character.only = TRUE,</span></span>
-<span><span class="co">#&gt; logical.return = TRUE, : there is no package called 'tseries'</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'quantmod':</span></span>
+<span><span class="co">#&gt;   method            from</span></span>
+<span><span class="co">#&gt;   as.zoo.data.frame zoo</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'tseries'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:brms':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     arma</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">draws_fit</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span>,<span class="op">]</span>, <span class="va">acf</span>, plot <span class="op">=</span> <span class="cn">F</span><span class="op">)</span> <span class="co"># check the first chain, i.e. the first 200 rows</span></span>
 <span><span class="co">#&gt; $b_betatilde_Intercept</span></span>
 <span><span class="co">#&gt; </span></span>
