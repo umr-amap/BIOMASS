@@ -10,7 +10,7 @@ checkURL <- function(x) {
   tryCatch(
     {
       req <- httr2::request(x) 
-      req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
+      #req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
       req <- httr2::req_method(req, "HEAD")
       httr2::req_perform(req)
       TRUE
@@ -80,7 +80,7 @@ callAPI <- function(vars, query, capacity = 60, fill_time_s = 60, timeout = 10) 
 
   # Create request 
   req <- httr2::request(getOption("wfo.api_uri"))
-  req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
+  #req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
   
   payload <- list(query = query, variables = vars)
 
@@ -395,7 +395,7 @@ correctTaxo <- function(genus, species = NULL, interactive = TRUE,
   if (useAPI && length(xun) > 0) {
     # Get current WFO backbone version
     req <- httr2::request(getOption("wfo.api_uri"))
-    req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
+    #req <- httr2::req_options(req, ssl_verifypeer = getOption("ssl_verif", T)) 
     
     bb_payload <- list(query = query_classifications())
     bb_req <- httr2::req_body_json(req, bb_payload, auto_unbox = TRUE)
