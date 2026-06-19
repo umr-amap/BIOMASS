@@ -39,7 +39,8 @@ Imports:
 	terra,
 	ggplot2,
 	stringdist,
-	stringr
+	stringr,
+	ggnewscale
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
