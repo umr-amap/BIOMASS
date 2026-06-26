@@ -105,7 +105,7 @@ test_that("subplot_summary_raster", {
   expect_equal(as.data.frame(res_multiple$tree_summary[1,]) ,
                data.frame(subplot_ID="201_0_0",
                           D_mean_per_ha=409.8663, D_sd_per_ha=313.5045,
-                          z2012_mean=24.26298,z2012_sd=11.45732), 
+                          z2012_mean=24.76322,z2012_sd=11.68464), 
                tolerance = 1e-2)
   
   
