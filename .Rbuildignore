@@ -12,3 +12,5 @@
 .github/
 
 ^\.github$
+^doc$
+^Meta$

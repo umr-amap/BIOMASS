@@ -128,7 +128,5 @@ check_plot_204 <- check_plot_coord(
 }
 }
 \author{
-Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
-
 Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN
 }

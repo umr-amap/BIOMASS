@@ -32,7 +32,6 @@
 #' @param threshold_tree a numeric of length 1: the threshold of the 'prop_tree' variable at which trees will be displayed on the plot.
 #' @param ask If TRUE and dealing with multiple plots, then prompt user before displaying each plot. 
 #'
-#' @author Arthur PERE, Maxime REJOU-MECHAIN, Arthur BAILLY
 #'
 #' @return Returns a list including :
 #'    - `corner_coord`: a data frame containing the projected coordinates (x_proj and y_proj) and the relative coordinates (x_rel and y_rel) of the 4 corners of the plot 
@@ -50,6 +49,7 @@
 #' @importFrom sf st_multipoint st_polygon st_sfc st_as_sf
 #' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text geom_raster scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank guides guide_legend scale_alpha scale_alpha_manual scale_size
 #' @importFrom terra vect crop as.data.frame
+#' @importFrom ggnewscale new_scale
 #'
 #' @author  Arthur BAILLY, Arthur PERE, Maxime REJOU-MECHAIN
 #'
@@ -446,7 +446,8 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       # plot the raster
       plot_design <- ggplot() +
         geom_raster(data = plot_raster, mapping = aes(x = x, y = y, fill = .data[[names(plot_raster)[3]]] ) ) +
-        scale_fill_gradientn(colours = rev(terrain.colors(10)))
+        scale_fill_gradientn(colours = rev(terrain.colors(10)))+
+        guides(fill_gradientn = guide_legend(order = 4))
     } else {
       plot_design <- ggplot()
     }
@@ -565,7 +566,14 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
           filt_disp_trees <- TRUE
         }
         
+        tree_dt[ plot_ID == current_plot_ID, tree_label := ifelse(is_in_plot," ","outside the plot")] # Tree labels for the legend
+        
         plot_design <- plot_design +
+          # Display the trees outside the plot (and display them in the legend)
+          ggnewscale::new_scale(new_aes = "shape")+
+          geom_point(data = tree_dt[plot_ID == current_plot_ID & !is.na(is_in_plot) & is_in_plot==F, ],
+                     mapping = aes(x = x_proj, y = y_proj, shape = tree_label), size = 2)+
+          scale_shape_manual(values = 13,  name = NULL)+
           # Display the trees inside the plot
           geom_point(data = tree_dt[plot_ID == current_plot_ID & !is.na(is_in_plot) & is_in_plot==T & filt_disp_trees, ], 
                      mapping = aes(x = x_proj, y = y_proj,
@@ -575,11 +583,13 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
           scale_alpha(range = c(0.2,1)) +
           scale_size(range = c(0.1,6)) + 
           guides( alpha = guide_legend(title = paste('Trees :', prop_tree), order = 2),
-                  size = guide_legend(title = paste('Trees :', prop_tree), order = 2, override.aes = list(shape = 1) )) +
-          # Display the trees outside the plot (but don't display them in the legend)
-          geom_point(data = tree_dt[plot_ID == current_plot_ID & !is.na(is_in_plot) & is_in_plot==F, ],
-                     mapping = aes(x = x_proj, y = y_proj),
-                     shape = 13, size = 2)
+                  size = guide_legend(title = paste('Trees :', prop_tree), order = 2, override.aes = list(shape = 1) ),
+                  shape = guide_legend(title = "Tree position", order = 2)
+          )
+          
+          
+        
+        tree_dt[, tree_label := NULL]
       }
     }
     

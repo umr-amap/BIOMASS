@@ -22,7 +22,7 @@
 #'
 #' @export
 #' 
-#' @author Arthur Bailly
+#' @author Arthur BAILLY
 #'
 #' @importFrom data.table data.table := set 
 #' @importFrom stats reshape setNames
@@ -88,7 +88,7 @@
 #'   )
 #'   
 #'   # Modelling height-diameter relationship
-#'   HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2")
+#'   HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
 #'   # Retrieving wood density values
 #'   Nouragues201WD <- getWoodDensity(
 #'     genus = NouraguesTrees201$Genus,
@@ -114,7 +114,8 @@
 #'   res_summary <- subplot_summary(
 #'     subplots = nouragues_subplots, 
 #'     AGB_simu = resultMC$AGB_simu,
-#'     ref_raster = nouragues_raster, raster_fun = mean)
+#'     ref_raster = nouragues_raster,
+#'     raster_fun = mean, na.rm = TRUE)
 #'     
 #'   res_summary$tree_summary
 #'   res_summary$plot_design[[1]]
@@ -163,7 +164,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   # arg_fun <- available_functions[[input$sel_user_function]]
   # subplot_summary(..., fun = arg_fun)
   # it returned column names like "AGB_arg_fun_per_ha"
-  # code generated with Claude AI
+  # code generated with the help of Claude AI
   
   # Helper function to find original function name ----
   find_function_name <- function(func) {
@@ -332,7 +333,8 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     # Check if there was a subplot without any tree
     if(nrow(AGB_simu_sum) != length(unique(corner_dat$subplot_ID))) {
       AGB_simu_sum <- AGB_simu_sum[
-        data.table(plot_ID = rep(as.character(unique(corner_dat$plot_ID)) , e=4),
+        data.table(plot_ID = rep(as.character(unique(corner_dat$plot_ID)) , 
+                                 e= length(as.character(unique(corner_dat$subplot_ID)))/length(unique(corner_dat$plot_ID))),
                    subplot_ID = as.character(unique(corner_dat$subplot_ID))),
                                    on = c("plot_ID","subplot_ID")]
       AGB_simu_sum[is.na(AGB_simu_sum)] <- 0
@@ -411,8 +413,8 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
       extract_rast_val <- extract(x = ref_raster, y = vect(sf_simu_polygons$sf_subplot_polygon), exact = TRUE)
     }
     cat("Extracting raster metric done.\n")
-    # keeping raster values whose fraction are > 0.5
-    extract_rast_val = data.table(extract_rast_val)[ fraction >0.5,]
+
+    extract_rast_val <- data.table(extract_rast_val)
     rast_val_name <- names(extract_rast_val)[2]
     raster_value_fun_name <- paste(rast_val_name, raster_fun_name, sep = "_")
     
@@ -488,7 +490,7 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     res_raster_sim <- sf_simu_polygons[,
                                        setNames(
                                          list(
-                                           median(get(raster_value_fun_name)),
+                                           median(get(raster_value_fun_name), na.rm=TRUE),
                                            quantile(get(raster_value_fun_name), probs = 0.025, na.rm=TRUE),
                                            quantile(get(raster_value_fun_name), probs = 0.975, na.rm=TRUE)
                                          ),
@@ -499,7 +501,15 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
     
     if(exists("long_AGB_simu_sum")) {
       long_AGB_simu_sum[, eval(raster_value_fun_name) := sf_simu_polygons[[raster_value_fun_name]] ]
+      setnames(long_AGB_simu_sum, old = raster_value_fun_name, new = "raster_metric")
     }
+  } else if (!is.null(ref_raster) && is.null(subplots$simu_coord)) {
+    # Add raster_metric if there is raster but no simulated corners
+    if(exists("long_AGB_simu_sum")) {
+      long_AGB_simu_sum <- long_AGB_simu_sum[tree_summary[, .SD, .SDcols = grep("AGBD", names(tree_summary), invert = TRUE)] , on = c("subplot_ID")]
+      setnames(long_AGB_simu_sum, old = raster_value_fun_name, new = "raster_metric")
+    }
+    
   }
   
   # Add metrics to sf_polygons
