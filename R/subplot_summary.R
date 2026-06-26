@@ -413,8 +413,8 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
       extract_rast_val <- extract(x = ref_raster, y = vect(sf_simu_polygons$sf_subplot_polygon), exact = TRUE)
     }
     cat("Extracting raster metric done.\n")
-    # keeping raster values whose fraction are > 0.5
-    extract_rast_val = data.table(extract_rast_val)[ fraction >0.25,]
+
+    extract_rast_val <- data.table(extract_rast_val)
     rast_val_name <- names(extract_rast_val)[2]
     raster_value_fun_name <- paste(rast_val_name, raster_fun_name, sep = "_")
     
