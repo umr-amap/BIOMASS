@@ -15,7 +15,11 @@ AGBmonteCarlo(
   Dpropag = NULL,
   n = 1000,
   Carbon = FALSE,
-  Dlim = NULL
+  Dlim = NULL,
+  fitted_allom = "chave2014",
+  var_in_data = NULL,
+  volume_allom = FALSE,
+  return_volume = FALSE
 )
 }
 \arguments{
@@ -32,7 +36,7 @@ values (in the latter case the vector should be of the same length as \code{H}).
 
 \item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example).}
 
-\item{coord}{(option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
+\item{coord}{(option 3, only used with \code{"chave2014"} allometry) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 height-diameter allometry with bioclimatic variables.}
 
@@ -47,6 +51,19 @@ with the diameter measurements or \code{"chave2004"} (an important error on 5 pe
 
 \item{Dlim}{(optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 \code{Dlim} will have a 0 value in the output).}
+
+\item{fitted_allom}{Can be three types of values, indicating the AGB allometry that will be used to compute tree AGB:
+\code{"chave2014"} (pantropical Chave's allometry, default value), or a brms.fit object of a fitted allometry, or a list of 3 objects
+(a formula, a data.frame of fitted parameters values, a character value specifying if the response is log scaled).
+See Details below for supported user allometries.}
+
+\item{var_in_data}{(Needed when \code{"fitted_allom"} is a brms.fit object) A vector of characters among :
+\code{"AGB"}, \code{"logAGB"}, \code{"V"}, \code{"logV"}, \code{"H"}, \code{"logH"}, \code{"D"}, \code{"logD"}, \code{"WD"} standing for variables (including response & predictors)
+used in fitting procedure, corresponding to \code{"fitted_allom$data"}, variables order MUST match variables order of \code{"colnames(fitted_allom$data)"}.}
+
+\item{volume_allom}{(logical) Whether the response of the allometry model is AGB or volume (V). By default \code{volume_allom = FALSE}}
+
+\item{return_volume}{(logical) Whether the returned output should be AGB or volume (V). By default \code{return_volume = FALSE}}
 }
 \value{
 Returns a list  with (if Carbon is FALSE):
@@ -56,13 +73,25 @@ Returns a list  with (if Carbon is FALSE):
 \item \code{sdAGB}: Standard deviation of the stand AGB value following the error propagation
 \item \code{credibilityAGB}: Credibility interval at 95\\% of the stand AGB value following the error propagation
 \item \code{AGB_simu}: Matrix with the AGB of the trees (rows) times the n iterations (columns)
+\item \code{AGB_simu_per_stem}: Dataframe with mean, median, sd, 2.5 and 97.5\\% quantiles of AGB value
+following the error propagation at individual tree level.
 }
 }
 \description{
-Propagation of the errors throughout the steps needed to compute AGB or AGC.
+Propagation of the errors throughout the steps needed to compute AGB or AGC, supporting user AGB allometry.
 }
 \details{
 See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
+
+Supported types of allometry, and how to properly specify the allometry:
+\itemize{
+\item brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD;
+group level effect not supported;
+\item formula & parameters: list(formula = NULL, parameters = NULL, link = NULL)
+formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL or "log";
+variables in the formula must be among \code{"H"}, \code{"D"}, \code{"WD"}; column names of parameters must match parameters names in formula;
+a Gaussian error model is assumed on mean response, with \code{"sigma"} as standard deviation.
+}
 }
 \examples{
 # Load a database
@@ -113,16 +142,8 @@ credperplot <- sapply(resultMC, "[", 4)
 closeAllConnections()
 
 }
-\references{
-Chave, J. et al. (2004). \emph{Error propagation and scaling for tropical forest biomass estimates}.
-Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
-
-Rejou-Mechain et al. (2017).
-\emph{BIOMASS: An R Package for estimating above-ground biomass and its uncertainty in tropical forests}.
-Methods in Ecology and Evolution, 8 (9), 1163-1167.
-}
 \author{
-Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
+Dominique LAMONICA, Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY, Arthur PERE
 }
 \keyword{Carlo}
 \keyword{Monte}

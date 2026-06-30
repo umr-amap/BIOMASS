@@ -1,3 +1,6 @@
+#' Computing tree above ground biomass (AGB) with Chave eqs.
+#' Now an internal function
+#' 
 #' @description This function uses Chave et al. 2014's pantropical models to estimate the above ground biomass of tropical trees.
 #'
 #' @param D Tree diameter (in cm), either a vector or a single value.
@@ -34,14 +37,14 @@
 #' H <- D^(2 / 3)
 #'
 #' # If you have height data
-#' AGB <- computeAGB(D, WD, H)
+#' AGB <- chave2014(D, WD, H)
 #'
 #' # If you do not have height data and a single site
 #' lat <- 4.08
 #' long <- -52.68
 #' coord <- c(long, lat)
 #' \donttest{
-#' AGB <- computeAGB(D, WD, coord = coord)
+#' AGB <- chave2014(D, WD, coord = coord)
 #' }
 #'
 #' # If you do not have height data and several sites (here three)
@@ -49,10 +52,10 @@
 #' long <- c(rep(-52.68, 30), rep(-53.12, 30), rep(-53.29, 30))
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' AGB <- computeAGB(D, WD, coord = coord)
+#' AGB <- chave2014(D, WD, coord = coord)
 #' }
 #' closeAllConnections()
-#' @keywords AGB above ground biomass forest carbon allometry
+#' @keywords AGB above ground biomass forest carbon allometry internal
 #'
 chave2014 <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
 

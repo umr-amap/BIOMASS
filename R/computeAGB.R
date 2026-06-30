@@ -1,9 +1,10 @@
 #' Computing tree above ground biomass (AGB)
 #'
 #' Compute tree above ground biomass (AGB) using multiple biomass allometry
+#' NOT A FAN OF MULTIPLE ALLOMETRY, NOT HOMOGENEOUS WITH THE REST OF AGB COMPUTATION
 #'
-#' @param allometry a function which returns AGB estimates as a numeric vector, or a list of functions
-#' @param ... arguments passed to function(s) provided in `allometry`
+#' @param allometry a function which returns AGB estimates as a numeric vector
+#' @param ... arguments passed to the function provided in `allometry`
 #'
 #' @return numeric vector with tree AGB estimates
 #' 
@@ -18,7 +19,8 @@
 #' d <- c(10:99)
 #' g <- c(100:189)
 #' 
-#' computeAGB(list(allom, allom2), D = d, G = g)
+#' computeAGB(allometry = allom, D = d, G = g)
+#' computeAGB(allometry = allom2, G = g)
 #' 
 #' @export
 #' 
@@ -68,10 +70,12 @@ computeAGB <- function(allometry = chave2014, ...) {
   names(allometry) <- nm
 
   # For each function:
-  out <- lapply(seq_along(allometry), function(i) {
+  
+  #out <- lapply(seq_along(allometry), function(i) {
 
-    x <- allometry[[i]]
-    func_id <- names(allometry)[i]
+   # tryCatch(expr = {
+    x <- allometry[[1]]
+    func_id <- names(allometry)[1]
 
     # Extract required arguments from allometry function
     fn_formals <- formals(x)
@@ -102,10 +106,18 @@ computeAGB <- function(allometry = chave2014, ...) {
     }
 
     # Run allometry
-    do.call(x, valid_args)
-  })
-
-  names(out) <- names(allometry)
+    
+    out <- do.call(x, valid_args)
+   
+  # } #expr trycatch
+  #   ,  error=function(e) {
+  #     stop('An Error Occurred in the allometry function')
+  #     print(e)
+  #   })#trycatch
+  
+  #}#function(i)
+  #  )# lapply
+  #names(out) <- names(allometry)
   
   # Return
   return(out)
