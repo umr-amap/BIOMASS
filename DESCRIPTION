@@ -1,8 +1,8 @@
 Package: BIOMASS
 Type: Package
-Title: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests
-Version: 3.0
-Date: 2026-02-11
+Title: Estimating Aboveground Biomass and Its Uncertainty in Forests
+Version: 3.1
+Date: 2026-07-01
 Authors@R: c(
 	person("Dominique", "Lamonica", email = "dominique.lamonica@ird.fr", role = c("aut","cre")),
 	person("Maxime", "Réjou-Méchain", email = "maxime.rejou@gmail.com", role = c("aut", "dtc")),
@@ -18,7 +18,7 @@ Authors@R: c(
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
   )
-Description: Contains functions for estimating above-ground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
+Description: Contains functions for estimating above-ground biomass/carbon and its uncertainty in forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

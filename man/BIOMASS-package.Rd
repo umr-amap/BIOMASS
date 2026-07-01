@@ -4,11 +4,11 @@
 \name{BIOMASS-package}
 \alias{BIOMASS}
 \alias{BIOMASS-package}
-\title{BIOMASS: Estimating Aboveground Biomass and Its Uncertainty in Tropical Forests}
+\title{BIOMASS: Estimating Aboveground Biomass and Its Uncertainty in Forests}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Contains functions for estimating above-ground biomass/carbon and its uncertainty in tropical forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) \doi{10.1111/2041-210X.12753}.
+Contains functions for estimating above-ground biomass/carbon and its uncertainty in forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) \doi{10.1111/2041-210X.12753}.
 }
 \seealso{
 Useful links:

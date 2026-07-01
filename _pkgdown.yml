@@ -40,6 +40,7 @@ reference:
 - subtitle: Estimate AGB
   contents: 
   - computeAGB
+  - computeAGB_myallom
 - subtitle: Propagate uncertainties
   contents: 
   - AGBmonteCarlo
