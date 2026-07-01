@@ -109,6 +109,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   var_in_data = NULL,
   volume_allom = FALSE, return_volume = FALSE) {
   
+  len <- length(D)
+  
   if (all(fitted_allom == "chave2014")) {
     
     # set volume_allom & return_volume to FALSE when chave's allometry is used
@@ -128,7 +130,6 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     
     # parameters verification -------------------------------------------------
     ## checks that are shared by formula or fit object
-    len <- length(D)
  
     if (n > 1000 | n < 50) {
       stop("n cannot be smaller than 50 or larger than 1000")
@@ -154,7 +155,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     
 
-    if (class(fitted_allom) == "brmsfit") {
+    if (class(fitted_allom) == "brmsfit") { #class == character ça va pas, à reprendre
 
       # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
