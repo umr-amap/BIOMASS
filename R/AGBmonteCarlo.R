@@ -161,7 +161,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       var_names_allom <- colnames(fitted_allom$data)
       resp_name_allom <- all.vars(fitted_allom$formula$formula)[1]
       
-     if (length(var_names_allom) != var_in_data) {
+     if (length(var_names_allom) != length(var_in_data)) {
        stop("The length of variable names do not match the number of columns found in brms.fit object data")
      }
       
