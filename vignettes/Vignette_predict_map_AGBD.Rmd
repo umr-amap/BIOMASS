@@ -55,7 +55,7 @@ $$
 
 $d_{i,j}$ is the distance between locations $s_i$ and $s_j$, parameter $\psi$ controls the magnitude and parameter $l$ the range of the kernel.
 
-In our case $X$ stands for the logarithm of plot-level AGBD, while $Y$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. The intercept $\beta_0$ can be removed from the model (as by default).
+In our case $Y$ stands for the logarithm of plot-level AGBD, while $X$ is the logarithm of a LiDAR metric measurement for the corresponding plot, for instance the mean of the Canopy Height Model on the plot surface. The intercept $\beta_0$ can be removed from the model (as by default).
 
 ## Warning on vignette example
 
@@ -315,8 +315,8 @@ ggplot(dt_plot_val)+
   geom_point(aes( x = median_obs, y = AGBD_pred.Estimate, colour = subplot_ID), shape = 1)+
   geom_segment(aes(y = AGBD_pred.Estimate, yend = AGBD_pred.Estimate, x = inf_obs, xend = sup_obs, colour = subplot_ID))+
   geom_segment(aes(y = AGBD_pred.Q2.5, yend = AGBD_pred.Q97.5, x = median_obs, xend = median_obs, colour = subplot_ID))+
-  xlab("Observed AGBD")+
-  ylab("Predicted AGBD")+
+  xlab("Field derived AGBD")+
+  ylab("LiDAR derived AGBD")+
   coord_cartesian(xlim = axis_lims, ylim = axis_lims)+
   theme_minimal()
 ```
