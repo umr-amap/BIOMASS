@@ -31,7 +31,7 @@
 #' @param return_volume (logical) Whether the returned output should be AGB or volume (V). By default `return_volume = FALSE`
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
-#' @details Supported types of allometry, and how to properly specify the allometry:
+#' @details Supported types of AGB allometry, and how to properly specify it:
 #'  - brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD; 
 #'   group level effect not supported;
 #'  - formula & parameters: list(formula = NULL, parameters = NULL, link = NULL)
@@ -65,6 +65,7 @@
 #' )
 #' }
 #' 
+#' ## Allometry Chave 2014 equation
 #' # Propagating errors with a standard error for Wood density
 #' \donttest{
 #' resultMC <- AGBmonteCarlo(
@@ -96,6 +97,10 @@
 #' meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
 #' credperplot <- sapply(resultMC, "[", 4)
 #' }
+#' 
+#' ## User allometry implemented with a brms.fit object
+#' 
+#' 
 #' closeAllConnections()
 #' 
 #' @keywords Monte Carlo
@@ -355,14 +360,14 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       sdV = sd(sum_V_simu),
       credibilityV = quantile(sum_V_simu, probs = c(0.025, 0.975)),
       
-      V_simu = V_simu, # ok keep
+      V_simu = AGB_simu, # ok keep
       
       V_simu_per_stem = data.frame( # stem level
-        meanV = apply(X = V_simu, MARGIN = 1, FUN = mean, na.rm = T),
-        medV = apply(X = V_simu, MARGIN = 1, FUN = median, na.rm = T),
-        sdV = apply(X = V_simu, MARGIN = 1, FUN = sd, na.rm = T),
-        lower_CI_V = apply(X = V_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
-        upper_CI_V = apply(X = V_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
+        meanV = apply(X = AGB_simu, MARGIN = 1, FUN = mean, na.rm = T),
+        medV = apply(X = AGB_simu, MARGIN = 1, FUN = median, na.rm = T),
+        sdV = apply(X = AGB_simu, MARGIN = 1, FUN = sd, na.rm = T),
+        lower_CI_V = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.025, na.rm = T),
+        upper_CI_V = apply(X = AGB_simu, MARGIN = 1, FUN = quantile, probs = 0.975, na.rm = T)
       )
       
     )
@@ -377,7 +382,9 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
         medAGB = median(sum_AGB_simu),
         sdAGB = sd(sum_AGB_simu),
         credibilityAGB = quantile(sum_AGB_simu, probs = c(0.025, 0.975)),
+        
         AGB_simu = AGB_simu, # ok keep
+        
         AGB_simu_per_stem = data.frame( # stem level
           meanAGB = apply(X = AGB_simu, MARGIN = 1, FUN = mean, na.rm = T),
           medAGB = apply(X = AGB_simu, MARGIN = 1, FUN = median, na.rm = T),
