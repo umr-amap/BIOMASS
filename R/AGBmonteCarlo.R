@@ -149,8 +149,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     
     if (!is.null(WD)){
-      if (len != length(WD) || len != length(errWD)) {
-        stop("One of vector WD or errWD does not have the same length as D")
+      if (length(WD) != len || !(length(errWD) %in% c(1, len))) {
+        stop("WD must be the same length as D and errWD must be either one value or the same length as D")
       }
     }
     
