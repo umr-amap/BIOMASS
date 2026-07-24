@@ -15,6 +15,7 @@ calibrate_model(
   useCache = FALSE,
   plot_model = TRUE,
   intercept = FALSE,
+  spatial = TRUE,
   chains = 3,
   thin = 20,
   iter = 3000,
@@ -52,6 +53,11 @@ calibrate_model(
 
   A logical indicating whether the regression model should include an
   intercept (defaults to FALSE).
+
+- spatial:
+
+  A logical indicating whether explicit spatial correlation should be
+  modeled (defaults to TRUE).
 
 - chains:
 
@@ -128,6 +134,9 @@ Matern kernel between two locations \\s_i\\ and \\s_j\\:
 -\frac{\sqrt{3}d\_{i,j}}{l} \right)\\ \\d\_{i,j}\\ is the distance
 between locations \\s_i\\ and \\s_j\\, parameter \\\psi\\ controls the
 magnitude and parameter \\l\\ the range of the kernel.
+
+Note that the spatial structure integration can be turned off by setting
+argument `spatial` to `FALSE`, leading to a classic log-log regression.
 
 If useCache = TRUE and this is the first time the model is being built,
 the model will be saved as a .rds file in the defined cache path (see

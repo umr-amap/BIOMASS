@@ -49,6 +49,7 @@
 <span>  useCache <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_model <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  intercept <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  spatial <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  chains <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  thin <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">3000</span>,</span>
@@ -80,6 +81,10 @@
 
 <dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
 <dd><p>A logical indicating whether the regression model should include an intercept (defaults to FALSE).</p></dd>
+
+
+<dt id="arg-spatial">spatial<a class="anchor" aria-label="anchor" href="#arg-spatial"></a></dt>
+<dd><p>A logical indicating whether explicit spatial correlation should be modeled (defaults to TRUE).</p></dd>
 
 
 <dt id="arg-chains">chains<a class="anchor" aria-label="anchor" href="#arg-chains"></a></dt>
@@ -131,6 +136,7 @@ two locations \(s_i\) and \(s_j\):
 \(k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)\)
 \(d_{i,j}\) is the distance between locations \(s_i\) and \(s_j\), parameter \(\psi\) controls
 the magnitude and parameter \(l\) the range of the kernel.</p>
+<p>Note that the spatial structure integration can be turned off by setting argument <code>spatial</code> to <code>FALSE</code>, leading to a classic log-log regression.</p>
 <p>If useCache = TRUE and this is the first time the model is being built, the model will be saved as a .rds file in the defined cache path (see <code><a href="createCache.html">createCache()</a></code>).
 If useCache = TRUE and the model has already been built using the user cache, the model will be loaded and updated to avoid wasting time re-compiling it.
 If useCache = NULL, the cache is first cleared before building the model.</p>
