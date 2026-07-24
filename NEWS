@@ -1,3 +1,6 @@
+* version 3.0.1
+- calibrate_model() now allows no spatial effect in the AGBD~LiDAR regression.
+
 * version 3.0
 - When LiDAR data are available in raster format, BIOMASS can now be used to predict AGBD at the landscape scale using two new functions of the pipeline:
 - calibrate_model(): takes the `long_AGB_simu` output from `subplot_summary(subplots = ..., AGB_simu = ..., ref_raster = ...)`. This function fits a log–log Bayesian regression model with spatially varying coefficients between AGBD and simulated raster metrics.
