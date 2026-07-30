@@ -105,7 +105,6 @@ check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
   trust_GPS_corners = TRUE, draw_plot = FALSE)
-#> Error in xlab("x"): could not find function "xlab"
 subplots_201 <- suppressWarnings(
   divide_plot(
     corner_data = check_plot201$corner_coord, 
@@ -113,20 +112,22 @@ subplots_201 <- suppressWarnings(
     grid_size = 50,
     tree_data =  NouraguesTrees[NouraguesTrees$Plot == 201,],
     tree_coords = c("Xfield","Yfield")))
-#> Error: object 'check_plot201' not found
 # Sum summary (by default) of diameter
 subplots_201_sum <- subplot_summary(subplots_201 , value = "D", draw_plot = FALSE)
-#> Error: object 'subplots_201' not found
 subplots_201_sum$tree_summary
-#> Error: object 'subplots_201_sum' not found
+#>     subplot_ID D_sum_per_ha
+#>         <char>        <num>
+#> 1: subplot_0_0     10656.19
+#> 2: subplot_1_0     12103.82
+#> 3: subplot_0_1     10708.82
+#> 4: subplot_1_1     12972.33
 # \donttest{
   subplots_201_sum$plot_design
-#> Error: object 'subplots_201_sum' not found
+
 # }
 # 9th quantile summary (for example) of diameter
 subplots_201_quant <- subplot_summary(subplots_201 , value = "D", draw_plot = FALSE,
                                       fun = quantile, probs=0.9)
-#> Error: object 'subplots_201' not found
   
 
 # Dealing with multiple plots and metrics
