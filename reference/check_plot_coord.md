@@ -195,15 +195,12 @@ check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
   trust_GPS_corners = TRUE, draw_plot = FALSE)
+#> Error in xlab("x"): could not find function "xlab"
 check_plot201$corner_coord
-#>   x_rel y_rel   x_proj   y_proj
-#> 1     0     0 313005.7 451723.2
-#> 2   100     0 312956.9 451630.2
-#> 3   100   100 313050.2 451582.6
-#> 4     0   100 313100.5 451665.9
+#> Error: object 'check_plot201' not found
 # \donttest{
   check_plot201$plot_design
-
+#> Error: object 'check_plot201' not found
 # }
 
 # 4 plots with one measurement of each corner
@@ -212,38 +209,12 @@ check_plots <- check_plot_coord(
   corner_data = NouraguesCoords,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
   trust_GPS_corners = TRUE, plot_ID = "Plot", draw_plot = FALSE)
+#> Error in xlab("x"): could not find function "xlab"
 check_plots$corner_coord
-#>    plot_ID x_rel y_rel   x_proj   y_proj
-#> 1      201     0     0 313007.9 451717.2
-#> 2      201   100     0 312960.2 451629.3
-#> 3      201   100   100 313048.0 451581.6
-#> 4      201     0   100 313095.8 451669.5
-#> 5      204     0   300 313271.5 451574.0
-#> 6      204   100   300 313223.8 451486.2
-#> 7      204   100   400 313311.7 451438.4
-#> 8      204     0   400 313359.4 451526.3
-#> 9      213   100   200 313135.9 451533.9
-#> 10     213   200   200 313088.2 451446.0
-#> 11     213   200   300 313176.1 451398.3
-#> 12     213   100   300 313223.8 451486.2
-#> 13     223   200   200 313088.2 451446.0
-#> 14     223   300   200 313040.5 451358.1
-#> 15     223   300   300 313128.4 451310.4
-#> 16     223   200   300 313176.1 451398.3
+#> Error: object 'check_plots' not found
 # \donttest{
   check_plots$plot_design
-#> $`201`
-
-#> 
-#> $`204`
-
-#> 
-#> $`213`
-
-#> 
-#> $`223`
-
-#> 
+#> Error: object 'check_plots' not found
 # }
 
 # Displaying the associated CHM raster and representing trees proportionally to their diameter
@@ -261,8 +232,9 @@ check_plot_204 <- check_plot_coord(
  tree_data = plot_204_trees, tree_coords = c("Xfield","Yfield"),
  ref_raster = nouragues_raster, prop_tree = "D", threshold_tree = 25
 )
+#> Error in xlab("x"): could not find function "xlab"
 # \donttest{
   check_plot_204$plot_design
-
+#> Error: object 'check_plot_204' not found
 # }
 ```

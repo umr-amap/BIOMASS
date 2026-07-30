@@ -167,30 +167,14 @@ check_plot201 <- check_plot_coord(
   corner_data = NouraguesPlot201,
   proj_coord = c("Xutm","Yutm"), rel_coord = c("Xfield","Yfield"),
   trust_GPS_corners = TRUE, draw_plot = FALSE)
+#> Error in xlab("x"): could not find function "xlab"
 subplots_201 <- divide_plot(
   corner_data = check_plot201$corner_coord, 
   rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
   grid_size = 50)
+#> Error: object 'check_plot201' not found
 subplots_201
-#> $sub_corner_coord
-#>    plot_ID  subplot_ID x_rel y_rel   x_proj   y_proj
-#> 1          subplot_0_0     0     0 313005.7 451723.2
-#> 2          subplot_0_0    50     0 312981.3 451676.7
-#> 3          subplot_0_0    50    50 313028.4 451650.5
-#> 4          subplot_0_0     0    50 313053.1 451694.5
-#> 5          subplot_1_0    50     0 312981.3 451676.7
-#> 6          subplot_1_0   100     0 312956.9 451630.2
-#> 7          subplot_1_0   100    50 313003.6 451606.4
-#> 8          subplot_1_0    50    50 313028.4 451650.5
-#> 9          subplot_0_1     0    50 313053.1 451694.5
-#> 10         subplot_0_1    50    50 313028.4 451650.5
-#> 11         subplot_0_1    50   100 313075.4 451624.2
-#> 12         subplot_0_1     0   100 313100.5 451665.9
-#> 13         subplot_1_1    50    50 313028.4 451650.5
-#> 14         subplot_1_1   100    50 313003.6 451606.4
-#> 15         subplot_1_1   100   100 313050.2 451582.6
-#> 16         subplot_1_1    50   100 313075.4 451624.2
-#> 
+#> Error: object 'subplots_201' not found
 
 # Assigning trees to subplots
 data("NouraguesTrees")
@@ -201,29 +185,11 @@ subplots_201 <- suppressWarnings(
     rel_coord = c("x_rel","y_rel"), proj_coord = c("x_proj","y_proj"),
     grid_size = 50,
     tree_data = plot201_trees, tree_coords = c("Xfield","Yfield")))
+#> Error: object 'check_plot201' not found
 head(subplots_201$sub_corner_coord)
-#>   plot_ID  subplot_ID x_rel y_rel   x_proj   y_proj
-#> 1         subplot_0_0     0     0 313005.7 451723.2
-#> 2         subplot_0_0    50     0 312981.3 451676.7
-#> 3         subplot_0_0    50    50 313028.4 451650.5
-#> 4         subplot_0_0     0    50 313053.1 451694.5
-#> 5         subplot_1_0    50     0 312981.3 451676.7
-#> 6         subplot_1_0   100     0 312956.9 451630.2
+#> Error: object 'subplots_201' not found
 head(subplots_201$tree_data)
-#>            Site Plot x_rel y_rel        Family               Genus     Species
-#> 1 Petit_Plateau  201   0.0  31.5   Burseraceae             Protium surinamense
-#> 2 Petit_Plateau  201   0.1  75.2 Anacardiaceae            Tapirira  guianensis
-#> 3 Petit_Plateau  201   0.2  27.6 Lecythidaceae Indet.Lecythidaceae      Indet.
-#> 4 Petit_Plateau  201  -4.0  67.5 Euphorbiaceae          Conceveiba  guyanensis
-#> 5 Petit_Plateau  201   0.3  39.9   Burseraceae             Protium  altissimum
-#> 6 Petit_Plateau  201  -3.5  41.5 Euphorbiaceae               Mabea    speciosa
-#>      D plot_ID  subplot_ID
-#> 1 11.0         subplot_0_0
-#> 2 74.4         subplot_0_1
-#> 3 25.4         subplot_0_0
-#> 4 10.0                <NA>
-#> 5 18.9         subplot_0_0
-#> 6 10.0                <NA>
+#> Error: object 'subplots_201' not found
 
 # When grid dimensions (40m x 40m) don't fit perfectly plot dimensions
 # an origin at (10 ; 10) will center the grid
@@ -235,29 +201,7 @@ head(subplots_201$tree_data)
     grid_tol = 0.4,
     origin = c(10,10)
  )
-#> Warning: 
-#> The x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset
-#> Warning: 
-#> The y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset
-#> $sub_corner_coord
-#>    plot_ID  subplot_ID x_rel y_rel
-#> 1          subplot_0_0    10    10
-#> 2          subplot_0_0    50    10
-#> 3          subplot_0_0    50    50
-#> 4          subplot_0_0    10    50
-#> 5          subplot_1_0    50    10
-#> 6          subplot_1_0    90    10
-#> 7          subplot_1_0    90    50
-#> 8          subplot_1_0    50    50
-#> 9          subplot_0_1    10    50
-#> 10         subplot_0_1    50    50
-#> 11         subplot_0_1    50    90
-#> 12         subplot_0_1    10    90
-#> 13         subplot_1_1    50    50
-#> 14         subplot_1_1    90    50
-#> 15         subplot_1_1    90    90
-#> 16         subplot_1_1    50    90
-#> 
+#> Error: object 'check_plot201' not found
 # }
 
 # Dealing with multiple plots
