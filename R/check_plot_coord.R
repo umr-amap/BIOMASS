@@ -447,9 +447,13 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       plot_design <- ggplot() +
         geom_raster(data = plot_raster, mapping = aes(x = x, y = y, fill = .data[[names(plot_raster)[3]]] ) ) +
         scale_fill_gradientn(colours = rev(terrain.colors(10)))+
-        guides(fill_gradientn = guide_legend(order = 4))
+        guides(fill_gradientn = guide_legend(order = 4))+
+        xlab("x")+
+        ylab("y")
     } else {
-      plot_design <- ggplot()
+      plot_design <- ggplot()+
+        xlab("x")+
+        ylab("y")
     }
     
     # Shapefile 
