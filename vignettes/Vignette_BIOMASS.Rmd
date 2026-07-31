@@ -252,7 +252,14 @@ NouraguesTrees$AGB_Chave <- computeAGB(
 
 The `AGBmonteCarlo()` function allows the user to propagate diﬀerent sources of error up to the ﬁnal AGB estimate.
 
-The error propagation due to the **uncertainty of the model parameters** of the AGB allometric equation (Chave et al. 2014) **is automatically performed** by the function. However, the propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parameterized by the user**.
+Equation describing AGB allometry can be defined by the user, provided that **a sample of the distributions of corresponding model parameters is supplied**. For tropical forests, users can choose to model AGB allometry using Chave's equation calibrated on which data? (ref 2014), in this case **no parameter sample is needed**. The error propagation due to the **uncertainty of the model parameters** is then performed by the function. The propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parameterized by the user**.
+
+## AGB allometry
+
+- chave version: default, or allometry = chave2014, note that makes the codes written using previous versions of BIOMASS remain valid. it is the one used for the whole vignette.
+
+- user allometry:
+
 
 ## Diameter measurement error
 
