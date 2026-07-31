@@ -27,6 +27,11 @@ require(brms)
 require(terra)
 ```
 
+This vignette describes guides the user through the last steps of the workflow to get AGBD maps from spatialized AGBD and spatialized LiDAR metrics. For the sake of clarity, the article follows the same workflow as in the BIOMASS paper, excluded the shaded area:
+
+![](img/workflow_article3.png)
+
+
 # Overview
 
 BIOMASS enables users to predict AGBD maps at the landscape level, with uncertainties per pixel. For that, both inventory and LiDAR data are required.
