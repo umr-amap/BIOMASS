@@ -222,7 +222,9 @@ Now, let's have a look at the posterior predictive check:
 pp_check(model_cal, ndraws = 100)
 ```
 
-This posterior predictive check enables to quickly visualise if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination. Hence, it is an indicator of the goodness of fit of the model to the data.
+This posterior predictive check enables to quickly visualize if the distribution of observed data `y`, blue bold line, matches the distributions of data predicted by the calibrated model `y_rep`, light blue lines - one per parameter draw or combination. Hence, it is an indicator of the goodness of fit of the model to the data.\
+
+> Note that you can turn off the description of spatial structure in the model by setting argument `spatial` to `FALSE` (`TRUE` being the default), resulting in a classic log-linear regression. For instance, you may use that model version to assess the variance explained by the spatial structure by comparing both models (with and without explicit spatial structure).
 
 # Predict AGBD map on the LiDAR footprint
 
