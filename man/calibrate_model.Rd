@@ -10,6 +10,7 @@ calibrate_model(
   useCache = FALSE,
   plot_model = TRUE,
   intercept = FALSE,
+  spatial = TRUE,
   chains = 3,
   thin = 20,
   iter = 3000,
@@ -28,6 +29,8 @@ calibrate_model(
 \item{plot_model}{A logical indicating whether the model should be plotted (defaults to TRUE).}
 
 \item{intercept}{A logical indicating whether the regression model should include an intercept (defaults to FALSE).}
+
+\item{spatial}{A logical indicating whether explicit spatial correlation should be modeled (defaults to TRUE).}
 
 \item{chains}{Number of Markov chains (defaults to 3), see \code{\link[brms:brm]{brms::brm()}}}
 
@@ -77,6 +80,8 @@ two locations \eqn{s_i} and \eqn{s_j}:
 \eqn{k(\mathbf{s}_i, \mathbf{s}_j) = \psi^2 \left( 1 + \frac{\sqrt{3}d_{i,j}}{l} \right) \exp \left( -\frac{\sqrt{3}d_{i,j}}{l} \right)}
 \eqn{d_{i,j}} is the distance between locations \eqn{s_i} and \eqn{s_j}, parameter \eqn{\psi} controls
 the magnitude and parameter \eqn{l} the range of the kernel.
+
+Note that the spatial structure integration can be turned off by setting argument \code{spatial} to \code{FALSE}, leading to a classic log-log regression.
 
 If useCache = TRUE and this is the first time the model is being built, the model will be saved as a .rds file in the defined cache path (see \code{\link[=createCache]{createCache()}}).
 If useCache = TRUE and the model has already been built using the user cache, the model will be loaded and updated to avoid wasting time re-compiling it.

@@ -47,7 +47,7 @@
 #' @importFrom data.table data.table := setnames %between% copy
 #' @importFrom stats reshape
 #' @importFrom sf st_multipoint st_polygon st_sfc st_as_sf
-#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text geom_raster scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank guides guide_legend scale_alpha scale_alpha_manual scale_size
+#' @importFrom ggplot2 ggplot aes geom_point geom_segment geom_polygon geom_text geom_raster scale_shape_manual scale_color_manual ggtitle theme_minimal theme coord_equal arrow unit element_blank guides guide_legend scale_alpha scale_alpha_manual scale_size xlab ylab
 #' @importFrom terra vect crop as.data.frame
 #' @importFrom ggnewscale new_scale
 #'
@@ -447,9 +447,13 @@ check_plot_coord <- function(corner_data, proj_coord = NULL, longlat = NULL, rel
       plot_design <- ggplot() +
         geom_raster(data = plot_raster, mapping = aes(x = x, y = y, fill = .data[[names(plot_raster)[3]]] ) ) +
         scale_fill_gradientn(colours = rev(terrain.colors(10)))+
-        guides(fill_gradientn = guide_legend(order = 4))
+        guides(fill_gradientn = guide_legend(order = 4))+
+        xlab("x")+
+        ylab("y")
     } else {
-      plot_design <- ggplot()
+      plot_design <- ggplot()+
+        xlab("x")+
+        ylab("y")
     }
     
     # Shapefile 
