@@ -1,5 +1,14 @@
 # Predict maps of AGBD based on inventory and LiDAR data
 
+This vignette describes guides the user through the last steps of the
+workflow to get AGBD maps from spatialized AGBD and spatialized LiDAR
+metrics. For the sake of clarity, the article follows the same workflow
+as in the BIOMASS paper, excluded the shaded area:
+
+![BIOMASS workflow - Article Predict map](img/workflow_article3.png)
+
+BIOMASS workflow - Article Predict map
+
 ## Overview
 
 BIOMASS enables users to predict AGBD maps at the landscape level, with
@@ -395,11 +404,18 @@ pp_check(model_cal, ndraws = 100)
 
 ![](Vignette_predict_map_AGBD_files/figure-html/mod_ppcheck-1.png)
 
-This posterior predictive check enables to quickly visualise if the
+This posterior predictive check enables to quickly visualize if the
 distribution of observed data `y`, blue bold line, matches the
 distributions of data predicted by the calibrated model `y_rep`, light
 blue lines - one per parameter draw or combination. Hence, it is an
-indicator of the goodness of fit of the model to the data.
+indicator of the goodness of fit of the model to the data.  
+
+> Note that you can turn off the description of spatial structure in the
+> model by setting argument `spatial` to `FALSE` (`TRUE` being the
+> default), resulting in a classic log-linear regression. For instance,
+> you may use that model version to assess the variance explained by the
+> spatial structure by comparing both models (with and without explicit
+> spatial structure).
 
 ## Predict AGBD map on the LiDAR footprint
 

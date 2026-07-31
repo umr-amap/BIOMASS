@@ -78,22 +78,13 @@ Bailly</h4>
 
     
     
-<div class="section level2">
-<h2 id="complete-biomass-workflow-and-vignette-organisation">Complete BIOMASS workflow and vignette organisation<a class="anchor" aria-label="anchor" href="#complete-biomass-workflow-and-vignette-organisation"></a>
-</h2>
-<p>For the sake of clarity, and to be consistent with the BIOMASS paper
-(<a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753" class="external-link">Réjou-Méchain
-et al. 2017</a>), the three articles comprised in the vignette follow
-the same workflow as presented in the paper:</p>
-<p><img src="img/BIOMASS_workflow.png"> The first vignette (Estimate
-stand biomass, the current one) is dedicated to compute above ground
-biomass (AGB) and its associated uncertainty from plot inventory data.
-The second one (Spatialize trees and forest stand metrics) explains how
-to manage plot coordinates and summarize AGB and/or LiDAR metrics at
-subplot level. The third one (Predict maps of AGBD based on inventory
-and LiDAR data) guides the user through the last steps of the workflow
-to get AGBD maps from spatialized AGBD and spatialized LiDAR
-metrics.</p>
+<p>This vignette describes how to compute above ground biomass (AGB) and
+its associated uncertainty from plot inventory data. For the sake of
+clarity, the article follows the same workflow as in the BIOMASS paper,
+excluded the shaded area:</p>
+<div class="float">
+<img src="img/workflow_article1.png" alt="BIOMASS workflow - Article Estimate biomass"><div class="figcaption">BIOMASS workflow - Article Estimate
+biomass</div>
 </div>
 <div class="section level2">
 <h2 id="general-workflow-and-required-data">General workflow and required data<a class="anchor" aria-label="anchor" href="#general-workflow-and-required-data"></a>
@@ -693,7 +684,9 @@ with the default arguments:</p>
 <span>  bayesian <span class="op">=</span> <span class="cn">TRUE</span>, useCache <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">brm_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img/weibull_plot.png"></p>
+<div class="float">
+<img src="img/weibull_plot.png" alt="brm_model output"><div class="figcaption">brm_model output</div>
+</div>
 <p>As one can see, the two first parameters a and b (resp. called
 <code>b_a_Intercept</code> and <code>b_b_Intercept</code>) of the
 Weibull equation:
@@ -734,7 +727,9 @@ provided to <code><a href="../reference/modelHD.html">modelHD()</a></code>:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">brm_model</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img/weibull_plot_2.png"></p>
+<div class="float">
+<img src="img/weibull_plot_2.png" alt="brm_model output"><div class="figcaption">brm_model output</div>
+</div>
 <p>Posterior distributions look better but the right-skewed
 distributions are not yet satisfactory. So <strong>we recommend using
 the log2 method when the RSE given by lm and nls models (when bayesian =

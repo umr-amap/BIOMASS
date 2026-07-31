@@ -1,5 +1,14 @@
 # Spatialize trees and forest stand metrics with BIOMASS
 
+This vignette describes explains how to manage plot coordinates and
+summarize AGB and/or LiDAR metrics at subplot level. For the sake of
+clarity, the article follows the same workflow as in the BIOMASS paper,
+excluded the shaded area:
+
+![BIOMASS workflow - Article Spatialize](img/workflow_article2.png)
+
+BIOMASS workflow - Article Spatialize
+
 ## Overview
 
 BIOMASS enables users to manage their plots by:

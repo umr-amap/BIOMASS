@@ -1,21 +1,14 @@
 # Estimate stand biomass
 
-## Complete BIOMASS workflow and vignette organisation
+This vignette describes how to compute above ground biomass (AGB) and
+its associated uncertainty from plot inventory data. For the sake of
+clarity, the article follows the same workflow as in the BIOMASS paper,
+excluded the shaded area:
 
-For the sake of clarity, and to be consistent with the BIOMASS paper
-([Réjou-Méchain et
-al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12753)),
-the three articles comprised in the vignette follow the same workflow as
-presented in the paper:
+![BIOMASS workflow - Article Estimate
+biomass](img/workflow_article1.png)
 
-![](img/BIOMASS_workflow.png) The first vignette (Estimate stand
-biomass, the current one) is dedicated to compute above ground biomass
-(AGB) and its associated uncertainty from plot inventory data. The
-second one (Spatialize trees and forest stand metrics) explains how to
-manage plot coordinates and summarize AGB and/or LiDAR metrics at
-subplot level. The third one (Predict maps of AGBD based on inventory
-and LiDAR data) guides the user through the last steps of the workflow
-to get AGBD maps from spatialized AGBD and spatialized LiDAR metrics.
+BIOMASS workflow - Article Estimate biomass
 
 ## General workflow and required data
 
@@ -594,7 +587,9 @@ brm_model <- modelHD(
 plot(brm_model$model)
 ```
 
-![](img/weibull_plot.png)
+![brm_model output](img/weibull_plot.png)
+
+brm_model output
 
 As one can see, the two first parameters a and b (resp. called
 `b_a_Intercept` and `b_b_Intercept`) of the Weibull equation:
@@ -640,7 +635,9 @@ brm_model <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H,
 plot(brm_model$model)
 ```
 
-![](img/weibull_plot_2.png)
+![brm_model output](img/weibull_plot_2.png)
+
+brm_model output
 
 Posterior distributions look better but the right-skewed distributions
 are not yet satisfactory. So **we recommend using the log2 method when
