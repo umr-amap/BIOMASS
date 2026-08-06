@@ -256,7 +256,7 @@ Equation describing AGB allometry can be defined by the user, provided that **a 
 
 ## AGB allometry
 
-- chave version: default, or allometry = chave2014, note that makes the codes written using previous versions of BIOMASS remain valid. it is the one used for the whole vignette.
+- chave version: default, or allometry = "chave2014", note that makes the codes written using previous versions of BIOMASS remain valid. it is the one used for the whole vignette.
 
 - user allometry:
 
