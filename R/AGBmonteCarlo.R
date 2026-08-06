@@ -180,7 +180,15 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       D_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500)))
     }
   } else {
-    D_simu <- replicate(n, D)
+    
+    D_simu <- replicate(n, D)    
+  }
+  
+  # deal with missing DBH if any -----------------------------------
+  
+  if (anyNA(D)) {
+    warning("NA values in D have been randomly replaced by existing D values")
+    D_simu[is.na(D_simu)] <- sample(x = D_simu[!is.na(D_simu)], size = length(D_simu[is.na(D_simu)]), replace = TRUE)
   }
   
   
