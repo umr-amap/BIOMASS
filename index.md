@@ -57,7 +57,7 @@ al. 2017](https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.127
 the three articles comprised in the vignette follow the same workflow as
 presented in the paper:
 
-![](articles/img/BIOMASS_workflow.png)
+![](articles/img/BIOMASS_workflow_articles.png)
 
 The first vignette (Estimate stand biomass) is dedicated to compute
 above ground biomass (AGB) and its associated uncertainty from plot
