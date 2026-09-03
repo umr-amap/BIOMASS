@@ -254,7 +254,7 @@ test_that("AGB with NA", {
   set.seed(10)
   
   expect_warning(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter),
-                   "NA values in D have been randomly replaced")
+                   "To account for the error due to missing diameter values")
   
   AGB <- suppressWarnings(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter))
 

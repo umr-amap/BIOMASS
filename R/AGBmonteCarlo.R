@@ -187,7 +187,10 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   # deal with missing DBH if any -----------------------------------
   
   if (anyNA(D)) {
-    warning("NA values in D have been randomly replaced by existing D values")
+    nbNA_D <- sum(is.na(D))
+    percentNA_D <- sum(is.na(D))/length(D)
+    
+    warning(paste0("To account for the error due to missing diameter values, NA values in D (",nbNA_D," NAs, ", percentNA_D, "%) have been randomly replaced by existing D values.", sep =""))
     D_simu[is.na(D_simu)] <- sample(x = D_simu[!is.na(D_simu)], size = length(D_simu[is.na(D_simu)]), replace = TRUE)
   }
   
