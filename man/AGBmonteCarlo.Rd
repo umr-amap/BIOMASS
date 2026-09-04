@@ -83,7 +83,7 @@ Propagation of the errors throughout the steps needed to compute AGB or AGC, sup
 \details{
 See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 
-Supported types of allometry, and how to properly specify the allometry:
+Supported types of AGB allometry, and how to properly specify it:
 \itemize{
 \item brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD;
 group level effect not supported;
@@ -108,6 +108,7 @@ NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
 )
 }
 
+## Allometry Chave 2014 equation
 # Propagating errors with a standard error for Wood density
 \donttest{
 resultMC <- AGBmonteCarlo(
@@ -139,6 +140,10 @@ resultMC <- by(
 meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
 credperplot <- sapply(resultMC, "[", 4)
 }
+
+## User allometry implemented with a brms.fit object
+
+
 closeAllConnections()
 
 }

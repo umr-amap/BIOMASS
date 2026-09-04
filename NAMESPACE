@@ -30,101 +30,117 @@ export(retrieveH)
 export(subPattern)
 export(subplot_summary)
 export(summaryByPlot)
-importFrom(data.table,"%between%")
-importFrom(data.table,":=")
-importFrom(data.table,as.data.table)
-importFrom(data.table,between)
-importFrom(data.table,copy)
-importFrom(data.table,data.table)
-importFrom(data.table,first)
-importFrom(data.table,fread)
-importFrom(data.table,is.data.table)
-importFrom(data.table,rbindlist)
-importFrom(data.table,set)
-importFrom(data.table,setDF)
-importFrom(data.table,setDT)
-importFrom(data.table,setcolorder)
-importFrom(data.table,setnames)
+importFrom(data.table,
+  "%between%",
+  ":=",
+  as.data.table,
+  between,
+  copy,
+  data.table,
+  first,
+  fread,
+  is.data.table,
+  rbindlist,
+  set,
+  setDF,
+  setDT,
+  setcolorder,
+  setnames
+)
 importFrom(ggnewscale,new_scale)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,arrow)
-importFrom(ggplot2,coord_equal)
-importFrom(ggplot2,coord_fixed)
-importFrom(ggplot2,element_blank)
-importFrom(ggplot2,element_text)
-importFrom(ggplot2,geom_errorbar)
-importFrom(ggplot2,geom_point)
-importFrom(ggplot2,geom_polygon)
-importFrom(ggplot2,geom_raster)
-importFrom(ggplot2,geom_segment)
-importFrom(ggplot2,geom_sf)
-importFrom(ggplot2,geom_smooth)
-importFrom(ggplot2,geom_text)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,ggtitle)
-importFrom(ggplot2,guide_legend)
-importFrom(ggplot2,guides)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,lims)
-importFrom(ggplot2,scale_alpha)
-importFrom(ggplot2,scale_alpha_manual)
-importFrom(ggplot2,scale_color_manual)
-importFrom(ggplot2,scale_fill_gradientn)
-importFrom(ggplot2,scale_shape_manual)
-importFrom(ggplot2,scale_size)
-importFrom(ggplot2,scale_x_continuous)
-importFrom(ggplot2,scale_x_discrete)
-importFrom(ggplot2,scale_y_continuous)
-importFrom(ggplot2,theme)
-importFrom(ggplot2,theme_minimal)
-importFrom(ggplot2,unit)
-importFrom(ggplot2,xlab)
-importFrom(ggplot2,ylab)
+importFrom(ggplot2,
+  aes,
+  arrow,
+  coord_equal,
+  coord_fixed,
+  element_blank,
+  element_text,
+  geom_errorbar,
+  geom_point,
+  geom_polygon,
+  geom_raster,
+  geom_segment,
+  geom_sf,
+  geom_smooth,
+  geom_text,
+  ggplot,
+  ggtitle,
+  guide_legend,
+  guides,
+  labs,
+  lims,
+  scale_alpha,
+  scale_alpha_manual,
+  scale_color_manual,
+  scale_fill_gradientn,
+  scale_shape_manual,
+  scale_size,
+  scale_x_continuous,
+  scale_x_discrete,
+  scale_y_continuous,
+  theme,
+  theme_minimal,
+  unit,
+  xlab,
+  ylab
+)
 importFrom(grDevices,terrain.colors)
-importFrom(graphics,axis)
-importFrom(graphics,grid)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,points)
-importFrom(graphics,segments)
+importFrom(graphics,
+  axis,
+  grid,
+  legend,
+  lines,
+  par,
+  plot,
+  points,
+  segments
+)
 importFrom(methods,is)
-importFrom(minpack.lm,nls.lm.control)
-importFrom(minpack.lm,nlsLM)
-importFrom(sf,st_as_sf)
-importFrom(sf,st_multipoint)
-importFrom(sf,st_polygon)
-importFrom(sf,st_sfc)
-importFrom(stats,SSmicmen)
-importFrom(stats,as.formula)
-importFrom(stats,coef)
-importFrom(stats,dist)
-importFrom(stats,formula)
-importFrom(stats,gaussian)
-importFrom(stats,lm)
-importFrom(stats,median)
-importFrom(stats,na.omit)
-importFrom(stats,pnorm)
-importFrom(stats,predict)
-importFrom(stats,qnorm)
-importFrom(stats,quantile)
-importFrom(stats,reshape)
-importFrom(stats,rnorm)
-importFrom(stats,runif)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,update)
+importFrom(minpack.lm,
+  nls.lm.control,
+  nlsLM
+)
+importFrom(sf,
+  st_as_sf,
+  st_multipoint,
+  st_polygon,
+  st_sfc
+)
+importFrom(stats,
+  SSmicmen,
+  as.formula,
+  coef,
+  dist,
+  formula,
+  gaussian,
+  lm,
+  median,
+  na.omit,
+  pnorm,
+  predict,
+  qnorm,
+  quantile,
+  reshape,
+  rnorm,
+  runif,
+  sd,
+  setNames,
+  update
+)
 importFrom(stringdist,stringsim)
 importFrom(stringr,str_detect)
-importFrom(terra,as.data.frame)
-importFrom(terra,buffer)
-importFrom(terra,crop)
-importFrom(terra,extract)
-importFrom(terra,rast)
-importFrom(terra,vect)
-importFrom(utils,askYesNo)
-importFrom(utils,data)
-importFrom(utils,download.file)
-importFrom(utils,globalVariables)
-importFrom(utils,unzip)
+importFrom(terra,
+  as.data.frame,
+  buffer,
+  crop,
+  extract,
+  rast,
+  vect
+)
+importFrom(utils,
+  askYesNo,
+  data,
+  download.file,
+  globalVariables,
+  unzip
+)

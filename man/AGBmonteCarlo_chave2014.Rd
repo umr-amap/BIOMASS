@@ -54,55 +54,6 @@ Propagation of the errors throughout the steps needed to compute AGB or AGC.
 \details{
 See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
 }
-\examples{
-# Load a database
-data(NouraguesHD)
-data(NouraguesTrees)
-
-# Modelling height-diameter relationship
-HDmodel <- modelHD(D = NouraguesHD$D, H = NouraguesHD$H, method = "log2", bayesian = FALSE)
-
-# Retrieving wood density values
-\donttest{
-NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
-  stand = NouraguesTrees$Plot
-)
-}
-
-# Propagating errors with a standard error for Wood density
-\donttest{
-resultMC <- AGBmonteCarlo(
-  D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
-  errWD = NouraguesWD$sdWD, HDmodel = HDmodel
-)
-}
-
-# If only the coordinates are available
-coord <- c(-52.683213,4.083024 )
-\donttest{
-resultMC <- AGBmonteCarlo(
-  D = NouraguesTrees$D, WD = NouraguesWD$meanWD,
-  errWD = NouraguesWD$sdWD, coord = coord
-)
-}
-
-# Propagating errors with a standard error in wood density in all plots at once
-\donttest{
-NouraguesTrees$meanWD <- NouraguesWD$meanWD
-NouraguesTrees$sdWD <- NouraguesWD$sdWD
-resultMC <- by(
-  NouraguesTrees, NouraguesTrees$Plot,
-  function(x) AGBmonteCarlo(
-      D = x$D, WD = x$meanWD, errWD = x$sdWD,
-      HDmodel = HDmodel, Dpropag = "chave2004"
-    )
-)
-meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
-credperplot <- sapply(resultMC, "[", 4)
-}
-closeAllConnections()
-
-}
 \references{
 Chave, J. et al. (2004). \emph{Error propagation and scaling for tropical forest biomass estimates}.
 Philosophical Transactions of the Royal Society B: Biological Sciences, 359(1443), 409-420.
