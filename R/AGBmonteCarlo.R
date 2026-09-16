@@ -152,7 +152,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     if (is.null(WD) & volume_allom == TRUE & return_volume == FALSE) {
       stop("WD should be provided when AGB must be returned while the model predicts volume")
     }
-    
+
     if (!is.null(WD)){
       if (length(WD) != len || !(length(errWD) %in% c(1, len))) {
         stop("WD must be the same length as D and errWD must be either one value or the same length as D")
@@ -165,6 +165,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
       resp_name_allom <- all.vars(fitted_allom$formula$formula)[1]
+
       
      if (length(var_names_allom) != length(var_in_data)) {
        stop("The length of variable names do not match the number of columns found in brms.fit object data")
@@ -241,6 +242,17 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     } else {
       D_simu <- replicate(n, D)
     }
+    
+    # deal with missing DBH if any -----------------------------------
+    
+    if (anyNA(D)) {
+      nbNA_D <- sum(is.na(D))
+      percentNA_D <- sum(is.na(D))/length(D)
+      
+      warning(paste0("To account for the error due to missing diameter values, NA values in D (",nbNA_D," NAs, ", percentNA_D, "%) have been randomly replaced by existing D values.", sep =""))
+      D_simu[is.na(D_simu)] <- sample(x = D_simu[!is.na(D_simu)], size = length(D_simu[is.na(D_simu)]), replace = TRUE)
+    }
+  
   
     # --------------------- WD ---------------------
     
