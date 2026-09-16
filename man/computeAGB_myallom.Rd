@@ -4,7 +4,7 @@
 \alias{computeAGB_myallom}
 \title{Compute tree above ground biomass (AGB) using (multiple) user biomass allometry}
 \usage{
-computeAGB_myallom(allometry = chave2014, ...)
+computeAGB_myallom(allometry, ...)
 }
 \arguments{
 \item{allometry}{a function which returns AGB estimates as a numeric vector, or a list of functions}

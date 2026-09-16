@@ -66,7 +66,7 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
   
   if (!is.null(H)) {
     if (length(D) != length(H)) {
-      stop("H and D have different length")
+      stop("H and D have different lengths")
     }
     if (anyNA(D)) {
       warning("NA values in D")

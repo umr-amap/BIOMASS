@@ -18,7 +18,7 @@ Authors@R: c(
 	person("Philippe", "Verley", email = "philippe.verley@ird.fr ", role = c("ctb")),
 	person("Ted", "Feldpausch", email = "T.R.Feldpausch@exeter.ac.uk", role = c("dtc"))
   )
-Description: Contains functions for estimating above-ground biomass/carbon and its uncertainty in forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
+Description: Contains functions for estimating above-ground biomass/carbon and its uncertainty in forests. These functions allow to (1) retrieve and correct taxonomy, (2) estimate wood density and its uncertainty, (3) build height-diameter models, (4) manage tree and plot coordinates, (5) estimate above-ground biomass/carbon at stand level with associated uncertainty, (6) predicting landscape maps of AGBD with associated uncertainty using LiDAR products. To cite ‘BIOMASS’, please use citation(‘BIOMASS’). For more information, see Réjou-Méchain et al. (2017) <doi:10.1111/2041-210X.12753>.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -40,7 +40,8 @@ Imports:
 	ggplot2,
 	stringdist,
 	stringr,
-	ggnewscale
+	ggnewscale,
+	rlang
 VignetteBuilder: knitr
 Suggests:
 	knitr, 
@@ -64,6 +65,7 @@ Suggests:
 	lifecycle,
 	jsonlite,
 	GGally,
-	tseries
+	tseries,
+	readxl
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.0

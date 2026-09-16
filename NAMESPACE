@@ -100,6 +100,7 @@ importFrom(minpack.lm,
   nls.lm.control,
   nlsLM
 )
+importFrom(rlang,f_rhs)
 importFrom(sf,
   st_as_sf,
   st_multipoint,

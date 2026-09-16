@@ -104,7 +104,8 @@
 #' closeAllConnections()
 #' 
 #' @keywords Monte Carlo
-#' @importFrom stats pnorm qnorm runif
+#' @importFrom stats pnorm qnorm runif 
+#' @importFrom rlang f_rhs
 #' @export
 
 AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
@@ -160,7 +161,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     
 
-    if (class(fitted_allom) == "brmsfit") { #class == character ça va pas, à reprendre
+    if (is(fitted_allom) == "brmsfit") {
 
       # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
@@ -317,7 +318,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       }
     }
   
-    if (class(fitted_allom) == "brmsfit") {
+    if (is(fitted_allom) == "brmsfit") {
       newdata_for_pred <- data.table(
         D = as.vector(t(D_simu)),
         H = as.vector(t(H_simu)), 

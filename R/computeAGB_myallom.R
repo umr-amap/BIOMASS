@@ -20,7 +20,7 @@
 #' 
 #' @export
 #' 
-computeAGB_myallom <- function(allometry = chave2014, ...) {
+computeAGB_myallom <- function(allometry, ...) {
   
   # Capture arguments passed by ellipses
   args <- list(...)
