@@ -254,7 +254,7 @@ NouraguesTrees$AGB_Chave <- computeAGB(
 
 # Propagate AGB errors
 
-The `AGBmonteCarlo()` function allows the user to propagate diﬀerent sources of error up to the ﬁnal AGB estimate. The propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parameterized by the user**.
+The `AGBmonteCarlo()` function allows the user to propagate different sources of error up to the final AGB estimate. The propagation of the error due to the **uncertainty of the model variables** (D, WD and H) can be **parameterized by the user**. The propagation of the error due to the **uncertainty of the allometry model parameters** is automatically performed by the function. 
 
 ## Diameter measurement error
 
@@ -352,25 +352,21 @@ AGB_by_plot <- summaryByPlot(AGB_val = error_prop$AGB_simu, plot = NouraguesTree
 
 Finally, the last element (`$AGB_simu`) of the `AGBmonteCarlo()` output is a matrix containing the simulated tree AGB values (in rows) for each iteration of the Monte Carlo procedure (in columns). 
 
-## AGB allometry
+# Provide your own AGB allometry
 
-### Default: Chave's equation for tropical forests
+## Default allometry or user allometry?
 
 For tropical forests, users can choose to model AGB allometry using eqn 4
-of [Chave et al. (2014)](https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.12629). The error propagation due to the **uncertainty of the model parameters** is then performed by the function. 
+of [Chave et al. (2014)](https://onlinelibrary.wiley.com/doi/abs/10.1111/gcb.12629). In that case you do not need to provide a value to the `allometry` argument, default value being `"chave2014"`. Hence any code written using previous versions of BIOMASS remains valid if you update to v3.1 and above. Note that the entire BIOMASS vignette uses Chave's AGB allometry equation.
 
-In that case you do not need to provide a value to the `allometry` argument, default value being `"chave2014"`. Hence any code written using previous versions of BIOMASS remains valid if you update to v3.1 and above. Note that the entire BIOMASS vignette uses Chave's AGB allometry equation.
+However, if you have an allometry dataset (*e.g.* TLS measurements, destructive AGB) you can use it to calibrate the allometric model, then use the calibrated model as the allometry equation in `AGBmonteCarlo`. The error due uncertainty in model parameters will still be propagated by the function. The easiest way is to pass to the `allometry` argument the output of a `brms` fit. Two examples are shown below.
 
-### Provide your own allometry
+## First example 
 
-Equation describing AGB allometry can be defined by the user, provided that **a sample of the distributions of corresponding model parameters is supplied**. 
-
-First example [Takoudjou et al. 2017 MEE](https://doi.org/10.1111/2041-210X.12933) data: calibrate user volume allometry with TLS data (DBH, H, volume) using brms, compute volume with destructive data (DBH, H), and compare with destructive volume from the dataset.
+[Takoudjou et al. 2017 MEE](https://doi.org/10.1111/2041-210X.12933) data: calibrate user volume allometry with TLS data (DBH, H, volume) using brms, compute volume with destructive data (DBH, H), and compare with destructive volume from the dataset.
 
 ```{r, user_allom_takoudjou_ex}
-
-###1) LOAD DATA
-
+#1) LOAD DATA
 tree_data_raw <- readxl::read_excel("saved_data/database_takoudjou_paper.xls", sheet = 2)
 tree_data <- tree_data_raw %>% 
   select(c('ID', 'Genus', 'Species', 'DBH_dest', 'H_tot_dest', 'Destructive total volume',
@@ -380,48 +376,46 @@ tree_data <- tree_data_raw %>%
   rename(Vol_tls = 'TLS edited total volume_5') %>%
   rename(Vol_dest = 'Destructive total volume')
 
-
-###2) CALIBRATE VOLUME ALLOMETRY
-
-## volume allometry inferred based on TLS data
+#2) CALIBRATE VOLUME ALLOMETRY WITH TLS DATA
 tree_data_allom <- tree_data %>%
   select(c('ID', 'DBH_L', 'Hauteur_L', 'Vol_tls'))
 
+# plot predictor vs. predicted
 tree_data_allom$predictor <- log(tree_data_allom$DBH_L^2 * tree_data_allom$Hauteur_L) 
 tree_data_allom$logV <- log(tree_data_allom$Vol_tls)
-
 ggplot(tree_data_allom, aes(x=predictor, y=logV)) +
   geom_point()+
   theme_minimal()
 
+# write allometry equation as formula
 allom_formula <- bf(logV ~ a + b * log(Hauteur_L * DBH_L^2), a ~ 1, b ~ 1, nl = TRUE)
+
+# model fit & checks
 fit_allom <- brm(formula = allom_formula, 
                  data = tree_data_allom,
                  family = gaussian(),
-                 thin = 10, control = list(max_treedepth = 13), iter = 3500, warmup = 1500, cores = 4, chains = 4)
-fit_allom
+                 thin = 10, control = list(max_treedepth = 13), iter = 3500, warmup = 1500, chains = 3, 
+                 refresh = 0, silent = 2)
 plot(fit_allom)
+summary(fit_allom)
 pp_check(fit_allom, ndraws = 150)
 
-###3) Validation with destructive Volume
-
-## Compute volume with minimal error propagation
-simuV <- AGBmonteCarlo(n = 1000,
+#3) VALIDATION WITH DESTRUCTIVE VOLUME
+# compute volume with allometry uncertainty only 
+predV <- AGBmonteCarlo(n = 1000,
                          D = tree_data$DBH_dest, Dpropag = NULL,
                          H = tree_data$H_tot_dest, errH = 0,
                          fitted_allom = fit_allom, var_in_data = c("logV", "H", "D"),
                          volume_allom = T, return_volume = T
 )
 
+# plot predicted Volume vs observed destrucTive Volume
+tree_data_pred <- tree_data %>%
+  mutate(predV_median = predV$V_simu_per_stem$medV,
+         lower_CI_V = predV$V_simu_per_stem$lower_CI_V,
+         upper_CI_V = predV$V_simu_per_stem$upper_CI_V)
 
-# plot sim. V vs obs. V
-tree_data_sim <- tree_data %>%
-  mutate(predV_median = simuV$V_simu_per_stem$medV,
-         lower_CI_V = simuV$V_simu_per_stem$lower_CI_V,
-         upper_CI_V = simuV$V_simu_per_stem$upper_CI_V)
-
-
-ggplot(tree_data_sim, aes(x= Vol_dest, y=predV_median)) +
+ggplot(tree_data_pred, aes(x= Vol_dest, y=predV_median)) +
   geom_abline(intercept = 0, slope = 1, lty = 2, colour = "grey")+
   theme_minimal()+
   geom_segment(aes(x = Vol_dest, y = lower_CI_V, 
@@ -432,12 +426,12 @@ ggplot(tree_data_sim, aes(x= Vol_dest, y=predV_median)) +
   ylab("Predicted Volume (m^3)")
 ```
 
-Second example [Schepaschenko et al. 2017 PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.871491150) data: select one species (P. *sylvestris* L.) in one ecoregion, dataset partition for calibration (70%) and validation (30%), calibrate AGB allometry with calibration data (DBH, H, destructive AGB) using brms, compute AGB for validation data (DBH, H) and compare with destructive AGB.
+## Second example 
+
+[Schepaschenko et al. 2017 PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.871491150) data: select one species (P. *sylvestris* L.) in one biome (Temperate Grasslands, Savannas, and Shrublands), dataset partition for calibration (70%) and validation (30%), calibrate AGB allometry with calibration data (DBH, H, destructive AGB) using brms, compute AGB for validation data (DBH, H) and compare with observed AGB.
 
 ```{r, user_allom_Schepaschenko_ex}
-
-###1) LOAD & PREPARE DATA
-
+#1) LOAD & PREPARE DATA
 tree_data_raw <- suppressWarnings(readxl::read_xlsx("saved_data/Biomass_tree_DB_Scientific_data_2017.xlsx"))
 tree_data <- tree_data_raw %>% 
   select(c('ID', 'Species', 'DBH', 'H tree', 'Pabo', 'Location', 'Latitude', 'Longitude',
@@ -449,77 +443,73 @@ tree_data <- tree_data_raw %>%
   filter(!str_starts(Ecoregion, "808"))  %>%
   filter(D >=5) %>%  
   filter(!is.na(H)) %>%
-  filter(!is.na(AGB))
+  filter(!is.na(AGB)) %>%
+  mutate(logAGB = log(AGB))
 
-# get WD
+# get wood density
 woodDens <- getWoodDensity(genus = "Pinus", species = "Pinus sylvestris L.")
 tree_data$WD <- woodDens$meanWD
 tree_data$sdWD <- woodDens$sdWD
 
-tree_data$logAGB <- log(tree_data$AGB)
-
-###2) DATASET PARTITION for calibration & validation
-
+#2) SPATIAL PARTITION OF THE DATASET for calibration & validation
 set.seed(5678)
-cluster <- stats::kmeans(x = as.matrix(tree_data[,c('Latitude', 'Longitude')]), centers = 4)
-plot(tree_data$Latitude, tree_data$Longitude, col = c("blue", "red", "green", "purple")[cluster$cluster])
+nb_cluster <- 4
+cluster <- stats::kmeans(x = as.matrix(tree_data[,c('Latitude', 'Longitude')]), centers = nb_cluster)
+plot(tree_data$Latitude, tree_data$Longitude, col = rainbow(nb_cluster)[cluster$cluster])
 table(cluster$cluster)
 
-# cluster 2 for validation
+# choosing cluster 2 for validation
 sum(table(cluster$cluster)[c(2)])/sum(table(cluster$cluster))
 tree_data$cluster <- cluster$cluster
-
 tree_data_cal <- tree_data %>%
   filter(cluster != 2)
-
 tree_data_val <- tree_data %>%
   filter(cluster == 2)
 
-###3) CALIBRATE AGB ALLOMETRY
-
+#3) CALIBRATE AGB ALLOMETRY WITH CALIBRATION DATA
+# plot predictor vs. predicted
 tree_data_cal$predictor <- log(tree_data_cal$D^2 * tree_data_cal$H * tree_data_cal$WD) 
 ggplot(tree_data_cal, aes(x=predictor, y=logAGB, colour = as.factor(cluster))) +
   geom_point()+
   theme_minimal()
 
-# fit AGB allometry with brms
+# write allometry equation as formula
 allom_formula <- bf(logAGB ~ a + b * log(WD * H * D^2), a ~ 1, b ~ 1, nl = TRUE)
+
+# model fit & checks
 fit_allom <- brm(formula = allom_formula, 
                  data = tree_data_cal,
                  family = gaussian(),
-                 thin = 10, control = list(max_treedepth = 13), iter = 3500, warmup = 1500, cores = 4, chains = 4)
-fit_allom
+                 thin = 10, control = list(max_treedepth = 13), iter = 3500, warmup = 1500, chains = 3, 
+                 refresh = 0, silent = 2)
 plot(fit_allom)
+summary(fit_allom)
 pp_check(fit_allom, ndraws = 150)
 
-###4) VALIDATION WITH DESTRUCTIVE AGB
-
-# compute AGB with minimal error propagation for validation dataset
-simuAGB <- AGBmonteCarlo(n = 1000,
+#4) VALIDATION
+# compute AGB with allometry uncertainty only for validation data
+predAGB <- AGBmonteCarlo(n = 1000,
                          D = tree_data_val$D, Dpropag = NULL,
                          H = tree_data_val$H, errH = 0,
                          WD = tree_data_val$WD, errWD = 0,
                          fitted_allom = fit_allom, var_in_data = c("logAGB", "WD", "H", "D")
 )
 
-# plot sim. AGB vs obs. AGB
-tree_data_val_sim <- tree_data_val %>%
-  mutate(predAGB_median = simuAGB$AGB_simu_per_stem$medAGB,
-         lower_CI_AGB = simuAGB$AGB_simu_per_stem$lower_CI_AGB,
-         upper_CI_AGB = simuAGB$AGB_simu_per_stem$upper_CI_AGB)
+# plot predicted AGB vs. observed AGB
+tree_data_val_pred <- tree_data_val %>%
+  mutate(predAGB_median = predAGB$AGB_simu_per_stem$medAGB,
+         lower_CI_AGB = predAGB$AGB_simu_per_stem$lower_CI_AGB,
+         upper_CI_AGB = predAGB$AGB_simu_per_stem$upper_CI_AGB)
 
-
-ggplot(tree_data_val_sim, aes(x=AGB, y=predAGB_median, 
-                              colour = as.factor(Location))) +
+ggplot(tree_data_val_pred, aes(x=AGB, y=predAGB_median, colour = as.factor(Location))) +
   geom_abline(intercept = 0, slope = 1, lty = 2, colour = "grey")+
   scale_color_brewer(palette = "Dark2")+
   theme_minimal()+
-  geom_segment(aes(x = AGB, y = lower_CI_AGB, xend = AGB, yend = upper_CI_AGB, 
-                   colour = Location))+
+  geom_segment(aes(x = AGB, y = lower_CI_AGB, xend = AGB, yend = upper_CI_AGB, colour = Location))+
   geom_point()+
-  theme(legend.position = "none")+
-  xlab("Observed destructive AGB (kg/ha)")+
-  ylab("Predicted AGB (kg/ha)")
+  #theme(legend.position = "none")+
+  xlab("Observed AGB (Mg)")+
+  ylab("Predicted AGB (Mg)")
 ```
 
 # Some tricks
