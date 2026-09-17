@@ -6,7 +6,7 @@ clarity, the article follows the same workflow as in the BIOMASS paper,
 excluded the shaded area:
 
 ![BIOMASS workflow - Article Estimate
-biomass](img/workflow_article1.png)
+biomass](img/BIOMASS_workflow_articles.png)
 
 BIOMASS workflow - Article Estimate biomass
 

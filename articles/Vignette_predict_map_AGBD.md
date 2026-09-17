@@ -5,7 +5,8 @@ workflow to get AGBD maps from spatialized AGBD and spatialized LiDAR
 metrics. For the sake of clarity, the article follows the same workflow
 as in the BIOMASS paper, excluded the shaded area:
 
-![BIOMASS workflow - Article Predict map](img/workflow_article3.png)
+![BIOMASS workflow - Article Predict
+map](img/BIOMASS_workflow_articles.png)
 
 BIOMASS workflow - Article Predict map
 
