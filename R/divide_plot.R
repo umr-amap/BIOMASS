@@ -235,6 +235,10 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     xmax <- max(dat[["x_rel"]])
     ymin <- min(dat[["y_rel"]])
     ymax <- max(dat[["y_rel"]])
+    
+    if (xmax < grid_size[1] | ymax < grid_size[2]){
+      stop(paste("The size of the sub-plot grid is larger than the size of the plot, please adjust grid_size argument value(s) accordingly."))
+    }
 
     # Effective offset of grid start within plot
     x_offset <- (origin[1] - xmin) %% grid_size[1]
@@ -243,8 +247,9 @@ divide_plot <- function(corner_data, rel_coord, proj_coord = NULL, longlat = NUL
     x_not_in_grid <- (x_plot_length - x_offset) %% grid_size[1]
     y_not_in_grid <- (y_plot_length - y_offset) %% grid_size[2]
 
-    if( x_not_in_grid != 0 ) warning("\nThe x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset")
-    if( y_not_in_grid != 0 ) warning("\nThe y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset")
+    if(x_not_in_grid != 0) warning("\nThe x-dimension of the plot is not a multiple of the x-dimension of the grid size and origin offset")
+    if(y_not_in_grid != 0) warning("\nThe y-dimension of the plot is not a multiple of the y-dimension of the grid size and origin offset")
+   
     if( x_not_in_grid * y_plot_length + y_not_in_grid * x_plot_length - x_not_in_grid * y_not_in_grid > grid_tol * x_plot_length * y_plot_length ) {
       stop(paste("More than",grid_tol*100,"% of the plot area is not included in the sub-plot grid. If you still want to divide the plot, please increase the value of the grid_tol argument, adjust grid size and/or origin."))
     }
