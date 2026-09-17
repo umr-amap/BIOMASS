@@ -1,5 +1,7 @@
 * version 3.1
-- user allom
+- AGB can now be estimated using an allometry equation set by the user, thanks to an update in AGBmonCarlo() and a new function:
+ - AGBmonteCarlo() now handles a user-defined allometry, previously calibrated by the user, through the argument `fitted_allom`.
+ - computeAGB_myallom(): compute tree mean AGB for user-defined allometries, as does computeAGB() with Chave's 2014 allometry.
 
 * version 3.0.2
 - AGBmonteCarlo() now handles the propagation of error due to missing diameter measurements.
@@ -9,8 +11,8 @@
 
 * version 3.0
 - When LiDAR data are available in raster format, BIOMASS can now be used to predict AGBD at the landscape scale using two new functions of the pipeline:
-- calibrate_model(): takes the `long_AGB_simu` output from `subplot_summary(subplots = ..., AGB_simu = ..., ref_raster = ...)`. This function fits a log–log Bayesian regression model with spatially varying coefficients between AGBD and simulated raster metrics.
-- predict_map(): takes the output from `calibrate_model()` to predict AGBD from a raster containing CHM values.
+ - calibrate_model(): takes the `long_AGB_simu` output from `subplot_summary(subplots = ..., AGB_simu = ..., ref_raster = ...)`. This function fits a log–log Bayesian regression model with spatially varying coefficients between AGBD and simulated raster metrics.
+ - predict_map(): takes the output from calibrate_model() to predict AGBD from a raster containing CHM values.
 
 * version 2.2.9
 - Moved taxonomic correction from TNRS API to World Flora Online API in correctTaxo()
