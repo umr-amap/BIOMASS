@@ -1,9 +1,19 @@
-#' Translate the lon lat coordinate in UTM coordinate
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(
+    "codeUTM", "long", "lat", ".BY"
+  ))
+}
+
+#' Translate the long lat coordinate in UTM coordinate
 #'
 #' @inheritParams computeE
 #'
 #' @return a data frame with :
+#'    - `long`: The longitude of the entry
+#'    - `lat`: The latitude of the entry
 #'    - `codeUTM`: The code `proj` for UTM
+#'    - `X`: The X UTM coordinate
+#'    - `Y`: The Y UTM coordinate
 #'
 #' @export
 #' @importFrom data.table as.data.table :=
@@ -16,9 +26,9 @@
 #' UTMcoord <- latlong2UTM(coord)
 #' }
 #'
-getUTM <- function(coord) {
+latlong2UTM <- function(coord) {
   coord <- data.table(coord, check.names = TRUE)
-  setnames(coord, colnames(coord), c("lon", "lat"))
+  setnames(coord, colnames(coord), c("long", "lat"))
 
   if (!requireNamespace("proj4")) {
     stop("Please install the package 'proj4'\n
@@ -27,18 +37,17 @@ getUTM <- function(coord) {
 
   # Function to find UTM zone: assumes that data longitudes to the west of the
   # Prime Meridian are encoded as running from -180 to 0 degrees
-  codelatlong2UTM <- function(lon, lat) {
-    Nzone <- (floor((lon + 180) / 6) %% 60) + 1
+  codelatlong2UTM <- function(long, lat) {
+    Nzone <- (floor((long + 180) / 6) %% 60) + 1
     Nzone <- paste0(Nzone, ifelse(lat >= 0, " +north ", " +south "))
     Nzone <- paste0("+proj=utm +zone=", Nzone, "+ellps=WGS84 +datum=WGS84 +units=m +no_defs")
     return(Nzone)
   }
 
   # Convert into UTM
-  coord[, codeUTM := codelatlong2UTM(lon, lat)]
-  coord[, c("X", "Y") := proj4::project(.(lon, lat), proj = unique(.BY)), by = codeUTM]
+  coord[, codeUTM := codelatlong2UTM(long, lat)]
+  coord[, c("X", "Y") := proj4::project(.(long, lat), proj = unique(.BY)), by = codeUTM]
 
-  # Convert to dataframe
   setDF(coord)
 
   return(coord)

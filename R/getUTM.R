@@ -13,7 +13,7 @@
 #' lat <- c(4.08, 3.98, 4.12)
 #' coord <- cbind(long, lat)
 #' \donttest{
-#' UTMcoord <- latlong2UTM(coord)
+#' UTMcoord <- getUTM(coord)
 #' }
 #'
 getUTM <- function(coord) {
