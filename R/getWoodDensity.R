@@ -24,8 +24,13 @@
 #'
 #' When supplying addWoodDensityData, the dataframe should be organized as follow:
 #' - four (or five) columns: "genus","species","meanWD","sdWD" (the fifth column "family" is optional)
-#' - one row per species (not per individual measurement)
-#' The taxa present in addWoodDensityData will replace the GWDD V2 estimates.
+#' - `species` is the specific epithet, e.g. "africana" for Burkea africana
+#' - one row per taxon (not per individual measurement)
+#' Estimates may be given at species level, genus level (`species` is NA), 
+#' or family level (`genus` and `species` are NA). The taxa present in 
+#' addWoodDensityData replace the GWDD V2 estimates at the same taxonomic 
+#' level. If `sdWD` is NA, the GWDD V2 standard deviation is kept for taxa in
+#' the database, and is NA for taxa not in the database.
 #'
 #' @return Returns a dataframe containing the following information:
 #'   - `family`: Family
@@ -108,22 +113,53 @@ getWoodDensity <- function(genus, species, family = NULL, stand = NULL,
   # Adding addWoodDensityData to wdData
   if (!is.null(addWoodDensityData)) {
     # Formatting addWoodDensityData:
-    addWoodDensityData <- as.data.table(addWoodDensityData)
-    addWoodDensityData[,species := paste(genus, species)]
-    addWoodDensityData <- addWoodDensityData[!is.na(meanWD), ]
-    addWoodDensityData[!is.na(species), add_level_tax := "species"]
-    addWoodDensityData[is.na(species) & !is.na(genus), add_level_tax := "genus"]
-    if("family" %in% names(addWoodDensityData)) {
-      addWoodDensityData[is.na(species) & is.na(genus) & !is.na(family), add_level_tax := "family"]
-      wdData <- merge(wdData, addWoodDensityData, by = c("family", "genus", "species"), all = TRUE)
-    }else{    
-      wdData <- merge(wdData, addWoodDensityData, by = c("genus", "species"), all = TRUE)
+    addWD <- as.data.table(addWoodDensityData)
+    if (!"family" %in% names(addWD)) {
+      addWD[, family := NA_character_]
     }
-    
-    wdData[!is.na(meanWD), wsg := meanWD]
-    wdData[!is.na(sdWD), sd := sdWD]
-    wdData[!is.na(add_level_tax), level_tax := add_level_tax]
-    wdData[, c("meanWD","sdWD") := NULL]
+    addWD[, c("family", "genus", "species") := lapply(.SD, function(x) {
+      x <- as.character(x)
+      x[!is.na(x) & trimws(x) == ""] <- NA_character_
+      x
+    }), .SDcols = c("family", "genus", "species")]
+    addWD <- addWD[!is.na(meanWD), ]
+
+    # Species names are matched as binomials, as in wdData
+    addWD[, species := ifelse(is.na(species), NA_character_, paste(genus, species))]
+
+    # Taxonomic level of each estimate, and the name at that level
+    addWD[, level_tax := ifelse(!is.na(species), "species", 
+      ifelse(!is.na(genus), "genus", 
+        ifelse(!is.na(family), "family", NA_character_)))]
+    if (anyNA(addWD$level_tax)) {
+      warning(sum(is.na(addWD$level_tax)), 
+        " rows of addWoodDensityData have no family, genus, or species and are ignored")
+      addWD <- addWD[!is.na(level_tax), ]
+    }
+    taxKey <- function(dt) {
+      ifelse(dt$level_tax == "species", dt$species, 
+        ifelse(dt$level_tax == "genus", dt$genus, dt$family))
+    }
+    addWD[, key := paste(level_tax, taxKey(addWD))]
+    if (anyDuplicated(addWD$key)) {
+      stop("addWoodDensityData must have one row per taxon, duplicated: ", 
+        paste(unique(addWD$key[duplicated(addWD$key)]), collapse = ", "))
+    }
+
+    # Replace estimates of taxa already in wdData, matching on the name at the
+    # level of the estimate only, so that differences in e.g. family names
+    # don't create duplicate taxa. The database standard deviation is kept if 
+    # sdWD is not provided
+    wd_key <- paste(wdData$level_tax, taxKey(wdData))
+    idx <- match(addWD$key, wd_key)
+    old <- idx[!is.na(idx)]
+    new <- addWD[!is.na(idx), ]
+    wdData[old, wsg := new$meanWD]
+    wdData[old, sd := ifelse(is.na(new$sdWD), sd, new$sdWD)]
+
+    # Add taxa not in wdData
+    wdData <- rbind(wdData, addWD[is.na(idx), 
+      .(family, genus, species, wsg = meanWD, sd = sdWD, level_tax)])
   }
   
   # Creating an input data-table
