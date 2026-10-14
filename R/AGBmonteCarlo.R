@@ -12,16 +12,20 @@
 #' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 #' height-diameter allometry with bioclimatic variables.
-#' @param Dpropag This variable can take three kind of values, indicating how to propagate the errors on diameter measurements:
-#' a single numerical value or a vector of the same size as `D`, both representing the standard deviation associated
-#' with the diameter measurements or `"chave2004"` (an important error on 5 percent of the measures, a smaller error on
-#' 95 percent of the trees).
+#' @param Dpropag This variable can take four kinds of values, indicating how to propagate the errors on diameter
+#' measurements: a single numerical value or a vector of the same size as `D`, both representing the standard deviation
+#' associated with the diameter measurements, `"chave2004"` (a large error on 5 percent of the measures, a smaller error
+#' increasing with diameter on 95 percent of the measures, Chave et al. 2004), or a diameter measurement error model
+#' from [diamError()] or [fitDiamError()], e.g. estimated from repeated measurements of the same stems.
 #' @param n Number of iterations. Cannot be smaller than 50 or larger than 1000. By default `n = 1000`
 #' @param Carbon (logical) Whether or not the propagation should be done up to the carbon value (FALSE by default).
 #' @param Dlim (optional) Minimum diameter (in cm) for which above ground biomass should be calculated (all diameter below
 #' `Dlim` will have a 0 value in the output).
 #'
 #' @details See Rejou-Mechain et al. (2017) for all details on the error propagation procedure.
+#'
+#' With `Dpropag = "chave2004"` or a diameter measurement error model, large errors are drawn independently for each
+#' tree in each iteration, with probability `p_large` (0.05 for `"chave2004"`).
 #'
 #' @return Returns a list  with (if Carbon is FALSE):
 #'   - `meanAGB`: Mean stand AGB value following the error propagation
@@ -86,6 +90,8 @@
 #' }
 #' closeAllConnections()
 #' 
+#' @seealso [diamError()], [fitDiamError()]
+#'
 #' @keywords Monte Carlo
 #' @importFrom stats pnorm qnorm runif
 #' @export
@@ -101,12 +107,14 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     stop("n cannot be smaller than 50 or larger than 1000")
   }
   
-  if (!is.null(Dpropag)) {
-    if ((is.numeric(Dpropag) && !(length(Dpropag) %in% c(1, len)) || (!is.numeric(Dpropag) && tolower(Dpropag) != "chave2004"))) {
+  if (!is.null(Dpropag) && !inherits(Dpropag, "diamError")) {
+    if ((is.numeric(Dpropag) && !(length(Dpropag) %in% c(1, len)) ||
+      (!is.numeric(Dpropag) && !(is.character(Dpropag) && length(Dpropag) == 1 && tolower(Dpropag) == "chave2004")))) {
       stop('Dpropag should be set to one of these options:
              - "chave2004"
              - a single sd value that will be applied to all trees
-             - a vector of sd values of the same length as D')
+             - a vector of sd values of the same length as D
+             - a diameter measurement error model from diamError() or fitDiamError()')
     }
   }
   
@@ -150,39 +158,13 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   }
   
   
-  # function truncated random gausian law -----------------------------------
-  myrtruncnorm <- function(n, lower = -1, upper = 1, mean = 0, sd = 1) {
-    qnorm(p = runif(n = n, min = pnorm(lower, mean = mean, sd = sd), max = pnorm(upper, mean = mean, sd = sd)), mean = mean, sd = sd)
-  }
-  
-  
   ### Propagate error with Markov Chain Monte Carlo approach
   
   # --------------------- D ---------------------
   
-  if (!is.null(Dpropag)) {
-    if (length(Dpropag) == 1 && tolower(Dpropag) == "chave2004") {
-      # Propagation of the measurement error on D: based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B.
-      fivePercent <- round(len * 5 / 100)
-      chaveError <- function(x, len) {
-        ## Assigning large errors on 5% of the trees
-        largeErrSample <- sample(len, fivePercent)
-        
-        D_sd <- 0.0062 * x + 0.0904 # Assigning small errors on the remaining 95% trees
-        D_sd[largeErrSample] <- 4.64
-        
-        x <- myrtruncnorm(n = len, mean = x, sd = D_sd, lower = 0.1, upper = 500)
-        return(x)
-      }
-      D_simu <- suppressWarnings(replicate(n, chaveError(D, len)))
-    }
-    else {
-      D_simu <- suppressWarnings(replicate(n, myrtruncnorm(len, mean = D, sd = Dpropag, lower = 0.1, upper = 500)))
-    }
-  } else {
-    
-    D_simu <- replicate(n, D)    
-  }
+  # Propagation of the measurement error on D, see simulateD() in diamError.R
+  # "chave2004" is based on Chave et al. 2004 (p.412) Phil. Trans. R. Soc. Lond. B.
+  D_simu <- simulateD(D, Dpropag, n)
   
   # deal with missing DBH if any -----------------------------------
   
