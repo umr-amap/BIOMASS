@@ -279,7 +279,7 @@ AGBmonteCarlo_chave2014 <- function(D, WD = NULL, errWD = NULL, H = NULL, errH =
       rnorm(sd = y, n = len)
     }, y = RSE)
     AGB_simu <- AGB_simu + matRSE
-    AGB_simu <- exp(AGB_simu)
+    AGB_simu <- exp(AGB_simu) / 1000
   }
  
   return(AGB_simu)
