@@ -106,7 +106,7 @@ in \code{point_data} and displayed on in generated plots.
 \examples{
 # One plot with repeated measurements of each corner
 data("NouraguesPlot201")
-fit_plot201 <- plotPolyFit(
+fit_plot201 <- plotPolygonFit(
    point_data = NouraguesPlot201,
    method = "exact",
    proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
@@ -118,7 +118,7 @@ fit_plot201$corner_coord
 
 # 4 plots with one measurement of each corner
 data("NouraguesCoords")
-fit_plots <- plotPolyFit(
+fit_plots <- plotPolygonFit(
    point_data = NouraguesCoords,
    method = "affine",
    proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
@@ -136,7 +136,7 @@ nouragues_raster <- terra::rast(
    system.file("extdata", "NouraguesRaster.tif",
                package = "BIOMASS", mustWork = TRUE)
    )
-fit_plot_204 <- plotPolyFit(
+fit_plot_204 <- plotPolygonFit(
  point_data = plot_204_coords,
  method = "procrustes",
  proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
