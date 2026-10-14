@@ -388,7 +388,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     } else {
       # Biomass to carbon ratio calculated from Thomas and Martin 2012 forests data stored in DRYAD (tropical
       # angiosperm stems carbon content)
-      AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = n * len) / 100
+      AGC_simu <- AGB_simu * rnorm(mean = 47.13, sd = 2.06, n = length(AGB_simu)) / 100
       sum_AGC_simu <- colSums(AGC_simu, na.rm = TRUE)
       res <- list(
         meanAGC = mean(sum_AGC_simu),

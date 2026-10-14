@@ -100,7 +100,7 @@ test_that("AGBmonteCarlo error", {
 test_that("AGB monte Carlo with HDmodel", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGB, 1)
   expect_type(AGB$meanAGB, "double")
@@ -123,7 +123,7 @@ test_that("AGB monte Carlo with HDmodel", {
 test_that("AGB monte Carlo with one value for errWD", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD[1], H = H, errH = 0)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 })
 
 
@@ -131,7 +131,7 @@ test_that("AGB monte Carlo with one value for errWD", {
 test_that("AGB monte Carlo with H", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, H = H, errH = HDmodel$RSE, n = nIter)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGB, 1)
   expect_type(AGB$meanAGB, "double")
@@ -155,7 +155,7 @@ test_that("AGB monte Carlo with coord", {
   skip_on_cran()
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, coord = coord, n = nIter)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGB, 1)
   expect_type(AGB$meanAGB, "double")
@@ -181,7 +181,7 @@ test_that("AGBMonteCarlo with Dpropag", {
     Dpropag = rnorm(length(D), mean = mean(D), sd = 0.1),
     WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter
   )
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGB, 1)
   expect_type(AGB$meanAGB, "double")
@@ -205,7 +205,7 @@ test_that("AGB monte Carlo with Carbon", {
   
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGC, 1)
   expect_type(AGB$meanAGC, "double")
@@ -227,7 +227,7 @@ test_that("AGB monte Carlo with Carbon", {
 test_that("AGB monte Carlo with Dlim", {
   set.seed(10)
   AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter, Carbon = TRUE, Dlim = 20)
-  expect_length(AGB, 5)
+  expect_length(AGB, 6)
 
   expect_length(AGB$meanAGC, 1)
   expect_type(AGB$meanAGC, "double")
