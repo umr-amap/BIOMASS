@@ -33,6 +33,7 @@ test_that("divide_plot error", {
   expect_warning(divide_plot(corner_data = corner_data, rel_coord = c("x_rel","y_rel"), grid_size = c(30,25)) , "The x-dimension of the plot is not a multiple of the x-dimension of the grid size")
   expect_warning(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = c(25,30)) , "The y-dimension of the plot is not a multiple of the y-dimension of the grid size")
   expect_error(suppressWarnings(divide_plot(corner_data, c("x_rel","y_rel"), grid_size = c(40,40))) , "If you still want to divide the plot, please increase the value of the grid_tol argument.")
+  expect_error(divide_plot(corner_data = corner_data, rel_coord = c("x_rel","y_rel"), grid_size = 150) , "The size of the sub-plot grid is larger than the size of the plot")
   
   wrong_NouraguesTrees <- NouraguesTrees ; wrong_NouraguesTrees[1,"Plot"] <- 200
   divide_plot(NouraguesCoords, c("Xfield","Yfield"), grid_size = 25, corner_plot_ID = "Plot", tree_data = wrong_NouraguesTrees, tree_coords = c("Xfield","Yfield"), tree_plot_ID = "Plot") %>% 

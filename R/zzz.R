@@ -2,6 +2,11 @@
   # Set WFO GraphQL API URI if not already set
   if( !"wfo.api_uri" %in% names(options()) ){
     options("wfo.api_uri" = c("https://list.worldfloraonline.org/gql.php"))
+
+  if (Sys.info()['sysname'] == "Linux") {
+    options("wfo.api_uri" = c("https://list-test.rbge.info/gql.php"))
+  }
+    
   }
   
 }

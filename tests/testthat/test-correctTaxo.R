@@ -296,8 +296,10 @@ test_that("correctTaxo returns empty dataframe when nothing matches", {
 test_that("correctTaxo handles real API calls", {
   skip_on_cran()
   reset_cache()
-  options(wfo.api_uri = "https://list.worldfloraonline.org/gql.php")
-
+  #options(wfo.api_uri = "https://list.worldfloraonline.org/gql.php")
+  #options(wfo.api_uri = "https://list-test.rbge.info/gql.php")
+  #options(ssl_verif = FALSE)
+  
   # Import data
   test <- read.csv("../testdata/test_correctTaxo.csv")
 

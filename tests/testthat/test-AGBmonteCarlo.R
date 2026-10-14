@@ -51,11 +51,6 @@ test_that("AGBmonteCarlo error", {
   )
 
   expect_error(
-    AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD[1], H = H),
-    "One of vector WD or errWD does not have the same length as D"
-  )
-
-  expect_error(
     AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD, H = H, coord = coord),
     "Too many input"
   )
@@ -122,7 +117,15 @@ test_that("AGB monte Carlo with HDmodel", {
   expect_equal(dim(AGB$AGB_simu), c(length(D), nIter))
   expect_contains(class(AGB$AGB_simu), "matrix")
   expect_type(AGB$AGB_simu[1, 1], "double")
+  
 })
+
+test_that("AGB monte Carlo with one value for errWD", {
+  set.seed(10)
+  AGB <- AGBmonteCarlo(D, WD = WD$meanWD, errWD = WD$sdWD[1], H = H, errH = 0)
+  expect_length(AGB, 5)
+})
+
 
 
 test_that("AGB monte Carlo with H", {
@@ -249,7 +252,11 @@ test_that("AGB monte Carlo with Dlim", {
 test_that("AGB with NA", {
   D[1:5] <- NA
   set.seed(10)
-  AGB <- AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter)
+  
+  expect_warning(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter),
+                   "To account for the error due to missing diameter values")
+  
+  AGB <- suppressWarnings(AGBmonteCarlo(D, Dpropag = "chave2004", WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter))
 
   expect_length(AGB$meanAGB, 1)
   expect_type(AGB$meanAGB, "double")
@@ -267,8 +274,8 @@ test_that("AGB with NA", {
   expect_contains(class(AGB$AGB_simu), "matrix")
   expect_type(AGB$AGB_simu[1, 1], "double")
 
-  expect_true(all(is.na(AGB$AGB_simu[1:5, ])))
-  expect_false(all(is.na(AGB$AGB_simu[1:6, ])))
+  expect_false(all(is.na(AGB$AGB_simu[1:5, ])))
+  #expect_false(all(is.na(AGB$AGB_simu[1:6, ])))
 })
 
 

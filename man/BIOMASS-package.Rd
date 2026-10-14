@@ -24,6 +24,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Dominique Lamonica \email{dominique.lamonica@ird.fr}
   \item Maxime Réjou-Méchain \email{maxime.rejou@gmail.com} [data contributor]
   \item Arthur Bailly \email{arthur.bailly@ird.fr}
   \item Guillaume Cornu \email{gcornu@cirad.fr} (\href{https://orcid.org/0000-0002-7523-5176}{ORCID})
