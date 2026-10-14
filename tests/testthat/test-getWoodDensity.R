@@ -78,3 +78,62 @@ test_that("Function getWoodDensity", {
     "The additional wood density database should be organized in a dataframe with four"
   )
 })
+
+test_that("getWoodDensity uses addWoodDensityData at each taxonomic level", {
+  gwdd <- BIOMASS::wsg_estimates
+  wd_sp <- gwdd$wsg[which(gwdd$species == "Burkea africana")]
+  sd_sp <- gwdd$sd[which(gwdd$species == "Burkea africana")]
+
+  stems <- data.frame(
+    family = c("Fabaceae", "Fabaceae", "Fabaceae", "Fabaceae", "Phyllanthaceae"),
+    genus = c("Burkea", "Burkea", "Burkea", "Julbernardia", "Pseudolachnostylis"),
+    species = c("africana", NA, "fakeensis", "paniculata", "maprouneifolia"))
+
+  add <- data.frame(
+    family = c(NA, "Fabaceae", "Wrongaceae"),
+    genus = c("Burkea", "Brachystegia", "Julbernardia"),
+    species = c(NA, "fakeensis", "paniculata"),
+    meanWD = c(0.5, 0.6, 0.7),
+    sdWD = c(0.05, NA, NA))
+
+  out <- suppressMessages(getWoodDensity(
+    genus = stems$genus, species = stems$species, family = stems$family, 
+    addWoodDensityData = add, verbose = FALSE))
+
+  # One output row per stem, in the same order
+  expect_equal(nrow(out), nrow(stems))
+  expect_equal(out$genus, stems$genus)
+
+  # Species in GWDD without a local estimate keep the GWDD estimate
+  expect_equal(out$meanWD[1], wd_sp)
+  expect_equal(out$levelWD[1], "species")
+
+  # Genus-level local estimate applies to stems identified to genus, and to
+  # species of that genus without a species-level estimate
+  expect_equal(out$meanWD[2:3], c(0.5, 0.5))
+  expect_equal(out$sdWD[2:3], c(0.05, 0.05))
+  expect_equal(out$levelWD[2:3], c("genus", "genus"))
+
+  # Species-level local estimate replaces GWDD estimate, even if the family
+  # name differs, keeping the GWDD SD where sdWD is NA
+  gwdd_jp <- gwdd[which(gwdd$species == "Julbernardia paniculata"), ]
+  expect_equal(out$meanWD[4], 0.7)
+  expect_equal(out$sdWD[4], gwdd_jp$sd)
+
+  # Stems of other taxa are unaffected
+  expect_equal(out$meanWD[5], 
+    gwdd$wsg[which(gwdd$species == "Pseudolachnostylis maprouneifolia")])
+
+  # Local species not in GWDD are added, with NA SD if not provided
+  out2 <- suppressMessages(getWoodDensity(
+    genus = "Brachystegia", species = "fakeensis", 
+    addWoodDensityData = add[, -1], verbose = FALSE))
+  expect_equal(out2$meanWD, 0.6)
+  expect_true(is.na(out2$sdWD))
+  expect_equal(out2$levelWD, "species")
+
+  # One row per taxon
+  expect_error(getWoodDensity(genus = "Burkea", species = "africana", 
+    addWoodDensityData = rbind(add, add[1, ]), verbose = FALSE), 
+    "one row per taxon")
+})

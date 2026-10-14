@@ -56,8 +56,13 @@ If a taxon is unidentified or absent from the database, the estimated WD and unc
 When supplying addWoodDensityData, the dataframe should be organized as follow:
 \itemize{
 \item four (or five) columns: "genus","species","meanWD","sdWD" (the fifth column "family" is optional)
-\item one row per species (not per individual measurement)
-The taxa present in addWoodDensityData will replace the GWDD V2 estimates.
+\item \code{species} is the specific epithet, e.g. "africana" for Burkea africana
+\item one row per taxon (not per individual measurement)
+Estimates may be given at species level, genus level (\code{species} is NA),
+or family level (\code{genus} and \code{species} are NA). The taxa present in
+addWoodDensityData replace the GWDD V2 estimates at the same taxonomic
+level. If \code{sdWD} is NA, the GWDD V2 standard deviation is kept for taxa in
+the database, and is NA for taxa not in the database.
 }
 }
 \examples{
