@@ -483,16 +483,16 @@ plotPolygonFit <- function(point_data,
   for (pid in unique(corner_checked$plot_ID)) {
     sub_corners <- corner_checked[corner_checked$plot_ID == pid, ]
     poly_mat <- as.matrix(rbind(sub_corners[, c("x_proj", "y_proj")], sub_corners[1, c("x_proj", "y_proj")]))
-    poly_geom <- st_polygon(list(poly_mat))
+    poly_geom <- sf::st_polygon(list(poly_mat))
     
     # Conditionally create the geometry column to avoid NA type errors in sf
     if (!is.null(lonlat_col)) {
-      geom_sfc <- st_sfc(poly_geom, crs = utm_unique)
+      geom_sfc <- sf::st_sfc(poly_geom, crs = utm_unique)
     } else {
-      geom_sfc <- st_sfc(poly_geom)
+      geom_sfc <- sf::st_sfc(poly_geom)
     }
 
-    poly_list[[pid]] <- st_sf(plot_ID = pid, geometry = geom_sfc)
+    poly_list[[pid]] <- sf::st_sf(plot_ID = pid, geometry = geom_sfc)
   }
 
   if (length(poly_list) > 0) {
