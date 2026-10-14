@@ -69,7 +69,7 @@
 #' @examples
 #' # One plot with repeated measurements of each corner
 #' data("NouraguesPlot201")
-#' fit_plot201 <- plotPolyFit(
+#' fit_plot201 <- plotPolygonFit(
 #'    point_data = NouraguesPlot201,
 #'    method = "exact",
 #'    proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
@@ -81,7 +81,7 @@
 #' 
 #' # 4 plots with one measurement of each corner
 #' data("NouraguesCoords")
-#' fit_plots <- plotPolyFit(
+#' fit_plots <- plotPolygonFit(
 #'    point_data = NouraguesCoords,
 #'    method = "affine",
 #'    proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
@@ -99,7 +99,7 @@
 #'    system.file("extdata", "NouraguesRaster.tif",
 #'                package = "BIOMASS", mustWork = TRUE)
 #'    )
-#' fit_plot_204 <- plotPolyFit(
+#' fit_plot_204 <- plotPolygonFit(
 #'  point_data = plot_204_coords,
 #'  method = "procrustes",
 #'  proj_col = c("Xutm","Yutm"), rel_col = c("Xfield","Yfield"),
@@ -193,7 +193,7 @@ plotPolygonFit <- function(point_data,
   }
 
   if (!is.null(lonlat_col) && method == "exact" && sum(is.na(pdt[, lonlat_col])) != 0) {
-    stop("Missing values detected in point longitude/latitude coordinates, these rows will be discarded.")
+    message("Missing values detected in point longitude/latitude coordinates, these rows will be discarded.")
   }
 
   if (!is.null(corner_col)) {
@@ -204,28 +204,28 @@ plotPolygonFit <- function(point_data,
 
   rel_pos <- apply(cdt_test[, rel_col], 1, paste, collapse = ":")
 
-  if (method == "exact" && length(unique(rel_pos)) > 4) {
-    stop("Method 'exact' can only handle exactly four corner points")
+  # Count unique corners per plot, in total and with non-missing coordinates
+  coord_col <- if (!is.null(proj_col)) proj_col else lonlat_col
+  plot_test <- if (!is.null(plot_col)) as.character(cdt_test[[plot_col]]) else rep("", nrow(cdt_test))
+  plot_test <- factor(plot_test, levels = unique(plot_test))
+  coord_ok <- stats::complete.cases(cdt_test[, coord_col])
+  n_corner <- tapply(rel_pos, plot_test, function(x) length(unique(x)))
+  n_corner_ok <- tapply(rel_pos[coord_ok], plot_test[coord_ok], function(x) length(unique(x)))
+  n_corner_ok[is.na(n_corner_ok)] <- 0
+
+  if (method == "exact" && any(n_corner > 4)) {
+    stop("Method 'exact' can only handle four corner points per plot: ", 
+      paste(names(n_corner)[n_corner > 4], collapse = ", "))
   }
 
-  if (method == "affine" && 
-    length(unique(rel_pos[!grepl("NA", apply(pdt[, proj_col], 1, paste, collapse = ":"))])) < 3) {
-    stop("Fewer than three non-missing projected point coordinates, needed for 'affine' method")
+  if (method == "affine" && any(n_corner_ok < 3)) {
+    stop("Fewer than three corners with non-missing coordinates, needed for 'affine' method: ", 
+      paste(names(n_corner_ok)[n_corner_ok < 3], collapse = ", "))
   }
 
-  if (method == "affine" && 
-    length(unique(rel_pos[!grepl("NA", apply(pdt[, lonlat_col], 1, paste, collapse = ":"))])) < 3) {
-    stop("Fewer than three non-missing longitude/latitude coordinates, needed for 'affine' method")
-  }
-
-  if (method == "procrustes" && 
-    length(unique(rel_pos[!grepl("NA", apply(pdt[, proj_col], 1, paste, collapse = ":"))])) < 2) {
-    stop("Fewer than two non-missing projected point coordinates, needed for 'procrustes' method")
-  }
-
-  if (method == "procrustes" && 
-    length(unique(rel_pos[!grepl("NA", apply(pdt[, lonlat_col], 1, paste, collapse = ":"))])) < 2) {
-    stop("Fewer than two non-missing projected point coordinates, needed for 'procrustes' method")
+  if (method == "procrustes" && any(n_corner_ok < 2)) {
+    stop("Fewer than two corners with non-missing coordinates, needed for 'procrustes' method: ", 
+      paste(names(n_corner_ok)[n_corner_ok < 2], collapse = ", "))
   }
 
   if (!is.null(tree_data) && !is.null(plot_col) && is.null(tree_plot_col)) {
@@ -302,14 +302,17 @@ plotPolygonFit <- function(point_data,
   
   # Transform lat-lon coordinates to UTM if provided
   if (!is.null(lonlat_col)) { 
-    UTM_code <- getUTM(pdt[,c("lon", "lat")])
+    lonlat_ok <- stats::complete.cases(pdt[, c("lon", "lat")])
+    UTM_code <- getUTM(pdt[lonlat_ok, c("lon", "lat")])$codeUTM
     if (length(unique(UTM_code)) > 1) {
       message("More than one UTM zone detected. Latitude-longitude coordinates will be transformed to the most frequent UTM zone across plots.")
     }
     utm_unique <- names(sort(table(UTM_code), decreasing = TRUE))[1]
-    proj_xy <- proj4::project(pdt[, c("lon", "lat")], proj = utm_unique)
-    pdt$x_proj <- proj_xy$x
-    pdt$y_proj <- proj_xy$y
+    proj_xy <- proj4::project(pdt[lonlat_ok, c("lon", "lat")], proj = utm_unique)
+    pdt$x_proj <- NA_real_
+    pdt$y_proj <- NA_real_
+    pdt$x_proj[lonlat_ok] <- proj_xy$x
+    pdt$y_proj[lonlat_ok] <- proj_xy$y
   }
 
   # Calculate sd_coord
@@ -326,7 +329,7 @@ plotPolygonFit <- function(point_data,
   # Check corner coordinates and calculate tree projected coordinates --------
   
   # Fit models, calculate predictions, and identify outliers (Vectorized & split approach)
-  apply_fit <- function(df, meth) {
+  apply_fit <- function(df, meth, warn = TRUE) {
     res_list <- lapply(split(df, df$plot_ID), function(sub_dt) {
       if (meth == "exact") {
         sub_dt$x_proj_pred <- ave(sub_dt$x_proj, sub_dt$x_rel, sub_dt$y_rel, FUN = function(x) mean(x, na.rm = TRUE))
@@ -340,6 +343,10 @@ plotPolygonFit <- function(point_data,
         proc <- BIOMASS:::procrust(
           sub_dt[!is.na(sub_dt$x_proj) & !is.na(sub_dt$y_proj), c("x_proj", "y_proj")], 
           sub_dt[!is.na(sub_dt$x_proj) & !is.na(sub_dt$y_proj), c("x_rel", "y_rel")])
+        if (warn && det(proc$rotation) < 0) {
+          warning("Procrustes fit for plot '", sub_dt$plot_ID[1], 
+            "' is a reflection. Check that relative coordinates are not mirrored.")
+        }
         rot <- as.matrix(sub_dt[, c("x_rel", "y_rel")]) %*% proc$rotation
         sub_dt$x_proj_pred <- rot[, 1] + proc$translation[1]
         sub_dt$y_proj_pred <- rot[, 2] + proc$translation[2]
@@ -361,7 +368,7 @@ plotPolygonFit <- function(point_data,
 
   if (rm_outliers) {
     pdt <- pdt[!(pdt$outlier == TRUE & !is.na(pdt$outlier) & pdt$n_meas > pdt$n_outliers), ]
-    pdt <- apply_fit(pdt, method)
+    pdt <- apply_fit(pdt, method, warn = FALSE)
   }
 
   # Extract corners and aggregate to 1 row per unique corner
@@ -379,23 +386,6 @@ plotPolygonFit <- function(point_data,
     data = cdt, FUN = mean, na.rm = TRUE)
   names(corner_checked)[
     names(corner_checked) %in% c("x_proj_pred", "y_proj_pred")] <- c("x_proj", "y_proj")
-
-  # Sort corners counter-clockwise radially or by order in dataframe
-  if (nrow(cdt) <= 4) { 
-    corner_checked <- do.call(rbind, lapply(split(corner_checked, corner_checked$plot_ID), function(sub_c) {
-      centroid_x <- mean(sub_c$x_rel)
-      centroid_y <- mean(sub_c$y_rel)
-      angles <- atan2(sub_c$y_rel - centroid_y, sub_c$x_rel - centroid_x)
-      sub_c[order(angles), ]
-    }))
-  } else { 
-    cdt$pos <- seq_len(nrow(cdt))
-    orig_ord <- aggregate(pos ~ plot_ID + x_rel + y_rel, data = cdt, FUN = min)
-    corner_checked <- merge(corner_checked, orig_ord, by = c("plot_ID", "x_rel", "y_rel"))
-    corner_checked <- corner_checked[order(corner_checked$plot_ID, corner_checked$pos), ]
-    corner_checked$pos <- NULL # Clean up
-  }
-  rownames(corner_checked) <- NULL
 
   # Prep original order from cdt 
   cdt$pos <- seq_len(nrow(cdt))
