@@ -57,16 +57,16 @@
 #' @keywords AGB above ground biomass forest carbon allometry
 
 computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
-
+  
   # Parameters verification -------------------------------------------------
-
+  
   if (length(D) != length(WD)) {
-    stop("D and WD have different lenghts")
+    stop("D and WD have different lengths")
   }
-
+  
   if (!is.null(H)) {
     if (length(D) != length(H)) {
-      stop("H and D have different length")
+      stop("H and D have different lengths")
     }
     if (anyNA(D)) {
       warning("NA values in D")
@@ -79,38 +79,38 @@ computeAGB <- function(D, WD, H = NULL, coord = NULL, Dlim = NULL) {
       stop("Both height and coordinates are providen.")
     }
   }
-
+  
   if (!is.null(coord) && ((is.vector(coord) && length(coord) != 2) || (is.matrix(coord) && nrow(coord) != length(D)))) {
     stop("coord should be either
              - a vector (e.g. c(longitude, latitude))
              - a matrix with two columns (longitude and latitude)
              having the same number of rows as the number of trees (length(D))")
   }
-
+  
   if (is.null(H) && is.null(coord)) {
     stop("You need to provide either H or coord")
   }
-
-
-
+  
+  
+  
   # Compute the AGB ---------------------------------------------------------
-
+  
   # If there is height data for all the trees
   if (!is.null(H)) {
     AGB <- (0.0673 * (WD * H * D^2)^0.976) / 1000 # Eq 4 from Chave et al. 2014 Global change biology
   } else {
-
+    
     # If there is no heigth, but the coordinates :
     if (is.null(dim(coord))) {
       coord <- as.matrix(t(coord))
     }
-
+    
     E <- computeE(coord) # environmental index in Chave et al. 2014
-
+    
     # Modified Eq 7 from Chave et al. 2014 Global change biology
     AGB <- exp(-2.023977 - 0.89563505 * E + 0.92023559 * log(WD) + 2.79495823 * log(D) - 0.04606298 * (log(D)^2)) / 1000
   }
-
+  
   if (!is.null(Dlim)) AGB[D < Dlim] <- 0
   return(AGB)
 }
