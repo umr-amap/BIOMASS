@@ -42,8 +42,8 @@ from \code{paste(genus, species)} using \code{gsub()}. The order of this vector
 matters, substitutions are applied sequentially. Sensible defaults are
 provided by \code{subPattern()}}
 
-\item{useCache}{logical, if TRUE use cached values in \code{the$wfo_cache}
-preferentially, to reduce the number of API calls}
+\item{useCache}{logical, if TRUE preferentially use cached values in the
+WFO cache (see \code{\link[=getWFOCache]{getWFOCache()}}), to reduce the number of API calls}
 
 \item{useAPI}{logical, if TRUE (default) allow API calls}
 

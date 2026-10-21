@@ -252,8 +252,8 @@ pickName <- function(x, cand, offset = 0, page_size = 10, timeout = 10) {
 #'     from `paste(genus, species)` using `gsub()`. The order of this vector
 #'     matters, substitutions are applied sequentially. Sensible defaults are
 #'     provided by `subPattern()`
-#' @param useCache logical, if TRUE use cached values in `the$wfo_cache` 
-#'     preferentially, to reduce the number of API calls
+#' @param useCache logical, if TRUE preferentially use cached values in the 
+#'     WFO cache (see [getWFOCache()]), to reduce the number of API calls
 #' @param useAPI logical, if TRUE (default) allow API calls
 #' @param capacity maximum number of API calls which can accumulate over the 
 #'     duration of `fill_time_s`. See documentation for `httr2::req_throttle()`
