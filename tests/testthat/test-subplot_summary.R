@@ -243,3 +243,56 @@ test_that("subplot_summary_coord_uncertainties", {
 
 
 
+
+test_that("subplot_summary places trees without coordinates within their bounds", {
+  cd <- data.frame(x_rel = c(0, 20, 20, 0), y_rel = c(0, 0, 10, 10))
+  cd$x_proj <- cd$x_rel + 1000
+  cd$y_proj <- cd$y_rel + 5000
+  sp <- divide_plot(cd, rel_coord = c("x_rel", "y_rel"), proj_coord = c("x_proj", "y_proj"), grid_size = 10)
+  n_sim <- 1000
+  # One mapped tree in each subplot, and trees without coordinates: within the
+  # second subplot, across both subplots, half outside the grid, and without bounds
+  sp$tree_data <- data.frame(
+    plot_ID = "",
+    subplot_ID = c("subplot_0_0", "subplot_1_0", NA, NA, NA, NA),
+    x_min = c(NA, NA, 12, 0, 10, NA),
+    x_max = c(NA, NA, 18, 20, 30, NA),
+    y_min = c(NA, NA, 0, 0, 0, NA),
+    y_max = c(NA, NA, 10, 10, 10, NA))
+  agb <- matrix(c(1, 2, 4, 8, 16, 32), nrow = 6, ncol = n_sim)
+  bounds <- c("x_min", "x_max", "y_min", "y_max")
+  
+  set.seed(3)
+  expect_message(
+    res <- subplot_summary(sp, AGB_simu = agb, draw_plot = FALSE, tree_bounds = bounds),
+    "3 trees without coordinates were placed at random")
+  agb_sum <- reshape(data.frame(res$long_AGB_simu)[, c("subplot_ID", "N_simu", "AGBD")], 
+    idvar = "N_simu", timevar = "subplot_ID", direction = "wide")
+  # AGBD in Mg/ha of 0.01 ha subplots
+  s1 <- agb_sum$AGBD.subplot_0_0 / 100
+  s2 <- agb_sum$AGBD.subplot_1_0 / 100
+  # Subplot 1: tree 1, and tree 4 in about half of the simulations
+  expect_true(all(s1 %in% c(1, 1 + 8)))
+  # Subplot 2: trees 2 and 3, tree 4 in the others, tree 5 in about half
+  expect_true(all(s2 %in% (2 + 4 + c(0, 8, 16, 8 + 16))))
+  # Tree 4 is always in one of the two subplots
+  expect_true(all((s1 == 9) != (s2 %in% c(14, 30))))
+  expect_lt(abs(mean(s1 == 9) - 0.5), 0.1)
+  # Tree 5 is outside the grid in about half of the simulations
+  expect_lt(abs(mean(s2 - 6 >= 16) - 0.5), 0.1)
+  # Tree 6, without bounds, is never included
+  expect_true(all(s1 + s2 < 1 + 2 + 4 + 8 + 16 + 32))
+  
+  # Without tree_bounds, trees without a subplot are not included
+  res <- suppressMessages(subplot_summary(sp, AGB_simu = agb, draw_plot = FALSE))
+  expect_equal(res$tree_summary$AGBD_median, c(100, 200))
+  
+  expect_error(subplot_summary(sp, value = "x_min", tree_bounds = bounds, draw_plot = FALSE),
+    "'tree_bounds' can only be used with 'AGB_simu'")
+  expect_error(subplot_summary(sp, AGB_simu = agb, tree_bounds = c("x_min", "x_max"), draw_plot = FALSE),
+    "'tree_bounds' must be four column names")
+  sp_bad <- sp
+  sp_bad$tree_data$x_max[3] <- 0
+  expect_error(subplot_summary(sp_bad, AGB_simu = agb, tree_bounds = bounds, draw_plot = FALSE),
+    "maximum values must not be smaller than minimum values")
+})

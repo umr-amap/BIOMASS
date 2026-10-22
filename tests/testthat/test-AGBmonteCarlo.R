@@ -299,3 +299,21 @@ test_that("With the plot value", {
 })
 
 closeAllConnections()
+
+
+test_that("AGB monte Carlo with missing diameters", {
+  D_na <- D
+  D_na[1:5] <- NA
+  
+  # Percentage of missing values in the warning
+  expect_warning(
+    AGB <- AGBmonteCarlo(D_na, WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, n = nIter),
+    paste0("5 NAs, ", round(100 * 5 / length(D), 2), "%"))
+  expect_false(anyNA(AGB$AGB_simu[1:5, ]))
+  
+  # Missing diameters with Dlim
+  AGB <- suppressWarnings(AGBmonteCarlo(D_na, WD = WD$meanWD, errWD = WD$sdWD, HDmodel = HDmodel, 
+    n = nIter, Dlim = 20))
+  expect_true(all(AGB$AGB_simu[which(D_na < 20), ] == 0))
+  expect_false(any(AGB$AGB_simu[1:5, ] == 0))
+})
