@@ -1,3 +1,7 @@
+* development version
+- AGBmonteCarlo(): fixed the percentage of missing diameters reported in the warning, and an error when `Dlim` is used with missing diameters.
+- subplot_summary() can propagate the uncertainty in the location of trees without coordinates, using the argument `tree_bounds`: in each simulation, each tree is placed at random within its bounds, e.g. a field subplot, and its AGB is added to the subplot containing it.
+
 * version 3.1
 - AGB can now be estimated using an allometry equation set by the user, thanks to an update in AGBmonCarlo() and a new function:
  - AGBmonteCarlo() now handles a user-defined allometry, previously calibrated by the user, through the argument `fitted_allom`.

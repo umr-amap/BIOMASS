@@ -11,7 +11,21 @@
 #' @param fun the function to be applied on tree metric of each subplot (or, if summarising several metrics at once: a list of functions named according to each metric (see examples))
 #' @param ref_raster A SpatRaster object from terra package, typically a chm raster created from LiDAR data. Note that in the case of a multiple attributes raster, only the first variable "z" will be summarised.
 #' @param raster_fun the function (or a list of functions) to be applied on raster values of each subplot.
+#' @param tree_bounds (optional, used with `AGB_simu`) a character vector of four column names in `subplots$tree_data`,
+#'   giving the bounds of the location of trees without coordinates in the relative coordinate system of the plot, in the
+#'   order: minimum x, maximum x, minimum y, maximum y. See Details.
 #' @param ... optional arguments to fun
+#'
+#' @details
+#' Trees without a subplot (`NA` in `subplots$tree_data$subplot_ID`) are not included in the summaries, e.g. trees
+#' outside the grid of subplots. If `tree_bounds` is given with `AGB_simu`, trees without a subplot with non-missing
+#' bounds are treated as trees without coordinates, whose location is only known to be within their bounds, e.g. within
+#' a field subplot of known position, or anywhere within the plot. In each simulation, each of these trees is placed at
+#' a random location drawn uniformly within its bounds, and its simulated AGB is added to the subplot containing that
+#' location. If the location is outside the grid of subplots, the tree is not included in that simulation. This
+#' propagates the uncertainty in the location of these trees to the AGBD of each subplot. Each row of
+#' `subplots$tree_data` is placed independently, so the stems of a multi-stemmed tree should be combined into a single
+#' row.
 #'
 #' @return a list containing the following elements:
 #'  - `tree_summary`: a summary of the metric(s) per subplot 
@@ -122,7 +136,7 @@
 #'   head(res_summary$long_AGB_simu)
 #' }
 
-subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ref_raster = NULL, raster_fun = mean, ...) {
+subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot = TRUE, per_ha = TRUE, fun = sum, ref_raster = NULL, raster_fun = mean, tree_bounds = NULL, ...) {
   
   # Checking parameters --------------------------------------------------------
   if( any(!c("x_proj","y_proj") %in% names(subplots$sub_corner_coord)) ) {
@@ -136,6 +150,18 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
   
   if (!is.null(AGB_simu) && nrow(AGB_simu) != nrow(subplots$tree_data) ) {
     stop("The rows in 'subplots$tree_data' must match the rows in 'AGB_simu'")
+  }
+  if (!is.null(tree_bounds)) {
+    if (is.null(AGB_simu)) {
+      stop("'tree_bounds' can only be used with 'AGB_simu'")
+    }
+    if (!is.character(tree_bounds) || length(tree_bounds) != 4 || !all(tree_bounds %in% names(subplots$tree_data))) {
+      stop("'tree_bounds' must be four column names of subplots$tree_data: minimum x, maximum x, minimum y, maximum y")
+    }
+    tb <- subplots$tree_data[, tree_bounds, drop = FALSE]
+    if (any(tb[[2]] < tb[[1]] | tb[[4]] < tb[[3]], na.rm = TRUE)) {
+      stop("In 'tree_bounds', maximum values must not be smaller than minimum values")
+    }
   }
   if (!is.null(AGB_simu)) {
     if(is.null(subplots$simu_coord)) {
@@ -336,6 +362,43 @@ subplot_summary <- function(subplots, value = NULL, AGB_simu = NULL, draw_plot =
         unique(corner_dat[, .(plot_ID = as.character(plot_ID), subplot_ID = as.character(subplot_ID))]),
                                    on = c("plot_ID","subplot_ID")]
       AGB_simu_sum[is.na(AGB_simu_sum)] <- 0
+    }
+    
+    # Trees without coordinates, placed at random within their bounds in each
+    # simulation, see Details
+    if (!is.null(tree_bounds)) {
+      tree_dat <- data.frame(subplots$tree_data)
+      bounds <- as.matrix(tree_dat[, tree_bounds])
+      unmapped <- which(is.na(tree_dat$subplot_ID) & stats::complete.cases(bounds))
+      if (length(unmapped) > 0) {
+        agb_cols <- grep("^AGB_[0-9]+$", names(AGB_simu_sum), value = TRUE)
+        n_simu <- length(agb_cols)
+        agb_mat <- as.matrix(AGB_simu[, .SD, .SDcols = agb_cols])
+        sum_mat <- as.matrix(AGB_simu_sum[, .SD, .SDcols = agb_cols])
+        sum_key <- paste(AGB_simu_sum$plot_ID, AGB_simu_sum$subplot_ID, sep = "|")
+        # Subplots are rectangles in the relative coordinate system
+        sub_ext <- corner_dat[, .(x_min = min(x_rel), x_max = max(x_rel),
+                                  y_min = min(y_rel), y_max = max(y_rel)),
+                              by = c("plot_ID", "subplot_ID")]
+        n_out <- 0
+        for (i in unmapped) {
+          q <- sub_ext[as.character(sub_ext$plot_ID) == as.character(tree_dat$plot_ID[i]), ]
+          if (nrow(q) == 0) next
+          x <- stats::runif(n_simu, bounds[i, 1], bounds[i, 2])
+          y <- stats::runif(n_simu, bounds[i, 3], bounds[i, 4])
+          inq <- outer(x, q$x_min, ">=") & outer(x, q$x_max, "<") &
+            outer(y, q$y_min, ">=") & outer(y, q$y_max, "<")
+          k <- max.col(inq, ties.method = "first")
+          k[rowSums(inq) == 0] <- NA
+          ok <- which(!is.na(k) & !is.na(agb_mat[i, ]))
+          n_out <- n_out + sum(is.na(k))
+          r <- match(paste(q$plot_ID[k[ok]], q$subplot_ID[k[ok]], sep = "|"), sum_key)
+          sum_mat[cbind(r, ok)] <- sum_mat[cbind(r, ok)] + agb_mat[i, ok]
+        }
+        AGB_simu_sum[, (agb_cols) := as.data.table(sum_mat)]
+        message(length(unmapped), " trees without coordinates were placed at random within their bounds in each ",
+          "simulation (", round(100 * n_out / (length(unmapped) * n_simu), 1), "% of placements outside the grid of subplots)")
+      }
     }
   }
   

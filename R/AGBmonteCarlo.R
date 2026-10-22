@@ -237,7 +237,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     
     if (anyNA(D)) {
       nbNA_D <- sum(is.na(D))
-      percentNA_D <- sum(is.na(D))/length(D)
+      percentNA_D <- round(100 * sum(is.na(D)) / length(D), 2)
       
       warning(paste0("To account for the error due to missing diameter values, NA values in D (",nbNA_D," NAs, ", percentNA_D, "%) have been randomly replaced by existing D values.", sep =""))
       D_simu[is.na(D_simu)] <- sample(x = D_simu[!is.na(D_simu)], size = length(D_simu[is.na(D_simu)]), replace = TRUE)
@@ -349,7 +349,8 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
      AGB_simu <- AGB_simu * WD_simu
   }
   
-  if (!is.null(Dlim)) AGB_simu[D < Dlim, ] <- 0 # ok keep
+  # Trees with a missing diameter are not set to 0
+  if (!is.null(Dlim)) AGB_simu[which(D < Dlim), ] <- 0
   AGB_simu[which(is.infinite(AGB_simu))] <- NA # ok keep
   
   if (volume_allom == TRUE & return_volume == TRUE) {

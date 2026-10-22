@@ -13,6 +13,7 @@ subplot_summary(
   fun = sum,
   ref_raster = NULL,
   raster_fun = mean,
+  tree_bounds = NULL,
   ...
 )
 }
@@ -33,6 +34,10 @@ subplot_summary(
 
 \item{raster_fun}{the function (or a list of functions) to be applied on raster values of each subplot.}
 
+\item{tree_bounds}{(optional, used with \code{AGB_simu}) a character vector of four column names in \code{subplots$tree_data},
+giving the bounds of the location of trees without coordinates in the relative coordinate system of the plot, in the
+order: minimum x, maximum x, minimum y, maximum y. See Details.}
+
 \item{...}{optional arguments to fun}
 }
 \value{
@@ -47,6 +52,17 @@ If 'AGB_simu' is provided, the function also return \verb{$long_AGB_simu}: a dat
 }
 \description{
 After applying the \code{\link[=divide_plot]{divide_plot()}} function, this function summarises with any defined function the desired tree metric (including AGB simulations calculated by the \code{\link[=AGBmonteCarlo]{AGBmonteCarlo()}} function) by sub-plot and displays the plot representation.
+}
+\details{
+Trees without a subplot (\code{NA} in \code{subplots$tree_data$subplot_ID}) are not included in the summaries, e.g. trees
+outside the grid of subplots. If \code{tree_bounds} is given with \code{AGB_simu}, trees without a subplot with non-missing
+bounds are treated as trees without coordinates, whose location is only known to be within their bounds, e.g. within
+a field subplot of known position, or anywhere within the plot. In each simulation, each of these trees is placed at
+a random location drawn uniformly within its bounds, and its simulated AGB is added to the subplot containing that
+location. If the location is outside the grid of subplots, the tree is not included in that simulation. This
+propagates the uncertainty in the location of these trees to the AGBD of each subplot. Each row of
+\code{subplots$tree_data} is placed independently, so the stems of a multi-stemmed tree should be combined into a single
+row.
 }
 \examples{
 # One plot with repeated measurements of each corner
