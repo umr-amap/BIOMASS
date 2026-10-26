@@ -4,7 +4,7 @@
 #' From the diameter and either i) a model, ii) the coordinates of the plot or iii) the region, this function gives an estimate of the total tree height.
 #'
 #' @param D Vector of diameters.
-#' @param model A model output by the function [modelHD()].
+#' @param model A model output by the function [modelHD()], or a model defined with [customHD()].
 #' @param coord Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a
 #' matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).
 #' @param region Area of your dataset to estimate tree height thanks to Weibull-H region-, continent-specific

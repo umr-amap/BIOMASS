@@ -34,7 +34,7 @@ AGBmonteCarlo(
 \item{errH}{(if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 values (in the latter case the vector should be of the same length as \code{H}).}
 
-\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example).}
+\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example, or a model defined with \code{\link[=customHD]{customHD()}}).}
 
 \item{coord}{(option 3, only used with \code{"chave2014"} allometry) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
@@ -92,9 +92,11 @@ Supported types of AGB allometry, and how to properly specify it:
 \item brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD;
 group level effect not supported;
 \item formula & parameters: list(formula = NULL, parameters = NULL, link = NULL)
-formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL or "log";
+formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL (or "identity") or "log";
 variables in the formula must be among \code{"H"}, \code{"D"}, \code{"WD"}; column names of parameters must match parameters names in formula;
-a Gaussian error model is assumed on mean response, with \code{"sigma"} as standard deviation.
+a Gaussian error model is assumed on the response (on the log scale if link = "log"), with \code{"sigma"} as standard deviation.
+Each row of parameters is a set of parameter values, e.g. a posterior draw, used for all trees in one iteration. Rows are
+resampled if there are fewer than n, so a single row gives fixed parameters. The response should be in Mg, as for \code{"chave2014"}.
 }
 }
 \examples{

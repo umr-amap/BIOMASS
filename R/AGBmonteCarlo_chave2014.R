@@ -8,7 +8,7 @@
 #' @param H (option 1) Vector of tree heights (in m). If set, `errH` must be set too.
 #' @param errH (if `H`) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 #' values (in the latter case the vector should be of the same length as `H`).
-#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example).
+#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example, or a model defined with [customHD()]).
 #' @param coord (option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 #' height-diameter allometry with bioclimatic variables.
@@ -144,7 +144,7 @@ AGBmonteCarlo_chave2014 <- function(D, WD = NULL, errWD = NULL, H = NULL, errH =
       # Propagation of the error thanks to the H-D local model
       
       # If HDmodel is a list of stand-specific hd-models, get back the plotID vector
-      if (!identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
+      if (!inherits(HDmodel, "customHD") && !identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
         plotID <- do.call(c , lapply(names(HDmodel), function(x) {
           rep(x , length(HDmodel[[x]]$input$D))
         }))

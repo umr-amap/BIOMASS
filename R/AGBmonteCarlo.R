@@ -8,7 +8,7 @@
 #' @param H (option 1) Vector of tree heights (in m). If set, `errH` must be set too.
 #' @param errH (if `H`) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 #' values (in the latter case the vector should be of the same length as `H`).
-#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example).
+#' @param HDmodel (option 2) Model used to estimate tree height from tree diameter (output from [modelHD()], see example, or a model defined with [customHD()]).
 #' @param coord (option 3, only used with `"chave2014"` allometry) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 #' or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict
 #' height-diameter allometry with bioclimatic variables.
@@ -39,9 +39,11 @@
 #'  - brms.fit object: response must be (log)AGB or (log)V (volume); predictors must be among (log)height H (logH), (log)diameter D (logD), wood density WD; 
 #'   group level effect not supported;
 #'  - formula & parameters: list(formula = NULL, parameters = NULL, link = NULL)
-#'   formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL or "log";
+#'   formula = ~ param1 * H ..., can be any function of variables H, D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =); link = NULL (or "identity") or "log";
 #'   variables in the formula must be among `"H"`, `"D"`, `"WD"`; column names of parameters must match parameters names in formula;
-#'   a Gaussian error model is assumed on mean response, with `"sigma"` as standard deviation.
+#'   a Gaussian error model is assumed on the response (on the log scale if link = "log"), with `"sigma"` as standard deviation.
+#'   Each row of parameters is a set of parameter values, e.g. a posterior draw, used for all trees in one iteration. Rows are
+#'   resampled if there are fewer than n, so a single row gives fixed parameters. The response should be in Mg, as for `"chave2014"`.
 #'
 #' @return Returns a list  with (if Carbon is FALSE):
 #'   - `meanAGB`: Mean stand AGB value following the error propagation
@@ -122,8 +124,17 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
   volume_allom = FALSE, return_volume = FALSE) {
   
   len <- length(D)
-  
-  if (all(fitted_allom == "chave2014")) {
+
+  # Type of AGB allometry: Chave et al. (2014), a brms.fit object, or a
+  # formula with parameters
+  is_brms <- inherits(fitted_allom, "brmsfit")
+  is_formula <- !is_brms && is.list(fitted_allom) &&
+    inherits(fitted_allom$formula, "formula")
+  if (!identical(fitted_allom, "chave2014") && !is_brms && !is_formula) {
+    stop("fitted_allom must be \"chave2014\", a brms.fit object, or a list with a formula and parameters, see Details")
+  }
+
+  if (identical(fitted_allom, "chave2014")) {
     
     # set volume_allom & return_volume to FALSE when chave's allometry is used
     volume_allom <- FALSE
@@ -169,7 +180,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
     }
     
 
-    if (is(fitted_allom) == "brmsfit") {
+    if (is_brms) {
 
       # id response variable in brmsfit
       var_names_allom <- colnames(fitted_allom$data)
@@ -196,7 +207,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
       names(predictor_names) <- predictor_names_allom
     }
     
-    if (length(fitted_allom) == 2) {
+    if (is_formula) {
       
       # check that formula is composed of variables among D, H, WD and parameters from the provided list
       if (all(all.vars(fitted_allom$formula) %in% 
@@ -209,14 +220,19 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
         stop("A residual error parameter named sigma should be provided.")
       }
       
-      # check for parameter sample size
-      if (n <= nrow(fitted_allom$parameters)) {
-        params <- fitted_allom$parameters[1:n,]
+      # check for parameter sample size, one row of parameters per iteration
+      fitted_params <- as.data.frame(as.list(fitted_allom$parameters))
+      if (n <= nrow(fitted_params)) {
+        params <- fitted_params[1:n, , drop = FALSE]
       } else { #resample to get enough parameter combinations
-        params <- rbind(fitted_allom$parameters, 
-          fitted_allom$parameters[sample(1:nrow(fitted_allom$parameters), 
-            n - nrow(fitted_allom$parameters), replace = T),]
+        params <- rbind(fitted_params,
+          fitted_params[sample(1:nrow(fitted_params),
+            n - nrow(fitted_params), replace = T), , drop = FALSE]
         )
+      }
+
+      if (!is.null(fitted_allom$link) && !fitted_allom$link %in% c("identity", "log")) {
+        stop("The link of the user allometry must be NULL, \"identity\" or \"log\"")
       }
     }
   
@@ -262,7 +278,7 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
         # Propagation of the error thanks to the H-D local model
         
         # If HDmodel is a list of stand-specific hd-models, get back the plotID vector
-        if (!identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
+        if (!inherits(HDmodel, "customHD") && !identical(names(HDmodel)[1:4] , c("input", "model", "residuals", "method"))) {
           plotID <- do.call(c , lapply(names(HDmodel), function(x) {
             rep(x , length(HDmodel[[x]]$input$D))
           }))
@@ -283,31 +299,36 @@ AGBmonteCarlo <- function(D, WD = NULL, errWD = NULL, H = NULL, errH = NULL,
 
     # --------------------- AGB prediction ---------------------
  
-    if (length(fitted_allom) == 2) {
+    if (is_formula) {
+      # Each parameter as a matrix with trees in rows and iterations in
+      # columns, so that each iteration uses one row of `params` for all trees
+      params_mat <- lapply(params, function(p) {
+        matrix(p, nrow = len, ncol = n, byrow = TRUE)
+      })
       compute_pred <- function(formula, data, params) {
         call = rlang::f_rhs(formula)
         data = as.list(data)
         envir = c(data, params)
         eval(call, envir = envir)
       }
-     
-      # names D_simu, H_simu in data vs D, H in the formula
-      predicted_response <- compute_pred(formula = fitted_allom$formula, 
-        data = list(D = D_simu, H = H_simu, WD = WD_simu), 
-        params = fitted_allom$parameters)
-       #trees in row, replicates columns -> ok same as AGBmC_chave2014
-       # residual error
 
-      AGB_simu <- t(apply(MARGIN = 1, X = predicted_response,
-          FUN = rnorm, n = nrow(params), sd = fitted_allom$parameters$sigma
-      ))
-     
-      if (fitted_allom$link == "log") {
+      # names D_simu, H_simu in data vs D, H in the formula
+      predicted_response <- compute_pred(formula = fitted_allom$formula,
+        data = list(D = D_simu, H = H_simu, WD = WD_simu),
+        params = params_mat)
+      predicted_response <- matrix(predicted_response, nrow = len, ncol = n)
+      #trees in row, replicates columns -> ok same as AGBmC_chave2014
+
+      # residual error, with the sigma of each iteration
+      AGB_simu <- predicted_response +
+        matrix(rnorm(len * n, sd = params_mat$sigma), nrow = len, ncol = n)
+
+      if (identical(fitted_allom$link, "log")) {
         AGB_simu <- exp(AGB_simu)
       }
     }
   
-    if (is(fitted_allom) == "brmsfit") {
+    if (is_brms) {
       newdata_for_pred <- data.table(
         D = as.vector(t(D_simu)),
         H = as.vector(t(H_simu)), 

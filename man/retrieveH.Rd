@@ -9,7 +9,7 @@ retrieveH(D, model = NULL, coord = NULL, region = NULL, plot = NULL)
 \arguments{
 \item{D}{Vector of diameters.}
 
-\item{model}{A model output by the function \code{\link[=modelHD]{modelHD()}}.}
+\item{model}{A model output by the function \code{\link[=modelHD]{modelHD()}}, or a model defined with \code{\link[=customHD]{customHD()}}.}
 
 \item{coord}{Coordinates of the site(s), either a vector (e.g. c(longitude, latitude)) or a
 matrix/dataframe with two columns (e.g. cbind(longitude, latitude)).}

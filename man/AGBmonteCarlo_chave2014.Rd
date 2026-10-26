@@ -29,7 +29,7 @@ AGBmonteCarlo_chave2014(
 \item{errH}{(if \code{H}) Residual standard error (RSE) of a model or vector of errors (sd values) associated to tree height
 values (in the latter case the vector should be of the same length as \code{H}).}
 
-\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example).}
+\item{HDmodel}{(option 2) Model used to estimate tree height from tree diameter (output from \code{\link[=modelHD]{modelHD()}}, see example, or a model defined with \code{\link[=customHD]{customHD()}}).}
 
 \item{coord}{(option 3) Coordinates of the site(s), either a vector giving a single site (e.g. c(longitude, latitude))
 or a matrix/dataframe with two columns (e.g. cbind(longitude, latitude)). The coordinates are used to predict

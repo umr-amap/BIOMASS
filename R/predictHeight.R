@@ -3,7 +3,7 @@
 #' The function predicts height from diameter based on a fitted model.
 #' As the predict() function for brms models takes ~10 minutes to run, predictions are calculated using the coefficients from the models directly.
 #' @param D a n x m matrix containing tree diameters (in cm), where n is the number of trees and m is the number of Monte Carlo simulations (m = 1 if no error propagation).
-#' @param model The output of the [modelHD()] function.
+#' @param model The output of the [modelHD()] function, or a model defined with [customHD()].
 #' @param err If `TRUE`, An error is taken randomly from a normal distribution with a mean of zero and a standard deviation equaled to the residual standard error of the model (RSE). Only used for the Monte Carlo approach (see [AGBmonteCarlo()]), otherwise it should be let as `FALSE`, the default case.
 #' @param plot (optional) Plot ID, must be either one value, or a vector of the same length as D. This argument is used to build
 #' stand-specific HD models.
@@ -20,7 +20,25 @@
 #' @keywords Internal
 #' 
 predictHeight <- function(D, model, err = FALSE, plot = NULL) {
-  
+
+  # Model defined with customHD(): the same model for all trees
+  if (inherits(model, "customHD")) {
+    if (!is.matrix(D)) {
+      stop("`D` must be a n x m matrix containing tree diameters (in cm), where n is the number of trees and m is the number of Monte Carlo simulations (m = 1 if no error propagation).")
+    }
+    H_predict <- customHDpred(model, D)
+    if (err) {
+      e <- matrix(rnorm(n = length(D), sd = model$sigma), nrow = nrow(D))
+      H_predict <- if (model$link == "log") H_predict * exp(e) else H_predict + e
+    } else if (model$link == "log") {
+      # Baskerville correction, as for log models from modelHD()
+      H_predict <- H_predict * exp(0.5 * model$sigma^2)
+    }
+    # As below, negative heights due to random error assignment
+    H_predict[H_predict <= 0] <- 0.1
+    return(H_predict)
+  }
+
   # If 'model' contains only one model, put model in a list of one element to keep the same structure as when there are several plots
   if( names(model)[1] == "input") {
     model <- list(single_plot = model)
