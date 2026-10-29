@@ -1,7 +1,5 @@
 * version 3.1
-- AGB can now be estimated using an allometry equation set by the user, thanks to an update in AGBmonCarlo() and a new function:
- - AGBmonteCarlo() now handles a user-defined allometry, previously calibrated by the user, through the argument `fitted_allom`.
- - computeAGB_myallom(): compute tree mean AGB for user-defined allometries, as does computeAGB() with Chave's 2014 allometry.
+- AGBmonteCarlo() now handles a user-defined allometry, previously calibrated by the user, through the argument `fitted_allom`.
 
 * version 3.0.2
 - AGBmonteCarlo() now handles the propagation of error due to missing diameter measurements.
