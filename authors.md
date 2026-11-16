@@ -31,7 +31,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/umr-amap/BIOMASS/blob/master/inst/CITATION)
+[`inst/CITATION`](https://github.com/umr-amap/BIOMASS/blob/108-subplot_summary-sets-agbd-to-0-for-non-empty-subplots-when-plots-have-different-numbers-of-subplots/inst/CITATION)
 
 Réjou-Méchain M, Tanguy A, Piponiot C, Chave J, Herault B (2017).
 “BIOMASS : an R package for estimating above-ground biomass and its
