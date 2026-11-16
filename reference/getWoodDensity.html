@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">BIOMASS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.0.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Estimating wood density and associated uncertainties</h1>
-      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/master/R/getWoodDensity.R" class="external-link"><code>R/getWoodDensity.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/umr-amap/BIOMASS/blob/109-user_allometry_intergration---agbmontecarlo-with-coord-returns-agb-in-kg-instead-of-mg/R/getWoodDensity.R" class="external-link"><code>R/getWoodDensity.R</code></a></small>
       <div class="d-none name"><code>getWoodDensity.Rd</code></div>
     </div>
 
@@ -103,13 +103,8 @@ sigma ~ 1 + ind + (1 | species)
 The uncertainties related to the genus and family are then estimated by simulating WD values for all the species.</p>
 <p>If a taxon is unidentified or absent from the database, the estimated WD and uncertainty of the stand (if set) is given.</p>
 <p>When supplying addWoodDensityData, the dataframe should be organized as follow:</p><ul><li><p>four (or five) columns: "genus","species","meanWD","sdWD" (the fifth column "family" is optional)</p></li>
-<li><p><code>species</code> is the specific epithet, e.g. "africana" for Burkea africana</p></li>
-<li><p>one row per taxon (not per individual measurement)
-Estimates may be given at species level, genus level (<code>species</code> is NA),
-or family level (<code>genus</code> and <code>species</code> are NA). The taxa present in
-addWoodDensityData replace the GWDD V2 estimates at the same taxonomic
-level. If <code>sdWD</code> is NA, the GWDD V2 standard deviation is kept for taxa in
-the database, and is NA for taxa not in the database.</p></li>
+<li><p>one row per species (not per individual measurement)
+The taxa present in addWoodDensityData will replace the GWDD V2 estimates.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

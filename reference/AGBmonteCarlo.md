@@ -1,7 +1,7 @@
 # Propagating above ground biomass (AGB) or carbon (AGC) errors to the stand level
 
 Propagation of the errors throughout the steps needed to compute AGB or
-AGC.
+AGC, supporting user AGB allometry.
 
 ## Usage
 
@@ -17,7 +17,11 @@ AGBmonteCarlo(
   Dpropag = NULL,
   n = 1000,
   Carbon = FALSE,
-  Dlim = NULL
+  Dlim = NULL,
+  fitted_allom = "chave2014",
+  var_in_data = NULL,
+  volume_allom = FALSE,
+  return_volume = FALSE
 )
 ```
 
@@ -56,10 +60,11 @@ AGBmonteCarlo(
 
 - coord:
 
-  (option 3) Coordinates of the site(s), either a vector giving a single
-  site (e.g. c(longitude, latitude)) or a matrix/dataframe with two
-  columns (e.g. cbind(longitude, latitude)). The coordinates are used to
-  predict height-diameter allometry with bioclimatic variables.
+  (option 3, only used with `"chave2014"` allometry) Coordinates of the
+  site(s), either a vector giving a single site (e.g. c(longitude,
+  latitude)) or a matrix/dataframe with two columns (e.g.
+  cbind(longitude, latitude)). The coordinates are used to predict
+  height-diameter allometry with bioclimatic variables.
 
 - Dpropag:
 
@@ -86,6 +91,34 @@ AGBmonteCarlo(
   should be calculated (all diameter below `Dlim` will have a 0 value in
   the output).
 
+- fitted_allom:
+
+  Can be three types of values, indicating the AGB allometry that will
+  be used to compute tree AGB: `"chave2014"` (pantropical Chave's
+  allometry, default value), or a brms.fit object of a fitted allometry,
+  or a list of 3 objects (a formula, a data.frame of fitted parameters
+  values, a character value specifying if the response is log scaled).
+  See Details below for supported user allometries.
+
+- var_in_data:
+
+  (Needed when `"fitted_allom"` is a brms.fit object) A vector of
+  characters among : `"AGB"`, `"logAGB"`, `"V"`, `"logV"`, `"H"`,
+  `"logH"`, `"D"`, `"logD"`, `"WD"` standing for variables (including
+  response & predictors) used in fitting procedure, corresponding to
+  `"fitted_allom$data"`, variables order MUST match variables order of
+  `"colnames(fitted_allom$data)"`.
+
+- volume_allom:
+
+  (logical) Whether the response of the allometry model is AGB or volume
+  (V). By default `volume_allom = FALSE`
+
+- return_volume:
+
+  (logical) Whether the returned output should be AGB or volume (V). By
+  default `return_volume = FALSE`
+
 ## Value
 
 Returns a list with (if Carbon is FALSE):
@@ -102,25 +135,32 @@ Returns a list with (if Carbon is FALSE):
 - `AGB_simu`: Matrix with the AGB of the trees (rows) times the n
   iterations (columns)
 
+- `AGB_simu_per_stem`: Dataframe with mean, median, sd, 2.5 and 97.5\\
+  following the error propagation at individual tree level.
+
 ## Details
 
 See Rejou-Mechain et al. (2017) for all details on the error propagation
 procedure.
 
-## References
+Supported types of AGB allometry, and how to properly specify it:
 
-Chave, J. et al. (2004). *Error propagation and scaling for tropical
-forest biomass estimates*. Philosophical Transactions of the Royal
-Society B: Biological Sciences, 359(1443), 409-420.
+- brms.fit object: response must be (log)AGB or (log)V (volume);
+  predictors must be among (log)height H (logH), (log)diameter D (logD),
+  wood density WD; group level effect not supported;
 
-Rejou-Mechain et al. (2017). *BIOMASS: An R Package for estimating
-above-ground biomass and its uncertainty in tropical forests*. Methods
-in Ecology and Evolution, 8 (9), 1163-1167.
+- formula & parameters: list(formula = NULL, parameters = NULL, link =
+  NULL) formula = ~ param1 \* H ..., can be any function of variables H,
+  D, WD; parameters = data.frame(param1 = , param2 = , ..., sigma =);
+  link = NULL or "log"; variables in the formula must be among `"H"`,
+  `"D"`, `"WD"`; column names of parameters must match parameters names
+  in formula; a Gaussian error model is assumed on mean response, with
+  `"sigma"` as standard deviation.
 
 ## Author
 
-Maxime REJOU-MECHAIN, Bruno HERAULT, Camille PIPONIOT, Ariane TANGUY,
-Arthur PERE
+Dominique LAMONICA, Maxime REJOU-MECHAIN, Bruno HERAULT, Camille
+PIPONIOT, Ariane TANGUY, Arthur PERE
 
 ## Examples
 
@@ -141,6 +181,7 @@ NouraguesWD <- getWoodDensity(NouraguesTrees$Genus, NouraguesTrees$Species,
 #> Warning: 142 taxa don't match the Global Wood Density Database V2. You may provide 'family' to match wood density estimates at family level.
 # }
 
+## Allometry Chave 2014 equation
 # Propagating errors with a standard error for Wood density
 # \donttest{
 resultMC <- AGBmonteCarlo(
@@ -172,5 +213,9 @@ resultMC <- by(
 meanAGBperplot <- unlist(sapply(resultMC, "[", 1))
 credperplot <- sapply(resultMC, "[", 4)
 # }
+
+## User allometry implemented with a brms.fit object
+
+
 closeAllConnections()
 ```

@@ -29,6 +29,9 @@ AGB and its uncertainty
 
 - [`computeAGB()`](https://umr-amap.github.io/BIOMASS/reference/computeAGB.md)
   : Computing tree above ground biomass (AGB)
+- [`computeAGB_myallom()`](https://umr-amap.github.io/BIOMASS/reference/computeAGB_myallom.md)
+  : Compute tree above ground biomass (AGB) using (multiple) user
+  biomass allometry
 
 ### Propagate uncertainties
 

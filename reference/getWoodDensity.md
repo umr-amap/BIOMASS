@@ -87,14 +87,8 @@ follow:
 - four (or five) columns: "genus","species","meanWD","sdWD" (the fifth
   column "family" is optional)
 
-- `species` is the specific epithet, e.g. "africana" for Burkea africana
-
-- one row per taxon (not per individual measurement) Estimates may be
-  given at species level, genus level (`species` is NA), or family level
-  (`genus` and `species` are NA). The taxa present in addWoodDensityData
-  replace the GWDD V2 estimates at the same taxonomic level. If `sdWD`
-  is NA, the GWDD V2 standard deviation is kept for taxa in the
-  database, and is NA for taxa not in the database.
+- one row per species (not per individual measurement) The taxa present
+  in addWoodDensityData will replace the GWDD V2 estimates.
 
 ## References
 

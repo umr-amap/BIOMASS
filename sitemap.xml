@@ -7,6 +7,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/authors.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/index.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/AGBmonteCarlo.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/AGBmonteCarlo_chave2014.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/BIOMASS-package.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/HDmethods.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/NouraguesCoords.html</loc></url>
@@ -22,6 +23,7 @@
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/check_plot_coord.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/clearCache.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/computeAGB.html</loc></url>
+<url><loc>https://umr-amap.github.io/BIOMASS/reference/computeAGB_myallom.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/computeE.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/computeFeldRegion.html</loc></url>
 <url><loc>https://umr-amap.github.io/BIOMASS/reference/correctCoordGPS.html</loc></url>
